@@ -277,7 +277,7 @@ class PromptEnhancer(scripts.Script):
 
         with gr.Accordion(open=False, label="Prompt Enhancer"):
 
-            # ── Source prompt ──
+            # ── Source prompt + enhance ──
             source_prompt = gr.Textbox(
                 label="Source Prompt",
                 lines=3,
@@ -285,12 +285,20 @@ class PromptEnhancer(scripts.Script):
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
+                enhance_btn = gr.Button(
+                    value="\U0001f4a1 Enhance",
+                    variant="primary",
+                    scale=0,
+                    min_width=120,
+                    elem_id=f"{tab}_pe_enhance_btn",
+                )
                 grab_btn = gr.Button(
                     value="\u2b07 Grab from prompt box",
                     scale=0,
                     min_width=180,
                     elem_id=f"{tab}_pe_grab_btn",
                 )
+                status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # Grab: pull main prompt textarea into source
             grab_btn.click(
@@ -303,21 +311,6 @@ class PromptEnhancer(scripts.Script):
                 outputs=[source_prompt],
                 show_progress=False,
             )
-
-            # ── API settings ──
-            with gr.Row():
-                api_url = gr.Textbox(
-                    label="API URL",
-                    value=DEFAULT_API_URL,
-                    scale=3,
-                )
-                model = gr.Dropdown(
-                    label="Model",
-                    choices=initial_models,
-                    value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0],
-                    allow_custom_value=True,
-                    scale=2,
-                )
 
             # ── Preset + generation settings ──
             with gr.Row():
@@ -356,7 +349,20 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # ── External presets path ──
+            # ── API + external presets settings ──
+            with gr.Row():
+                api_url = gr.Textbox(
+                    label="API URL",
+                    value=DEFAULT_API_URL,
+                    scale=3,
+                )
+                model = gr.Dropdown(
+                    label="Model",
+                    choices=initial_models,
+                    value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0],
+                    allow_custom_value=True,
+                    scale=2,
+                )
             with gr.Row():
                 presets_path = gr.Textbox(
                     label="External Presets (JSON)",
@@ -388,17 +394,6 @@ class PromptEnhancer(scripts.Script):
                 outputs=[model],
                 show_progress=False,
             )
-
-            # ── Enhance button + status ──
-            with gr.Row():
-                enhance_btn = gr.Button(
-                    value="\U0001f4a1 Enhance",
-                    variant="primary",
-                    scale=0,
-                    min_width=120,
-                    elem_id=f"{tab}_pe_enhance_btn",
-                )
-                status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # Hidden bridge for writing to the main prompt textarea
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
