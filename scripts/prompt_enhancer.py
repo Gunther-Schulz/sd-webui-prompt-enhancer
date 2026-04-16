@@ -171,6 +171,32 @@ def _refresh_models(api_url, current_model):
     return gr.update(choices=models, value=value)
 
 
+# ── Intensity ─────────────────────────────────────────────────────────────────
+
+INTENSITY_LABELS = {
+    1: "very restrained and minimal",
+    2: "subtle and understated",
+    3: "moderate and balanced",
+    4: "detailed and vivid",
+    5: "intense and highly detailed",
+    6: "very intense, graphic, and extreme",
+}
+
+
+def _apply_intensity(system_prompt, intensity):
+    """Prepend an intensity instruction to the system prompt."""
+    intensity = int(intensity)
+    if intensity == 3:
+        return system_prompt
+    desc = INTENSITY_LABELS.get(intensity, INTENSITY_LABELS[3])
+    return (
+        f"IMPORTANT: Apply the following style at intensity {intensity}/6 - "
+        f"meaning {desc}. "
+        f"Scale ALL descriptions to this intensity level.\n\n"
+        f"{system_prompt}"
+    )
+
+
 # ── Core enhancement logic ───────────────────────────────────────────────────
 
 def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
@@ -196,7 +222,7 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     return result["choices"][0]["message"]["content"].strip()
 
 
-def enhance_prompt(source, api_url, model, preset, custom_system_prompt, max_tokens, temperature):
+def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature):
     source = (source or "").strip()
     if not source:
         return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -204,6 +230,8 @@ def enhance_prompt(source, api_url, model, preset, custom_system_prompt, max_tok
     system_prompt = custom_system_prompt if preset == "Custom" else _get_preset_prompt(preset)
     if not system_prompt:
         return "", "<span style='color:#c66'>No system prompt configured.</span>"
+
+    system_prompt = _apply_intensity(system_prompt, intensity)
 
     try:
         enhanced = _call_llm(source, api_url, model, system_prompt, max_tokens, temperature)
@@ -294,6 +322,12 @@ class PromptEnhancer(scripts.Script):
                     value="Cinematic (Video)",
                     scale=2,
                 )
+                intensity = gr.Slider(
+                    label="Intensity", minimum=1, maximum=6,
+                    value=3, step=1, scale=1,
+                    info="1=restrained  3=balanced  6=extreme",
+                )
+            with gr.Row():
                 max_tokens = gr.Slider(
                     label="Max Tokens", minimum=64, maximum=1024,
                     value=600, step=32, scale=1,
@@ -367,7 +401,7 @@ class PromptEnhancer(scripts.Script):
             # Enhance: source_prompt -> LLM -> prompt_out + status
             enhance_btn.click(
                 fn=enhance_prompt,
-                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, max_tokens, temperature],
+                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -390,4 +424,4 @@ class PromptEnhancer(scripts.Script):
             )
 
         self.infotext_fields = []
-        return [api_url, model, preset, custom_system_prompt, max_tokens, temperature]
+        return [api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature]
