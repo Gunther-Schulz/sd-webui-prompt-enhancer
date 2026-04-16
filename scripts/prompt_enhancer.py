@@ -437,6 +437,13 @@ BUILTIN_MODIFIERS = {
         "Internal detail is lost; the image is about shape, outline, and the contrast "
         "between the dark figure and the luminous background behind them."
     ),
+    "First Person / POV": (
+        "Additionally, describe the scene entirely from a first-person perspective. "
+        "The camera IS the viewer's eyes. Describe what 'you' see directly in front of you. "
+        "Include your own hands, arms, or body in frame where relevant. Use spatial language "
+        "relative to the viewer: 'in front of you', 'looking down', 'at arm's length'. "
+        "The scene should feel immersive and present-tense — you are there."
+    ),
 }
 
 _external_modifiers = {}
