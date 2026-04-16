@@ -615,8 +615,10 @@ class PromptEnhancer(scripts.Script):
             (preset, "PE Preset"),
             (intensity, "PE Intensity"),
             (word_limit, "PE WordLimit"),
+            (content_modifier, "PE Modifiers"),
+            (think, "PE Think"),
         ]
-        self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit"]
+        self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit", "PE Modifiers", "PE Think"]
         return [source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, think, temperature):
@@ -626,5 +628,9 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Preset"] = preset
         if intensity and int(intensity) != 3:
             p.extra_generation_params["PE Intensity"] = int(intensity)
-        if word_limit and int(word_limit) != 150:
+        if word_limit and int(word_limit) != 300:
             p.extra_generation_params["PE WordLimit"] = int(word_limit)
+        if content_modifier:
+            p.extra_generation_params["PE Modifiers"] = ", ".join(content_modifier)
+        if think:
+            p.extra_generation_params["PE Think"] = True
