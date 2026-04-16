@@ -159,8 +159,15 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     return result["choices"][0]["message"]["content"].strip()
 
 
+def _strip_comments(text):
+    """Remove comment lines (# ...) so re-enhancing doesn't feed old metadata to the LLM."""
+    lines = text.splitlines()
+    cleaned = [line for line in lines if not line.lstrip().startswith("#")]
+    return "\n".join(cleaned).strip()
+
+
 def enhance_prompt(prompt, api_url, model, preset, custom_system_prompt, max_tokens, temperature):
-    prompt = (prompt or "").strip()
+    prompt = _strip_comments(prompt or "")
     if not prompt:
         return "", "No prompt to enhance."
 
