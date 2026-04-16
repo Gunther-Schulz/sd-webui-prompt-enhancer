@@ -215,9 +215,10 @@ class PromptEnhancer(scripts.Script):
 
             with gr.Row():
                 enhance_btn = gr.Button(
-                    value="\U0001f4a1 Enhance Prompt",
+                    value="\U0001f4a1 Enhance",
                     variant="primary",
-                    scale=1,
+                    scale=0,
+                    min_width=120,
                     elem_id=f"{tab}_pe_enhance_btn",
                 )
                 status = gr.Textbox(label="Status", interactive=False, scale=3)
