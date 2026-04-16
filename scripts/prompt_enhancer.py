@@ -488,6 +488,7 @@ def _get_modifier_names():
     """Return merged list of modifier names: built-in + external."""
     names = list(BUILTIN_MODIFIERS.keys())
     if _external_modifiers:
+        names.append("───── External ─────")
         names.extend(_external_modifiers.keys())
     return names
 
