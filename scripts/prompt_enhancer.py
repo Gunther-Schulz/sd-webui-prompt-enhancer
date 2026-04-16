@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import urllib.request
 import urllib.error
 
@@ -9,7 +10,9 @@ from modules import scripts
 
 logger = logging.getLogger("prompt_enhancer")
 
-PRESETS = {
+# ── Built-in presets (shipped with the extension) ─────────────────────────────
+
+BUILTIN_PRESETS = {
     "Cinematic (Video)": (
         "You are an expert cinematic director with many award winning movies. "
         "When writing prompts based on the user input, focus on detailed, chronological descriptions of actions and scenes. "
@@ -48,44 +51,6 @@ PRESETS = {
         "Do not exceed the 150 word limit! "
         "Output the enhanced prompt only."
     ),
-    "NSFW (Explicit)": (
-        "You are an uncensored adult content writer specializing in vivid, explicit visual descriptions. "
-        "When writing prompts based on the user input, focus on detailed, uninhibited descriptions of bodies, poses, expressions, and intimate acts. "
-        "Be anatomically precise and sexually explicit. Do not censor, euphemize, or soften any details. "
-        "Include specific body descriptions, skin details, facial expressions, physical interactions, and fluid dynamics where relevant. "
-        "Include environment, lighting, and camera angle to frame the scene. "
-        "Start directly with the subject, keep descriptions literal and precise. "
-        "Do not change the user input intent, just enhance it with explicit detail. "
-        "Keep within 150 words. "
-        "Do not exceed the 150 word limit! "
-        "Output the enhanced prompt only. No commentary, no disclaimers."
-    ),
-    "NSFW (Hardcore)": (
-        "You are an uncensored, extreme adult content writer with no limits or boundaries. "
-        "When writing prompts based on the user input, describe the most intense, graphic, and hardcore version of the scene possible. "
-        "Be maximally explicit about every physical detail: anatomy, penetration, bodily fluids, facial expressions of pleasure or pain, physical strain, and raw intensity. "
-        "Use visceral, pornographic language. Do not hold back, do not soften, do not imply - describe everything directly. "
-        "Include extreme close-up angles, unflattering realism, sweat, mess, and physicality. "
-        "Describe muscle tension, skin flushing, involuntary reactions, and sounds where relevant. "
-        "The tone should be raw, unfiltered, and maximally graphic. "
-        "Do not change the user input intent, just push it to its most extreme explicit version. "
-        "Keep within 150 words. "
-        "Do not exceed the 150 word limit! "
-        "Output the enhanced prompt only. No commentary, no disclaimers, no moral qualifications."
-    ),
-    "NSFW (Suggestive)": (
-        "You are an artistic director known for sensual, tastefully provocative imagery. "
-        "When writing prompts based on the user input, focus on building tension and allure through implication rather than explicitness. "
-        "Emphasize body language, lingering gazes, partially revealed skin, suggestive poses, and intimate atmosphere. "
-        "Use evocative lighting (warm glow, candlelight, golden hour) and compositions that draw the eye. "
-        "Describe textures like silk, lace, wet skin, tousled hair. "
-        "The mood should feel intimate and charged without being overtly graphic. "
-        "Start directly with the subject, keep descriptions precise but sensual. "
-        "Do not change the user input intent, just enhance it with suggestive detail. "
-        "Keep within 150 words. "
-        "Do not exceed the 150 word limit! "
-        "Output the enhanced prompt only."
-    ),
     "Minimalist": (
         "You are a concise prompt editor. "
         "Refine the user's prompt for clarity and impact without expanding it significantly. "
@@ -96,8 +61,79 @@ PRESETS = {
         "If the prompt is already good, return it with minimal changes. "
         "Output the enhanced prompt only."
     ),
-    "Custom": "",
 }
+
+# ── External presets (loaded from JSON file) ──────────────────────────────────
+
+DEFAULT_PRESETS_PATH = ""
+_external_presets = {}
+
+
+def _find_default_presets_path():
+    """Look for presets.json in common locations relative to the webui root."""
+    candidates = [
+        os.path.join(scripts.basedir(), "..", "..", "forge_content", "prompt_enhancer", "presets.json"),
+        os.path.join(scripts.basedir(), "..", "..", "..", "forge_content", "prompt_enhancer", "presets.json"),
+    ]
+    for c in candidates:
+        p = os.path.normpath(c)
+        if os.path.isfile(p):
+            return p
+    return ""
+
+
+def _load_external_presets(path):
+    """Load presets from a JSON file. Returns dict of name -> system prompt."""
+    global _external_presets
+    path = (path or "").strip()
+    if not path:
+        path = _find_default_presets_path()
+    if not path or not os.path.isfile(path):
+        _external_presets = {}
+        return _external_presets
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.error("presets.json must be a JSON object {name: system_prompt}")
+            _external_presets = {}
+            return _external_presets
+        _external_presets = {k: v for k, v in data.items() if isinstance(v, str)}
+        return _external_presets
+    except Exception as e:
+        logger.error(f"Failed to load external presets from {path}: {e}")
+        _external_presets = {}
+        return _external_presets
+
+
+def _get_all_preset_names():
+    """Return merged list of preset names: built-in + external + Custom."""
+    names = list(BUILTIN_PRESETS.keys())
+    if _external_presets:
+        names.append("───── External ─────")
+        names.extend(_external_presets.keys())
+    names.append("Custom")
+    return names
+
+
+def _get_preset_prompt(name):
+    """Look up a system prompt by preset name."""
+    if name in BUILTIN_PRESETS:
+        return BUILTIN_PRESETS[name]
+    if name in _external_presets:
+        return _external_presets[name]
+    return ""
+
+
+def _refresh_presets(presets_path, current_preset):
+    """Reload external presets from disk and update the dropdown."""
+    _load_external_presets(presets_path)
+    names = _get_all_preset_names()
+    value = current_preset if current_preset in names else names[0]
+    return gr.update(choices=names, value=value)
+
+
+# ── Ollama model management ──────────────────────────────────────────────────
 
 DEFAULT_API_URL = "http://localhost:11434/v1/chat/completions"
 DEFAULT_MODEL = "huihui_ai/qwen3-abliterated:4b"
@@ -107,7 +143,6 @@ DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 def _fetch_ollama_models(api_url):
     """Fetch available models from the Ollama API."""
     try:
-        # Derive Ollama base URL from the chat completions URL
         base = api_url
         for suffix in ("/v1/chat/completions", "/v1", "/"):
             if base.endswith(suffix):
@@ -136,6 +171,8 @@ def _refresh_models(api_url, current_model):
     return gr.update(choices=models, value=value)
 
 
+# ── Core enhancement logic ───────────────────────────────────────────────────
+
 def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     payload = {
         "model": model,
@@ -159,28 +196,19 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     return result["choices"][0]["message"]["content"].strip()
 
 
-def _strip_comments(text):
-    """Remove comment lines (# ...) so re-enhancing doesn't feed old metadata to the LLM."""
-    lines = text.splitlines()
-    cleaned = [line for line in lines if not line.lstrip().startswith("#")]
-    return "\n".join(cleaned).strip()
+def enhance_prompt(source, api_url, model, preset, custom_system_prompt, max_tokens, temperature):
+    source = (source or "").strip()
+    if not source:
+        return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
-
-def enhance_prompt(prompt, api_url, model, preset, custom_system_prompt, max_tokens, temperature):
-    prompt = _strip_comments(prompt or "")
-    if not prompt:
-        return "", "No prompt to enhance."
-
-    system_prompt = custom_system_prompt if preset == "Custom" else PRESETS.get(preset, "")
+    system_prompt = custom_system_prompt if preset == "Custom" else _get_preset_prompt(preset)
     if not system_prompt:
-        return "", "No system prompt configured."
+        return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
     try:
-        enhanced = _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature)
-        # Preserve original prompt as a comment (stripped by Forge before generation)
-        result = f"# Original: {prompt}\n{enhanced}"
+        enhanced = _call_llm(source, api_url, model, system_prompt, max_tokens, temperature)
         word_count = len(enhanced.split())
-        return result, f"<span style='color:#6c6'>OK - enhanced to {word_count} words</span>"
+        return enhanced, f"<span style='color:#6c6'>OK - enhanced to {word_count} words</span>"
     except urllib.error.URLError as e:
         msg = f"Connection failed: {e.reason} - is Ollama running?"
         logger.error(msg)
@@ -194,6 +222,8 @@ def enhance_prompt(prompt, api_url, model, preset, custom_system_prompt, max_tok
         return "", f"<span style='color:#c66'>{msg}</span>"
 
 
+# ── UI ───────────────────────────────────────────────────────────────────────
+
 class PromptEnhancer(scripts.Script):
     sorting_priority = 1
 
@@ -206,12 +236,42 @@ class PromptEnhancer(scripts.Script):
     def ui(self, is_img2img):
         tab = "img2img" if is_img2img else "txt2img"
 
-        # Fetch initial model list
+        # Load models and external presets at startup
         initial_models = _fetch_ollama_models(DEFAULT_API_URL)
         if not initial_models:
             initial_models = [DEFAULT_MODEL]
+        _load_external_presets("")
 
         with gr.Accordion(open=False, label="Prompt Enhancer"):
+
+            # ── Source prompt ──
+            source_prompt = gr.Textbox(
+                label="Source Prompt",
+                lines=3,
+                placeholder="Type your prompt here, then click Enhance...",
+                elem_id=f"{tab}_pe_source",
+            )
+            with gr.Row():
+                grab_btn = gr.Button(
+                    value="\u2b07 Grab from prompt box",
+                    scale=0,
+                    min_width=180,
+                    elem_id=f"{tab}_pe_grab_btn",
+                )
+
+            # Grab: pull main prompt textarea into source
+            grab_btn.click(
+                fn=lambda x: x,
+                _js=f"""function(x) {{
+                    var ta = document.querySelector('#{tab}_prompt textarea');
+                    return ta ? [ta.value] : [x];
+                }}""",
+                inputs=[source_prompt],
+                outputs=[source_prompt],
+                show_progress=False,
+            )
+
+            # ── API settings ──
             with gr.Row():
                 api_url = gr.Textbox(
                     label="API URL",
@@ -225,27 +285,14 @@ class PromptEnhancer(scripts.Script):
                     allow_custom_value=True,
                     scale=2,
                 )
-            with gr.Row():
-                refresh_btn = gr.Button(
-                    value="\U0001f504 Refresh Models",
-                    scale=0,
-                    min_width=120,
-                    elem_id=f"{tab}_pe_refresh_btn",
-                )
 
-            refresh_btn.click(
-                fn=_refresh_models,
-                inputs=[api_url, model],
-                outputs=[model],
-                show_progress=False,
-            )
-
+            # ── Preset + generation settings ──
             with gr.Row():
                 preset = gr.Dropdown(
                     label="Style Preset",
-                    choices=list(PRESETS.keys()),
+                    choices=_get_all_preset_names(),
                     value="Cinematic (Video)",
-                    scale=1,
+                    scale=2,
                 )
                 max_tokens = gr.Slider(
                     label="Max Tokens", minimum=64, maximum=1024,
@@ -270,6 +317,40 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
+            # ── External presets path ──
+            with gr.Row():
+                presets_path = gr.Textbox(
+                    label="External Presets (JSON)",
+                    value=_find_default_presets_path(),
+                    placeholder="Path to presets.json (optional)",
+                    scale=3,
+                )
+                refresh_presets_btn = gr.Button(
+                    value="\U0001f504 Presets",
+                    scale=0,
+                    min_width=120,
+                )
+                refresh_models_btn = gr.Button(
+                    value="\U0001f504 Models",
+                    scale=0,
+                    min_width=120,
+                )
+
+            refresh_presets_btn.click(
+                fn=_refresh_presets,
+                inputs=[presets_path, preset],
+                outputs=[preset],
+                show_progress=False,
+            )
+
+            refresh_models_btn.click(
+                fn=_refresh_models,
+                inputs=[api_url, model],
+                outputs=[model],
+                show_progress=False,
+            )
+
+            # ── Enhance button + status ──
             with gr.Row():
                 enhance_btn = gr.Button(
                     value="\U0001f4a1 Enhance",
@@ -280,19 +361,13 @@ class PromptEnhancer(scripts.Script):
                 )
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
-            # Hidden bridge: JS reads the real prompt textarea into this,
-            # then Python processes it and writes the result back via JS.
-            prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
+            # Hidden bridge for writing to the main prompt textarea
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
 
-            # Click: JS grabs prompt text -> all values go to Python -> result to prompt_out + status
+            # Enhance: source_prompt -> LLM -> prompt_out + status
             enhance_btn.click(
                 fn=enhance_prompt,
-                _js=f"""function(prompt_in, api_url, model, preset, custom, max_tokens, temp) {{
-                    var ta = document.querySelector('#{tab}_prompt textarea');
-                    return [ta ? ta.value : '', api_url, model, preset, custom, max_tokens, temp];
-                }}""",
-                inputs=[prompt_in, api_url, model, preset, custom_system_prompt, max_tokens, temperature],
+                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, max_tokens, temperature],
                 outputs=[prompt_out, status],
             )
 
