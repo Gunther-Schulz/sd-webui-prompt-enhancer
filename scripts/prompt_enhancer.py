@@ -139,9 +139,59 @@ def _refresh_presets(presets_path, current_preset):
     return gr.update(choices=names, value=value)
 
 
-# ── Content modifiers (loaded from modifiers.json next to presets.json) ──────
+# ── Content modifiers (built-in + external from modifiers.json) ──────────────
 
-_content_modifiers = {}
+BUILTIN_MODIFIERS = {
+    "Black & White": (
+        "Additionally, describe the scene as a black and white photograph. "
+        "Emphasize tonal contrast, shadows, highlights, and texture over color. "
+        "Mention the absence of color explicitly. Think in terms of luminance, "
+        "grain, and the interplay of light and dark."
+    ),
+    "Film Noir": (
+        "Additionally, apply a film noir aesthetic. Use dramatic chiaroscuro lighting "
+        "with deep shadows and sharp highlights. Include rain-slicked surfaces, venetian "
+        "blind shadows, low-key lighting, and a moody, suspenseful atmosphere. "
+        "The tone should feel dangerous and stylized."
+    ),
+    "Dreamy / Ethereal": (
+        "Additionally, give the scene a dreamy, ethereal quality. Use soft focus, "
+        "hazy light, lens flare, and pastel or desaturated tones. The atmosphere "
+        "should feel weightless and otherworldly — like a half-remembered memory "
+        "or a waking dream."
+    ),
+    "Gritty / Urban": (
+        "Additionally, apply a gritty urban aesthetic. Include harsh fluorescent or "
+        "sodium vapor lighting, concrete textures, graffiti, worn surfaces, and visual "
+        "noise. The mood should feel raw, unpolished, and street-level. Think documentary "
+        "photography in rough neighborhoods."
+    ),
+    "Horror / Dark": (
+        "Additionally, shift the tone to horror. Use unsettling lighting — underlit faces, "
+        "sickly color casts, deep impenetrable shadows. Include visual unease: slightly wrong "
+        "proportions, uncanny stillness, implied threat. The atmosphere should feel dreadful "
+        "and oppressive."
+    ),
+    "Fantasy / Painterly": (
+        "Additionally, describe the scene as if it were a fantasy painting. Use rich, "
+        "saturated colors, dramatic composition, and theatrical lighting. Include elements "
+        "that feel mythic or storybook — golden light, impossible architecture, fabric "
+        "that flows dramatically. The style should evoke concept art or classical oil painting."
+    ),
+    "Vintage Film": (
+        "Additionally, apply a vintage analog film look. Include film grain, slight color "
+        "shifts, warm highlights, and faded blacks. The image should feel like it was shot "
+        "on expired film stock — nostalgic, imperfect, and textured."
+    ),
+    "Macro / Close-up": (
+        "Additionally, describe the scene from an extreme close-up or macro perspective. "
+        "Focus on fine details invisible at normal distance: skin pores, fabric weave, "
+        "water droplets, individual hairs, dust particles. Use very shallow depth of field "
+        "with most of the frame softly blurred."
+    ),
+}
+
+_external_modifiers = {}
 
 
 def _find_modifiers_path(presets_path):
@@ -158,31 +208,34 @@ def _find_modifiers_path(presets_path):
 
 
 def _load_content_modifiers(presets_path):
-    """Load content modifiers from modifiers.json."""
-    global _content_modifiers
+    """Load external content modifiers from modifiers.json."""
+    global _external_modifiers
     path = _find_modifiers_path(presets_path)
     if not path or not os.path.isfile(path):
-        _content_modifiers = {}
-        return _content_modifiers
+        _external_modifiers = {}
+        return _external_modifiers
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         if not isinstance(data, dict):
             logger.error("modifiers.json must be a JSON object {name: system_prompt}")
-            _content_modifiers = {}
-            return _content_modifiers
-        _content_modifiers = {k: v for k, v in data.items() if isinstance(v, str)}
-        return _content_modifiers
+            _external_modifiers = {}
+            return _external_modifiers
+        _external_modifiers = {k: v for k, v in data.items() if isinstance(v, str)}
+        return _external_modifiers
     except Exception as e:
         logger.error(f"Failed to load content modifiers: {e}")
-        _content_modifiers = {}
-        return _content_modifiers
+        _external_modifiers = {}
+        return _external_modifiers
 
 
 def _get_modifier_names():
-    """Return list of modifier names with a 'None' option."""
+    """Return merged list of modifier names: None + built-in + external."""
     names = ["None"]
-    names.extend(_content_modifiers.keys())
+    names.extend(BUILTIN_MODIFIERS.keys())
+    if _external_modifiers:
+        names.append("───── External ─────")
+        names.extend(_external_modifiers.keys())
     return names
 
 
@@ -190,7 +243,11 @@ def _get_modifier_prompt(name):
     """Look up a content modifier prompt by name."""
     if name == "None" or not name:
         return ""
-    return _content_modifiers.get(name, "")
+    if name in BUILTIN_MODIFIERS:
+        return BUILTIN_MODIFIERS[name]
+    if name in _external_modifiers:
+        return _external_modifiers[name]
+    return ""
 
 
 def _refresh_modifiers(presets_path, current_modifier):
