@@ -70,7 +70,11 @@ _external_presets = {}
 
 
 def _find_default_presets_path():
-    """Look for presets.json in common locations relative to the webui root."""
+    """Find presets.json from env var or common locations."""
+    env_path = os.environ.get("PROMPT_ENHANCER_PRESETS", "")
+    if env_path and os.path.isfile(env_path):
+        return env_path
+    # Fallback: search relative to the extension directory
     candidates = [
         os.path.join(scripts.basedir(), "..", "..", "forge_content", "prompt_enhancer", "presets.json"),
         os.path.join(scripts.basedir(), "..", "..", "..", "forge_content", "prompt_enhancer", "presets.json"),
