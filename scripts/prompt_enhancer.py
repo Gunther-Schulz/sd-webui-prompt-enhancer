@@ -260,7 +260,7 @@ def _refresh_modifiers(presets_path, current_modifiers):
 # ── Ollama model management ──────────────────────────────────────────────────
 
 DEFAULT_API_URL = "http://localhost:11434/v1/chat/completions"
-DEFAULT_MODEL = "huihui_ai/qwen3-abliterated:4b"
+DEFAULT_MODEL = "huihui_ai/qwen3.5-abliterated:9b"
 DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 
 
