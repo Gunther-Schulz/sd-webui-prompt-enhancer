@@ -430,8 +430,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
         headers={"Content-Type": "application/json"},
         method="POST",
     )
-    timeout = 300 if think else 120
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
+    with urllib.request.urlopen(req, timeout=600) as resp:
         result = json.loads(resp.read().decode("utf-8"))
     content = result.get("message", {}).get("content", "")
     # Safety net: strip any thinking blocks that slipped through
