@@ -256,6 +256,86 @@ BUILTIN_MODIFIERS = {
         "water droplets, individual hairs, dust particles. Use very shallow depth of field "
         "with most of the frame softly blurred."
     ),
+    "Golden Hour": (
+        "Additionally, set the scene during golden hour. Bathe everything in warm amber "
+        "and honey-toned light. Include long dramatic shadows, sun flare, and that soft "
+        "directional warmth that makes skin glow and edges shimmer. The sky should be "
+        "rich with color — peach, gold, soft pink."
+    ),
+    "Neon / Cyberpunk": (
+        "Additionally, apply a neon cyberpunk aesthetic. Include colored neon reflections "
+        "on wet or glossy surfaces — blue, pink, purple, magenta. The environment should "
+        "feel urban and nocturnal: rain-slicked streets, glowing signs, LED strips. "
+        "Contrast deep shadows with vivid artificial color."
+    ),
+    "Candlelight": (
+        "Additionally, light the scene entirely by candlelight. Use warm flickering light "
+        "that creates deep, moving shadows and pools of golden illumination. Faces and "
+        "surfaces are partially lit, partially lost in darkness. The mood is intimate, "
+        "quiet, and warm."
+    ),
+    "Long Exposure": (
+        "Additionally, describe the scene as a long exposure photograph. Include motion "
+        "blur on moving elements — light trails, silky water, streaked clouds, ghosted "
+        "figures. Stationary elements remain sharp. The contrast between frozen and "
+        "blurred creates a sense of time passing within a single frame."
+    ),
+    "Tilt-Shift / Miniature": (
+        "Additionally, apply a tilt-shift miniature effect. Use extreme selective focus "
+        "with a very narrow band of sharpness, making the scene look like a tiny model "
+        "or diorama. Top-down or elevated angles enhance the effect. Colors should be "
+        "slightly oversaturated to reinforce the toy-like quality."
+    ),
+    "Double Exposure": (
+        "Additionally, describe the scene as a double exposure photograph. Two images "
+        "are blended into one — a portrait filled with a landscape, a silhouette "
+        "containing a cityscape, or overlapping textures that create a ghostly composite. "
+        "Describe both layers and how they interact: which elements show through, where "
+        "they align, and where they contrast."
+    ),
+    "Foggy / Misty": (
+        "Additionally, fill the scene with fog or mist. Reduce visibility and soften "
+        "distant elements into vague silhouettes. Light diffuses through the haze, "
+        "creating god rays or glowing halos. Foreground elements emerge sharply from "
+        "the murk. The atmosphere should feel quiet, isolated, and mysterious."
+    ),
+    "Rainy": (
+        "Additionally, set the scene in rain. Include wet surfaces with reflections, "
+        "streaked windows, visible raindrops in the air or on skin, puddles mirroring "
+        "lights and shapes. Describe the specific quality of rain light — overcast, "
+        "diffused, with a cool blue-grey cast. Include the texture of wet fabric, "
+        "matted hair, and glistening surfaces."
+    ),
+    "Dusty / Hazy": (
+        "Additionally, fill the scene with dust, haze, or smoke. Include visible "
+        "particles caught in light beams, diffused rays, and a warm atmospheric glow. "
+        "The air itself should feel thick and textured — desert heat shimmer, smoky "
+        "room haze, or construction dust catching afternoon sun."
+    ),
+    "Cinematic Color Grade": (
+        "Additionally, apply a cinematic color grade. Use the classic teal-and-orange "
+        "split tone, with crushed blacks, lifted shadows, and a slight desaturation "
+        "in midtones. The image should feel like a still from a Hollywood film — "
+        "polished, moody, and color-separated."
+    ),
+    "Soft / Pastel": (
+        "Additionally, apply a soft pastel aesthetic. Use desaturated, airy colors — "
+        "blush pink, powder blue, lavender, mint, cream. Highlights should be lifted "
+        "and whites should feel bright and clean. The overall tone is gentle, light, "
+        "and delicate — Wes Anderson-adjacent."
+    ),
+    "In Motion": (
+        "Additionally, capture the subject in dynamic motion. Include motion blur, "
+        "frozen action mid-movement, flying hair or fabric, splashing water, or "
+        "airborne particles. The pose should feel caught between moments — unstable, "
+        "energetic, full of kinetic force. A fast shutter freezes the peak of action."
+    ),
+    "Silhouette": (
+        "Additionally, render the subject as a silhouette. The subject is backlit — "
+        "a dark outline against a bright background (sunset, window, neon, fire). "
+        "Internal detail is lost; the image is about shape, outline, and the contrast "
+        "between the dark figure and the luminous background behind them."
+    ),
 }
 
 _external_modifiers = {}
