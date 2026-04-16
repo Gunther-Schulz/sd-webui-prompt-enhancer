@@ -230,18 +230,16 @@ def _load_content_modifiers(presets_path):
 
 
 def _get_modifier_names():
-    """Return merged list of modifier names: None + built-in + external."""
-    names = ["None"]
-    names.extend(BUILTIN_MODIFIERS.keys())
+    """Return merged list of modifier names: built-in + external."""
+    names = list(BUILTIN_MODIFIERS.keys())
     if _external_modifiers:
-        names.append("───── External ─────")
         names.extend(_external_modifiers.keys())
     return names
 
 
 def _get_modifier_prompt(name):
     """Look up a content modifier prompt by name."""
-    if name == "None" or not name:
+    if not name:
         return ""
     if name in BUILTIN_MODIFIERS:
         return BUILTIN_MODIFIERS[name]
@@ -250,11 +248,12 @@ def _get_modifier_prompt(name):
     return ""
 
 
-def _refresh_modifiers(presets_path, current_modifier):
+def _refresh_modifiers(presets_path, current_modifiers):
     """Reload content modifiers from disk and update the dropdown."""
     _load_content_modifiers(presets_path)
     names = _get_modifier_names()
-    value = current_modifier if current_modifier in names else "None"
+    # Keep only still-valid selections
+    value = [m for m in (current_modifiers or []) if m in names]
     return gr.update(choices=names, value=value)
 
 
@@ -377,10 +376,11 @@ def enhance_prompt(source, api_url, model, preset, custom_system_prompt, content
     if not system_prompt:
         return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
-    # Append content modifier if selected
-    modifier_prompt = _get_modifier_prompt(content_modifier)
-    if modifier_prompt:
-        system_prompt = f"{system_prompt}\n\n{modifier_prompt}"
+    # Append all selected content modifiers
+    for mod_name in (content_modifier or []):
+        mod_prompt = _get_modifier_prompt(mod_name)
+        if mod_prompt:
+            system_prompt = f"{system_prompt}\n\n{mod_prompt}"
 
     system_prompt = _apply_intensity(system_prompt, intensity)
     system_prompt = _apply_word_limit(system_prompt, word_limit)
@@ -474,11 +474,12 @@ class PromptEnhancer(scripts.Script):
                     scale=2,
                 )
                 content_modifier = gr.Dropdown(
-                    label="Content Modifier",
+                    label="Content Modifiers",
                     choices=_get_modifier_names(),
-                    value="None",
-                    scale=1,
-                    info="Layered on top of preset",
+                    value=[],
+                    multiselect=True,
+                    scale=2,
+                    info="Stack multiple modifiers on top of preset",
                 )
             with gr.Row():
                 intensity = gr.Slider(
