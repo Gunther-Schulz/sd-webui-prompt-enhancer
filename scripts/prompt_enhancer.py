@@ -74,10 +74,11 @@ def _find_default_presets_path():
     env_path = os.environ.get("PROMPT_ENHANCER_PRESETS", "")
     if env_path and os.path.isfile(env_path):
         return env_path
-    # Fallback: search relative to the extension directory
+    # Fallback: search relative to webui cwd and parent directories
+    cwd = os.getcwd()
     candidates = [
-        os.path.join(scripts.basedir(), "..", "..", "forge_content", "prompt_enhancer", "presets.json"),
-        os.path.join(scripts.basedir(), "..", "..", "..", "forge_content", "prompt_enhancer", "presets.json"),
+        os.path.join(cwd, "forge_content", "prompt_enhancer", "presets.json"),
+        os.path.join(cwd, "..", "forge_content", "prompt_enhancer", "presets.json"),
     ]
     for c in candidates:
         p = os.path.normpath(c)
