@@ -139,6 +139,68 @@ def _refresh_presets(presets_path, current_preset):
     return gr.update(choices=names, value=value)
 
 
+# ── Content modifiers (loaded from modifiers.json next to presets.json) ──────
+
+_content_modifiers = {}
+
+
+def _find_modifiers_path(presets_path):
+    """Find modifiers.json in the same directory as presets.json, or via env var."""
+    env_path = os.environ.get("PROMPT_ENHANCER_MODIFIERS", "")
+    if env_path and os.path.isfile(env_path):
+        return env_path
+    presets_path = (presets_path or "").strip() or _find_default_presets_path()
+    if presets_path:
+        candidate = os.path.join(os.path.dirname(presets_path), "modifiers.json")
+        if os.path.isfile(candidate):
+            return candidate
+    return ""
+
+
+def _load_content_modifiers(presets_path):
+    """Load content modifiers from modifiers.json."""
+    global _content_modifiers
+    path = _find_modifiers_path(presets_path)
+    if not path or not os.path.isfile(path):
+        _content_modifiers = {}
+        return _content_modifiers
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if not isinstance(data, dict):
+            logger.error("modifiers.json must be a JSON object {name: system_prompt}")
+            _content_modifiers = {}
+            return _content_modifiers
+        _content_modifiers = {k: v for k, v in data.items() if isinstance(v, str)}
+        return _content_modifiers
+    except Exception as e:
+        logger.error(f"Failed to load content modifiers: {e}")
+        _content_modifiers = {}
+        return _content_modifiers
+
+
+def _get_modifier_names():
+    """Return list of modifier names with a 'None' option."""
+    names = ["None"]
+    names.extend(_content_modifiers.keys())
+    return names
+
+
+def _get_modifier_prompt(name):
+    """Look up a content modifier prompt by name."""
+    if name == "None" or not name:
+        return ""
+    return _content_modifiers.get(name, "")
+
+
+def _refresh_modifiers(presets_path, current_modifier):
+    """Reload content modifiers from disk and update the dropdown."""
+    _load_content_modifiers(presets_path)
+    names = _get_modifier_names()
+    value = current_modifier if current_modifier in names else "None"
+    return gr.update(choices=names, value=value)
+
+
 # ── Ollama model management ──────────────────────────────────────────────────
 
 DEFAULT_API_URL = "http://localhost:11434/v1/chat/completions"
@@ -249,7 +311,7 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     return _strip_think_blocks(content)
 
 
-def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature):
+def enhance_prompt(source, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature):
     source = (source or "").strip()
     if not source:
         return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -257,6 +319,11 @@ def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensi
     system_prompt = custom_system_prompt if preset == "Custom" else _get_preset_prompt(preset)
     if not system_prompt:
         return "", "<span style='color:#c66'>No system prompt configured.</span>"
+
+    # Append content modifier if selected
+    modifier_prompt = _get_modifier_prompt(content_modifier)
+    if modifier_prompt:
+        system_prompt = f"{system_prompt}\n\n{modifier_prompt}"
 
     system_prompt = _apply_intensity(system_prompt, intensity)
     system_prompt = _apply_word_limit(system_prompt, word_limit)
@@ -297,11 +364,12 @@ class PromptEnhancer(scripts.Script):
     def ui(self, is_img2img):
         tab = "img2img" if is_img2img else "txt2img"
 
-        # Load models and external presets at startup
+        # Load models, external presets, and content modifiers at startup
         initial_models = _fetch_ollama_models(DEFAULT_API_URL)
         if not initial_models:
             initial_models = [DEFAULT_MODEL]
         _load_external_presets("")
+        _load_content_modifiers("")
 
         with gr.Accordion(open=False, label="Prompt Enhancer"):
 
@@ -348,6 +416,14 @@ class PromptEnhancer(scripts.Script):
                     value="Cinematic (Video)",
                     scale=2,
                 )
+                content_modifier = gr.Dropdown(
+                    label="Content Modifier",
+                    choices=_get_modifier_names(),
+                    value="None",
+                    scale=1,
+                    info="Layered on top of preset",
+                )
+            with gr.Row():
                 intensity = gr.Slider(
                     label="Intensity", minimum=1, maximum=6,
                     value=3, step=1, scale=1,
@@ -421,6 +497,11 @@ class PromptEnhancer(scripts.Script):
                 inputs=[presets_path, preset],
                 outputs=[preset],
                 show_progress=False,
+            ).then(
+                fn=_refresh_modifiers,
+                inputs=[presets_path, content_modifier],
+                outputs=[content_modifier],
+                show_progress=False,
             )
 
             refresh_models_btn.click(
@@ -436,7 +517,7 @@ class PromptEnhancer(scripts.Script):
             # Enhance: source_prompt -> LLM -> prompt_out + status
             enhance_btn.click(
                 fn=enhance_prompt,
-                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature],
+                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -465,9 +546,9 @@ class PromptEnhancer(scripts.Script):
             (word_limit, "PE WordLimit"),
         ]
         self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit"]
-        return [source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature]
+        return [source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature]
 
-    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature):
+    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature):
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
         if preset:
