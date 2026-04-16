@@ -275,7 +275,7 @@ def _refresh_modifiers(presets_path, current_modifiers):
 
 # ── Ollama model management ──────────────────────────────────────────────────
 
-DEFAULT_API_URL = "http://localhost:11434/v1/chat/completions"
+DEFAULT_API_URL = "http://localhost:11434"
 DEFAULT_MODEL = "huihui_ai/qwen3.5-abliterated:9b"
 DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 
@@ -283,14 +283,7 @@ DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 def _fetch_ollama_models(api_url):
     """Fetch available models from the Ollama API."""
     try:
-        base = api_url
-        for suffix in ("/v1/chat/completions", "/v1", "/"):
-            if base.endswith(suffix):
-                base = base[: -len(suffix)]
-                break
-        if not base:
-            base = DEFAULT_OLLAMA_BASE
-
+        base = _to_ollama_base(api_url)
         req = urllib.request.Request(f"{base}/api/tags", method="GET")
         with urllib.request.urlopen(req, timeout=5) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -355,31 +348,46 @@ def _strip_think_blocks(text):
     return re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
 
 
+def _to_ollama_base(api_url):
+    """Convert an OpenAI-compatible URL to the Ollama base URL."""
+    base = api_url
+    for suffix in ("/v1/chat/completions", "/v1", "/"):
+        if base.endswith(suffix):
+            base = base[: -len(suffix)]
+            break
+    return base or DEFAULT_OLLAMA_BASE
+
+
 def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
-    # Prepend /no_think to disable Qwen3 thinking mode so tokens aren't
-    # wasted on internal reasoning that eats into the max_tokens budget.
-    user_content = f"/no_think\n{prompt}"
+    # Use the native Ollama API (/api/chat) with think=false to properly
+    # disable thinking mode. The OpenAI-compatible endpoint doesn't support
+    # this, causing thinking models (Qwen3, Qwen3.5) to waste all tokens
+    # on hidden internal reasoning.
+    base = _to_ollama_base(api_url)
     payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
+            {"role": "user", "content": prompt},
         ],
-        "max_tokens": int(max_tokens),
-        "temperature": float(temperature),
+        "options": {
+            "num_predict": int(max_tokens),
+            "temperature": float(temperature),
+        },
+        "think": False,
         "stream": False,
     }
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(
-        api_url,
+        f"{base}/api/chat",
         data=data,
         headers={"Content-Type": "application/json"},
         method="POST",
     )
     with urllib.request.urlopen(req, timeout=120) as resp:
         result = json.loads(resp.read().decode("utf-8"))
-    content = result["choices"][0]["message"]["content"]
-    # Strip any thinking blocks that slipped through despite /no_think
+    content = result.get("message", {}).get("content", "")
+    # Safety net: strip any thinking blocks that slipped through
     return _strip_think_blocks(content)
 
 
