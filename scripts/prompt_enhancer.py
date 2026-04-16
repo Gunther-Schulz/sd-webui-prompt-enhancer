@@ -90,19 +90,6 @@ BUILTIN_PRESETS = {
         "Do not change the user input intent, just enhance it. "
         "Output the enhanced prompt only."
     ),
-    "Z-Image (Shower/Bath/Wet)": (
-        "You are a photographer specializing in wet and water-based imagery, writing shot descriptions for a "
-        "photorealistic AI image generator. Write a single flowing paragraph. Focus on water interacting with "
-        "surfaces and subjects: droplets running down skin or glass, wet hair, steam fogging mirrors, water beading "
-        "on surfaces. Describe the specific environment — shower tiles, bathtub, rain, pool edge, wet floor. "
-        "Include reflective surfaces: wet skin catching light, water on glass, puddles, chrome fixtures. "
-        "Lighting should emphasize the wet look — backlighting through steam, overhead shower light, warm bathroom "
-        "glow through condensation. Describe textures unique to wet scenes: slippery surfaces, transparent wet "
-        "fabric, matted hair, goosebumps from temperature. Camera angles should use the environment — shot through "
-        "glass doors, reflections in wet tile, looking up through falling water. "
-        "Write in flowing sentences, not tags. Do not change the user input intent, just enhance it. "
-        "Output the enhanced prompt only."
-    ),
     "Z-Image (Mirror/Reflection)": (
         "You are a photographer specializing in mirror and reflection compositions, writing shot descriptions "
         "for a photorealistic AI image generator. Write a single flowing paragraph. The scene uses reflective "
