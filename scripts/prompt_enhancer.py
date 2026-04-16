@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 import urllib.request
 import urllib.error
 
@@ -20,7 +21,6 @@ BUILTIN_PRESETS = {
         "Start directly with the action, and keep descriptions literal and precise. "
         "Think like a cinematographer describing a shot list. "
         "Do not change the user input intent, just enhance it. "
-        "Keep within 150 words. "
         "For best results, build your prompts using this structure: "
         "Start with main action in a single sentence. "
         "Add specific details about movements and gestures. "
@@ -29,7 +29,20 @@ BUILTIN_PRESETS = {
         "Specify camera angles and movements. "
         "Describe lighting and colors. "
         "Note any changes or sudden events. "
-        "Do not exceed the 150 word limit! "
+        "Output the enhanced prompt only."
+    ),
+    "Z-Image (Photorealistic)": (
+        "You are a photographer writing detailed shot descriptions for a photorealistic AI image generator "
+        "that understands natural language. "
+        "Write a single flowing paragraph describing the scene as if writing notes for a photo shoot. "
+        "Include: the subject and their exact pose, body position, and expression. "
+        "The physical setting and background details. "
+        "Camera perspective (close-up, medium shot, full body, POV, low angle, etc.). "
+        "Lens characteristics (shallow depth of field, wide angle, 85mm portrait lens, etc.). "
+        "Lighting setup (natural window light, studio softbox, golden hour, rim lighting, etc.). "
+        "Color palette and mood. Material textures (skin, fabric, metal, etc.). "
+        "Do not use comma-separated tags. Write in complete descriptive sentences. "
+        "Do not change the user input intent, just enhance it into a detailed photographic description. "
         "Output the enhanced prompt only."
     ),
     "Visual (Image)": (
@@ -39,7 +52,6 @@ BUILTIN_PRESETS = {
         "Start directly with the main subject, and keep descriptions literal and precise. "
         "Think like a photographer describing the perfect shot. "
         "Do not change the user input intent, just enhance it. "
-        "Keep within 150 words. "
         "For best results, build your prompts using this structure: "
         "Start with main subject and pose in a single sentence. "
         "Add specific details about expressions and positioning. "
@@ -48,7 +60,6 @@ BUILTIN_PRESETS = {
         "Specify framing, composition and perspective. "
         "Describe lighting, colors, and mood. "
         "Note any atmospheric or stylistic elements. "
-        "Do not exceed the 150 word limit! "
         "Output the enhanced prompt only."
     ),
     "Minimalist": (
@@ -70,20 +81,10 @@ _external_presets = {}
 
 
 def _find_default_presets_path():
-    """Find presets.json from env var or common locations."""
+    """Find presets.json from the PROMPT_ENHANCER_PRESETS env var."""
     env_path = os.environ.get("PROMPT_ENHANCER_PRESETS", "")
     if env_path and os.path.isfile(env_path):
         return env_path
-    # Fallback: search relative to webui cwd and parent directories
-    cwd = os.getcwd()
-    candidates = [
-        os.path.join(cwd, "forge_content", "prompt_enhancer", "presets.json"),
-        os.path.join(cwd, "..", "forge_content", "prompt_enhancer", "presets.json"),
-    ]
-    for c in candidates:
-        p = os.path.normpath(c)
-        if os.path.isfile(p):
-            return p
     return ""
 
 
@@ -202,14 +203,33 @@ def _apply_intensity(system_prompt, intensity):
     )
 
 
+def _apply_word_limit(system_prompt, word_limit):
+    """Append a word-limit instruction to the system prompt."""
+    word_limit = int(word_limit)
+    if word_limit <= 0:
+        return system_prompt
+    return (
+        f"{system_prompt}\n\n"
+        f"IMPORTANT: Aim for around {word_limit} words."
+    )
+
+
 # ── Core enhancement logic ───────────────────────────────────────────────────
 
+def _strip_think_blocks(text):
+    """Remove <think>...</think> blocks that Qwen3 and similar models emit."""
+    return re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
+
+
 def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
+    # Prepend /no_think to disable Qwen3 thinking mode so tokens aren't
+    # wasted on internal reasoning that eats into the max_tokens budget.
+    user_content = f"/no_think\n{prompt}"
     payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": user_content},
         ],
         "max_tokens": int(max_tokens),
         "temperature": float(temperature),
@@ -224,10 +244,12 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     )
     with urllib.request.urlopen(req, timeout=120) as resp:
         result = json.loads(resp.read().decode("utf-8"))
-    return result["choices"][0]["message"]["content"].strip()
+    content = result["choices"][0]["message"]["content"]
+    # Strip any thinking blocks that slipped through despite /no_think
+    return _strip_think_blocks(content)
 
 
-def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature):
+def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature):
     source = (source or "").strip()
     if not source:
         return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -237,6 +259,13 @@ def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensi
         return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
     system_prompt = _apply_intensity(system_prompt, intensity)
+    system_prompt = _apply_word_limit(system_prompt, word_limit)
+
+    # Ensure max_tokens is high enough for the requested word count.
+    # ~1.5 tokens per word is typical; add generous headroom for thinking
+    # models and overhead.
+    min_tokens = int(word_limit) * 3
+    max_tokens = max(int(max_tokens), min_tokens)
 
     try:
         enhanced = _call_llm(source, api_url, model, system_prompt, max_tokens, temperature)
@@ -325,10 +354,16 @@ class PromptEnhancer(scripts.Script):
                     value=3, step=1, scale=1,
                     info="1=restrained  3=balanced  6=extreme",
                 )
+                word_limit = gr.Slider(
+                    label="Word Limit", minimum=20, maximum=500,
+                    value=300, step=10, scale=1,
+                    info="Target length of enhanced prompt",
+                )
             with gr.Row():
                 max_tokens = gr.Slider(
-                    label="Max Tokens", minimum=64, maximum=1024,
-                    value=600, step=32, scale=1,
+                    label="Max Tokens", minimum=64, maximum=10240,
+                    value=900, step=64, scale=1,
+                    info="Hard ceiling (auto-raised if needed)",
                 )
                 temperature = gr.Slider(
                     label="Temperature", minimum=0.0, maximum=2.0,
@@ -401,7 +436,7 @@ class PromptEnhancer(scripts.Script):
             # Enhance: source_prompt -> LLM -> prompt_out + status
             enhance_btn.click(
                 fn=enhance_prompt,
-                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature],
+                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -427,14 +462,17 @@ class PromptEnhancer(scripts.Script):
             (source_prompt, "PE Source"),
             (preset, "PE Preset"),
             (intensity, "PE Intensity"),
+            (word_limit, "PE WordLimit"),
         ]
-        self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity"]
-        return [source_prompt, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature]
+        self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit"]
+        return [source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature]
 
-    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature):
+    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature):
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
         if preset:
             p.extra_generation_params["PE Preset"] = preset
         if intensity and int(intensity) != 3:
             p.extra_generation_params["PE Intensity"] = int(intensity)
+        if word_limit and int(word_limit) != 150:
+            p.extra_generation_params["PE WordLimit"] = int(word_limit)
