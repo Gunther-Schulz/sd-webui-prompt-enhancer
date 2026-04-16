@@ -122,7 +122,9 @@ def enhance_prompt(prompt, api_url, model, preset, custom_system_prompt, max_tok
 
     try:
         enhanced = _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature)
-        return enhanced, f"OK - enhanced to {len(enhanced.split())} words"
+        # Preserve original prompt as a comment (stripped by Forge before generation)
+        result = f"# Original: {prompt}\n{enhanced}"
+        return result, f"OK - enhanced to {len(enhanced.split())} words"
     except urllib.error.URLError as e:
         msg = f"Connection failed: {e.reason} - is Ollama running? (ollama serve)"
         logger.error(msg)
