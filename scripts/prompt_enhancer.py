@@ -493,7 +493,6 @@ class PromptEnhancer(scripts.Script):
                     value=[],
                     multiselect=True,
                     scale=2,
-                    info="Stack multiple modifiers on top of preset",
                 )
             with gr.Row():
                 intensity = gr.Slider(
