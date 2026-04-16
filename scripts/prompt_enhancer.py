@@ -423,5 +423,18 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-        self.infotext_fields = []
-        return [api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature]
+        self.infotext_fields = [
+            (source_prompt, "PE Source"),
+            (preset, "PE Preset"),
+            (intensity, "PE Intensity"),
+        ]
+        self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity"]
+        return [source_prompt, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature]
+
+    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, intensity, max_tokens, temperature):
+        if source_prompt:
+            p.extra_generation_params["PE Source"] = source_prompt
+        if preset:
+            p.extra_generation_params["PE Preset"] = preset
+        if intensity and int(intensity) != 3:
+            p.extra_generation_params["PE Intensity"] = int(intensity)
