@@ -124,18 +124,19 @@ def enhance_prompt(prompt, api_url, model, preset, custom_system_prompt, max_tok
         enhanced = _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature)
         # Preserve original prompt as a comment (stripped by Forge before generation)
         result = f"# Original: {prompt}\n{enhanced}"
-        return result, f"OK - enhanced to {len(enhanced.split())} words"
+        word_count = len(enhanced.split())
+        return result, f"<span style='color:#6c6'>OK - enhanced to {word_count} words</span>"
     except urllib.error.URLError as e:
-        msg = f"Connection failed: {e.reason} - is Ollama running? (ollama serve)"
+        msg = f"Connection failed: {e.reason} - is Ollama running?"
         logger.error(msg)
-        return "", msg
+        return "", f"<span style='color:#c66'>{msg}</span>"
     except KeyError:
         logger.error("Unexpected API response format")
-        return "", "Unexpected API response format"
+        return "", "<span style='color:#c66'>Unexpected API response format</span>"
     except Exception as e:
         msg = f"{type(e).__name__}: {e}"
         logger.error(msg)
-        return "", msg
+        return "", f"<span style='color:#c66'>{msg}</span>"
 
 
 class PromptEnhancer(scripts.Script):
@@ -169,10 +170,11 @@ class PromptEnhancer(scripts.Script):
                     allow_custom_value=True,
                     scale=2,
                 )
+            with gr.Row():
                 refresh_btn = gr.Button(
-                    value="\U0001f504",
+                    value="\U0001f504 Refresh Models",
                     scale=0,
-                    min_width=40,
+                    min_width=120,
                     elem_id=f"{tab}_pe_refresh_btn",
                 )
 
@@ -221,7 +223,7 @@ class PromptEnhancer(scripts.Script):
                     min_width=120,
                     elem_id=f"{tab}_pe_enhance_btn",
                 )
-                status = gr.Textbox(label="Status", interactive=False, scale=3)
+                status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # Hidden bridge: JS reads the real prompt textarea into this,
             # then Python processes it and writes the result back via JS.
