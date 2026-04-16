@@ -62,6 +62,22 @@ BUILTIN_PRESETS = {
         "Note any atmospheric or stylistic elements. "
         "Output the enhanced prompt only."
     ),
+    "Z-Image (Amateur)": (
+        "You are describing a photo taken by an amateur photographer for a photorealistic AI image generator "
+        "that understands natural language. Write a single flowing paragraph. "
+        "The image should feel like it was taken by someone learning photography — not bad, but imperfect. "
+        "Include common amateur characteristics: slightly off composition (subject not perfectly centered or "
+        "framed), mixed or available lighting (on-camera flash, harsh overhead light, uneven natural light), "
+        "busy or cluttered backgrounds that a pro would avoid. "
+        "The camera is a consumer DSLR or mirrorless — decent but not top-end. "
+        "Depth of field is often too deep (everything in focus) or awkwardly shallow. "
+        "Colors are as-shot, not color-graded — slightly flat or oversaturated from auto settings. "
+        "Poses feel directed but stiff, or genuinely candid and slightly awkward. "
+        "The charm is in the authenticity — real moments, real places, real imperfections. "
+        "Do not use comma-separated tags. Write in complete descriptive sentences. "
+        "Do not change the user input intent, just enhance it. "
+        "Output the enhanced prompt only."
+    ),
     "Minimalist": (
         "You are a concise prompt editor. "
         "Refine the user's prompt for clarity and impact without expanding it significantly. "
