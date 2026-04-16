@@ -242,7 +242,7 @@ class PromptEnhancer(scripts.Script):
                 )
                 max_tokens = gr.Slider(
                     label="Max Tokens", minimum=64, maximum=1024,
-                    value=300, step=32, scale=1,
+                    value=600, step=32, scale=1,
                 )
                 temperature = gr.Slider(
                     label="Temperature", minimum=0.0, maximum=2.0,
