@@ -242,42 +242,58 @@ BUILTIN_PRESETS = {
     ),
 }
 
-# ── External presets (loaded from JSON file) ──────────────────────────────────
+# ── External presets (loaded from JSON files in multiple directories) ──────────
 
-DEFAULT_PRESETS_PATH = ""
+DEFAULT_PRESET_DIRS = ""
 _external_presets = {}
 
 
-def _find_default_presets_path():
-    """Find presets.json from the PROMPT_ENHANCER_PRESETS env var."""
-    env_path = os.environ.get("PROMPT_ENHANCER_PRESETS", "")
-    if env_path and os.path.isfile(env_path):
-        return env_path
-    return ""
+def _get_default_dirs():
+    """Get default preset directories from PROMPT_ENHANCER_DIRS env var.
+
+    Returns a colon-separated string of directory paths.
+    """
+    return os.environ.get("PROMPT_ENHANCER_DIRS", "")
 
 
-def _load_external_presets(path):
-    """Load presets from a JSON file. Returns dict of name -> system prompt."""
+def _parse_dirs(dirs_str):
+    """Parse a comma-or-colon-separated string into a list of directory paths."""
+    if not dirs_str:
+        return []
+    # Support both comma and colon as separators
+    parts = re.split(r"[,:]", dirs_str)
+    return [p.strip() for p in parts if p.strip()]
+
+
+def _load_json_from_dirs(dirs_str, filename):
+    """Load and merge a named JSON file from multiple directories.
+
+    Later directories override earlier ones for duplicate keys.
+    Returns merged dict of name -> value (strings only).
+    """
+    merged = {}
+    for d in _parse_dirs(dirs_str):
+        path = os.path.join(d, filename)
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if not isinstance(data, dict):
+                logger.error(f"{path} must be a JSON object {{name: value}}")
+                continue
+            merged.update({k: v for k, v in data.items() if isinstance(v, str)})
+        except Exception as e:
+            logger.error(f"Failed to load {path}: {e}")
+    return merged
+
+
+def _load_external_presets(dirs_str):
+    """Load and merge presets.json from all preset directories."""
     global _external_presets
-    path = (path or "").strip()
-    if not path:
-        path = _find_default_presets_path()
-    if not path or not os.path.isfile(path):
-        _external_presets = {}
-        return _external_presets
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        if not isinstance(data, dict):
-            logger.error("presets.json must be a JSON object {name: system_prompt}")
-            _external_presets = {}
-            return _external_presets
-        _external_presets = {k: v for k, v in data.items() if isinstance(v, str)}
-        return _external_presets
-    except Exception as e:
-        logger.error(f"Failed to load external presets from {path}: {e}")
-        _external_presets = {}
-        return _external_presets
+    dirs_str = (dirs_str or "").strip() or _get_default_dirs()
+    _external_presets = _load_json_from_dirs(dirs_str, "presets.json")
+    return _external_presets
 
 
 def _get_all_preset_names():
@@ -299,9 +315,9 @@ def _get_preset_prompt(name):
     return ""
 
 
-def _refresh_presets(presets_path, current_preset):
+def _refresh_presets(preset_dirs, current_preset):
     """Reload external presets from disk and update the dropdown."""
-    _load_external_presets(presets_path)
+    _load_external_presets(preset_dirs)
     names = _get_all_preset_names()
     value = current_preset if current_preset in names else names[0]
     return gr.update(choices=names, value=value)
@@ -449,39 +465,12 @@ BUILTIN_MODIFIERS = {
 _external_modifiers = {}
 
 
-def _find_modifiers_path(presets_path):
-    """Find modifiers.json in the same directory as presets.json, or via env var."""
-    env_path = os.environ.get("PROMPT_ENHANCER_MODIFIERS", "")
-    if env_path and os.path.isfile(env_path):
-        return env_path
-    presets_path = (presets_path or "").strip() or _find_default_presets_path()
-    if presets_path:
-        candidate = os.path.join(os.path.dirname(presets_path), "modifiers.json")
-        if os.path.isfile(candidate):
-            return candidate
-    return ""
-
-
-def _load_content_modifiers(presets_path):
-    """Load external content modifiers from modifiers.json."""
+def _load_content_modifiers(dirs_str):
+    """Load and merge modifiers.json from all preset directories."""
     global _external_modifiers
-    path = _find_modifiers_path(presets_path)
-    if not path or not os.path.isfile(path):
-        _external_modifiers = {}
-        return _external_modifiers
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        if not isinstance(data, dict):
-            logger.error("modifiers.json must be a JSON object {name: system_prompt}")
-            _external_modifiers = {}
-            return _external_modifiers
-        _external_modifiers = {k: v for k, v in data.items() if isinstance(v, str)}
-        return _external_modifiers
-    except Exception as e:
-        logger.error(f"Failed to load content modifiers: {e}")
-        _external_modifiers = {}
-        return _external_modifiers
+    dirs_str = (dirs_str or "").strip() or _get_default_dirs()
+    _external_modifiers = _load_json_from_dirs(dirs_str, "modifiers.json")
+    return _external_modifiers
 
 
 def _get_modifier_names():
@@ -504,9 +493,9 @@ def _get_modifier_prompt(name):
     return ""
 
 
-def _refresh_modifiers(presets_path, current_modifiers):
+def _refresh_modifiers(preset_dirs, current_modifiers):
     """Reload content modifiers from disk and update the dropdown."""
-    _load_content_modifiers(presets_path)
+    _load_content_modifiers(preset_dirs)
     names = _get_modifier_names()
     # Keep only still-valid selections
     value = [m for m in (current_modifiers or []) if m in names]
@@ -786,10 +775,10 @@ class PromptEnhancer(scripts.Script):
                     scale=2,
                 )
             with gr.Row():
-                presets_path = gr.Textbox(
-                    label="External Presets (JSON)",
-                    value=_find_default_presets_path(),
-                    placeholder="Path to presets.json (optional)",
+                preset_dirs = gr.Textbox(
+                    label="Preset Directories",
+                    value=_get_default_dirs(),
+                    placeholder="Comma-separated paths to directories containing presets.json / modifiers.json",
                     scale=3,
                 )
                 refresh_presets_btn = gr.Button(
@@ -805,12 +794,12 @@ class PromptEnhancer(scripts.Script):
 
             refresh_presets_btn.click(
                 fn=_refresh_presets,
-                inputs=[presets_path, preset],
+                inputs=[preset_dirs, preset],
                 outputs=[preset],
                 show_progress=False,
             ).then(
                 fn=_refresh_modifiers,
-                inputs=[presets_path, content_modifier],
+                inputs=[preset_dirs, content_modifier],
                 outputs=[content_modifier],
                 show_progress=False,
             )
@@ -855,7 +844,7 @@ class PromptEnhancer(scripts.Script):
             (preset, "PE Preset"),
             (intensity, "PE Intensity"),
             (word_limit, "PE WordLimit"),
-            (content_modifier, "PE Modifiers"),
+            (content_modifier, lambda params: [m.strip() for m in params.get("PE Modifiers", "").split(",") if m.strip()] if params.get("PE Modifiers") else []),
             (think, "PE Think"),
         ]
         self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit", "PE Modifiers", "PE Think"]
