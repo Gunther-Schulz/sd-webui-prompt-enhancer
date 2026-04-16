@@ -249,7 +249,7 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     return _strip_think_blocks(content)
 
 
-def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature):
+def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature):
     source = (source or "").strip()
     if not source:
         return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -261,11 +261,10 @@ def enhance_prompt(source, api_url, model, preset, custom_system_prompt, intensi
     system_prompt = _apply_intensity(system_prompt, intensity)
     system_prompt = _apply_word_limit(system_prompt, word_limit)
 
-    # Ensure max_tokens is high enough for the requested word count.
-    # ~1.5 tokens per word is typical; add generous headroom for thinking
-    # models and overhead.
-    min_tokens = int(word_limit) * 3
-    max_tokens = max(int(max_tokens), min_tokens)
+    # Auto-scale tokens from word limit (~3 tokens per word).
+    # Use override if set, otherwise auto-calculate.
+    max_tokens_override = int(max_tokens_override or 0)
+    max_tokens = max_tokens_override if max_tokens_override > 0 else int(word_limit) * 3
 
     try:
         enhanced = _call_llm(source, api_url, model, system_prompt, max_tokens, temperature)
@@ -360,14 +359,15 @@ class PromptEnhancer(scripts.Script):
                     info="Target length of enhanced prompt",
                 )
             with gr.Row():
-                max_tokens = gr.Slider(
-                    label="Max Tokens", minimum=64, maximum=10240,
-                    value=900, step=64, scale=1,
-                    info="Hard ceiling (auto-raised if needed)",
-                )
                 temperature = gr.Slider(
                     label="Temperature", minimum=0.0, maximum=2.0,
                     value=0.7, step=0.05, scale=1,
+                )
+                max_tokens_override = gr.Number(
+                    label="Max Tokens Override",
+                    value=0, precision=0, minimum=0,
+                    scale=1,
+                    info="0 = auto (word limit × 3)",
                 )
 
             custom_system_prompt = gr.Textbox(
@@ -436,7 +436,7 @@ class PromptEnhancer(scripts.Script):
             # Enhance: source_prompt -> LLM -> prompt_out + status
             enhance_btn.click(
                 fn=enhance_prompt,
-                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature],
+                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -465,9 +465,9 @@ class PromptEnhancer(scripts.Script):
             (word_limit, "PE WordLimit"),
         ]
         self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit"]
-        return [source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature]
+        return [source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature]
 
-    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens, temperature):
+    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, intensity, word_limit, max_tokens_override, temperature):
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
         if preset:
