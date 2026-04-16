@@ -358,11 +358,7 @@ def _to_ollama_base(api_url):
     return base or DEFAULT_OLLAMA_BASE
 
 
-def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
-    # Use the native Ollama API (/api/chat) with think=false to properly
-    # disable thinking mode. The OpenAI-compatible endpoint doesn't support
-    # this, causing thinking models (Qwen3, Qwen3.5) to waste all tokens
-    # on hidden internal reasoning.
+def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature, think=False):
     base = _to_ollama_base(api_url)
     payload = {
         "model": model,
@@ -374,7 +370,7 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
             "num_predict": int(max_tokens),
             "temperature": float(temperature),
         },
-        "think": False,
+        "think": bool(think),
         "stream": False,
     }
     data = json.dumps(payload).encode("utf-8")
@@ -391,7 +387,7 @@ def _call_llm(prompt, api_url, model, system_prompt, max_tokens, temperature):
     return _strip_think_blocks(content)
 
 
-def enhance_prompt(source, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature):
+def enhance_prompt(source, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, token_factor, think, temperature):
     source = (source or "").strip()
     if not source:
         return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -409,13 +405,11 @@ def enhance_prompt(source, api_url, model, preset, custom_system_prompt, content
     system_prompt = _apply_intensity(system_prompt, intensity)
     system_prompt = _apply_word_limit(system_prompt, word_limit)
 
-    # Auto-scale tokens from word limit (~3 tokens per word).
-    # Use override if set, otherwise auto-calculate.
-    max_tokens_override = int(max_tokens_override or 0)
-    max_tokens = max_tokens_override if max_tokens_override > 0 else int(word_limit) * 3
+    # Auto-scale tokens: word_limit × token_factor
+    max_tokens = int(int(word_limit) * float(token_factor))
 
     try:
-        enhanced = _call_llm(source, api_url, model, system_prompt, max_tokens, temperature)
+        enhanced = _call_llm(source, api_url, model, system_prompt, max_tokens, temperature, think=think)
         word_count = len(enhanced.split())
         return enhanced, f"<span style='color:#6c6'>OK - enhanced to {word_count} words</span>"
     except urllib.error.URLError as e:
@@ -521,11 +515,16 @@ class PromptEnhancer(scripts.Script):
                     label="Temperature", minimum=0.0, maximum=2.0,
                     value=0.7, step=0.05, scale=1,
                 )
-                max_tokens_override = gr.Number(
-                    label="Max Tokens Override",
-                    value=0, precision=0, minimum=0,
-                    scale=1,
-                    info="0 = auto (word limit × 3)",
+                token_factor = gr.Slider(
+                    label="Token Factor", minimum=1, maximum=20,
+                    value=3, step=1, scale=1,
+                    info="Tokens = word limit × factor (raise with thinking on)",
+                )
+                think = gr.Checkbox(
+                    label="Think",
+                    value=False,
+                    info="Let model reason before answering",
+                    scale=0, min_width=80,
                 )
 
             custom_system_prompt = gr.Textbox(
@@ -599,7 +598,7 @@ class PromptEnhancer(scripts.Script):
             # Enhance: source_prompt -> LLM -> prompt_out + status
             enhance_btn.click(
                 fn=enhance_prompt,
-                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature],
+                inputs=[source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, token_factor, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -628,9 +627,9 @@ class PromptEnhancer(scripts.Script):
             (word_limit, "PE WordLimit"),
         ]
         self.paste_field_names = ["PE Source", "PE Preset", "PE Intensity", "PE WordLimit"]
-        return [source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature]
+        return [source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, token_factor, think, temperature]
 
-    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, max_tokens_override, temperature):
+    def process(self, p, source_prompt, api_url, model, preset, custom_system_prompt, content_modifier, intensity, word_limit, token_factor, think, temperature):
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
         if preset:
