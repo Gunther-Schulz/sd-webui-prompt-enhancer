@@ -478,6 +478,11 @@ class PromptEnhancer(scripts.Script):
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
 
             enhance_btn.click(
+                fn=lambda: "<span style='color:#aaa'>Enhancing...</span>",
+                inputs=[],
+                outputs=[status],
+                show_progress=False,
+            ).then(
                 fn=enhance_prompt,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         modifiers, wildcards, word_limit, think, temperature],
