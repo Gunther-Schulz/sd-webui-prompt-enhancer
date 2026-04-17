@@ -29,33 +29,70 @@ def _load_flat_json(filename):
     return {}
 
 
-def _load_categorized_json(filename):
-    """Load a categorized JSON file: {category: {name: keywords, ...}, ...}.
+def _load_categorized_data(path):
+    """Load a categorized JSON file and return raw dict: {category: {name: keywords}}."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            return data
+        logger.error(f"{path} must be a JSON object")
+    except FileNotFoundError:
+        pass
+    except Exception as e:
+        logger.error(f"Failed to load {path}: {e}")
+    return {}
+
+
+def _merge_categorized(base_data, override_data):
+    """Merge override into base: new categories append, existing categories extend."""
+    merged = {}
+    for cat, items in base_data.items():
+        if isinstance(items, dict):
+            merged[cat] = dict(items)
+    for cat, items in override_data.items():
+        if not isinstance(items, dict):
+            continue
+        if cat in merged:
+            merged[cat].update(items)
+        else:
+            merged[cat] = dict(items)
+    return merged
+
+
+def _categorized_to_flat_and_choices(data):
+    """Convert categorized dict to (flat_dict, choice_list) for dropdown UI."""
+    flat = {}
+    choices = []
+    for category, items in data.items():
+        if not isinstance(items, dict):
+            continue
+        separator = f"\u2500\u2500\u2500\u2500\u2500 {category.title()} \u2500\u2500\u2500\u2500\u2500"
+        choices.append(separator)
+        for name, prompt in items.items():
+            if isinstance(prompt, str):
+                flat[name] = prompt
+                choices.append(name)
+    return flat, choices
+
+
+def _load_categorized_json(filename, local_override_path=""):
+    """Load a categorized JSON file, optionally merging a local override.
 
     Returns (flat_dict, choice_list) where flat_dict maps name->keywords
     and choice_list has category separators for the dropdown UI.
     """
-    path = os.path.join(_EXT_DIR, filename)
-    flat = {}
-    choices = []
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        if not isinstance(data, dict):
-            logger.error(f"{path} must be a JSON object")
-            return flat, choices
-        for category, items in data.items():
-            if not isinstance(items, dict):
-                continue
-            separator = f"\u2500\u2500\u2500\u2500\u2500 {category.title()} \u2500\u2500\u2500\u2500\u2500"
-            choices.append(separator)
-            for name, prompt in items.items():
-                if isinstance(prompt, str):
-                    flat[name] = prompt
-                    choices.append(name)
-    except Exception as e:
-        logger.error(f"Failed to load {filename}: {e}")
-    return flat, choices
+    base_data = _load_categorized_data(os.path.join(_EXT_DIR, filename))
+
+    # Merge local override: explicit path > default location
+    local_path = (local_override_path or "").strip()
+    if not local_path:
+        local_path = os.path.join(_EXT_DIR, filename.replace(".json", ".local.json"))
+    if os.path.isfile(local_path):
+        override_data = _load_categorized_data(local_path)
+        base_data = _merge_categorized(base_data, override_data)
+
+    return _categorized_to_flat_and_choices(base_data)
 
 
 # ── Load all config from JSON files ──────────────────────────────────────────
@@ -67,11 +104,11 @@ _wildcards = {}
 _wildcard_choices = []
 
 
-def _reload_all():
+def _reload_all(local_modifiers_path=""):
     """Reload all JSON config files from disk."""
     global _bases, _modifiers, _modifier_choices, _wildcards, _wildcard_choices
     _bases = _load_flat_json("bases.json")
-    _modifiers, _modifier_choices = _load_categorized_json("modifiers.json")
+    _modifiers, _modifier_choices = _load_categorized_json("modifiers.json", local_modifiers_path)
     _wildcards, _wildcard_choices = _load_categorized_json("wildcards.json")
 
 
@@ -92,9 +129,9 @@ def _base_names():
     return names
 
 
-def _refresh_all(current_base, current_modifiers, current_wildcards):
+def _refresh_all(current_base, current_modifiers, current_wildcards, local_modifiers_path=""):
     """Reload all JSON files and update all dropdowns."""
-    _reload_all()
+    _reload_all(local_modifiers_path)
     base_names = _base_names()
     mod_choices = list(_modifier_choices)
     wc_choices = list(_wildcard_choices)
@@ -378,6 +415,11 @@ class PromptEnhancer(scripts.Script):
                     scale=2,
                 )
             with gr.Row():
+                local_modifiers_path = gr.Textbox(
+                    label="Local Modifiers Override",
+                    placeholder=f"Default: {os.path.join(_EXT_DIR, 'modifiers.local.json')}",
+                    scale=3,
+                )
                 reload_btn = gr.Button(
                     value="\U0001f504 Reload Config",
                     scale=0,
@@ -391,7 +433,7 @@ class PromptEnhancer(scripts.Script):
 
             reload_btn.click(
                 fn=_refresh_all,
-                inputs=[base, modifiers, wildcards],
+                inputs=[base, modifiers, wildcards, local_modifiers_path],
                 outputs=[base, modifiers, wildcards],
                 show_progress=False,
             )
