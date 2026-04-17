@@ -1,0 +1,18 @@
+{
+    "scene": {
+        "Surprise Location": "Choose a specific, interesting location for this scene. Be creative and unexpected \u2014 avoid generic settings. Describe the location with concrete details that make it vivid and real.",
+        "Surprise Time": "Choose a specific time of day. Describe its natural lighting \u2014 direction, color temperature, shadow length \u2014 and how it shapes the mood of the scene.",
+        "Surprise Wardrobe": "Choose specific clothing and accessories for the subject. The choices should feel deliberate and fitting for the scene's mood and context.",
+        "Surprise Props": "Add two or three specific objects or environmental details. They should feel natural to the scene and add visual richness \u2014 not random, but creatively chosen to ground the image.",
+        "Surprise Palette": "Commit to a deliberate color palette of two to four colors. Weave these colors through every element \u2014 clothing, environment, lighting, props.",
+        "Surprise Weather": "Choose specific weather conditions. Describe their visual impact \u2014 how they affect light, surfaces, the subject, and the overall atmosphere."
+    },
+    "creative": {
+        "Unexpected Angle": "Choose a surprising camera angle that adds visual interest \u2014 extreme low, overhead, Dutch tilt, through-object framing, reflected view. The angle should feel motivated, not gimmicky.",
+        "Story Moment": "Place the subject at a specific narrative beat \u2014 arriving, leaving, discovering, waiting, reacting, deciding. Let that moment drive the pose, expression, and energy of the scene.",
+        "Texture Focus": "Pick one dominant texture and make it a central visual element. Describe it in rich tactile detail and let it anchor the composition.",
+        "Contrast Pairing": "Build the scene around a visual contrast \u2014 old and new, natural and artificial, still and moving, soft and hard. Use this tension as the compositional backbone.",
+        "Era": "Place the scene in a specific decade. Reflect that era authentically in clothing, hairstyles, decor, technology, color palette, and photographic style.",
+        "Emotion": "Choose a specific emotion and let it drive every visual choice \u2014 pose, expression, lighting mood, color temperature, composition."
+    }
+}

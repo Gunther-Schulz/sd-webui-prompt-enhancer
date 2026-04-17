@@ -89,10 +89,12 @@ Restart the WebUI.
 
 ## External presets and modifiers
 
-You can add your own presets and modifiers via JSON files:
+You can add your own presets and modifiers via JSON files placed in one or more directories:
 
-- **Presets**: set the `PROMPT_ENHANCER_PRESETS` environment variable to point to your `presets.json`
-- **Modifiers**: place a `modifiers.json` in the same directory as your `presets.json`, or set `PROMPT_ENHANCER_MODIFIERS`
+1. Set the `PROMPT_ENHANCER_DIRS` environment variable to a colon-separated list of directories, or
+2. Enter comma-separated directory paths in the **Preset Directories** field in the UI
+
+Each directory may contain a `presets.json` and/or a `modifiers.json`. Files from all directories are merged — later directories override earlier ones for duplicate keys.
 
 Both files use the same format - a JSON object mapping names to system prompt strings:
 

@@ -1,0 +1,142 @@
+{
+    "genre": {
+        "Studio Portrait": "studio portrait, controlled environment, solid or gradient background, classic portrait lighting, shallow depth of field, headshot or three-quarter framing",
+        "Environmental Portrait": "environmental portrait, subject in natural context, workplace or home setting, available light, environment tells the story, moderate depth of field",
+        "Street": "street photography, candid, 35mm lens, urban, unposed, spontaneous composition, decisive moment",
+        "Landscape": "landscape, wide angle, deep depth of field, foreground interest, sky detail, rule of thirds, sense of scale",
+        "Architecture": "architectural photography, wide angle, corrected verticals, geometric patterns, symmetry, leading lines, material textures",
+        "Product": "product photography, isolated subject, clean background, precise lighting, material qualities, commercial composition",
+        "Food": "food photography, overhead or 45-degree angle, soft directional light, texture emphasis, complementary props, appetizing colors",
+        "Wildlife": "wildlife photography, telephoto lens, background compression, bokeh, eye-level with subject, natural habitat, animal behavior",
+        "Sports": "sports photography, peak action, fast shutter freeze, telephoto compression, shallow depth of field, tight crop, implied movement",
+        "Editorial Fashion": "editorial fashion, high-fashion, stylized, commanding poses, dramatic precise lighting, clean graphic composition, strong lines",
+        "Amateur Snapshot": "amateur snapshot, authentically imperfect, slightly off composition, mixed available lighting, consumer camera, ungraded colors, candid",
+        "Mirror Composition": "mirror composition, reflective surfaces, dual perspectives, frame-within-frame, subject and reflection, lighting across both planes"
+    },
+    "lighting": {
+        "Golden Hour": "golden hour, warm amber light, long shadows, sun flare, soft directional warmth, peach and gold sky",
+        "Candlelight": "candlelight, warm flickering light, deep moving shadows, pools of golden illumination, partial illumination, intimate",
+        "Neon Glow": "neon lighting, colored reflections on wet surfaces, blue pink purple magenta, urban nocturnal, rain-slicked streets, glowing signs",
+        "Backlit": "backlit, rim lighting, lens flare, glowing edges, subject in relative shadow, light source behind subject",
+        "Volumetric Light": "volumetric light, visible light rays, shafts of sunlight, beams through dust or fog, god rays, light occupying space"
+    },
+    "mood": {
+        "Film Noir": "film noir, chiaroscuro, deep shadows, sharp highlights, rain-slicked surfaces, venetian blind shadows, low-key lighting, dangerous, stylized",
+        "Dreamy": "dreamy, ethereal, soft focus, hazy light, lens flare, pastel or desaturated tones, weightless, otherworldly",
+        "Horror": "horror, unsettling lighting, underlit faces, sickly color casts, deep shadows, uncanny stillness, implied threat, dread",
+        "Gritty": "gritty, urban, harsh fluorescent or sodium vapor lighting, concrete, graffiti, worn surfaces, visual noise, raw, street-level",
+        "Fantasy": "fantasy, painterly, rich saturated colors, dramatic composition, theatrical lighting, mythic, golden light, concept art aesthetic"
+    },
+    "emotion": {
+        "Melancholy": "melancholy, sadness, wistful, heavy-lidded eyes, downcast gaze, subdued posture, muted tones",
+        "Joy": "joy, genuine smile, bright eyes, open posture, warmth, lightness, natural laughter",
+        "Anger": "anger, tense jaw, furrowed brow, clenched hands, rigid posture, confrontational energy",
+        "Fear": "fear, wide eyes, tense body, defensive posture, shrinking back, vulnerability, unease",
+        "Serenity": "serenity, calm, closed or half-closed eyes, relaxed shoulders, peaceful expression, stillness",
+        "Loneliness": "loneliness, isolation, single figure in empty space, distant gaze, self-contained posture",
+        "Tension": "tension, stiff posture, held breath, clenched muscles, uneasy stillness, something about to happen",
+        "Nostalgia": "nostalgia, bittersweet, distant gaze, soft unfocused eyes, memory, longing for the past",
+        "Contemplation": "contemplation, thoughtful, inward gaze, hand on chin or temple, quiet focus, introspection",
+        "Defiance": "defiance, chin raised, direct stare, squared shoulders, unyielding stance, resistance"
+    },
+    "activity": {
+        "Dancing": "dancing, mid-movement, flowing fabric, dynamic pose, rhythm, body in motion",
+        "Running": "running, full stride, hair and clothing trailing, forward momentum, athletic posture",
+        "Fighting": "fighting, combat stance, physical tension, impact, aggression, defensive or offensive pose",
+        "Eating": "eating, food in hand or at mouth, table setting, casual or formal dining, social moment",
+        "Reading": "reading, book or paper in hand, absorbed, downcast eyes, quiet concentration",
+        "Sleeping": "sleeping, eyes closed, relaxed muscles, vulnerable, peaceful, resting pose",
+        "Embracing": "embracing, arms wrapped around another, closeness, faces near, protective or tender hold",
+        "Working": "working, hands engaged with tools or materials, focused expression, task-oriented posture",
+        "Playing": "playing, playful energy, spontaneous movement, light-hearted, toys or games or sport",
+        "Smoking": "smoking, cigarette or pipe, exhaled smoke, casual grip, contemplative or distracted",
+        "Performing": "performing, stage presence, projected expression, audience-aware pose, theatrical energy"
+    },
+    "relationship": {
+        "Intimate": "intimate, tender closeness, gentle touch, faces close together, private moment, soft connection",
+        "Romantic": "romantic, loving gaze, physical closeness, warmth between subjects, affectionate gesture",
+        "Passionate": "passionate, intense physical closeness, urgent touch, locked gaze, heat, desire",
+        "Playful": "playful between subjects, teasing gesture, shared laughter, light physical contact, mischief",
+        "Confrontational": "confrontational, facing each other, tense body language, aggressive posture, argument, conflict",
+        "Protective": "protective, one subject shielding or holding the other, guardian stance, arm around shoulder",
+        "Distant": "emotional distance, physical separation, averted gazes, space between subjects, longing or coldness",
+        "Eye Contact": "direct eye contact between subjects, locked gazes, unspoken communication, connection",
+        "Touch": "physical contact, holding hands, leaning on shoulder, back-to-back, intertwined limbs, skin contact",
+        "Power Dynamic": "power dynamic, dominant and submissive posture, one leading the other, height or position difference",
+        "Mirrored Poses": "mirrored poses, symmetrical positioning, matching gestures, visual echo between subjects"
+    },
+    "setting": {
+        "Urban": "urban setting, city streets, buildings, traffic, signage, concrete, crowds or empty sidewalks",
+        "Rural": "rural setting, countryside, fields, farmland, dirt roads, open sky, isolation",
+        "Underwater": "underwater, submerged, water distortion, floating hair and fabric, blue-green light, bubbles",
+        "Aerial": "aerial view, bird's-eye perspective, landscape from above, patterns visible only from height",
+        "Indoor": "indoor setting, interior space, walls and ceiling, furniture, artificial and window light",
+        "Rooftop": "rooftop, elevated urban vantage, city skyline backdrop, open sky above, edge of building",
+        "Underground": "underground, tunnel or basement or cave, low ceiling, artificial light, enclosed space",
+        "Forest": "forest setting, trees, undergrowth, dappled light through canopy, bark texture, moss, earth tones",
+        "Desert": "desert setting, sand or cracked earth, harsh sun, minimal vegetation, heat shimmer, vast emptiness",
+        "Coastal": "coastal setting, ocean or sea, waves, sand or rocks, salt air, horizon line, water light",
+        "Industrial": "industrial setting, factories, machinery, pipes, metal surfaces, concrete floors, utilitarian",
+        "Domestic": "domestic setting, home interior, personal objects, lived-in space, comfort or clutter, familiar"
+    },
+    "time period": {
+        "Medieval": "medieval era, stone and wood, candlelight and torchlight, armor or rough cloth, feudal setting",
+        "Victorian": "victorian era, ornate interiors, gas lamps, corsets and tailcoats, dark wood, lace, formal posture",
+        "1920s Art Deco": "1920s, art deco, geometric patterns, flapper dress, jazz age, gold and black, opulent",
+        "1950s Americana": "1950s, americana, chrome and pastel, diners, cars with fins, rockabilly, optimistic suburban",
+        "1970s": "1970s, warm earth tones, shag carpet, bell-bottoms, wood paneling, soft focus, analog warmth",
+        "1980s": "1980s, neon colors, big hair, synthwave aesthetic, VHS texture, bold graphic patterns",
+        "Futuristic": "futuristic, advanced technology, clean or dystopian surfaces, LED lighting, minimal or maximal design",
+        "Ancient": "ancient era, stone temples, draped fabric, torchlight, weathered surfaces, mythic scale"
+    },
+    "subject": {
+        "Solo": "single subject, alone in frame, full attention on one person or object",
+        "Couple": "two subjects, pair, relationship implied through proximity and body language",
+        "Group": "group of people, crowd, multiple subjects interacting or coexisting in frame",
+        "Animal": "animal subject, creature behavior, fur or feather or scale texture, non-human presence",
+        "Object": "object as subject, inanimate focus, material texture, form and function, still life quality",
+        "Hands Detail": "hands as focal point, gesture, grip, touch, texture of skin, rings or tools, expressive fingers"
+    },
+    "material": {
+        "Leather": "leather texture, worn or polished, creases, grain, brown or black, rugged tactile quality",
+        "Silk": "silk fabric, smooth sheen, light-catching folds, delicate drape, luxurious surface",
+        "Denim": "denim texture, indigo blue, visible weave, faded or raw, casual sturdy fabric",
+        "Lace": "lace, delicate pattern, semi-transparent, intricate needlework, feminine detail",
+        "Metal": "metal surfaces, steel or iron or copper, reflections, industrial sheen, cold hard texture",
+        "Glass": "glass, transparent or reflective, refractions, fragile appearance, clean edges, light passing through",
+        "Wet Skin": "wet skin, water droplets on surface, sheen, glistening highlights, tactile moisture"
+    },
+    "aesthetic": {
+        "Japanese": "japanese aesthetic, wabi-sabi, clean lines, natural materials, paper screens, zen minimalism",
+        "Nordic": "nordic aesthetic, muted earth tones, raw wood, wool textures, minimal, cold light, functional beauty",
+        "Mediterranean": "mediterranean aesthetic, warm stone, terracotta, olive and ochre tones, bright sun, whitewashed walls",
+        "Tropical": "tropical aesthetic, lush green, bright flowers, warm humid light, palm fronds, saturated color",
+        "Parisian": "parisian aesthetic, elegant, iron balconies, cafe tables, muted sophistication, soft overcast light",
+        "Brutalist": "brutalist aesthetic, raw concrete, massive geometric forms, stark shadows, imposing scale, utilitarian",
+        "Art Nouveau": "art nouveau, organic flowing lines, floral motifs, ornamental detail, stained glass, decorative elegance",
+        "Bohemian": "bohemian aesthetic, layered textiles, warm colors, eclectic objects, plants, relaxed imperfection"
+    },
+    "technique": {
+        "Long Exposure": "long exposure, motion blur, light trails, silky water, streaked clouds, ghosted figures, time passing in single frame",
+        "Double Exposure": "double exposure, two images blended, portrait filled with landscape, overlapping textures, ghostly composite",
+        "Tilt-Shift": "tilt-shift, miniature effect, extreme selective focus, narrow band of sharpness, diorama, elevated angle, slightly oversaturated",
+        "Macro": "macro, extreme close-up, fine details, shallow depth of field, textures invisible at normal distance",
+        "Silhouette": "silhouette, backlit dark outline, bright background, shape and outline only, contrast between dark figure and luminous background",
+        "First Person": "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language"
+    },
+    "color": {
+        "Black and White": "black and white, monochrome, tonal contrast, no color, luminance, grain, interplay of light and dark",
+        "Vintage Film": "vintage film, film grain, color shifts, warm highlights, faded blacks, expired film stock, nostalgic, textured",
+        "Cinematic Grade": "cinematic color grade, teal-and-orange, crushed blacks, lifted shadows, midtone desaturation, Hollywood film look",
+        "Pastel": "pastel, soft desaturated colors, blush pink, powder blue, lavender, mint, cream, lifted highlights, gentle, delicate",
+        "Retro": "retro, era-specific film stock, analog imperfections, grain, light leaks, color shifts, period-authentic styling"
+    },
+    "atmosphere": {
+        "Fog": "fog, mist, reduced visibility, distant silhouettes, diffused light, god rays, glowing halos, quiet, isolated, mysterious",
+        "Rain": "rain, wet surfaces, reflections, raindrops, puddles mirroring lights, overcast diffused light, cool blue-grey cast, glistening",
+        "Dust and Haze": "dust, haze, smoke, particles in light beams, diffused rays, warm atmospheric glow, thick textured air"
+    },
+    "motion": {
+        "Frozen Action": "frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action"
+    }
+}
