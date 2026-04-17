@@ -122,7 +122,6 @@
         "Tilt-Shift": "tilt-shift, miniature effect, extreme selective focus, narrow band of sharpness, diorama, elevated angle, slightly oversaturated",
         "Macro": "macro, extreme close-up, fine details, shallow depth of field, textures invisible at normal distance",
         "Silhouette": "silhouette, backlit dark outline, bright background, shape and outline only, contrast between dark figure and luminous background",
-        "First Person": "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language",
         "Male Gaze": "male gaze, camera lingers on the female subject's body, objectifying framing, emphasis on curves and physical appearance, subject as spectacle, cinematic male perspective",
         "Female Gaze": "female gaze, emphasis on emotion and context, subject has agency and interiority, intimate but not objectifying, focus on expression and gesture over body, warmth, connection"
     },
@@ -137,6 +136,19 @@
         "Fog": "fog, mist, reduced visibility, distant silhouettes, diffused light, god rays, glowing halos, quiet, isolated, mysterious",
         "Rain": "rain, wet surfaces, reflections, raindrops, puddles mirroring lights, overcast diffused light, cool blue-grey cast, glistening",
         "Dust and Haze": "dust, haze, smoke, particles in light beams, diffused rays, warm atmospheric glow, thick textured air"
+    },
+    "perspective": {
+        "First Person": "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language",
+        "Over the Shoulder": "over-the-shoulder shot, camera behind one subject looking at another, partial head or shoulder in foreground, conversational framing",
+        "Low Angle": "low angle, camera looking up at subject, imposing, powerful, dominant, subject towers over viewer",
+        "High Angle": "high angle, camera looking down at subject, diminished, vulnerable, small in frame, environmental context visible",
+        "Bird's Eye": "bird's-eye view, directly overhead, looking straight down, flat perspective, patterns and layout visible, god's-eye",
+        "Worm's Eye": "worm's-eye view, camera on ground looking up, extreme low angle, towering subject, sky as background, dramatic scale",
+        "Dutch Angle": "dutch angle, tilted camera, diagonal horizon line, unease, tension, disorientation, off-balance composition",
+        "Through Object": "shot through foreground object, framed by doorway or window or foliage or fence, layered depth, voyeuristic peek",
+        "Reflection Shot": "seen through reflection, mirror or puddle or window glass, indirect view, doubled perspective, compositional depth",
+        "Close-up Face": "extreme close-up on face, eyes and expression fill the frame, pores and skin texture visible, emotional intensity",
+        "Wide Establishing": "wide establishing shot, full environment visible, subject small in frame, context and scale emphasized, sense of place"
     },
     "motion": {
         "Frozen Action": "frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action"
