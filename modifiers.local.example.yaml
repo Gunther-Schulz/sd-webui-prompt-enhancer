@@ -1,14 +1,18 @@
-# Local Modifier Overrides — Example
+# Local Overrides — Example
 #
-# Place your custom modifiers here. This file is not tracked by git.
-# Copy this file to modifiers.local.yaml (same directory) or point to
-# a directory of .yaml/.yml/.json files via:
-#   - The "Local Modifiers Override" field in the UI
-#   - The PROMPT_ENHANCER_LOCAL_MODIFIERS environment variable
+# Place your custom files in a directory and point to it via:
+#   - The "Local Overrides Directory" field in the UI
+#   - The PROMPT_ENHANCER_LOCAL environment variable
 #
-# Format: categories containing named keyword strings.
+# File conventions in the local directory:
+#   _bases.yaml  → adds entries to the Base dropdown (flat: name -> prompt)
+#   *.yaml       → adds entries to the Modifiers dropdown (categorized)
+#
+# Modifier format: categories containing named keyword strings.
 # Categories can match existing ones (entries are merged) or be new.
-# Files in a directory are loaded in alphabetical order.
+# Files are loaded in alphabetical order.
+#
+# Example modifier file (e.g. my-styles.yaml):
 
 # Add entries to an existing category
 lighting:
@@ -19,3 +23,10 @@ my favorites:
   Cozy Autumn: autumn, warm tones, falling leaves, knit sweaters, golden light, hot drinks, wood smoke
   Rainy Tokyo: tokyo streets, neon reflections, rain, umbrellas, kanji signage, vending machine glow, night
   Old Library: old library, leather books, dust motes, reading lamp, dark wood, warm amber, silence
+
+# Example _bases.yaml (adds to Base dropdown):
+#
+# My Custom Base: |
+#   You are a Creative Assistant. Given a user's raw input, expand it into
+#   a detailed prompt for...
+#   (full system prompt here)

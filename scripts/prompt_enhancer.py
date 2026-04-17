@@ -15,67 +15,17 @@ logger = logging.getLogger("prompt_enhancer")
 _EXT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def _load_flat_file(path):
-    """Load a flat file (JSON or YAML): {name: prompt_string, ...}."""
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            if _HAS_YAML and path.endswith((".yaml", ".yml")):
-                data = yaml.safe_load(f)
-            else:
-                data = json.load(f)
-        if isinstance(data, dict):
-            return {k: v for k, v in data.items() if isinstance(v, str)}
-        logger.error(f"{path} must be a mapping of name: value")
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        logger.error(f"Failed to load {path}: {e}")
-    return {}
-
-
-def _load_flat_override(override_path):
-    """Load and merge flat overrides from a file or directory."""
-    merged = {}
-    if os.path.isdir(override_path):
-        for name in sorted(os.listdir(override_path)):
-            if name.startswith("."):
-                continue
-            if not name.endswith((".yaml", ".yml", ".json")):
-                continue
-            merged.update(_load_flat_file(os.path.join(override_path, name)))
-    elif os.path.isfile(override_path):
-        merged.update(_load_flat_file(override_path))
-    return merged
-
-
-def _load_flat_json(filename, env_var=""):
-    """Load a flat JSON file with optional local overrides.
-
-    Resolution order for override path:
-    1. Environment variable (if env_var name given)
-    2. Default: <ext_dir>/<filename>.local.json
-    """
-    base = _load_flat_file(os.path.join(_EXT_DIR, filename))
-
-    local_path = os.environ.get(env_var, "").strip() if env_var else ""
-    if not local_path:
-        local_path = os.path.join(_EXT_DIR, filename.replace(".json", ".local.json"))
-    override = _load_flat_override(local_path)
-    if override:
-        base.update(override)
-
-    return base
-
-
 try:
     import yaml
     _HAS_YAML = True
 except ImportError:
     _HAS_YAML = False
 
+BASES_FILENAME = "_bases"
 
-def _load_categorized_file(path):
-    """Load a categorized file (JSON or YAML) and return raw dict."""
+
+def _load_file(path):
+    """Load a JSON or YAML file and return its parsed content as a dict."""
     try:
         with open(path, "r", encoding="utf-8") as f:
             if _HAS_YAML and path.endswith((".yaml", ".yml")):
@@ -84,7 +34,7 @@ def _load_categorized_file(path):
                 data = json.load(f)
         if isinstance(data, dict):
             return data
-        logger.error(f"{path} must be a mapping of categories")
+        logger.error(f"{path} must be a mapping")
     except FileNotFoundError:
         pass
     except Exception as e:
@@ -108,22 +58,6 @@ def _merge_categorized(base_data, override_data):
     return merged
 
 
-def _load_override_dir(dir_path):
-    """Load and merge all .yaml/.yml/.json files from a directory."""
-    merged = {}
-    if not os.path.isdir(dir_path):
-        return merged
-    for name in sorted(os.listdir(dir_path)):
-        if name.startswith("."):
-            continue
-        if not name.endswith((".yaml", ".yml", ".json")):
-            continue
-        data = _load_categorized_file(os.path.join(dir_path, name))
-        if data:
-            merged = _merge_categorized(merged, data)
-    return merged
-
-
 def _categorized_to_flat_and_choices(data):
     """Convert categorized dict to (flat_dict, choice_list) for dropdown UI."""
     flat = {}
@@ -140,41 +74,47 @@ def _categorized_to_flat_and_choices(data):
     return flat, choices
 
 
-def _load_categorized_json(filename, local_override_path=""):
-    """Load a categorized JSON file, optionally merging local overrides.
+def _get_local_dir(ui_path=""):
+    """Resolve the local overrides directory.
 
-    The local override can be a single file (.json/.yaml/.yml) or a
-    directory containing multiple files. Files in a directory are loaded
-    in alphabetical order.
-
-    Resolution order for local override location:
-    1. Explicit path passed in (from UI field)
-    2. PROMPT_ENHANCER_LOCAL_MODIFIERS env var (for modifiers.json)
-    3. Default: <ext_dir>/<filename>.local.json
-
-    Returns (flat_dict, choice_list) where flat_dict maps name->keywords
-    and choice_list has category separators for the dropdown UI.
+    Priority: UI field > PROMPT_ENHANCER_LOCAL env var > None.
     """
-    base_data = _load_categorized_file(os.path.join(_EXT_DIR, filename))
+    path = (ui_path or "").strip()
+    if not path:
+        path = os.environ.get("PROMPT_ENHANCER_LOCAL", "").strip()
+    if path and os.path.isdir(path):
+        return path
+    return None
 
-    # Resolve local override path
-    local_path = (local_override_path or "").strip()
-    if not local_path and filename == "modifiers.json":
-        local_path = os.environ.get("PROMPT_ENHANCER_LOCAL_MODIFIERS", "")
-    if not local_path:
-        local_path = os.path.join(_EXT_DIR, filename.replace(".json", ".local.json"))
 
-    # Load from directory or single file
-    if os.path.isdir(local_path):
-        override_data = _load_override_dir(local_path)
-        if override_data:
-            base_data = _merge_categorized(base_data, override_data)
-    elif os.path.isfile(local_path):
-        override_data = _load_categorized_file(local_path)
-        if override_data:
-            base_data = _merge_categorized(base_data, override_data)
+def _load_local_bases(local_dir):
+    """Load _bases.yaml from the local directory (flat: name -> prompt)."""
+    if not local_dir:
+        return {}
+    for ext in (".yaml", ".yml", ".json"):
+        path = os.path.join(local_dir, BASES_FILENAME + ext)
+        if os.path.isfile(path):
+            return {k: v for k, v in _load_file(path).items() if isinstance(v, str)}
+    return {}
 
-    return _categorized_to_flat_and_choices(base_data)
+
+def _load_local_modifiers(local_dir):
+    """Load all files except _bases.* from the local directory (categorized)."""
+    if not local_dir:
+        return {}
+    merged = {}
+    for name in sorted(os.listdir(local_dir)):
+        if name.startswith("."):
+            continue
+        stem = os.path.splitext(name)[0]
+        if stem == BASES_FILENAME:
+            continue
+        if not name.endswith((".yaml", ".yml", ".json")):
+            continue
+        data = _load_file(os.path.join(local_dir, name))
+        if data:
+            merged = _merge_categorized(merged, data)
+    return merged
 
 
 # ── Load all config from JSON files ──────────────────────────────────────────
@@ -186,12 +126,26 @@ _wildcards = {}
 _wildcard_choices = []
 
 
-def _reload_all(local_modifiers_path=""):
-    """Reload all JSON config files from disk."""
+def _reload_all(local_dir_path=""):
+    """Reload all config files from disk."""
     global _bases, _modifiers, _modifier_choices, _wildcards, _wildcard_choices
-    _bases = _load_flat_json("bases.json", "PROMPT_ENHANCER_LOCAL_BASES")
-    _modifiers, _modifier_choices = _load_categorized_json("modifiers.json", local_modifiers_path)
-    _wildcards, _wildcard_choices = _load_categorized_json("wildcards.json")
+
+    local_dir = _get_local_dir(local_dir_path)
+
+    # Bases: extension bases.json + local bases.yaml
+    _bases = {k: v for k, v in _load_file(os.path.join(_EXT_DIR, "bases.json")).items() if isinstance(v, str)}
+    _bases.update(_load_local_bases(local_dir))
+
+    # Modifiers: extension modifiers.json + all local files (except bases.yaml)
+    mod_data = _load_file(os.path.join(_EXT_DIR, "modifiers.json"))
+    local_mods = _load_local_modifiers(local_dir)
+    if local_mods:
+        mod_data = _merge_categorized(mod_data, local_mods)
+    _modifiers, _modifier_choices = _categorized_to_flat_and_choices(mod_data)
+
+    # Wildcards: extension wildcards.json only
+    wc_data = _load_file(os.path.join(_EXT_DIR, "wildcards.json"))
+    _wildcards, _wildcard_choices = _categorized_to_flat_and_choices(wc_data)
 
 
 _reload_all()
@@ -211,9 +165,9 @@ def _base_names():
     return names
 
 
-def _refresh_all(current_base, current_modifiers, current_wildcards, local_modifiers_path=""):
-    """Reload all JSON files and update all dropdowns."""
-    _reload_all(local_modifiers_path)
+def _refresh_all(current_base, current_modifiers, current_wildcards, local_dir_path=""):
+    """Reload all config files and update all dropdowns."""
+    _reload_all(local_dir_path)
     base_names = _base_names()
     mod_choices = list(_modifier_choices)
     wc_choices = list(_wildcard_choices)
@@ -486,10 +440,10 @@ class PromptEnhancer(scripts.Script):
                     scale=2,
                 )
             with gr.Row():
-                _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL_MODIFIERS", "")
+                _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL", "")
                 local_modifiers_path = gr.Textbox(
-                    label="Local Modifiers Override",
-                    placeholder=f"Using: {_env_local}" if _env_local else "File or directory path (YAML/JSON)",
+                    label="Local Overrides Directory",
+                    placeholder=f"Using: {_env_local}" if _env_local else "Path to directory with local YAML/JSON files",
                     scale=3,
                 )
                 reload_btn = gr.Button(
