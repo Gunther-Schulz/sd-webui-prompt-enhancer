@@ -122,7 +122,9 @@
         "Tilt-Shift": "tilt-shift, miniature effect, extreme selective focus, narrow band of sharpness, diorama, elevated angle, slightly oversaturated",
         "Macro": "macro, extreme close-up, fine details, shallow depth of field, textures invisible at normal distance",
         "Silhouette": "silhouette, backlit dark outline, bright background, shape and outline only, contrast between dark figure and luminous background",
-        "First Person": "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language"
+        "First Person": "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language",
+        "Male Gaze": "male gaze, camera lingers on the female subject's body, objectifying framing, emphasis on curves and physical appearance, subject as spectacle, cinematic male perspective",
+        "Female Gaze": "female gaze, emphasis on emotion and context, subject has agency and interiority, intimate but not objectifying, focus on expression and gesture over body, warmth, connection"
     },
     "color": {
         "Black and White": "black and white, monochrome, tonal contrast, no color, luminance, grain, interplay of light and dark",
@@ -138,5 +140,43 @@
     },
     "motion": {
         "Frozen Action": "frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action"
+    },
+    "photography format": {
+        "Polaroid": "polaroid, instant film, white border frame, slightly washed colors, soft focus, casual snapshot feel",
+        "35mm Film": "35mm film, natural grain, slight color cast, analog texture, photojournalistic, classic film photography",
+        "Medium Format": "medium format, high resolution, shallow depth of field, smooth tonal gradation, fine detail, Hasselblad aesthetic",
+        "Disposable Camera": "disposable camera, flash on, harsh direct flash, red-eye, rough grain, off-center framing, party snapshot",
+        "Infrared": "infrared photography, false color, white foliage, dark skies, surreal tones, thermal glow effect",
+        "Cross-Processed": "cross-processed film, extreme color shifts, high contrast, oversaturated, green or magenta cast, unpredictable color"
+    },
+    "art style": {
+        "Oil Painting": "oil painting, visible brushstrokes, rich color, thick impasto texture, canvas surface, classical painting technique",
+        "Watercolor": "watercolor, soft washes, bleeding edges, translucent layers, paper texture showing through, delicate, flowing",
+        "Pencil Sketch": "pencil sketch, graphite on paper, hatching and cross-hatching, tonal shading, raw linework, hand-drawn",
+        "Charcoal Drawing": "charcoal drawing, deep blacks, smudged edges, rough paper texture, dramatic contrast, expressive marks",
+        "Digital Art": "digital art, clean lines, vibrant colors, smooth gradients, polished rendering, concept art quality",
+        "3D Render": "3D render, CGI, volumetric lighting, subsurface scattering, physically based materials, ray-traced reflections",
+        "Anime": "anime style, cel-shaded, large expressive eyes, clean outlines, flat color fills, Japanese animation aesthetic",
+        "Comic Book": "comic book, bold ink outlines, halftone dots, dynamic panel composition, flat bold colors, graphic novel",
+        "Pixel Art": "pixel art, low resolution, visible pixels, limited color palette, retro game aesthetic, 8-bit or 16-bit"
+    },
+    "cinema style": {
+        "Blockbuster": "blockbuster film look, high production value, dramatic lighting, epic scale, polished color grade, wide aspect ratio",
+        "Indie Film": "indie film, natural lighting, handheld camera feel, muted colors, intimate framing, understated, authentic",
+        "Documentary": "documentary, observational, available light, unposed, raw and authentic, journalistic framing, truth-seeking",
+        "Music Video": "music video, stylized, bold color, high contrast, fast cuts implied, performance energy, glamorous or gritty",
+        "Horror Film": "horror film, desaturated, sickly green or blue cast, underlit, jump-scare framing, something lurking, dread",
+        "Arthouse": "arthouse cinema, deliberate composition, long-take framing, muted palette, symbolic staging, contemplative, austere",
+        "Wes Anderson": "wes anderson style, symmetrical composition, pastel palette, centered framing, whimsical, deadpan, dollhouse aesthetic",
+        "Wong Kar-wai": "wong kar-wai style, smeared neon, motion blur, saturated red and green, melancholic, step-printed, urban romance",
+        "Kubrick": "kubrick style, one-point perspective, symmetrical wide angle, cold precision, unsettling stillness, geometric composition"
+    },
+    "vintage format": {
+        "Daguerreotype": "daguerreotype, earliest photography, silver plate, mirror-like surface, long exposure stillness, 1840s portrait",
+        "Tintype": "tintype, dark metallic plate, low contrast, rough edges, civil war era, scratched and imperfect surface",
+        "Kodachrome": "kodachrome, warm saturated color, rich reds and blues, sharp detail, 1960s-70s slide film, National Geographic look",
+        "VHS": "VHS, analog video, scan lines, color bleeding, tracking artifacts, low resolution, fuzzy warm distortion, 1980s-90s home video",
+        "Early Digital": "early digital camera, low megapixel, slight pixelation, oversaturated auto-white-balance, flash red-eye, 2000s snapshot",
+        "Instagram Circa 2012": "early instagram, square crop, heavy filter, vignette, faded blacks, orange and teal shift, overprocessed nostalgia"
     }
 }
