@@ -1,0 +1,21 @@
+# Local Modifier Overrides — Example
+#
+# Place your custom modifiers here. This file is not tracked by git.
+# Copy this file to modifiers.local.yaml (same directory) or point to
+# a directory of .yaml/.yml/.json files via:
+#   - The "Local Modifiers Override" field in the UI
+#   - The PROMPT_ENHANCER_LOCAL_MODIFIERS environment variable
+#
+# Format: categories containing named keyword strings.
+# Categories can match existing ones (entries are merged) or be new.
+# Files in a directory are loaded in alphabetical order.
+
+# Add entries to an existing category
+lighting:
+  Studio Strobe: studio strobe, hard flash, sharp shadows, high contrast, frozen motion, commercial lighting
+
+# Create a new category
+my favorites:
+  Cozy Autumn: autumn, warm tones, falling leaves, knit sweaters, golden light, hot drinks, wood smoke
+  Rainy Tokyo: tokyo streets, neon reflections, rain, umbrellas, kanji signage, vending machine glow, night
+  Old Library: old library, leather books, dust motes, reading lamp, dark wood, warm amber, silence
