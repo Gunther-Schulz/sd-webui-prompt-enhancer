@@ -266,7 +266,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
 
 
 def enhance_prompt(source, api_url, model, base, custom_system_prompt,
-                   style_notes, modifiers, wildcards, word_limit, think, temperature):
+                   modifiers, wildcards, word_limit, think, temperature):
     source = (source or "").strip()
     if not source:
         return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -280,15 +280,12 @@ def enhance_prompt(source, api_url, model, base, custom_system_prompt,
     if not system_prompt:
         return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
-    # Layer 2: Style keywords (modifiers + freeform notes)
+    # Layer 2: Style keywords from modifiers
     style_parts = []
     for mod_name in (modifiers or []):
         keywords = _modifiers.get(mod_name, "")
         if keywords:
             style_parts.append(keywords)
-    notes = (style_notes or "").strip()
-    if notes:
-        style_parts.append(notes)
     if style_parts:
         system_prompt = f"{system_prompt}\n\nApply these styles: {', '.join(style_parts)}."
 
@@ -378,19 +375,14 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # ── Base + Style Notes ──
+            # ── Base ──
             with gr.Row():
                 base = gr.Dropdown(
                     label="Base",
                     choices=_base_names(),
                     value="Still",
                     scale=1,
-                    info="Still = image, Scene = video, Refine = minimal cleanup",
-                )
-                style_notes = gr.Textbox(
-                    label="Style Notes",
-                    placeholder="Freeform style directions, e.g. 'moody, 1970s, desaturated'",
-                    scale=2,
+                    info="Still = image, Scene = video",
                 )
 
             # ── Modifiers + Wildcards ──
@@ -408,7 +400,6 @@ class PromptEnhancer(scripts.Script):
                     value=[],
                     multiselect=True,
                     scale=1,
-                    info="Let the LLM make creative choices",
                 )
 
             # ── Word Limit + Temperature + Think ──
@@ -416,7 +407,6 @@ class PromptEnhancer(scripts.Script):
                 word_limit = gr.Slider(
                     label="Word Limit", minimum=20, maximum=500,
                     value=150, step=10, scale=1,
-                    info="Target length of enhanced prompt",
                 )
                 temperature = gr.Slider(
                     label="Temperature", minimum=0.0, maximum=2.0,
@@ -425,7 +415,6 @@ class PromptEnhancer(scripts.Script):
                 think = gr.Checkbox(
                     label="Think",
                     value=False,
-                    info="Let model reason before answering (slower)",
                     scale=0, min_width=80,
                 )
 
@@ -496,7 +485,7 @@ class PromptEnhancer(scripts.Script):
             enhance_btn.click(
                 fn=enhance_prompt,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
-                        style_notes, modifiers, wildcards, word_limit, think, temperature],
+                        modifiers, wildcards, word_limit, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -520,27 +509,24 @@ class PromptEnhancer(scripts.Script):
         self.infotext_fields = [
             (source_prompt, "PE Source"),
             (base, "PE Base"),
-            (style_notes, "PE Style"),
             (word_limit, "PE WordLimit"),
             (modifiers, lambda params: [m.strip() for m in params.get("PE Modifiers", "").split(",") if m.strip()] if params.get("PE Modifiers") else []),
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
         ]
         self.paste_field_names = [
-            "PE Source", "PE Base", "PE Style", "PE WordLimit",
+            "PE Source", "PE Base", "PE WordLimit",
             "PE Modifiers", "PE Wildcards", "PE Think",
         ]
         return [source_prompt, api_url, model, base, custom_system_prompt,
-                style_notes, modifiers, wildcards, word_limit, think, temperature]
+                modifiers, wildcards, word_limit, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
-                style_notes, modifiers, wildcards, word_limit, think, temperature):
+                modifiers, wildcards, word_limit, think, temperature):
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
         if base:
             p.extra_generation_params["PE Base"] = base
-        if style_notes:
-            p.extra_generation_params["PE Style"] = style_notes
         if word_limit and int(word_limit) != 150:
             p.extra_generation_params["PE WordLimit"] = int(word_limit)
         if modifiers:
