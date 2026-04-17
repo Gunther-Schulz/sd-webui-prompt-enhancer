@@ -245,16 +245,27 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
         "stream": False,
     }
     data = json.dumps(payload).encode("utf-8")
-    req = urllib.request.Request(
-        f"{base}/api/chat",
-        data=data,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=600) as resp:
-        result = json.loads(resp.read().decode("utf-8"))
-    content = result.get("message", {}).get("content", "")
-    return _strip_think_blocks(content)
+    url = f"{base}/api/chat"
+
+    # Retry once on connection failure (Ollama may be reloading the model)
+    last_err = None
+    for attempt in range(2):
+        try:
+            req = urllib.request.Request(
+                url, data=data,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=600) as resp:
+                result = json.loads(resp.read().decode("utf-8"))
+            content = result.get("message", {}).get("content", "")
+            return _strip_think_blocks(content)
+        except urllib.error.URLError as e:
+            last_err = e
+            if attempt == 0:
+                import time
+                time.sleep(2)
+    raise last_err
 
 
 def enhance_prompt(source, api_url, model, base, custom_system_prompt,
