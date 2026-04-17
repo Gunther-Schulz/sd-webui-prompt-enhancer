@@ -15,18 +15,56 @@ logger = logging.getLogger("prompt_enhancer")
 _EXT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-def _load_flat_json(filename):
-    """Load a flat JSON file: {name: prompt_string, ...}."""
-    path = os.path.join(_EXT_DIR, filename)
+def _load_flat_file(path):
+    """Load a flat file (JSON or YAML): {name: prompt_string, ...}."""
     try:
         with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            if _HAS_YAML and path.endswith((".yaml", ".yml")):
+                data = yaml.safe_load(f)
+            else:
+                data = json.load(f)
         if isinstance(data, dict):
             return {k: v for k, v in data.items() if isinstance(v, str)}
-        logger.error(f"{path} must be a JSON object {{name: value}}")
+        logger.error(f"{path} must be a mapping of name: value")
+    except FileNotFoundError:
+        pass
     except Exception as e:
-        logger.error(f"Failed to load {filename}: {e}")
+        logger.error(f"Failed to load {path}: {e}")
     return {}
+
+
+def _load_flat_override(override_path):
+    """Load and merge flat overrides from a file or directory."""
+    merged = {}
+    if os.path.isdir(override_path):
+        for name in sorted(os.listdir(override_path)):
+            if name.startswith("."):
+                continue
+            if not name.endswith((".yaml", ".yml", ".json")):
+                continue
+            merged.update(_load_flat_file(os.path.join(override_path, name)))
+    elif os.path.isfile(override_path):
+        merged.update(_load_flat_file(override_path))
+    return merged
+
+
+def _load_flat_json(filename, env_var=""):
+    """Load a flat JSON file with optional local overrides.
+
+    Resolution order for override path:
+    1. Environment variable (if env_var name given)
+    2. Default: <ext_dir>/<filename>.local.json
+    """
+    base = _load_flat_file(os.path.join(_EXT_DIR, filename))
+
+    local_path = os.environ.get(env_var, "").strip() if env_var else ""
+    if not local_path:
+        local_path = os.path.join(_EXT_DIR, filename.replace(".json", ".local.json"))
+    override = _load_flat_override(local_path)
+    if override:
+        base.update(override)
+
+    return base
 
 
 try:
@@ -151,7 +189,7 @@ _wildcard_choices = []
 def _reload_all(local_modifiers_path=""):
     """Reload all JSON config files from disk."""
     global _bases, _modifiers, _modifier_choices, _wildcards, _wildcard_choices
-    _bases = _load_flat_json("bases.json")
+    _bases = _load_flat_json("bases.json", "PROMPT_ENHANCER_LOCAL_BASES")
     _modifiers, _modifier_choices = _load_categorized_json("modifiers.json", local_modifiers_path)
     _wildcards, _wildcard_choices = _load_categorized_json("wildcards.json")
 
