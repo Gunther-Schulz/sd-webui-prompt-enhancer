@@ -79,13 +79,20 @@ def _categorized_to_flat_and_choices(data):
 def _load_categorized_json(filename, local_override_path=""):
     """Load a categorized JSON file, optionally merging a local override.
 
+    Resolution order for local override path:
+    1. Explicit path passed in (from UI field)
+    2. PROMPT_ENHANCER_LOCAL_MODIFIERS env var (for modifiers.json)
+    3. Default: <ext_dir>/<filename>.local.json
+
     Returns (flat_dict, choice_list) where flat_dict maps name->keywords
     and choice_list has category separators for the dropdown UI.
     """
     base_data = _load_categorized_data(os.path.join(_EXT_DIR, filename))
 
-    # Merge local override: explicit path > default location
+    # Resolve local override path
     local_path = (local_override_path or "").strip()
+    if not local_path and filename == "modifiers.json":
+        local_path = os.environ.get("PROMPT_ENHANCER_LOCAL_MODIFIERS", "")
     if not local_path:
         local_path = os.path.join(_EXT_DIR, filename.replace(".json", ".local.json"))
     if os.path.isfile(local_path):
@@ -415,9 +422,10 @@ class PromptEnhancer(scripts.Script):
                     scale=2,
                 )
             with gr.Row():
+                _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL_MODIFIERS", "")
                 local_modifiers_path = gr.Textbox(
                     label="Local Modifiers Override",
-                    placeholder=f"Default: {os.path.join(_EXT_DIR, 'modifiers.local.json')}",
+                    placeholder=f"Using: {_env_local}" if _env_local else f"Default: {os.path.join(_EXT_DIR, 'modifiers.local.json')}",
                     scale=3,
                 )
                 reload_btn = gr.Button(
