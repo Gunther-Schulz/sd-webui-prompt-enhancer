@@ -29,14 +29,24 @@ def _load_flat_json(filename):
     return {}
 
 
-def _load_categorized_data(path):
-    """Load a categorized JSON file and return raw dict: {category: {name: keywords}}."""
+try:
+    import yaml
+    _HAS_YAML = True
+except ImportError:
+    _HAS_YAML = False
+
+
+def _load_categorized_file(path):
+    """Load a categorized file (JSON or YAML) and return raw dict."""
     try:
         with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            if _HAS_YAML and path.endswith((".yaml", ".yml")):
+                data = yaml.safe_load(f)
+            else:
+                data = json.load(f)
         if isinstance(data, dict):
             return data
-        logger.error(f"{path} must be a JSON object")
+        logger.error(f"{path} must be a mapping of categories")
     except FileNotFoundError:
         pass
     except Exception as e:
@@ -60,6 +70,22 @@ def _merge_categorized(base_data, override_data):
     return merged
 
 
+def _load_override_dir(dir_path):
+    """Load and merge all .yaml/.yml/.json files from a directory."""
+    merged = {}
+    if not os.path.isdir(dir_path):
+        return merged
+    for name in sorted(os.listdir(dir_path)):
+        if name.startswith("."):
+            continue
+        if not name.endswith((".yaml", ".yml", ".json")):
+            continue
+        data = _load_categorized_file(os.path.join(dir_path, name))
+        if data:
+            merged = _merge_categorized(merged, data)
+    return merged
+
+
 def _categorized_to_flat_and_choices(data):
     """Convert categorized dict to (flat_dict, choice_list) for dropdown UI."""
     flat = {}
@@ -77,9 +103,13 @@ def _categorized_to_flat_and_choices(data):
 
 
 def _load_categorized_json(filename, local_override_path=""):
-    """Load a categorized JSON file, optionally merging a local override.
+    """Load a categorized JSON file, optionally merging local overrides.
 
-    Resolution order for local override path:
+    The local override can be a single file (.json/.yaml/.yml) or a
+    directory containing multiple files. Files in a directory are loaded
+    in alphabetical order.
+
+    Resolution order for local override location:
     1. Explicit path passed in (from UI field)
     2. PROMPT_ENHANCER_LOCAL_MODIFIERS env var (for modifiers.json)
     3. Default: <ext_dir>/<filename>.local.json
@@ -87,7 +117,7 @@ def _load_categorized_json(filename, local_override_path=""):
     Returns (flat_dict, choice_list) where flat_dict maps name->keywords
     and choice_list has category separators for the dropdown UI.
     """
-    base_data = _load_categorized_data(os.path.join(_EXT_DIR, filename))
+    base_data = _load_categorized_file(os.path.join(_EXT_DIR, filename))
 
     # Resolve local override path
     local_path = (local_override_path or "").strip()
@@ -95,9 +125,16 @@ def _load_categorized_json(filename, local_override_path=""):
         local_path = os.environ.get("PROMPT_ENHANCER_LOCAL_MODIFIERS", "")
     if not local_path:
         local_path = os.path.join(_EXT_DIR, filename.replace(".json", ".local.json"))
-    if os.path.isfile(local_path):
-        override_data = _load_categorized_data(local_path)
-        base_data = _merge_categorized(base_data, override_data)
+
+    # Load from directory or single file
+    if os.path.isdir(local_path):
+        override_data = _load_override_dir(local_path)
+        if override_data:
+            base_data = _merge_categorized(base_data, override_data)
+    elif os.path.isfile(local_path):
+        override_data = _load_categorized_file(local_path)
+        if override_data:
+            base_data = _merge_categorized(base_data, override_data)
 
     return _categorized_to_flat_and_choices(base_data)
 
@@ -425,7 +462,7 @@ class PromptEnhancer(scripts.Script):
                 _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL_MODIFIERS", "")
                 local_modifiers_path = gr.Textbox(
                     label="Local Modifiers Override",
-                    placeholder=f"Using: {_env_local}" if _env_local else f"Default: {os.path.join(_EXT_DIR, 'modifiers.local.json')}",
+                    placeholder=f"Using: {_env_local}" if _env_local else "File or directory path (YAML/JSON)",
                     scale=3,
                 )
                 reload_btn = gr.Button(

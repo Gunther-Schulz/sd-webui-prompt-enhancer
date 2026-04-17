@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 *.local.json
+*.local.yaml
+*.local.yml
