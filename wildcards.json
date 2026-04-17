@@ -13,6 +13,9 @@
         "Texture Focus": "Pick one dominant texture and make it a central visual element. Describe it in rich tactile detail and let it anchor the composition.",
         "Contrast Pairing": "Build the scene around a visual contrast \u2014 old and new, natural and artificial, still and moving, soft and hard. Use this tension as the compositional backbone.",
         "Era": "Place the scene in a specific decade. Reflect that era authentically in clothing, hairstyles, decor, technology, color palette, and photographic style.",
-        "Emotion": "Choose a specific emotion and let it drive every visual choice \u2014 pose, expression, lighting mood, color temperature, composition."
+        "Emotion": "Choose a specific emotion and let it drive every visual choice \u2014 pose, expression, lighting mood, color temperature, composition.",
+        "Imperfection": "Add one realistic imperfection \u2014 slight motion blur on a hand, a stray hair across the face, a wrinkle in fabric, slightly overexposed highlights, a smudge, an asymmetry. Something that makes the image feel real rather than sterile.",
+        "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. An empty glass, a packed suitcase, a letter on the table, an open door, untied shoes. Let it sit naturally in the scene without drawing too much attention.",
+        "Light Source": "Instead of default natural lighting, invent a specific unusual light source \u2014 TV screen glow, phone screen illumination, passing car headlights, open refrigerator light, a single bare bulb, neon sign reflection, laptop screen in a dark room. Let it define the color and mood."
     }
 }
