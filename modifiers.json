@@ -148,7 +148,8 @@
         "Through Object": "shot through foreground object, framed by doorway or window or foliage or fence, layered depth, voyeuristic peek",
         "Reflection Shot": "seen through reflection, mirror or puddle or window glass, indirect view, doubled perspective, compositional depth",
         "Close-up Face": "extreme close-up on face, eyes and expression fill the frame, pores and skin texture visible, emotional intensity",
-        "Wide Establishing": "wide establishing shot, full environment visible, subject small in frame, context and scale emphasized, sense of place"
+        "Wide Establishing": "wide establishing shot, full environment visible, subject small in frame, context and scale emphasized, sense of place",
+        "Body Detail": "tight crop on body, abstracting torso or limbs into form and shape, skin texture, curves and lines, fine art body study"
     },
     "motion": {
         "Frozen Action": "frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action"
