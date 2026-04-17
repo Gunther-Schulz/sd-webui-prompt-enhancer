@@ -277,6 +277,9 @@ def enhance_prompt(source, api_url, model, base, custom_system_prompt,
     for mod_name in (modifiers or []):
         keywords = _modifiers.get(mod_name, "")
         if keywords:
+            # Prepend modifier name so the exact term is always in the output
+            if mod_name.lower() not in keywords.lower():
+                keywords = f"{mod_name.lower()}, {keywords}"
             style_parts.append(keywords)
     if style_parts:
         system_prompt = f"{system_prompt}\n\nApply these styles: {', '.join(style_parts)}."
