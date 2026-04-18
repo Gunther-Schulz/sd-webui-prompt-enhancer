@@ -53,25 +53,34 @@ def _load_file(path):
     return {}
 
 
-def _get_local_dir(ui_path=""):
-    """Resolve the local overrides directory."""
-    path = (ui_path or "").strip()
-    if not path:
-        path = os.environ.get("PROMPT_ENHANCER_LOCAL", "").strip()
-    if path and os.path.isdir(path):
-        return path
-    return None
+def _get_local_dirs(ui_path=""):
+    """Resolve local overrides directories.
+
+    Supports comma-separated paths in UI field or env var.
+    Returns list of valid directory paths.
+    """
+    raw = (ui_path or "").strip()
+    if not raw:
+        raw = os.environ.get("PROMPT_ENHANCER_LOCAL", "").strip()
+    if not raw:
+        return []
+    dirs = []
+    for p in raw.split(","):
+        p = p.strip()
+        if p and os.path.isdir(p):
+            dirs.append(p)
+    return dirs
 
 
-def _load_local_bases(local_dir):
-    """Load _bases.yaml from the local directory."""
-    if not local_dir:
-        return {}
-    for ext in (".yaml", ".yml", ".json"):
-        path = os.path.join(local_dir, BASES_FILENAME + ext)
-        if os.path.isfile(path):
-            return {k: v for k, v in _load_file(path).items() if isinstance(v, str)}
-    return {}
+def _load_local_bases(local_dirs):
+    """Load _bases.yaml from all local directories."""
+    merged = {}
+    for local_dir in local_dirs:
+        for ext in (".yaml", ".yml", ".json"):
+            path = os.path.join(local_dir, BASES_FILENAME + ext)
+            if os.path.isfile(path):
+                merged.update({k: v for k, v in _load_file(path).items() if isinstance(v, str)})
+    return merged
 
 
 def _scan_modifier_files(directory):
@@ -151,16 +160,17 @@ def _reload_all(local_dir_path=""):
     """Reload all config files from disk."""
     global _bases, _all_modifiers, _dropdown_order, _dropdown_choices, _wildcards, _wildcard_choices
 
-    local_dir = _get_local_dir(local_dir_path)
+    local_dirs = _get_local_dirs(local_dir_path)
 
     # Bases
     _bases = {k: v for k, v in _load_file(os.path.join(_EXT_DIR, "bases.json")).items() if isinstance(v, str)}
-    _bases.update(_load_local_bases(local_dir))
+    _bases.update(_load_local_bases(local_dirs))
 
-    # Modifiers: scan extension modifiers/ dir + local dir, merge
-    ext_mods = _scan_modifier_files(_MODIFIERS_DIR)
-    local_mods = _scan_modifier_files(local_dir)
-    all_mods = _merge_modifier_dicts(ext_mods, local_mods)
+    # Modifiers: scan extension modifiers/ dir + all local dirs, merge
+    all_mods = _scan_modifier_files(_MODIFIERS_DIR)
+    for local_dir in local_dirs:
+        local_mods = _scan_modifier_files(local_dir)
+        all_mods = _merge_modifier_dicts(all_mods, local_mods)
 
     _all_modifiers = {}
     _dropdown_order = []
