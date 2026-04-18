@@ -1315,17 +1315,13 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Cancel ──
-            def _do_cancel():
-                _cancel_flag.set()
-                return "<span style='color:#c66'>Cancelled</span>"
-
             cancel_btn.click(
-                fn=_do_cancel,
+                fn=lambda: _cancel_flag.set(),
                 _js=f"""function() {{
                     var el = document.getElementById('{tab}_pe_status');
                     if (el) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
                 }}""",
-                inputs=[], outputs=[status],
+                inputs=[], outputs=[],
                 queue=False,
                 show_progress=False,
             )
