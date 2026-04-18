@@ -67,11 +67,11 @@ def _load_file(path):
             return {}
         if isinstance(data, dict):
             return data
-        logger.error(f"{path} must be a mapping")
+        print(f"[PromptEnhancer] ERROR: {path} must be a YAML/JSON mapping (dict), got {type(data).__name__}")
     except FileNotFoundError:
         pass
     except Exception as e:
-        logger.error(f"Failed to load {path}: {e}")
+        print(f"[PromptEnhancer] ERROR: Failed to load {path}: {e}")
     return {}
 
 
@@ -128,7 +128,7 @@ def _scan_modifier_files(directory):
             # Require _label in YAML for dropdown name
             label = data.pop("_label", None)
             if not label:
-                logger.warning(f"Skipping {name}: missing _label field")
+                print(f"[PromptEnhancer] WARNING: Skipping {os.path.join(directory, name)}: missing '_label' field. Add '_label: Your Label' to the YAML file.")
                 continue
             result[label] = data
     return result
