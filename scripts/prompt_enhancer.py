@@ -60,6 +60,8 @@ def _load_file(path):
                 data = yaml.safe_load(f)
             else:
                 data = json.load(f)
+        if data is None:
+            return {}
         if isinstance(data, dict):
             return data
         logger.error(f"{path} must be a mapping")
@@ -634,11 +636,14 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # ── Mode checkboxes + Base + Tag Format ──
+            # ── Mode checkboxes ──
             with gr.Row():
-                mode_still = gr.Checkbox(label="Still", value=False, scale=0, min_width=70)
-                mode_scene = gr.Checkbox(label="Scene", value=False, scale=0, min_width=80)
-                mode_audio = gr.Checkbox(label="Audio", value=False, scale=0, min_width=80)
+                mode_still = gr.Checkbox(label="Still", value=False, elem_id=f"{tab}_pe_mode_still")
+                mode_scene = gr.Checkbox(label="Scene", value=False, elem_id=f"{tab}_pe_mode_scene")
+                mode_audio = gr.Checkbox(label="Audio", value=False, elem_id=f"{tab}_pe_mode_audio")
+
+            # ── Base + Tag Format ──
+            with gr.Row():
                 base = gr.Dropdown(
                     label="Base",
                     choices=_base_names(),
