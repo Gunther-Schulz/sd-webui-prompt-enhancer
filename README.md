@@ -6,7 +6,7 @@ Takes your short prompt and expands it into a detailed description or booru-styl
 
 ## Features
 
-- **Local LLM powered** — uses Ollama or any OpenAI-compatible API, zero VRAM impact (CPU by default)
+- **Local LLM powered** — uses Ollama or any OpenAI-compatible API
 - **Three generation modes** — Prose (flowing paragraph), Tags (booru tags), Remix (modify existing)
 - **Mode checkboxes** — Still (frozen moment), Scene (action over time), Audio (sound cues)
 - **130+ categorized modifiers** — organized into auto-generated dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
