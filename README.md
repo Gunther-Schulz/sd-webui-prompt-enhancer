@@ -69,7 +69,7 @@ Restart the WebUI.
 ## Usage
 
 1. Open the **Prompt Enhancer** accordion in the txt2img or img2img tab
-2. Type your prompt in the **Source Prompt** box (or click **Grab** to pull from the main prompt area)
+2. Type your prompt in the **Source Prompt** box
 3. Optionally select modifiers from the categorized dropdowns (Mode, Subject, Setting, Lighting & Mood, etc.)
 5. Optionally select **Wildcards** for creative LLM choices
 6. Choose a generation mode:
