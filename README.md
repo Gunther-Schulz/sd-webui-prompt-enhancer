@@ -7,7 +7,7 @@ Takes your short prompt and expands it into a detailed description using a local
 ## Features
 
 - **Local LLM powered** - uses Ollama or any OpenAI-compatible API
-- **Three action buttons** - Enhance (flowing prompt), Tags (booru tags), Remix (modify existing)
+- **Three action buttons** - Prose (flowing prompt), Tags (booru tags), Remix (modify existing)
 - **Mode checkboxes** - Still (frozen moment), Scene (action over time), Audio (sound cues)
 - **130+ categorized modifiers** - organized into multiple dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
 - **Tag generation** - booru-style tags for Illustrious, NoobAI, and Pony models with tag validation
@@ -67,12 +67,12 @@ Restart the WebUI.
 
 ## Usage
 
-1. Open the **Prompt Enhancer** accordion in the txt2img or img2img tab
+1. Open the **Prompt Proser** accordion in the txt2img or img2img tab
 2. Type your prompt in the **Source Prompt** box (or click **Grab** to pull from the main prompt area)
 3. Optionally check **Still** (image), **Scene** (video), or **Audio** (sound cues)
 4. Optionally select modifiers from the categorized dropdowns (Subject, Setting, Lighting & Mood, etc.)
 5. Optionally select **Wildcards** for creative LLM choices
-6. Click **Enhance** for a flowing paragraph, or **Tags** for booru-style tags
+6. Click **Prose** for a flowing paragraph, or **Tags** for booru-style tags
 
 ### Tag generation
 
@@ -96,7 +96,7 @@ Tag databases are automatically downloaded on first use (~2-3 MB per format). Ta
 Already have an enhanced prompt and want to tweak it?
 
 1. Select new modifiers or wildcards, or update the source prompt
-2. Click **Remix** instead of Enhance
+2. Click **Remix** instead of Prose
 3. The LLM reads the current prompt from the main textarea and integrates the changes without rewriting everything
 
 ### Inline wildcards
@@ -128,7 +128,7 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PROMPT_ENHANCER_LOCAL` | (none) | Comma-separated directories for local modifier overrides |
-| `PROMPT_ENHANCER_TIMEOUT` | 45 | Enhance/Remix LLM timeout in seconds |
+| `PROMPT_ENHANCER_TIMEOUT` | 45 | Prose/Remix LLM timeout in seconds |
 | `PROMPT_ENHANCER_TAGS_TIMEOUT` | 30 | Tags LLM timeout in seconds |
 
 ## Published modifiers
@@ -208,7 +208,7 @@ My Custom Base: |
 
 ## How it works
 
-1. **Enhance**: source prompt + modifiers + wildcards are assembled into a system prompt, sent to the local LLM, which returns a detailed flowing paragraph
+1. **Prose**: source prompt + modifiers + wildcards are assembled into a system prompt, sent to the local LLM, which returns a detailed flowing paragraph
 2. **Tags**: source prompt + modifiers are sent as a structured user message, LLM generates booru tags, which are then validated, corrected, deduplicated, and reordered
 3. **Remix**: the current enhanced prompt is sent back to the LLM with new modifiers to integrate without rewriting
 4. The output is written to the main prompt textbox and settings are saved to image metadata

@@ -585,7 +585,7 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
     if detail == 0:
         if mode == "tags":
             return "Generate a good set of tags with reasonable coverage."
-        return None
+        return "Write a moderately detailed description."
     label = _DETAIL_LABELS.get(detail, "moderate")
     if mode == "tags":
         count = _TAG_COUNTS.get(detail, 20)
@@ -900,7 +900,7 @@ class PromptEnhancer(scripts.Script):
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
-                enhance_btn = gr.Button(value="\U0001f4a1 Enhance", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
+                enhance_btn = gr.Button(value="\u270d Prose", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 grab_btn = gr.Button(value="\u2b07 Grab", scale=0, min_width=80, elem_id=f"{tab}_pe_grab_btn")
@@ -1053,7 +1053,7 @@ class PromptEnhancer(scripts.Script):
                     return "", f"<span style='color:#c66'>{msg}</span>"
 
             enhance_btn.click(
-                fn=lambda: "<span style='color:#aaa'>Enhancing...</span>",
+                fn=lambda: "<span style='color:#aaa'>Generating prose...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_enhance,
