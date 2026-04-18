@@ -754,7 +754,12 @@ class PromptEnhancer(scripts.Script):
                 base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 _tf_names = list(_tag_formats.keys())
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1)
-                tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"], value="Check", scale=1)
+                tag_validation = gr.Radio(
+                    label="Tag Validation",
+                    choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],
+                    value="Check", scale=1,
+                    info="Off=raw | Check=alias only | Fuzzy=alias+guess | Strict=alias+drop invalid | Fuzzy Strict=alias+guess+drop",
+                )
                 tag_validation.do_not_save_to_config = True
 
             # ── Auto-generated modifier dropdowns (one per file) ──
