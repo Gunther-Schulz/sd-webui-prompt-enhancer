@@ -515,6 +515,7 @@ class PromptEnhancer(scripts.Script):
                     placeholder=f"Using: {_env_local}" if _env_local else "Comma-separated dirs (refreshes content only, restart for new dropdowns)",
                     scale=3,
                 )
+                local_dir_path.do_not_save_to_config = True
                 reload_btn = gr.Button(value="\U0001f504 Reload", scale=0, min_width=100)
                 refresh_models_btn = gr.Button(value="\U0001f504 Models", scale=0, min_width=100)
 
