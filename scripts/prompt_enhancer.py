@@ -1141,6 +1141,8 @@ class PromptEnhancer(scripts.Script):
                 seed_reuse_btn = ToolButton(value="\u267b", elem_id=f"{tab}_pe_seed_reuse")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
+                prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=80, info="Prepend source prompt to output")
+                prepend_source.do_not_save_to_config = True
                 seed_random_btn.click(fn=lambda: -1, inputs=[], outputs=[seed], show_progress=False)
                 seed_reuse_btn.click(fn=lambda: _last_seed, inputs=[], outputs=[seed], show_progress=False)
 
@@ -1198,9 +1200,9 @@ class PromptEnhancer(scripts.Script):
 
             # ── Prose ──
             def _enhance(source, api_url, model, base_name, custom_sp, *args):
-                sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
-                wc = args[-5]
-                dd_vals = args[:-5]
+                prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
+                wc = args[-6]
+                dd_vals = args[:-6]
 
                 source = (source or "").strip()
                 if not source:
@@ -1220,6 +1222,8 @@ class PromptEnhancer(scripts.Script):
                 print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}")
                 try:
                     result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
+                    if prepend and source:
+                        result = f"{source}\n\n{result}"
                     return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
@@ -1245,16 +1249,16 @@ class PromptEnhancer(scripts.Script):
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + dd_components
-                       + [wildcards, seed, detail_level, think, temperature],
+                       + [wildcards, prepend_source, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
             def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
                         *args):
-                sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
-                wc = args[-5]
-                dd_vals = args[:-5]
+                prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
+                wc = args[-6]
+                dd_vals = args[:-6]
 
                 source = (source or "").strip()
                 if not source:
@@ -1316,6 +1320,8 @@ class PromptEnhancer(scripts.Script):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
                     final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
+                    if prepend and source:
+                        final = f"{source}\n\n{final}"
                     return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
@@ -1341,7 +1347,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, seed, detail_level, think, temperature],
+                       + [wildcards, prepend_source, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -1379,9 +1385,9 @@ class PromptEnhancer(scripts.Script):
 
             def _refine(existing, source, api_url, model, tag_fmt, validation_mode,
                         *args):
-                sd, th, temp = args[-3], args[-2], args[-1]
-                wc = args[-4]
-                dd_vals = args[:-4]
+                prepend, sd, th, temp = args[-4], args[-3], args[-2], args[-1]
+                wc = args[-5]
+                dd_vals = args[:-5]
 
                 existing = (existing or "").strip()
                 print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}")
@@ -1474,15 +1480,15 @@ class PromptEnhancer(scripts.Script):
                 fn=_refine,
                 inputs=[prompt_in, source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, seed, think, temperature],
+                       + [wildcards, prepend_source, seed, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, *args):
-                sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
-                wc = args[-5]
-                dd_vals = args[:-5]
+                prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
+                wc = args[-6]
+                dd_vals = args[:-6]
 
                 source = (source or "").strip()
                 if not source:
@@ -1527,6 +1533,8 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("error"):
                             status_parts.append(stats["error"])
 
+                    if prepend and source:
+                        tags = f"{source}\n\n{tags}"
                     return tags, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
                 except InterruptedError:
                     return "", "<span style='color:#c66'>Cancelled</span>"
@@ -1544,7 +1552,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, seed, detail_level, think, temperature],
+                       + [wildcards, prepend_source, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -1610,16 +1618,16 @@ class PromptEnhancer(scripts.Script):
         self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think", "PE Seed"]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
-                *dd_components, wildcards, seed, detail_level, think, temperature]
+                *dd_components, wildcards, prepend_source, seed, detail_level, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 *args):
-        # args = *dd_values, wildcards, seed, detail_level, think, temperature
-        wildcards = args[-5]
-        pe_seed = args[-4]
-        detail_level = args[-3]
-        think = args[-2]
-        dd_vals = args[:-5]
+        # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature
+        wildcards = args[-6]
+        pe_seed = args[-5]
+        detail_level = args[-4]
+        think = args[-3]
+        dd_vals = args[:-6]
 
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
