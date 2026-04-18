@@ -1032,18 +1032,14 @@ def _build_wildcard_text(wildcards_list, source=""):
     return "\n\n".join(parts) if parts else ""
 
 
-def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, detail=3):
-    """Assemble the system prompt (base + modifiers + detail, no wildcards)."""
+def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
+    """Assemble the system prompt (base + detail, no modifiers/wildcards)."""
     if base_name == "Custom":
         system_prompt = (custom_system_prompt or "").strip()
     else:
         system_prompt = _bases.get(base_name, "")
     if not system_prompt:
         return None
-
-    style_str = _build_style_string(mod_list)
-    if style_str:
-        system_prompt = f"{system_prompt}\n\n{style_str}"
 
     detail = int(detail) if detail else 0
     try:
@@ -1209,12 +1205,15 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 mods = _collect_modifiers(dd_vals)
-                sp = _assemble_system_prompt(base_name, custom_sp, mods, dl)
+                sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
-                # Build user message with wildcards (LLM pays more attention to user message)
+                # Build user message with modifiers + wildcards
                 user_msg = source
+                style_str = _build_style_string(mods)
+                if style_str:
+                    user_msg = f"{user_msg}\n\n{style_str}"
                 wc_text = _build_wildcard_text(wc, source)
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
@@ -1265,11 +1264,14 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 mods = _collect_modifiers(dd_vals)
-                sp = _assemble_system_prompt(base_name, custom_sp, mods, dl)
+                sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
                 user_msg = source
+                style_str = _build_style_string(mods)
+                if style_str:
+                    user_msg = f"{user_msg}\n\n{style_str}"
                 wc_text = _build_wildcard_text(wc, source)
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
