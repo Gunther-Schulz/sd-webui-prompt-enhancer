@@ -1090,6 +1090,8 @@ class PromptEnhancer(scripts.Script):
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
+                prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=80)
+                prepend_source.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # ── Base + Tag Format + Validation ──
@@ -1141,8 +1143,6 @@ class PromptEnhancer(scripts.Script):
                 seed_reuse_btn = ToolButton(value="\u267b", elem_id=f"{tab}_pe_seed_reuse")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
-                prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=80, info="Prepend source prompt to output")
-                prepend_source.do_not_save_to_config = True
                 seed_random_btn.click(fn=lambda: -1, inputs=[], outputs=[seed], show_progress=False)
                 seed_reuse_btn.click(fn=lambda: _last_seed, inputs=[], outputs=[seed], show_progress=False)
 
