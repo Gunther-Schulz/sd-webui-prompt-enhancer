@@ -22,6 +22,16 @@ except ImportError:
     _HAS_YAML = False
 
 BASES_FILENAME = "_bases"
+_TAGS_DIR = os.path.join(_EXT_DIR, "tags")
+
+# Tag database download URLs and filenames per format
+TAG_DB_URLS = {
+    "Illustrious": ("https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv", "illustrious.csv"),
+    "NoobAI": ("https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/NoobAIXL1.1_dash.csv", "noobai.csv"),
+    "Pony": ("https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv", "illustrious.csv"),  # reuse Illustrious
+}
+
+_tag_databases = {}  # format_name -> set of valid tags
 
 # Mode keywords (rendered as checkboxes, not in files)
 MODE_KEYWORDS = {
@@ -144,6 +154,165 @@ def _build_dropdown_data(categories_dict):
                 flat[name] = keywords
                 choices.append(name)
     return flat, choices
+
+
+# ── Tag database ─────────────────────────────────────────────────────────────
+
+def _download_tag_db(tag_format):
+    """Download tag database for the given format if not cached."""
+    if tag_format not in TAG_DB_URLS:
+        return False
+    url, filename = TAG_DB_URLS[tag_format]
+    os.makedirs(_TAGS_DIR, exist_ok=True)
+    local_path = os.path.join(_TAGS_DIR, filename)
+    if os.path.isfile(local_path):
+        return True
+    try:
+        logger.info(f"Downloading tag database: {filename}")
+        req = urllib.request.Request(url, method="GET")
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            with open(local_path, "wb") as f:
+                f.write(resp.read())
+        logger.info(f"Tag database saved: {local_path}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to download tag database: {e}")
+        return False
+
+
+def _load_tag_db(tag_format):
+    """Load tag database into memory. Returns set of valid tag strings."""
+    if tag_format in _tag_databases:
+        return _tag_databases[tag_format]
+
+    if not _download_tag_db(tag_format):
+        return set()
+
+    _, filename = TAG_DB_URLS[tag_format]
+    local_path = os.path.join(_TAGS_DIR, filename)
+    tags = set()
+    aliases = {}
+    try:
+        with open(local_path, "r", encoding="utf-8") as f:
+            for line in f:
+                parts = line.strip().split(",", 3)
+                if len(parts) >= 1:
+                    tag = parts[0].strip()
+                    if tag:
+                        tags.add(tag)
+                    # Parse aliases (field 4, quoted comma-separated)
+                    if len(parts) >= 4 and parts[3]:
+                        alias_str = parts[3].strip().strip('"')
+                        for alias in alias_str.split(","):
+                            alias = alias.strip()
+                            if alias:
+                                aliases[alias] = tag
+    except Exception as e:
+        logger.error(f"Failed to load tag database: {e}")
+        return set()
+
+    _tag_databases[tag_format] = tags
+    _tag_databases[f"{tag_format}_aliases"] = aliases
+    logger.info(f"Loaded {len(tags)} tags + {len(aliases)} aliases for {tag_format}")
+    return tags
+
+
+def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
+    """Find the closest valid tag for an invalid one.
+
+    Priority: exact alias match > substring match > Levenshtein distance.
+    Returns (corrected_tag, None) or (None, original_tag) if no match.
+    """
+    # Check aliases first
+    if tag in aliases:
+        return aliases[tag], None
+
+    # Substring: is a valid tag contained in or containing this tag?
+    for valid in valid_tags:
+        if len(valid) >= 4 and (valid in tag or tag in valid):
+            return valid, None
+
+    # Levenshtein distance (simple implementation for short strings)
+    best_match = None
+    best_dist = max_distance + 1
+    for valid in valid_tags:
+        # Quick length filter
+        if abs(len(valid) - len(tag)) > max_distance:
+            continue
+        # Calculate distance
+        dist = _levenshtein(tag, valid)
+        if dist < best_dist:
+            best_dist = dist
+            best_match = valid
+    if best_match and best_dist <= max_distance:
+        return best_match, None
+
+    return None, tag  # unmatched
+
+
+def _levenshtein(s1, s2):
+    """Simple Levenshtein distance."""
+    if len(s1) < len(s2):
+        return _levenshtein(s2, s1)
+    if len(s2) == 0:
+        return len(s1)
+    prev_row = range(len(s2) + 1)
+    for i, c1 in enumerate(s1):
+        curr_row = [i + 1]
+        for j, c2 in enumerate(s2):
+            insertions = prev_row[j + 1] + 1
+            deletions = curr_row[j] + 1
+            substitutions = prev_row[j] + (c1 != c2)
+            curr_row.append(min(insertions, deletions, substitutions))
+        prev_row = curr_row
+    return prev_row[-1]
+
+
+def _validate_tags(tags_str, tag_format, drop_invalid=False):
+    """Validate and correct tags against the database.
+
+    Returns (corrected_tags_str, stats_dict).
+    """
+    valid_tags = _load_tag_db(tag_format)
+    if not valid_tags:
+        return tags_str, {"error": "No tag database available"}
+
+    aliases = _tag_databases.get(f"{tag_format}_aliases", {})
+
+    # Determine format
+    use_underscores = tag_format in ("Illustrious", "Pony")
+
+    raw_tags = [t.strip() for t in tags_str.split(",") if t.strip()]
+    result_tags = []
+    corrected = 0
+    dropped = 0
+    kept = 0
+
+    for tag in raw_tags:
+        # Normalize for lookup
+        lookup = tag.replace(" ", "_") if not use_underscores else tag
+
+        if lookup in valid_tags:
+            result_tags.append(tag)
+            continue
+
+        # Try to find closest
+        match, unmatched = _find_closest_tag(lookup, valid_tags, aliases)
+        if match:
+            # Restore format
+            if use_underscores:
+                result_tags.append(match)
+            else:
+                result_tags.append(match.replace("_", " "))
+            corrected += 1
+        elif drop_invalid:
+            dropped += 1
+        else:
+            result_tags.append(tag)
+            kept += 1
+
+    stats = {"corrected": corrected, "dropped": dropped, "kept_invalid": kept, "total": len(result_tags)}
+    return ", ".join(result_tags), stats
 
 
 # ── Config state ─────────────────────────────────────────────────────────────
@@ -470,6 +639,8 @@ class PromptEnhancer(scripts.Script):
             with gr.Row():
                 base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 tag_format = gr.Dropdown(label="Tag Format", choices=list(TAGS_SYSTEM_PROMPTS.keys()), value=list(TAGS_SYSTEM_PROMPTS.keys())[0], scale=1)
+                drop_invalid_tags = gr.Checkbox(label="Drop Invalid Tags", value=False, scale=0, min_width=130)
+                drop_invalid_tags.do_not_save_to_config = True
 
             # ── Auto-generated modifier dropdowns (one per file) ──
             dd_components = []
@@ -643,7 +814,7 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Tags ──
-            def _tags(source, api_url, model, tag_fmt, m_still, m_scene, m_audio, *args):
+            def _tags(source, api_url, model, tag_fmt, drop_invalid, m_still, m_scene, m_audio, *args):
                 th, temp = args[-2], args[-1]
                 wc = args[-3]
                 dd_vals = args[:-3]
@@ -666,8 +837,24 @@ class PromptEnhancer(scripts.Script):
                     tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
                     if tag_fmt in ("Illustrious", "Pony"):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
-                    tag_count = len([t for t in tags.split(",") if t.strip()])
-                    return tags, f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
+
+                    # Validate tags against database
+                    tags, stats = _validate_tags(tags, tag_fmt, drop_invalid=drop_invalid)
+                    tag_count = stats.get("total", len([t for t in tags.split(",") if t.strip()]))
+
+                    # Build status message
+                    parts = [f"{tag_count} tags"]
+                    if stats.get("corrected"):
+                        parts.append(f"{stats['corrected']} corrected")
+                    if stats.get("dropped"):
+                        parts.append(f"{stats['dropped']} dropped")
+                    if stats.get("kept_invalid"):
+                        parts.append(f"{stats['kept_invalid']} unverified")
+                    if stats.get("error"):
+                        parts.append(stats["error"])
+                    status_msg = f"<span style='color:#6c6'>OK - {', '.join(parts)}</span>"
+
+                    return tags, status_msg
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
@@ -678,7 +865,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_tags,
-                inputs=[source_prompt, api_url, model, tag_format]
+                inputs=[source_prompt, api_url, model, tag_format, drop_invalid_tags]
                        + mode_inputs + dd_components
                        + [wildcards, think, temperature],
                 outputs=[prompt_out, status],

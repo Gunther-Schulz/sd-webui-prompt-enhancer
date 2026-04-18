@@ -4,3 +4,4 @@ __pycache__/
 *.local.yaml
 *.local.yml
 test_*.py
+tags/
