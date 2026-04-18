@@ -557,23 +557,11 @@ _reload_all()
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
-EXTRACT_SUPPLEMENT = (
-    "\n\nAfter the tags, add a blank line, then 1-2 sentences of natural language "
-    "capturing compositional details that tags alone cannot express (spatial "
-    "relationships, lighting direction, mood, camera angle). Keep it brief. "
-    "Do not repeat what the tags already say."
-)
-
-EXTRACT_FALLBACK_PROMPT = (
-    "You are a danbooru tag expert. Extract danbooru-style tags from the given image description.\n\n"
-    "Rules:\n"
-    "- Output a comma-separated list of tags, nothing else (followed by an NL supplement)\n"
-    "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
-    "- Start with quality tags: masterpiece, best quality, absurdres\n"
-    "- Extract only what is described. Do not add unmentioned details.\n"
-    "- End with exactly one rating tag: rating:general, rating:sensitive, "
-    "rating:questionable, or rating:explicit"
-    + EXTRACT_SUPPLEMENT
+SUMMARIZE_SYSTEM_PROMPT = (
+    "Condense the given image description into 1-2 sentences that capture only "
+    "compositional details: spatial relationships, lighting direction, camera angle, "
+    "and mood. Do not list objects or attributes \u2014 those are already covered by tags. "
+    "Output only the condensed sentences. No commentary."
 )
 
 REFINE_SYSTEM_PROMPT = (
@@ -874,6 +862,7 @@ _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 _MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "1000"))
 _MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
 _cancel_flag = threading.Event()
+_last_seed = -1
 
 
 class _TruncatedError(Exception):
@@ -881,7 +870,13 @@ class _TruncatedError(Exception):
     pass
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
+def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None, seed=-1):
+    global _last_seed
+    import random as _random
+    if seed == -1:
+        seed = _random.randint(0, 2**31 - 1)
+    _last_seed = seed
+
     base = _to_ollama_base(api_url)
     # Prepend /no_think to user message for Qwen3 models that ignore think:false
     user_content = prompt if think else f"/no_think\n{prompt}"
@@ -891,7 +886,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_content},
         ],
-        "options": {"temperature": float(temperature)},
+        "options": {"temperature": float(temperature), "seed": int(seed)},
         "think": bool(think),
         "stream": True,
     }
@@ -1147,13 +1142,21 @@ class PromptEnhancer(scripts.Script):
                 wildcards = gr.Dropdown(label="Wildcards", choices=list(_wildcard_choices), value=[], multiselect=True, scale=1)
                 wildcards.do_not_save_to_config = True
 
-            # ── Detail Level + Temperature + Think ──
+            # ── Detail Level + Temperature + Think + Seed ──
             with gr.Row():
                 detail_level = gr.Slider(label="Detail", minimum=0, maximum=10, value=0, step=1, scale=1, info="0=auto, 1=minimal ... 10=extensive, scales to model")
                 detail_level.do_not_save_to_config = True
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.8, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
+            with gr.Row():
+                seed = gr.Number(label="Seed", value=-1, minimum=-1, step=1, scale=2, info="-1 = random", precision=0)
+                seed.do_not_save_to_config = True
+                seed_random_btn = gr.Button(value="\U0001f3b2", scale=0, min_width=40)
+                seed_reuse_btn = gr.Button(value="\u267b", scale=0, min_width=40)
+                seed_random_btn.click(fn=lambda: -1, inputs=[], outputs=[seed], show_progress=False)
+                # Reuse button: the last used seed is stored in _last_seed
+                seed_reuse_btn.click(fn=lambda: _last_seed, inputs=[], outputs=[seed], show_progress=False)
 
             # ── Custom system prompt ──
             custom_system_prompt = gr.Textbox(label="Custom System Prompt", lines=4, visible=False, placeholder="Enter your custom system prompt...")
@@ -1211,9 +1214,9 @@ class PromptEnhancer(scripts.Script):
 
             # ── Prose ──
             def _enhance(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
-                dl, th, temp = args[-3], args[-2], args[-1]
-                wc = args[-4]
-                dd_vals = args[:-4]
+                sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
+                wc = args[-5]
+                dd_vals = args[:-5]
 
                 source = (source or "").strip()
                 if not source:
@@ -1230,9 +1233,9 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}")
+                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}")
                 try:
-                    result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
+                    result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
                     return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
@@ -1258,16 +1261,16 @@ class PromptEnhancer(scripts.Script):
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + mode_inputs + dd_components
-                       + [wildcards, detail_level, think, temperature],
+                       + [wildcards, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
             def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
                         m_still, m_scene, m_audio, *args):
-                dl, th, temp = args[-3], args[-2], args[-1]
-                wc = args[-4]
-                dd_vals = args[:-4]
+                sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
+                wc = args[-5]
+                dd_vals = args[:-5]
 
                 source = (source or "").strip()
                 if not source:
@@ -1283,32 +1286,33 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                print(f"[PromptEnhancer] Hybrid pass 1 (prose): model={model}, think={th}")
+                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}")
                 try:
-                    # Pass 1: generate prose
-                    prose = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
+                    # Pass 1: generate prose (uses base + modifiers + detail level)
+                    prose = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
                     if not prose:
                         return "", "<span style='color:#c66'>Prose generation returned empty.</span>"
-                    print(f"[PromptEnhancer] Hybrid pass 2 (extract): {len(prose.split())} words → tags+NL")
+                    print(f"[PromptEnhancer] Hybrid pass 2/3 (tags): {len(prose.split())} words → tags")
 
-                    # Pass 2: extract tags + NL from prose
-                    # Use tag format's system prompt if available, with extract supplement
+                    # Pass 2: extract tags only (uses tag format system prompt as-is)
                     fmt_config = _tag_formats.get(tag_fmt, {})
-                    extract_sp = fmt_config.get("system_prompt", "")
-                    if extract_sp:
-                        extract_sp = extract_sp.strip() + EXTRACT_SUPPLEMENT
-                    else:
-                        extract_sp = EXTRACT_FALLBACK_PROMPT
-                    result = _clean_output(_call_llm(prose, api_url, model, extract_sp, temp, think=th), strip_underscores=False)
+                    tag_sp = fmt_config.get("system_prompt", "")
+                    if not tag_sp:
+                        return "", "<span style='color:#c66'>No tag format configured.</span>"
+                    tags_raw = _clean_output(
+                        _call_llm(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)),
+                        strip_underscores=False,
+                    )
+                    print(f"[PromptEnhancer] Hybrid pass 3/3 (summarize): → NL supplement")
 
-                    # Split into tag line(s) and NL supplement
-                    parts = result.split("\n\n", 1)
-                    tag_str = parts[0].strip()
-                    nl_supplement = parts[1].strip() if len(parts) > 1 else ""
+                    # Pass 3: summarize prose to 1-2 compositional sentences
+                    nl_supplement = _clean_output(
+                        _call_llm(prose, api_url, model, SUMMARIZE_SYSTEM_PROMPT, temp, think=th, seed=int(sd)),
+                    )
 
                     # Run tags through full post-processing pipeline
-                    tag_str, stats = _postprocess_tags(tag_str, tag_fmt, validation_mode)
-                    tag_count = stats.get("total", 0) if stats else len([t for t in tag_str.split(",") if t.strip()])
+                    tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
+                    tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags + NL"]
                     if stats:
                         if stats.get("corrected"):
@@ -1318,8 +1322,7 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("kept_invalid"):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
-                    # Rejoin tags + NL supplement
-                    final = f"{tag_str}\n\n{nl_supplement}" if nl_supplement else tag_str
+                    final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
                     return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
@@ -1345,7 +1348,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + mode_inputs + dd_components
-                       + [wildcards, detail_level, think, temperature],
+                       + [wildcards, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -1383,9 +1386,9 @@ class PromptEnhancer(scripts.Script):
 
             def _refine(existing, source, api_url, model, tag_fmt, validation_mode,
                         m_still, m_scene, m_audio, *args):
-                th, temp = args[-2], args[-1]
-                wc = args[-3]
-                dd_vals = args[:-3]
+                sd, th, temp = args[-3], args[-2], args[-1]
+                wc = args[-4]
+                dd_vals = args[:-4]
 
                 existing = (existing or "").strip()
                 print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}")
@@ -1423,7 +1426,7 @@ class PromptEnhancer(scripts.Script):
 
                 try:
                     result = _clean_output(
-                        _call_llm(existing, api_url, model, sp, temp, think=th),
+                        _call_llm(existing, api_url, model, sp, temp, think=th, seed=int(sd)),
                         strip_underscores=(fmt == "prose"),
                     )
 
@@ -1478,16 +1481,15 @@ class PromptEnhancer(scripts.Script):
                 fn=_refine,
                 inputs=[prompt_in, source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
-                       + [wildcards, think, temperature],
+                       + [wildcards, seed, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, m_still, m_scene, m_audio, *args):
-                th, temp = args[-2], args[-1]
-                dl = args[-3]
-                wc = args[-4]
-                dd_vals = args[:-4]
+                sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
+                wc = args[-5]
+                dd_vals = args[:-5]
 
                 source = (source or "").strip()
                 if not source:
@@ -1518,7 +1520,7 @@ class PromptEnhancer(scripts.Script):
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
-                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th), strip_underscores=False)
+                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)), strip_underscores=False)
                     tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
@@ -1549,7 +1551,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
-                       + [wildcards, detail_level, think, temperature],
+                       + [wildcards, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -1610,24 +1612,26 @@ class PromptEnhancer(scripts.Script):
             # Wildcards
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
+            (seed, "PE Seed"),
         ]
         # Add each modifier dropdown
         for i, label in enumerate(dd_labels):
             self.infotext_fields.append((dd_components[i], _make_dd_restore(label)))
 
-        self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think"]
+        self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think", "PE Seed"]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
                 mode_still, mode_scene, mode_audio,
-                *dd_components, wildcards, detail_level, think, temperature]
+                *dd_components, wildcards, seed, detail_level, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 mode_still, mode_scene, mode_audio, *args):
-        # args = *dd_values, wildcards, detail_level, think, temperature
-        wildcards = args[-4]
+        # args = *dd_values, wildcards, seed, detail_level, think, temperature
+        wildcards = args[-5]
+        pe_seed = args[-4]
         detail_level = args[-3]
         think = args[-2]
-        dd_vals = args[:-4]
+        dd_vals = args[:-5]
 
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
@@ -1652,3 +1656,5 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Wildcards"] = ", ".join(wildcards)
         if think:
             p.extra_generation_params["PE Think"] = True
+        if _last_seed >= 0:
+            p.extra_generation_params["PE Seed"] = _last_seed

@@ -77,7 +77,7 @@ Restart the WebUI.
 
 **Prose** — Click **✍ Prose** for a flowing paragraph. Best for Flux, SD3, and other natural-language models.
 
-**Hybrid** — Click **✨ Hybrid** for danbooru-style tags followed by a short NL description. Two-pass pipeline: the LLM first generates a rich prose description (with wildcards/modifiers applied), then extracts tags + a brief NL supplement from it. Best for Illustrious, NoobAI, and Pony — follows the community-recommended "tags + NL" format where tags provide precise control and the NL supplement captures compositional details that tags alone cannot express.
+**Hybrid** — Click **✨ Hybrid** for danbooru-style tags followed by a short NL description. Three-pass pipeline: (1) generates rich prose with wildcards/modifiers, (2) extracts tags from that prose using the selected tag format, (3) summarizes the prose into 1-2 compositional sentences. Best for Illustrious, NoobAI, and Pony — follows the community-recommended "tags + NL" format where tags provide precise control and the NL supplement captures spatial relationships, lighting, and mood that tags alone cannot express.
 
 **Tags** — Click **🏷 Tags** for pure booru-style tags. Uses the selected tag format's system prompt directly. Tags are post-processed through validation, correction, reordering, and paren escaping.
 
@@ -131,6 +131,7 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 | Detail | 0 (auto) | Output length: 0=auto, 1=minimal ... 10=extensive, scales to model |
 | Temperature | 0.8 | Creativity (0 = deterministic, 2 = creative) |
 | Think | off | Let model reason before answering (slower) |
+| Seed | -1 (random) | LLM seed for reproducibility. Fixed seed = same output for same input |
 | API URL | `http://localhost:11434` | Ollama API endpoint |
 | Model | `huihui_ai/qwen3.5-abliterated:9b` | LLM model (auto-detected from Ollama) |
 
@@ -221,7 +222,7 @@ My Custom Base: |
 ## How it works
 
 1. **Prose**: source prompt is sent to the local LLM with system prompt (base + modifiers + detail level) and wildcards in the user message. The LLM returns a detailed flowing paragraph.
-2. **Hybrid**: two-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 sends that prose to the LLM with the selected tag format's instructions plus an NL supplement directive, producing tags + a brief NL description. Tags go through the full post-processing pipeline.
+2. **Hybrid**: three-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 extracts danbooru tags from that prose using the selected tag format's system prompt. Pass 3 summarizes the prose into 1-2 compositional sentences. Tags go through the full post-processing pipeline. All three passes use the same seed for consistency.
 3. **Tags**: source prompt + modifiers + wildcards are sent as a structured user message with tag format instructions. LLM generates booru tags which are validated, corrected, deduplicated, reordered, and paren-escaped.
 4. **Remix**: the current prompt is sent back to the LLM with new modifiers/wildcards to integrate. Auto-detects prose, tags, or hybrid format and uses the appropriate refine prompt and post-processing.
 5. **Streaming**: all LLM calls use streaming with real-time stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
