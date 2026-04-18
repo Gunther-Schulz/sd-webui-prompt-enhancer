@@ -818,9 +818,10 @@ class PromptEnhancer(scripts.Script):
                 wildcards = gr.Dropdown(label="Wildcards", choices=list(_wildcard_choices), value=[], multiselect=True, scale=1)
                 wildcards.do_not_save_to_config = True
 
-            # ── Word Limit + Temperature + Think ──
+            # ── Limits + Temperature + Think ──
             with gr.Row():
-                word_limit = gr.Slider(label="Word Limit", minimum=20, maximum=500, value=150, step=10, scale=1, info="Words for Enhance, tags for Tags")
+                word_limit = gr.Slider(label="Word Limit", minimum=20, maximum=500, value=150, step=10, scale=1, info="For Enhance")
+                tag_limit = gr.Slider(label="Tag Count", minimum=5, maximum=80, value=20, step=1, scale=1, info="For Tags")
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
@@ -1028,7 +1029,7 @@ class PromptEnhancer(scripts.Script):
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, m_still, m_scene, m_audio, *args):
                 th, temp = args[-2], args[-1]
-                wl = args[-3]
+                tl = args[-3]
                 wc = args[-4]
                 dd_vals = args[:-4]
 
@@ -1051,8 +1052,7 @@ class PromptEnhancer(scripts.Script):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
                         user_msg = f"{user_msg}\n\n{wc_prompt}"
-                # Convert word limit to approximate tag count (roughly 1 tag per 8-10 words)
-                tag_count_target = max(10, int(int(wl) / 8)) if wl and int(wl) > 0 else 20
+                tag_count_target = int(tl) if tl and int(tl) > 0 else 20
                 user_msg = f"{user_msg}\n\nGenerate approximately {tag_count_target} tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
@@ -1093,7 +1093,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
-                       + [wildcards, word_limit, think, temperature],
+                       + [wildcards, tag_limit, think, temperature],
                 outputs=[prompt_out, status],
             )
 
