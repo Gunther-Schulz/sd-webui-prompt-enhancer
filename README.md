@@ -117,7 +117,7 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 | Tag Validation | Check | How to validate generated tags against the database |
 | Modifiers | (none) | Multiple categorized dropdowns auto-generated from YAML files |
 | Wildcards | (none) | Creative delegation — let the LLM make choices |
-| Word Limit | 150 | Target output length in words |
+| Detail | 0 (auto) | Output length: 0=auto, 1=minimal ... 10=extensive, scales to model |
 | Temperature | 0.7 | Creativity (0 = deterministic, 2 = very creative) |
 | Think | off | Let model reason before answering (slower) |
 | API URL | `http://localhost:11434` | Ollama API endpoint |
@@ -128,8 +128,8 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PROMPT_ENHANCER_LOCAL` | (none) | Comma-separated directories for local modifier overrides |
-| `PROMPT_ENHANCER_TIMEOUT` | 45 | Prose/Remix LLM timeout in seconds |
-| `PROMPT_ENHANCER_TAGS_TIMEOUT` | 30 | Tags LLM timeout in seconds |
+| `PROMPT_ENHANCER_STALL_TIMEOUT` | 10 | Abort if no tokens received for this many seconds (streaming) |
+| `PROMPT_ENHANCER_MAX_TOKENS` | 2000 | Hard cap on output tokens to prevent endless generation |
 
 ## Published modifiers
 

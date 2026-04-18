@@ -722,10 +722,6 @@ def _split_concatenated_tag(tag):
     return tag
 
 
-_DEFAULT_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TIMEOUT", "45"))
-_DEFAULT_TAGS_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TAGS_TIMEOUT", "30"))
-
-
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 _MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "2000"))
 
@@ -896,7 +892,7 @@ class PromptEnhancer(scripts.Script):
             # ── Source prompt ──
             source_prompt = gr.Textbox(
                 label="Source Prompt", lines=3,
-                placeholder="Type your prompt here, then click Enhance... Use {name?} for inline wildcards.",
+                placeholder="Type your prompt here, then click Prose or Tags... Use {name?} for inline wildcards.",
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
@@ -1018,7 +1014,7 @@ class PromptEnhancer(scripts.Script):
 
             mode_inputs = [mode_still, mode_scene, mode_audio]
 
-            # ── Enhance ──
+            # ── Prose ──
             def _enhance(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
                 dl, th, temp = args[-3], args[-2], args[-1]
                 wc = args[-4]
@@ -1039,7 +1035,7 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                print(f"[PromptEnhancer] Enhance: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}")
+                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}")
                 try:
                     result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
                     return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
@@ -1063,7 +1059,7 @@ class PromptEnhancer(scripts.Script):
                 outputs=[prompt_out, status],
             )
 
-            # ── Refine ──
+            # ── Remix ──
             def _is_tag_format(text):
                 """Detect if text looks like comma-separated tags vs flowing paragraph."""
                 if not text:
@@ -1096,19 +1092,19 @@ class PromptEnhancer(scripts.Script):
                 dd_vals = args[:-3]
 
                 existing = (existing or "").strip()
-                print(f"[PromptEnhancer] Refine: existing_len={len(existing)}, source_len={len((source or '').strip())}")
+                print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}")
                 if not existing:
-                    return "", "<span style='color:#c66'>No prompt to remix. Generate one first with Enhance or Tags.</span>"
+                    return "", "<span style='color:#c66'>No prompt to remix. Generate one first with Prose or Tags.</span>"
 
                 source = (source or "").strip()
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
-                print(f"[PromptEnhancer] Refine: mods={len(mods)}, wc={len(wc or [])}, source={'yes' if source else 'no'}")
+                print(f"[PromptEnhancer] Remix: mods={len(mods)}, wc={len(wc or [])}, source={'yes' if source else 'no'}")
 
                 if not mods and not wc and not source:
                     return "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
 
                 is_tags = _is_tag_format(existing)
-                print(f"[PromptEnhancer] Refine: detected={'tags' if is_tags else 'paragraph'}")
+                print(f"[PromptEnhancer] Remix: detected={'tags' if is_tags else 'paragraph'}")
 
                 if is_tags:
                     # Tag mode refine
@@ -1211,7 +1207,7 @@ class PromptEnhancer(scripts.Script):
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
-                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
+                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
                     # Split concatenated tags, then apply underscore formatting
                     tags = ", ".join(_split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False) else _split_concatenated_tag(t.strip()) for t in tags.split(",") if t.strip())
 
