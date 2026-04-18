@@ -46,6 +46,8 @@ The 4b variant is not recommended as it produces noticeably lower quality output
 
 "Abliterated" models have refusal behaviors removed, which is useful for unrestricted creative content. Standard models work fine for general use.
 
+**Known limitation:** Certain combinations of source prompt, modifiers, and wildcards can cause Qwen to enter a repetition loop, generating garbage until the token limit is reached. This shows as a "Truncated" status. If this happens, try removing or changing a modifier — some combinations are simply too complex for a 9B model to synthesize coherently. Larger models handle complex combinations better.
+
 ## Installation
 
 ### From URL (recommended)
