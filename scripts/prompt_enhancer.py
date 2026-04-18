@@ -439,7 +439,7 @@ TAGS_SYSTEM_PROMPTS = {
         "- Then subject count (1girl, 1boy, 1other, no humans, etc.)\n"
         "- Then appearance, clothing, pose, expression, setting, composition\n"
         "- Use the user's key descriptive words as tags\n"
-        "- Include rating tag at end (rating:general, rating:sensitive, rating:questionable, rating:explicit)\n"
+        "- MUST end with exactly one rating tag. Only valid options: rating:general, rating:sensitive, rating:questionable, rating:explicit. No other rating values.\n"
         "- When style directions are provided, include relevant tags for them"
     ),
     "NoobAI": (
@@ -451,7 +451,7 @@ TAGS_SYSTEM_PROMPTS = {
         "- Then subject count (1girl, 1boy, 1other, no humans, etc.)\n"
         "- Then appearance, clothing, pose, expression, setting, composition\n"
         "- Use the user's key descriptive words as tags\n"
-        "- Include rating tag at end (rating:general, rating:sensitive, rating:questionable, rating:explicit)\n"
+        "- MUST end with exactly one rating tag. Only valid options: rating:general, rating:sensitive, rating:questionable, rating:explicit. No other rating values.\n"
         "- When style directions are provided, include relevant tags for them"
     ),
     "Pony": (
@@ -465,7 +465,7 @@ TAGS_SYSTEM_PROMPTS = {
         "- Then appearance, clothing, pose, expression, setting, composition\n"
         "- Use the user's key descriptive words as tags\n"
         "- Do NOT use quality words like masterpiece or best quality\n"
-        "- Include rating tag at end (rating safe, rating questionable, rating explicit)\n"
+        "- MUST end with exactly one rating tag. Only valid options: rating safe, rating questionable, rating explicit. No other rating values.\n"
         "- When style directions are provided, include relevant tags for them"
     ),
 }
