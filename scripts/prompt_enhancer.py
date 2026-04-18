@@ -856,8 +856,12 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                 resp.close()
 
             content = "".join(content_parts)
-            print(f"[PromptEnhancer] Done: {len(content.split())} words, thinking={'yes' if thinking_detected else 'no'}")
-            return _strip_think_blocks(content)
+            was_cancelled = _cancel_flag.is_set()
+            print(f"[PromptEnhancer] Done: {len(content.split())} words, thinking={'yes' if thinking_detected else 'no'}, cancelled={'yes' if was_cancelled else 'no'}")
+            result = _strip_think_blocks(content)
+            if was_cancelled:
+                raise InterruptedError(result)  # pass partial content via exception
+            return result
 
         except urllib.error.URLError as e:
             last_err = e
@@ -1092,6 +1096,11 @@ class PromptEnhancer(scripts.Script):
                 try:
                     result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
                     return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
+                except InterruptedError as e:
+                    partial = _clean_output(str(e))
+                    if partial:
+                        return partial, f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
+                    return "", "<span style='color:#c66'>Cancelled</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
@@ -1201,6 +1210,8 @@ class PromptEnhancer(scripts.Script):
                         return result, f"<span style='color:#6c6'>OK - remixed to {tag_count} tags</span>"
                     else:
                         return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words</span>"
+                except InterruptedError:
+                    return "", "<span style='color:#c66'>Cancelled</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
@@ -1285,6 +1296,8 @@ class PromptEnhancer(scripts.Script):
                         status_msg = f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
 
                     return tags, status_msg
+                except InterruptedError:
+                    return "", "<span style='color:#c66'>Cancelled</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
