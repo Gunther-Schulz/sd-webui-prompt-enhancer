@@ -597,6 +597,12 @@ WILDCARD_PREAMBLE = (
     "Do NOT default to the most popular or obvious option each time."
 )
 
+WILDCARD_PREAMBLE = (
+    "IMPORTANT: You MUST address every creative choice instruction below \u2014 do not skip any. "
+    "When making choices, be genuinely surprising and varied. Do NOT default to the most "
+    "popular or obvious option."
+)
+
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
     "For each one, choose a specific, vivid option that creates a coherent scene. "
