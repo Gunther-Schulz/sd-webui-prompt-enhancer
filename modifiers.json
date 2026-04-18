@@ -157,6 +157,14 @@
         "Extreme Wide": "extreme wide shot, subject tiny in vast environment, landscape dominance, scale and isolation, epic scope",
         "Body Detail": "tight crop on body, abstracting torso or limbs into form and shape, skin texture, curves and lines, fine art body study"
     },
+    "focus": {
+        "Focus Action": "prioritize action, describe movement first and in most detail, supporting elements secondary, dynamic energy central",
+        "Focus Emotion": "prioritize emotion, mood drives every visual choice, viewer should feel the emotion immediately, expression and atmosphere central",
+        "Focus Setting": "prioritize environment, rich setting detail, architecture surfaces light weather objects, subject exists within the world",
+        "Focus Subject": "prioritize the subject's appearance and presence, detailed portrait-like attention, clothing skin features, commanding the frame",
+        "Focus Composition": "prioritize framing and visual balance, geometric arrangement, leading lines, negative space, deliberate placement of elements",
+        "Focus Texture": "prioritize material surfaces and tactile quality, close attention to fabric skin metal wood water, tangible and touchable"
+    },
     "audio": {
         "Add Audio Cues": "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, be concrete about what is heard and when",
         "Ambient City": "ambient city sounds, distant traffic, car horns, pedestrian footsteps, construction hum, urban drone",
