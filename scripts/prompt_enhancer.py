@@ -1319,7 +1319,7 @@ class PromptEnhancer(scripts.Script):
                 fn=lambda: _cancel_flag.set(),
                 _js=f"""function() {{
                     var el = document.getElementById('{tab}_pe_status');
-                    if (el) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
+                    if (el && el.innerHTML.indexOf('...') > -1) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
                 }}""",
                 inputs=[], outputs=[],
                 queue=False,
