@@ -583,6 +583,8 @@ def _get_word_target(detail, preset="sd"):
 def _build_detail_instruction(detail, mode="enhance", preset="sd"):
     """Build detail instruction for enhance or tags."""
     if detail == 0:
+        if mode == "tags":
+            return "Generate a good set of tags with reasonable coverage."
         return None
     label = _DETAIL_LABELS.get(detail, "moderate")
     if mode == "tags":
