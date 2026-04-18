@@ -1293,11 +1293,15 @@ class PromptEnhancer(scripts.Script):
                         return "", "<span style='color:#c66'>Prose generation returned empty.</span>"
                     print(f"[PromptEnhancer] Hybrid pass 2/3 (tags): {len(prose.split())} words → tags")
 
-                    # Pass 2: extract tags only (uses tag format system prompt as-is)
+                    # Pass 2: extract tags (tag format prompt + wildcard context)
                     fmt_config = _tag_formats.get(tag_fmt, {})
                     tag_sp = fmt_config.get("system_prompt", "")
                     if not tag_sp:
                         return "", "<span style='color:#c66'>No tag format configured.</span>"
+                    # Append wildcard context so pass 2 knows what creative choices
+                    # were requested and can tag them (artist, era, medium, etc.)
+                    if wc_text:
+                        tag_sp = f"{tag_sp}\n\nThe following creative choices were requested. Ensure they are reflected in the tags:\n{wc_text}"
                     tags_raw = _clean_output(
                         _call_llm(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)),
                         strip_underscores=False,
