@@ -306,6 +306,20 @@ _WHITELISTED_TAGS = {
     "source_anime", "source_furry", "source_pony", "source_cartoon",
 }
 
+# Common LLM mistakes -> correct danbooru tag
+_TAG_CORRECTIONS = {
+    "1man": "1boy",
+    "1woman": "1girl",
+    "man": "male_focus",
+    "woman": "1girl",
+    "girl": "1girl",
+    "boy": "1boy",
+    "2girl": "2girls",
+    "2boy": "2boys",
+    "3girl": "3girls",
+    "3boy": "3boys",
+}
+
 # Valid rating tags (explicit list, not prefix matching)
 _VALID_RATINGS = {
     # Danbooru style (Illustrious, NoobAI)
@@ -344,6 +358,13 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
     for tag in raw_tags:
         lookup = tag.replace(" ", "_") if not use_underscores else tag
+
+        # Common LLM mistakes — correct before any other check
+        if lookup in _TAG_CORRECTIONS:
+            corrected_tag = _TAG_CORRECTIONS[lookup]
+            result_tags.append(corrected_tag if use_underscores else corrected_tag.replace("_", " "))
+            corrected += 1
+            continue
 
         # Whitelisted tags always pass
         if lookup in _WHITELISTED_TAGS or lookup in _VALID_RATINGS:
@@ -393,9 +414,10 @@ _QUALITY_TAGS = {
 }
 _SOURCE_TAGS = {"source_anime", "source_furry", "source_pony", "source_cartoon"}
 _SUBJECT_TAGS = {
-    "1girl", "2girls", "3girls", "4girls", "5girls", "6+girls", "multiple_girls",
-    "1boy", "2boys", "3boys", "4boys", "5boys", "6+boys", "multiple_boys",
+    "1girl", "1girls", "2girls", "3girls", "4girls", "5girls", "6+girls", "multiple_girls",
+    "1boy", "1man", "2boys", "3boys", "4boys", "5boys", "6+boys", "multiple_boys",
     "1other", "solo", "no_humans", "male_focus", "female_focus",
+    "1woman", "man", "woman", "girl", "boy",
 }
 _RATING_TAGS = {
     "rating:general", "rating:sensitive", "rating:questionable", "rating:explicit",
