@@ -557,6 +557,27 @@ _reload_all()
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
+EXTRACT_SYSTEM_PROMPT = (
+    "You are a danbooru tag expert. Extract danbooru-style tags from the given image description.\n\n"
+    "Output TWO parts:\n"
+    "1. Tags: a single line of comma-separated danbooru-style tags\n"
+    "2. Then a blank line\n"
+    "3. Then 1-2 sentences of natural language capturing compositional details that tags "
+    "alone cannot express (spatial relationships, lighting direction, mood, camera angle)\n\n"
+    "Tag rules:\n"
+    "- Start with quality tags: masterpiece, best quality, absurdres\n"
+    "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
+    "- Extract only what is described. Do not add unmentioned details.\n"
+    "- End the tag line with exactly one rating tag: rating:general (SFW), "
+    "rating:sensitive (swimsuits, mild), rating:questionable (nudity, suggestive), "
+    "rating:explicit (sex, genitalia)\n\n"
+    "NL supplement rules:\n"
+    "- Keep it brief (1-2 sentences)\n"
+    "- Focus on what tags cannot express: spatial layout, lighting direction, mood\n"
+    "- Do not repeat what the tags already say\n\n"
+    "Output tags and NL supplement only. No commentary, no headings."
+)
+
 REFINE_SYSTEM_PROMPT = (
     "You are a prompt editor. You are given an already-complete image/video generation prompt. "
     "Do NOT rewrite, expand, or re-enhance it. Your only job is to integrate the requested "
@@ -1032,6 +1053,7 @@ class PromptEnhancer(scripts.Script):
             )
             with gr.Row():
                 enhance_btn = gr.Button(value="\u270d Prose", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
+                hybrid_btn = gr.Button(value="\u2728 Hybrid", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_hybrid_btn")
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
@@ -1203,6 +1225,69 @@ class PromptEnhancer(scripts.Script):
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_enhance,
+                inputs=[source_prompt, api_url, model, base, custom_system_prompt]
+                       + mode_inputs + dd_components
+                       + [wildcards, detail_level, think, temperature],
+                outputs=[prompt_out, status],
+            )
+
+            # ── Hybrid (two-pass: prose → extract tags + NL) ──
+            def _hybrid(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
+                dl, th, temp = args[-3], args[-2], args[-1]
+                wc = args[-4]
+                dd_vals = args[:-4]
+
+                source = (source or "").strip()
+                if not source:
+                    return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+
+                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                sp = _assemble_system_prompt(base_name, custom_sp, mods, dl)
+                if not sp:
+                    return "", "<span style='color:#c66'>No system prompt configured.</span>"
+
+                user_msg = source
+                wc_text = _build_wildcard_text(wc, source)
+                if wc_text:
+                    user_msg = f"{user_msg}\n\n{wc_text}"
+
+                print(f"[PromptEnhancer] Hybrid pass 1 (prose): model={model}, think={th}")
+                try:
+                    # Pass 1: generate prose
+                    prose = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
+                    if not prose:
+                        return "", "<span style='color:#c66'>Prose generation returned empty.</span>"
+                    print(f"[PromptEnhancer] Hybrid pass 2 (extract): {len(prose.split())} words → tags+NL")
+
+                    # Pass 2: extract tags + NL from prose
+                    result = _clean_output(_call_llm(prose, api_url, model, EXTRACT_SYSTEM_PROMPT, temp, think=th), strip_underscores=False)
+
+                    # Count tags (first line before blank line)
+                    lines = result.split("\n")
+                    tag_line = lines[0] if lines else ""
+                    tag_count = len([t for t in tag_line.split(",") if t.strip()])
+                    return result, f"<span style='color:#6c6'>OK - {tag_count} tags + NL</span>"
+                except InterruptedError as e:
+                    partial = _clean_output(str(e))
+                    if partial:
+                        return partial, f"<span style='color:#c66'>Cancelled (partial)</span>"
+                    return "", "<span style='color:#c66'>Cancelled</span>"
+                except _TruncatedError as e:
+                    return _clean_output(str(e), strip_underscores=False), "<span style='color:#ca6'>Truncated</span>"
+                except urllib.error.URLError as e:
+                    msg = f"Connection failed: {e.reason} - is Ollama running?"
+                    logger.error(msg)
+                    return "", f"<span style='color:#c66'>{msg}</span>"
+                except Exception as e:
+                    msg = f"{type(e).__name__}: {e}"
+                    logger.error(msg)
+                    return "", f"<span style='color:#c66'>{msg}</span>"
+
+            hybrid_event = hybrid_btn.click(
+                fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating hybrid (prose → tags+NL)...</span>")[-1],
+                inputs=[], outputs=[status], show_progress=False,
+            ).then(
+                fn=_hybrid,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + mode_inputs + dd_components
                        + [wildcards, detail_level, think, temperature],
