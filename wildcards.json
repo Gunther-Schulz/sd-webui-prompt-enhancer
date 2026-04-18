@@ -8,40 +8,40 @@
         "Surprise Weather": "Choose specific weather conditions. Describe their visual impact \u2014 how they affect light, surfaces, the subject, and the overall atmosphere."
     },
     "character": {
-        "Random Hair": "Choose a specific hair color and hairstyle for the character. Be specific: blonde, blue, pink, silver, multicolored, twintails, ponytail, braid, bob cut, hime cut, side ponytail, messy, long, short.",
-        "Random Eyes": "Choose a specific eye color and style. Be specific: blue, red, green, heterochromia, glowing, slit pupils, closed, half-closed, empty eyes.",
-        "Random Outfit": "Choose a specific outfit for the character: school uniform, maid outfit, kimono, dress, armor, hoodie, bikini, sundress, military uniform, gothic lolita, casual wear, sportswear, lab coat, nurse outfit.",
-        "Random Expression": "Choose a specific facial expression: smile, grin, smirk, blush, crying, angry, surprised, pout, frown, nervous, embarrassed, dazed, determined, serene.",
-        "Random Pose": "Choose a specific pose: sitting, standing, kneeling, lying, leaning forward, arms behind back, hand on hip, crossed arms, reaching out, looking back, stretching, hugging own legs.",
-        "Random Accessory": "Choose specific accessories: hair ribbon, glasses, choker, earrings, hat, headband, flower in hair, scarf, necklace, bracelet, crown, halo, horns, wings."
+        "Random Hair": "Choose a specific hair color and hairstyle for the character. Be distinctive \u2014 pick an unusual combination, not the most common one.",
+        "Random Eyes": "Choose a specific eye color and style for the character. Pick something distinctive and fitting for the mood.",
+        "Random Outfit": "Choose a specific outfit for the character. Pick something that fits the scene but is not the most obvious choice.",
+        "Random Expression": "Choose a specific facial expression that tells a story. Not just a smile \u2014 pick something with nuance.",
+        "Random Pose": "Choose a specific body pose. Pick something dynamic or expressive, not a default standing pose.",
+        "Random Accessory": "Choose one or two specific accessories that add character. Something that tells you about who this person is."
     },
     "creative": {
-        "Unexpected Angle": "Choose a surprising camera angle that adds visual interest \u2014 extreme low, overhead, Dutch tilt, through-object framing, reflected view. The angle should feel motivated, not gimmicky.",
+        "Unexpected Angle": "Choose a surprising camera angle that adds visual interest. The angle should feel motivated, not gimmicky.",
         "Story Moment": "Place the subject at a specific narrative beat \u2014 arriving, leaving, discovering, waiting, reacting, deciding. Let that moment drive the pose, expression, and energy of the scene.",
         "Texture Focus": "Pick one dominant texture and make it a central visual element. Describe it in rich tactile detail and let it anchor the composition.",
         "Contrast Pairing": "Build the scene around a visual contrast \u2014 old and new, natural and artificial, still and moving, soft and hard. Use this tension as the compositional backbone.",
-        "Era": "Place the scene in a specific decade. Reflect that era authentically in clothing, hairstyles, decor, technology, color palette, and photographic style.",
+        "Era": "Place the scene in a specific decade. Reflect that era authentically in clothing, hairstyles, decor, technology, color palette, and visual style.",
         "Emotion": "Choose a specific emotion and let it drive every visual choice \u2014 pose, expression, lighting mood, color temperature, composition.",
-        "Imperfection": "Add one realistic imperfection \u2014 slight motion blur on a hand, a stray hair across the face, a wrinkle in fabric, slightly overexposed highlights, a smudge, an asymmetry. Something that makes the image feel real rather than sterile.",
-        "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. An empty glass, a packed suitcase, a letter on the table, an open door, untied shoes. Let it sit naturally in the scene without drawing too much attention.",
-        "Light Source": "Instead of default natural lighting, invent a specific unusual light source \u2014 TV screen glow, phone screen illumination, passing car headlights, open refrigerator light, a single bare bulb, neon sign reflection, laptop screen in a dark room. Let it define the color and mood.",
-        "Random Background": "Choose a specific background or setting: outdoors, night sky, starry sky, sunset, cityscape, classroom, bedroom, garden, rooftop, beach, forest, ruins, library, cafe, train station, alley."
+        "Imperfection": "Add one realistic imperfection \u2014 something that makes the image feel real rather than sterile. A small flaw that adds authenticity.",
+        "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. Let it sit naturally without drawing too much attention.",
+        "Light Source": "Instead of default natural lighting, invent a specific unusual light source. Let it define the color and mood of the entire scene.",
+        "Random Background": "Choose a specific, unexpected background or setting. Avoid the most common or generic choices."
     },
     "style influence": {
         "Random Artist": "Choose a specific artist or illustrator whose style should influence this image. Do not pick the most famous one. Pick someone with a distinctive, recognizable visual style. Apply their characteristic techniques, color choices, and composition tendencies.",
-        "Random Series": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style. Do not pick the most popular series. Choose one with a recognizable aesthetic \u2014 character proportions, color palette, linework, and general atmosphere.",
-        "Random Art Movement": "Choose a specific art movement and apply its principles: art nouveau, art deco, impressionism, expressionism, pop art, surrealism, ukiyo-e, baroque, minimalism, constructivism.",
-        "Random Medium": "Choose a specific art medium and make the image look like it was created with it: watercolor, oil paint, colored pencil, ink wash, chalk pastel, gouache, screen print, woodblock print, digital painting, marker."
+        "Random Series": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style. Do not pick the most popular series. Choose one with a recognizable aesthetic.",
+        "Random Art Movement": "Choose a specific art movement and apply its principles throughout the image. Pick one that creates an interesting visual result for this particular scene.",
+        "Random Medium": "Choose a specific art medium and make the image look like it was created with it. Pick something that fits the mood of the scene."
     },
     "anime style": {
         "Anime Artist": "Choose a specific anime or manga illustrator with a distinctive art style. Do not pick the most famous one. Pick someone whose linework, coloring, or composition is immediately recognizable. Apply their distinctive art style throughout.",
-        "Anime Series Style": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style. Do not pick the most popular series. Choose one with a recognizable aesthetic \u2014 character proportions, color palette, linework, and atmosphere.",
-        "Anime Character Archetype": "Choose a specific anime character archetype and apply it: tsundere, yandere, kuudere, dandere, genki girl, ojou-sama, tomboy, miko, idol, magical girl, knight, witch, catgirl, maid, princess, delinquent, student council president, childhood friend.",
-        "Anime Color Scheme": "Choose a distinctive anime color scheme: pastel and soft like slice of life, dark and desaturated like seinen, vivid and oversaturated like shonen, warm golden like romance, cool blue like psychological, neon and high contrast like cyberpunk anime, muted earth tones like isekai.",
-        "Anime Era": "Choose a specific anime visual era: 80s OVA (heavy shading, angular, detailed mechanical), 90s cel (warm palette, hand-painted backgrounds), 2000s digital (sharp lines, flat shading), 2010s polished (complex hair shading, lighting effects), modern (soft gradients, detailed backgrounds, cinematic).",
-        "Anime Race": "Choose a specific anime creature or race type for the character: elf, demon girl, angel, vampire, dragon girl, monster girl, fox girl (kitsune), cat girl (nekomimi), wolf girl, fairy, mermaid, ghost, oni, succubus, witch, dullahan.",
-        "Anime Weapon": "Choose a specific weapon for the character: sword, katana, dual swords, spear, bow, staff, scythe, gun, handgun, rifle, magic wand, shield, gauntlets, chakram, whip, hammer.",
-        "Anime Season": "Choose a specific season and apply its visual conventions: spring (cherry blossoms, fresh green, soft pink), summer (bright sun, cicadas, swimsuit, sunflowers), autumn (red and gold leaves, warm light, sweaters), winter (snow, breath visible, scarves, cozy interiors, illumination).",
-        "Anime Composition": "Choose a specific anime-style composition: close-up portrait, cowboy shot, full body, from below dramatic angle, from above looking down, from behind mysterious, wide shot with detailed background, three quarter view, profile view, dutch angle action shot."
+        "Anime Series Style": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style. Do not pick the most popular series. Choose one with a recognizable aesthetic.",
+        "Anime Character Archetype": "Choose a specific anime character archetype and apply it to the character's personality, pose, and expression. Pick one that fits the scene interestingly.",
+        "Anime Color Scheme": "Choose a distinctive anime color scheme that matches a specific genre or mood. Let the palette drive the entire image's feel.",
+        "Anime Era": "Choose a specific anime visual era and apply its conventions \u2014 the shading style, linework, color palette, and overall aesthetic of that period.",
+        "Anime Race": "Choose a specific anime creature or race type for the character. Pick one with distinctive visual features.",
+        "Anime Weapon": "Choose a specific weapon for the character. Pick something that fits the scene and reveals character personality.",
+        "Anime Season": "Choose a specific season and apply its visual conventions \u2014 the plants, light quality, clothing, and atmosphere typical of that time of year.",
+        "Anime Composition": "Choose a specific framing and composition. Pick an angle that adds drama or intimacy to this particular scene."
     }
 }
