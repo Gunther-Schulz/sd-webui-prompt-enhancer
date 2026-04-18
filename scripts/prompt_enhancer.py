@@ -598,11 +598,6 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
         return f"Write a {label} description. Aim for around {words} words."
 
 WILDCARD_PREAMBLE = (
-    "IMPORTANT: For all creative choices below, be genuinely varied. "
-    "Do NOT default to the most popular or obvious option each time."
-)
-
-WILDCARD_PREAMBLE = (
     "IMPORTANT: You MUST address every creative choice instruction below \u2014 do not skip any. "
     "Name your choices explicitly in the output. "
     "Be genuinely surprising and varied. Do NOT default to the most popular or obvious option."
