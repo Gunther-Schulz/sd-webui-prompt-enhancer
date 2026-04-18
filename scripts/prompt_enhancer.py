@@ -442,7 +442,7 @@ def _reorder_tags(tags):
     """
     seen = set()
     quality = []
-    source = []
+    source_tags = []
     subjects = []
     rating = []
     rest = []
@@ -457,7 +457,7 @@ def _reorder_tags(tags):
         if lookup in _QUALITY_TAGS:
             quality.append(tag)
         elif lookup in _SOURCE_TAGS:
-            source.append(tag)
+            source_tags.append(tag)
         elif lookup in _SUBJECT_TAGS:
             subjects.append(tag)
         elif lookup in _RATING_TAGS:
@@ -469,7 +469,12 @@ def _reorder_tags(tags):
     if len(rating) > 1:
         rating = [rating[-1]]
 
-    return quality + source + subjects + rest + rating
+    # Enforce no_humans: remove contradicting character count tags
+    subject_lookups = {t.replace(" ", "_") for t in subjects}
+    if "no_humans" in subject_lookups:
+        subjects = [t for t in subjects if t.replace(" ", "_") == "no_humans"]
+
+    return quality + source_tags + subjects + rest + rating
 
 
 # ── Config state ─────────────────────────────────────────────────────────────
