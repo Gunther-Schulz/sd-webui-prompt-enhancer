@@ -1,4 +1,9 @@
 {
+    "mode": {
+        "Still": "frozen moment, static composition, describe a single instant in time, no temporal language, no movement, captured pose",
+        "Scene": "chronological action, present-progressive verbs, temporal flow, describe movement unfolding over time, use connectors like as then while, no timestamps or scene cuts",
+        "Audio": "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, ambient sounds and sound effects, be concrete about what is heard and when"
+    },
     "genre": {
         "Studio Portrait": "studio portrait, controlled environment, solid or gradient background, classic portrait lighting, shallow depth of field, headshot or three-quarter framing",
         "Environmental Portrait": "environmental portrait, subject in natural context, workplace or home setting, available light, environment tells the story, moderate depth of field",

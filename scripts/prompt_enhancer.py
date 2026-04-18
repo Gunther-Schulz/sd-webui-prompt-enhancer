@@ -554,9 +554,8 @@ class PromptEnhancer(scripts.Script):
                 base = gr.Dropdown(
                     label="Base",
                     choices=_base_names(),
-                    value="Still",
+                    value="Default",
                     scale=2,
-                    info="Still = image, Scene = video",
                 )
                 tag_format = gr.Dropdown(
                     label="Tag Format",
