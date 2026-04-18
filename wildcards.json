@@ -7,6 +7,14 @@
         "Surprise Palette": "Commit to a deliberate color palette of two to four colors. Weave these colors through every element \u2014 clothing, environment, lighting, props.",
         "Surprise Weather": "Choose specific weather conditions. Describe their visual impact \u2014 how they affect light, surfaces, the subject, and the overall atmosphere."
     },
+    "character": {
+        "Random Hair": "Choose a specific hair color and hairstyle for the character. Be specific: blonde, blue, pink, silver, multicolored, twintails, ponytail, braid, bob cut, hime cut, side ponytail, messy, long, short.",
+        "Random Eyes": "Choose a specific eye color and style. Be specific: blue, red, green, heterochromia, glowing, slit pupils, closed, half-closed, empty eyes.",
+        "Random Outfit": "Choose a specific outfit for the character: school uniform, maid outfit, kimono, dress, armor, hoodie, bikini, sundress, military uniform, gothic lolita, casual wear, sportswear, lab coat, nurse outfit.",
+        "Random Expression": "Choose a specific facial expression: smile, grin, smirk, blush, crying, angry, surprised, pout, frown, nervous, embarrassed, dazed, determined, serene.",
+        "Random Pose": "Choose a specific pose: sitting, standing, kneeling, lying, leaning forward, arms behind back, hand on hip, crossed arms, reaching out, looking back, stretching, hugging own legs.",
+        "Random Accessory": "Choose specific accessories: hair ribbon, glasses, choker, earrings, hat, headband, flower in hair, scarf, necklace, bracelet, crown, halo, horns, wings."
+    },
     "creative": {
         "Unexpected Angle": "Choose a surprising camera angle that adds visual interest \u2014 extreme low, overhead, Dutch tilt, through-object framing, reflected view. The angle should feel motivated, not gimmicky.",
         "Story Moment": "Place the subject at a specific narrative beat \u2014 arriving, leaving, discovering, waiting, reacting, deciding. Let that moment drive the pose, expression, and energy of the scene.",
@@ -16,16 +24,7 @@
         "Emotion": "Choose a specific emotion and let it drive every visual choice \u2014 pose, expression, lighting mood, color temperature, composition.",
         "Imperfection": "Add one realistic imperfection \u2014 slight motion blur on a hand, a stray hair across the face, a wrinkle in fabric, slightly overexposed highlights, a smudge, an asymmetry. Something that makes the image feel real rather than sterile.",
         "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. An empty glass, a packed suitcase, a letter on the table, an open door, untied shoes. Let it sit naturally in the scene without drawing too much attention.",
-        "Light Source": "Instead of default natural lighting, invent a specific unusual light source \u2014 TV screen glow, phone screen illumination, passing car headlights, open refrigerator light, a single bare bulb, neon sign reflection, laptop screen in a dark room. Let it define the color and mood."
-    },
-    "anime tags": {
-        "Random Hair": "Choose a specific hair color and hairstyle for the character. Pick from actual danbooru tags like: blonde hair, blue hair, pink hair, silver hair, multicolored hair, twintails, ponytail, braid, bob cut, hime cut, side ponytail, messy hair, long hair, short hair.",
-        "Random Eyes": "Choose a specific eye color and style. Pick from actual danbooru tags like: blue eyes, red eyes, green eyes, heterochromia, glowing eyes, slit pupils, closed eyes, half-closed eyes, empty eyes.",
-        "Random Outfit": "Choose a specific outfit using actual danbooru clothing tags like: school uniform, maid outfit, kimono, dress, armor, hoodie, bikini, sundress, military uniform, chinese clothes, gothic lolita, casual wear, sportswear, lab coat, nurse outfit.",
-        "Random Expression": "Choose a specific facial expression using danbooru tags like: smile, grin, smirk, blush, crying, angry, surprised, pout, ahoge, frown, nervous, embarrassed, dazed, open mouth, teeth.",
-        "Random Pose": "Choose a specific pose using danbooru tags like: sitting, standing, kneeling, lying, leaning forward, arms behind back, hand on hip, crossed arms, peace sign, reaching out, looking back, stretching, hugging own legs.",
-        "Random Accessory": "Choose specific accessories using danbooru tags like: hair ribbon, glasses, choker, earrings, hat, headband, flower in hair, hair clip, scarf, necklace, bracelet, crown, halo, horns, wings.",
-        "Random Background": "Choose a specific background using danbooru tags like: outdoors, indoors, night sky, starry sky, sunset, cityscape, classroom, bedroom, garden, rooftop, beach, forest, ruins, library, cafe.",
-        "Random Series": "Choose a specific anime/game series for the art style influence. Pick from popular copyrights like: touhou, fate series, genshin impact, blue archive, hololive, pokemon, love live, fire emblem, final fantasy, persona."
+        "Light Source": "Instead of default natural lighting, invent a specific unusual light source \u2014 TV screen glow, phone screen illumination, passing car headlights, open refrigerator light, a single bare bulb, neon sign reflection, laptop screen in a dark room. Let it define the color and mood.",
+        "Random Background": "Choose a specific background or setting: outdoors, night sky, starry sky, sunset, cityscape, classroom, bedroom, garden, rooftop, beach, forest, ruins, library, cafe, train station, alley."
     }
 }
