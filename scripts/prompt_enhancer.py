@@ -1313,7 +1313,6 @@ class PromptEnhancer(scripts.Script):
                     if (el) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
                 }}""",
                 inputs=[], outputs=[status],
-                cancels=[prose_event, remix_event, tags_event],
                 show_progress=False,
             )
 
