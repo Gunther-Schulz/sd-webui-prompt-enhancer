@@ -899,11 +899,13 @@ class PromptEnhancer(scripts.Script):
                 dd_vals = args[:-3]
 
                 existing = (existing or "").strip()
+                print(f"[PromptEnhancer] Refine: existing_len={len(existing)}, source_len={len((source or '').strip())}")
                 if not existing:
-                    return "", "<span style='color:#c66'>No prompt to refine.</span>"
+                    return "", "<span style='color:#c66'>No prompt to refine. Generate one first with Enhance.</span>"
 
                 source = (source or "").strip()
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                print(f"[PromptEnhancer] Refine: mods={len(mods)}, wc={len(wc or [])}, source={'yes' if source else 'no'}")
 
                 if not mods and not wc and not source:
                     return "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
