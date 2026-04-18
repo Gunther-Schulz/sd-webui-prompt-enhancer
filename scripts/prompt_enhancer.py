@@ -557,25 +557,23 @@ _reload_all()
 
 # ── Constants ────────────────────────────────────────────────────────────────
 
-EXTRACT_SYSTEM_PROMPT = (
+EXTRACT_SUPPLEMENT = (
+    "\n\nAfter the tags, add a blank line, then 1-2 sentences of natural language "
+    "capturing compositional details that tags alone cannot express (spatial "
+    "relationships, lighting direction, mood, camera angle). Keep it brief. "
+    "Do not repeat what the tags already say."
+)
+
+EXTRACT_FALLBACK_PROMPT = (
     "You are a danbooru tag expert. Extract danbooru-style tags from the given image description.\n\n"
-    "Output TWO parts:\n"
-    "1. Tags: a single line of comma-separated danbooru-style tags\n"
-    "2. Then a blank line\n"
-    "3. Then 1-2 sentences of natural language capturing compositional details that tags "
-    "alone cannot express (spatial relationships, lighting direction, mood, camera angle)\n\n"
-    "Tag rules:\n"
-    "- Start with quality tags: masterpiece, best quality, absurdres\n"
+    "Rules:\n"
+    "- Output a comma-separated list of tags, nothing else (followed by an NL supplement)\n"
     "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
+    "- Start with quality tags: masterpiece, best quality, absurdres\n"
     "- Extract only what is described. Do not add unmentioned details.\n"
-    "- End the tag line with exactly one rating tag: rating:general (SFW), "
-    "rating:sensitive (swimsuits, mild), rating:questionable (nudity, suggestive), "
-    "rating:explicit (sex, genitalia)\n\n"
-    "NL supplement rules:\n"
-    "- Keep it brief (1-2 sentences)\n"
-    "- Focus on what tags cannot express: spatial layout, lighting direction, mood\n"
-    "- Do not repeat what the tags already say\n\n"
-    "Output tags and NL supplement only. No commentary, no headings."
+    "- End with exactly one rating tag: rating:general, rating:sensitive, "
+    "rating:questionable, or rating:explicit"
+    + EXTRACT_SUPPLEMENT
 )
 
 REFINE_SYSTEM_PROMPT = (
@@ -1232,7 +1230,8 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
-            def _hybrid(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
+            def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
+                        m_still, m_scene, m_audio, *args):
                 dl, th, temp = args[-3], args[-2], args[-1]
                 wc = args[-4]
                 dd_vals = args[:-4]
@@ -1260,13 +1259,49 @@ class PromptEnhancer(scripts.Script):
                     print(f"[PromptEnhancer] Hybrid pass 2 (extract): {len(prose.split())} words → tags+NL")
 
                     # Pass 2: extract tags + NL from prose
-                    result = _clean_output(_call_llm(prose, api_url, model, EXTRACT_SYSTEM_PROMPT, temp, think=th), strip_underscores=False)
+                    # Use tag format's system prompt if available, with extract supplement
+                    fmt_config = _tag_formats.get(tag_fmt, {})
+                    extract_sp = fmt_config.get("system_prompt", "")
+                    if extract_sp:
+                        extract_sp = extract_sp.strip() + EXTRACT_SUPPLEMENT
+                    else:
+                        extract_sp = EXTRACT_FALLBACK_PROMPT
+                    result = _clean_output(_call_llm(prose, api_url, model, extract_sp, temp, think=th), strip_underscores=False)
 
-                    # Count tags (first line before blank line)
-                    lines = result.split("\n")
-                    tag_line = lines[0] if lines else ""
-                    tag_count = len([t for t in tag_line.split(",") if t.strip()])
-                    return result, f"<span style='color:#6c6'>OK - {tag_count} tags + NL</span>"
+                    # Split into tag line(s) and NL supplement
+                    parts = result.split("\n\n", 1)
+                    tag_str = parts[0].strip()
+                    nl_supplement = parts[1].strip() if len(parts) > 1 else ""
+
+                    # Run tags through full post-processing pipeline
+                    tag_str = ", ".join(
+                        _split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False)
+                        else _split_concatenated_tag(t.strip())
+                        for t in tag_str.split(",") if t.strip()
+                    )
+
+                    if validation_mode != "Off":
+                        tag_str, stats = _validate_tags(tag_str, tag_fmt, mode=validation_mode)
+                        tag_count = stats.get("total", 0)
+                        status_parts = [f"{tag_count} tags + NL"]
+                        if stats.get("corrected"):
+                            status_parts.append(f"{stats['corrected']} corrected")
+                        if stats.get("dropped"):
+                            status_parts.append(f"{stats['dropped']} dropped")
+                        if stats.get("kept_invalid"):
+                            status_parts.append(f"{stats['kept_invalid']} unverified")
+                        status_msg = f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
+                    else:
+                        tag_count = len([t for t in tag_str.split(",") if t.strip()])
+                        status_msg = f"<span style='color:#6c6'>OK - {tag_count} tags + NL</span>"
+
+                    # Rejoin tags + NL supplement
+                    if nl_supplement:
+                        final = f"{tag_str}\n\n{nl_supplement}"
+                    else:
+                        final = tag_str
+
+                    return final, status_msg
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
@@ -1284,11 +1319,12 @@ class PromptEnhancer(scripts.Script):
                     return "", f"<span style='color:#c66'>{msg}</span>"
 
             hybrid_event = hybrid_btn.click(
-                fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating hybrid (prose → tags+NL)...</span>")[-1],
+                fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating hybrid (prose \u2192 tags+NL)...</span>")[-1],
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_hybrid,
-                inputs=[source_prompt, api_url, model, base, custom_system_prompt]
+                inputs=[source_prompt, api_url, model, base, custom_system_prompt,
+                        tag_format, tag_validation]
                        + mode_inputs + dd_components
                        + [wildcards, detail_level, think, temperature],
                 outputs=[prompt_out, status],
@@ -1296,10 +1332,16 @@ class PromptEnhancer(scripts.Script):
 
             # ── Remix ──
             def _is_tag_format(text):
-                """Detect if text looks like comma-separated tags vs flowing paragraph."""
+                """Detect if text looks like comma-separated tags vs flowing paragraph.
+
+                Also handles hybrid format (tags + blank line + NL supplement)
+                by checking only the first paragraph.
+                """
                 if not text:
                     return False
-                parts = [p.strip() for p in text.split(",")]
+                # Check first paragraph only (hybrid format has tags before blank line)
+                first_para = text.split("\n\n")[0]
+                parts = [p.strip() for p in first_para.split(",")]
                 if len(parts) < 3:
                     return False
                 # Tags: many short segments. Paragraph: few long segments.
