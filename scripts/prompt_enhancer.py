@@ -612,9 +612,12 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
     }
     data = json.dumps(payload).encode("utf-8")
     url = f"{base}/api/chat"
+    logger.info(f"LLM call: model={model}, think={think}, temp={temperature}, prompt_len={len(prompt)}, system_len={len(system_prompt)}")
     last_err = None
     for attempt in range(2):
         try:
+            if attempt > 0:
+                logger.warning(f"Ollama retry attempt {attempt + 1}")
             req = urllib.request.Request(
                 url, data=data,
                 headers={"Content-Type": "application/json"},
@@ -626,6 +629,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
             return _strip_think_blocks(content)
         except urllib.error.URLError as e:
             last_err = e
+            logger.warning(f"Ollama connection failed (attempt {attempt + 1}): {e.reason}")
             if attempt == 0:
                 import time
                 time.sleep(2)
@@ -814,6 +818,7 @@ class PromptEnhancer(scripts.Script):
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
+                logger.info(f"Enhance: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}")
                 try:
                     result = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
                     return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
