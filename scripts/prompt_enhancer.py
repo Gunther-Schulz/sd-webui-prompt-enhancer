@@ -726,11 +726,13 @@ _DEFAULT_TAGS_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TAGS_TIMEOUT", "30")
 
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
     base = _to_ollama_base(api_url)
+    # Prepend /no_think to user message for Qwen3 models that ignore think:false
+    user_content = prompt if think else f"/no_think\n{prompt}"
     payload = {
         "model": model,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": user_content},
         ],
         "options": {"temperature": float(temperature)},
         "think": bool(think),
