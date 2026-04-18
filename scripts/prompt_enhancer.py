@@ -1150,12 +1150,11 @@ class PromptEnhancer(scripts.Script):
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
             with gr.Row():
-                seed = gr.Number(label="Seed", value=-1, minimum=-1, step=1, scale=2, info="-1 = random", precision=0)
+                seed = gr.Number(label="Seed", value=-1, minimum=-1, step=1, scale=1, info="-1 = random", precision=0)
                 seed.do_not_save_to_config = True
-                seed_random_btn = gr.Button(value="\U0001f3b2", scale=0, min_width=40)
-                seed_reuse_btn = gr.Button(value="\u267b", scale=0, min_width=40)
+                seed_random_btn = gr.Button(value="\U0001f3b2", scale=0, min_width=28, size="sm")
+                seed_reuse_btn = gr.Button(value="\u267b", scale=0, min_width=28, size="sm")
                 seed_random_btn.click(fn=lambda: -1, inputs=[], outputs=[seed], show_progress=False)
-                # Reuse button: the last used seed is stored in _last_seed
                 seed_reuse_btn.click(fn=lambda: _last_seed, inputs=[], outputs=[seed], show_progress=False)
 
             # ── Custom system prompt ──
