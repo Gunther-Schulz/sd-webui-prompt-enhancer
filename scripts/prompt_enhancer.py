@@ -545,16 +545,16 @@ _load_tag_formats()
 
 DETAIL_LEVELS = {
     0: None,  # Auto — no instruction
-    1: {"enhance": "Write a very short, minimal description. Only the essentials, no elaboration.",
-        "tags": "Generate a minimal set of only the most essential tags."},
-    2: {"enhance": "Write a short, concise description. Brief but complete.",
-        "tags": "Generate a short, focused set of tags. Keep it concise."},
-    3: {"enhance": "Write a moderately detailed description. Balanced coverage.",
-        "tags": "Generate a balanced set of tags with good coverage."},
-    4: {"enhance": "Write a detailed, vivid description. Include rich specifics.",
-        "tags": "Generate a detailed, comprehensive set of tags."},
-    5: {"enhance": "Write an extensive, highly detailed description. Cover every aspect thoroughly.",
-        "tags": "Generate an extensive, exhaustive set of tags covering every detail."},
+    1: {"enhance": "Write a very short, minimal description. Aim for around 50 words.",
+        "tags": "Generate a minimal set of only the most essential tags. Aim for around 8 tags."},
+    2: {"enhance": "Write a short, concise description. Aim for around 100 words.",
+        "tags": "Generate a short, focused set of tags. Aim for around 15 tags."},
+    3: {"enhance": "Write a moderately detailed description. Aim for around 150 words.",
+        "tags": "Generate a balanced set of tags. Aim for around 20 tags."},
+    4: {"enhance": "Write a detailed, vivid description. Aim for around 250 words.",
+        "tags": "Generate a detailed set of tags. Aim for around 35 tags."},
+    5: {"enhance": "Write an extensive, highly detailed description. Aim for around 400 words.",
+        "tags": "Generate an extensive set of tags. Aim for around 55 tags."},
 }
 
 INLINE_WILDCARD_INSTRUCTION = (
