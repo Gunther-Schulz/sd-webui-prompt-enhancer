@@ -598,7 +598,11 @@ def _clean_output(text):
     return text.strip()
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=45):
+_DEFAULT_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TIMEOUT", "45"))
+_DEFAULT_TAGS_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TAGS_TIMEOUT", "30"))
+
+
+def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
     base = _to_ollama_base(api_url)
     payload = {
         "model": model,
@@ -610,9 +614,11 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
         "think": bool(think),
         "stream": False,
     }
+    if timeout is None:
+        timeout = _DEFAULT_TIMEOUT
     data = json.dumps(payload).encode("utf-8")
     url = f"{base}/api/chat"
-    print(f"[PromptEnhancer] LLM call: model={model}, think={think}, temp={temperature}, prompt_len={len(prompt)}, system_len={len(system_prompt)}")
+    print(f"[PromptEnhancer] LLM call: model={model}, think={think}, temp={temperature}, timeout={timeout}s, prompt_len={len(prompt)}, system_len={len(system_prompt)}")
     last_err = None
     for attempt in range(2):
         try:
@@ -919,7 +925,7 @@ class PromptEnhancer(scripts.Script):
                         sp = f"{sp}\n\n{wc_prompt}"
 
                 try:
-                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th, timeout=30))
+                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
                     if fmt_config.get("use_underscores", False):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
 
