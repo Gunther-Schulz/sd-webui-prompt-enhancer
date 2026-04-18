@@ -599,8 +599,8 @@ WILDCARD_PREAMBLE = (
 
 WILDCARD_PREAMBLE = (
     "IMPORTANT: You MUST address every creative choice instruction below \u2014 do not skip any. "
-    "When making choices, be genuinely surprising and varied. Do NOT default to the most "
-    "popular or obvious option."
+    "Name your choices explicitly in the output. "
+    "Be genuinely surprising and varied. Do NOT default to the most popular or obvious option."
 )
 
 INLINE_WILDCARD_INSTRUCTION = (
@@ -829,8 +829,24 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
     raise last_err
 
 
-def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards_list, source="", detail=3):
-    """Assemble the complete system prompt from all layers."""
+def _build_wildcard_text(wildcards_list, source=""):
+    """Build wildcard instructions for the user message."""
+    parts = []
+    has_inline = source and _has_inline_wildcards(source)
+    has_wildcards = any(_wildcards.get(wc, "") for wc in (wildcards_list or []))
+    if has_wildcards or has_inline:
+        parts.append(WILDCARD_PREAMBLE)
+    for wc_name in (wildcards_list or []):
+        wc_prompt = _wildcards.get(wc_name, "")
+        if wc_prompt:
+            parts.append(wc_prompt)
+    if has_inline:
+        parts.append(INLINE_WILDCARD_INSTRUCTION)
+    return "\n\n".join(parts) if parts else ""
+
+
+def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, detail=3):
+    """Assemble the system prompt (base + modifiers + detail, no wildcards)."""
     if base_name == "Custom":
         system_prompt = (custom_system_prompt or "").strip()
     else:
@@ -841,17 +857,6 @@ def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards
     style_str = _build_style_string(mod_list)
     if style_str:
         system_prompt = f"{system_prompt}\n\n{style_str}"
-
-    has_inline = source and _has_inline_wildcards(source)
-    has_wildcards = any(_wildcards.get(wc, "") for wc in (wildcards_list or []))
-    if has_wildcards or has_inline:
-        system_prompt = f"{system_prompt}\n\n{WILDCARD_PREAMBLE}"
-    for wc_name in (wildcards_list or []):
-        wc_prompt = _wildcards.get(wc_name, "")
-        if wc_prompt:
-            system_prompt = f"{system_prompt}\n\n{wc_prompt}"
-    if has_inline:
-        system_prompt = f"{system_prompt}\n\n{INLINE_WILDCARD_INSTRUCTION}"
 
     detail = int(detail) if detail else 0
     try:
@@ -1022,13 +1027,19 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
-                sp = _assemble_system_prompt(base_name, custom_sp, mods, wc, source, dl)
+                sp = _assemble_system_prompt(base_name, custom_sp, mods, dl)
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
+                # Build user message with wildcards (LLM pays more attention to user message)
+                user_msg = source
+                wc_text = _build_wildcard_text(wc, source)
+                if wc_text:
+                    user_msg = f"{user_msg}\n\n{wc_text}"
+
                 print(f"[PromptEnhancer] Enhance: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}")
                 try:
-                    result = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
+                    result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
                     return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
