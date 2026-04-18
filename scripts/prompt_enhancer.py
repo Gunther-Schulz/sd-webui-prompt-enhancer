@@ -150,6 +150,22 @@ def _reload_all(local_dir_path=""):
 
 _reload_all()
 
+REFINE_SYSTEM_PROMPT = (
+    "You are a prompt editor. You are given an already-complete image/video generation prompt. "
+    "Do NOT rewrite, expand, or re-enhance it. Your only job is to integrate the requested "
+    "style changes into the existing text.\n\n"
+    "Rules:\n"
+    "- If a style adds something new (mood, lighting, color), weave it into the existing "
+    "description naturally.\n"
+    "- If a style conflicts with something already present (different location, different "
+    "time of day, different mood), replace the old element with the new one.\n"
+    "- If a wildcard asks you to choose something (location, wardrobe, etc.) and one already "
+    "exists in the prompt, replace it with your creative choice.\n"
+    "- Preserve the original structure, flow, and approximate length.\n"
+    "- Include the style keywords verbatim in the output.\n"
+    "- Output the modified prompt only. No commentary."
+)
+
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
     "For each one, choose a specific, vivid option that creates a coherent scene. "
@@ -327,6 +343,46 @@ def enhance_prompt(source, api_url, model, base, custom_system_prompt,
         return "", f"<span style='color:#c66'>{msg}</span>"
 
 
+def refine_prompt(existing_prompt, api_url, model, modifiers, wildcards, think, temperature):
+    existing = (existing_prompt or "").strip()
+    if not existing:
+        return "", "<span style='color:#c66'>No prompt to refine. Generate one first with Enhance.</span>"
+
+    if not modifiers and not wildcards:
+        return "", "<span style='color:#c66'>Select modifiers or wildcards to apply.</span>"
+
+    system_prompt = REFINE_SYSTEM_PROMPT
+
+    # Build style changes to apply
+    style_parts = []
+    for mod_name in (modifiers or []):
+        keywords = _modifiers.get(mod_name, "")
+        if keywords:
+            if mod_name.lower() not in keywords.lower():
+                keywords = f"{mod_name.lower()}, {keywords}"
+            style_parts.append(keywords)
+    if style_parts:
+        system_prompt = f"{system_prompt}\n\nApply these styles: {', '.join(style_parts)}."
+
+    for wc_name in (wildcards or []):
+        wc_prompt = _wildcards.get(wc_name, "")
+        if wc_prompt:
+            system_prompt = f"{system_prompt}\n\n{wc_prompt}"
+
+    try:
+        refined = _call_llm(existing, api_url, model, system_prompt, temperature, think=think)
+        word_count = len(refined.split())
+        return refined, f"<span style='color:#6c6'>OK - refined to {word_count} words</span>"
+    except urllib.error.URLError as e:
+        msg = f"Connection failed: {e.reason} - is Ollama running?"
+        logger.error(msg)
+        return "", f"<span style='color:#c66'>{msg}</span>"
+    except Exception as e:
+        msg = f"{type(e).__name__}: {e}"
+        logger.error(msg)
+        return "", f"<span style='color:#c66'>{msg}</span>"
+
+
 # ── UI ───────────────────────────────────────────────────────────────────────
 
 class PromptEnhancer(scripts.Script):
@@ -361,6 +417,12 @@ class PromptEnhancer(scripts.Script):
                     scale=0,
                     min_width=120,
                     elem_id=f"{tab}_pe_enhance_btn",
+                )
+                refine_btn = gr.Button(
+                    value="\U0001f527 Refine",
+                    scale=0,
+                    min_width=120,
+                    elem_id=f"{tab}_pe_refine_btn",
                 )
                 grab_btn = gr.Button(
                     value="\u2b07 Grab from prompt box",
@@ -485,7 +547,8 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # Hidden bridge for writing to the main prompt textarea
+            # Hidden bridges for reading from / writing to the main prompt textarea
+            prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
 
             enhance_btn.click(
@@ -497,6 +560,27 @@ class PromptEnhancer(scripts.Script):
                 fn=enhance_prompt,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         modifiers, wildcards, word_limit, think, temperature],
+                outputs=[prompt_out, status],
+            )
+
+            # Refine: grab current prompt from main textarea, apply modifiers, write back
+            refine_btn.click(
+                fn=lambda x: x,
+                _js=f"""function(x) {{
+                    var ta = document.querySelector('#{tab}_prompt textarea');
+                    return ta ? [ta.value] : [x];
+                }}""",
+                inputs=[prompt_in],
+                outputs=[prompt_in],
+                show_progress=False,
+            ).then(
+                fn=lambda: "<span style='color:#aaa'>Refining...</span>",
+                inputs=[],
+                outputs=[status],
+                show_progress=False,
+            ).then(
+                fn=refine_prompt,
+                inputs=[prompt_in, api_url, model, modifiers, wildcards, think, temperature],
                 outputs=[prompt_out, status],
             )
 
