@@ -758,6 +758,7 @@ def _split_concatenated_tag(tag):
 
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 _MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "2000"))
+_MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
 
 
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
@@ -794,7 +795,8 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             # Initial connection timeout
             resp = urllib.request.urlopen(req, timeout=30)
             content_parts = []
-            last_token_time = _time.monotonic()
+            start_time = _time.monotonic()
+            last_token_time = start_time
             thinking_detected = False
 
             try:
@@ -840,6 +842,12 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                         print(f"[PromptEnhancer] Aborting: no tokens for {stall_timeout}s")
                         resp.close()
                         raise TimeoutError(f"No tokens received for {stall_timeout}s")
+
+                    # Total time cap (catches thinking disguised as content)
+                    if _time.monotonic() - start_time > _MAX_TIME:
+                        print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TIME}s total time")
+                        resp.close()
+                        break
             finally:
                 resp.close()
 
