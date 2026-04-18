@@ -1319,18 +1319,36 @@ class PromptEnhancer(scripts.Script):
             )
 
         # ── Metadata ──
+        def _parse_modifiers(params):
+            """Parse PE Modifiers string into a set of names."""
+            raw = params.get("PE Modifiers", "")
+            return {m.strip() for m in raw.split(",") if m.strip()} if raw else set()
+
+        def _make_dd_restore(dd_label):
+            """Create a restore function for a specific dropdown."""
+            dd_choices = _dropdown_choices.get(dd_label, [])
+            def restore(params):
+                saved = _parse_modifiers(params)
+                return [m for m in saved if m in dd_choices and m in _all_modifiers]
+            return restore
+
         self.infotext_fields = [
             (source_prompt, "PE Source"),
             (base, "PE Base"),
             (detail_level, "PE Detail"),
+            # Mode checkboxes
+            (mode_still, lambda params: "Still" in _parse_modifiers(params)),
+            (mode_scene, lambda params: "Scene" in _parse_modifiers(params)),
+            (mode_audio, lambda params: "Audio" in _parse_modifiers(params)),
+            # Wildcards
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
         ]
-        self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Wildcards", "PE Think"]
+        # Add each modifier dropdown
+        for i, label in enumerate(dd_labels):
+            self.infotext_fields.append((dd_components[i], _make_dd_restore(label)))
 
-        # Store dropdown references for process()
-        self._dd_components = dd_components
-        self._mode_inputs = [mode_still, mode_scene, mode_audio]
+        self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think"]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
                 mode_still, mode_scene, mode_audio,
