@@ -8,12 +8,12 @@ system_prompt: |
   - Output a comma-separated list of tags, nothing else
   - Use spaces in multi-word tags (long hair, blue eyes) - NO underscores
   - Start with quality tags: masterpiece, best quality, very awa
-  - Then ALL subject count tags — one for each person/entity (e.g. 1girl, 1boy for a couple). Never omit a subject.
+  - Then subject count tags for characters explicitly mentioned in the input (1girl, 1boy, etc.). If no characters are described, use no_humans. Never invent characters the user did not mention.
   - For multiple subjects, prefix attributes with who they belong to (e.g. muscular male, long hair female) to avoid ambiguity. Do not use bare attributes like 'muscular' when multiple subjects are present.
   - Then appearance, clothing, pose, expression, setting, composition
   - CRITICAL: Every tag must be consistent with the user's input and style directions. Never add tags that contradict what was requested. If the user says "blonde hair", do not add "brown hair". If a style direction says "rain", do not add "sunny".
   - Use the user's key descriptive words as tags. Do not replace them with synonyms.
-  - Do not invent character details (hair color, eye color, clothing) unless the user left them unspecified.
+  - Only describe characters the user explicitly mentions. Do not invent unmentioned people, genders, or character details.
   - MUST end with exactly one rating tag matching the content: rating:general (SFW), rating:sensitive (swimsuits, mild), rating:questionable (nudity, suggestive), rating:explicit (sex, genitalia). No other rating values.
   - When style directions are provided, include relevant tags for them
 

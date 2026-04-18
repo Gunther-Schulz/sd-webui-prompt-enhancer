@@ -2,6 +2,9 @@ import json
 import logging
 import os
 import re
+import socket
+import threading
+import time
 import urllib.request
 import urllib.error
 
@@ -721,16 +724,17 @@ def _get_ollama_status(api_url):
 # ── Core logic ───────────────────────────────────────────────────────────────
 
 def _strip_think_blocks(text):
-    return re.sub(r"<thi" + r"nk>[\s\S]*?</thi" + r"nk>", "", text).strip()
+    return re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
 
 
 def _has_inline_wildcards(text):
     return bool(re.search(r"\{[^}]+\?\}", text))
 
 
-def _clean_output(text):
+def _clean_output(text, strip_underscores=True):
     text = re.sub(r"\*{1,3}([^*]+)\*{1,3}", r"\1", text)
-    text = re.sub(r"_{1,3}([^_]+)_{1,3}", r"\1", text)
+    if strip_underscores:
+        text = re.sub(r"_{1,3}([^_]+)_{1,3}", r"\1", text)
     return text.strip()
 
 
@@ -756,17 +760,18 @@ def _split_concatenated_tag(tag):
     return tag
 
 
-import threading
-
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 _MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "1000"))
 _MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
 _cancel_flag = threading.Event()
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
-    import time as _time
+class _TruncatedError(Exception):
+    """LLM output was truncated (stall, max tokens, or max time)."""
+    pass
 
+
+def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
     base = _to_ollama_base(api_url)
     # Prepend /no_think to user message for Qwen3 models that ignore think:false
     user_content = prompt if think else f"/no_think\n{prompt}"
@@ -780,7 +785,6 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
         "think": bool(think),
         "stream": True,
     }
-    _cancel_flag.clear()
     data = json.dumps(payload).encode("utf-8")
     url = f"{base}/api/chat"
     stall_timeout = timeout or _STALL_TIMEOUT
@@ -798,15 +802,19 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             )
             # Initial connection timeout
             resp = urllib.request.urlopen(req, timeout=30)
-            # Set socket timeout so reads unblock periodically for cancel checks
-            resp.fp.raw._sock.settimeout(2.0)
+            # Set socket timeout so reads unblock periodically for cancel checks.
+            # Uses CPython internals — wrapped for safety.
+            try:
+                resp.fp.raw._sock.settimeout(2.0)
+            except (AttributeError, OSError):
+                pass
             content_parts = []
-            start_time = _time.monotonic()
+            completed = False
+            start_time = time.monotonic()
             last_token_time = start_time
             thinking_detected = False
 
             try:
-                import socket
                 while True:
                     try:
                         line = resp.readline()
@@ -837,7 +845,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                             thinking_detected = True
                             print(f"[PromptEnhancer] WARNING: Model is thinking despite think=false")
                         # Don't reset timer for thinking tokens — let it stall out
-                        if _time.monotonic() - last_token_time > stall_timeout:
+                        if time.monotonic() - last_token_time > stall_timeout:
                             print(f"[PromptEnhancer] Aborting: thinking exceeded {stall_timeout}s")
                             break
                         continue
@@ -846,7 +854,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                     token = chunk.get("message", {}).get("content", "")
                     if token:
                         content_parts.append(token)
-                        last_token_time = _time.monotonic()
+                        last_token_time = time.monotonic()
                         # Hard cap on total tokens
                         if len(content_parts) > _MAX_TOKENS:
                             print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TOKENS} tokens")
@@ -854,38 +862,44 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
 
                     # Check for completion
                     if chunk.get("done", False):
+                        completed = True
                         break
 
                     # Check stall (no content token for too long)
-                    if _time.monotonic() - last_token_time > stall_timeout:
+                    if time.monotonic() - last_token_time > stall_timeout:
                         print(f"[PromptEnhancer] Aborting: no tokens for {stall_timeout}s")
                         break
 
                     # Total time cap (catches thinking disguised as content)
-                    if _time.monotonic() - start_time > _MAX_TIME:
+                    if time.monotonic() - start_time > _MAX_TIME:
                         print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TIME}s total time")
                         break
             finally:
-                resp.close()
+                try:
+                    resp.close()
+                except OSError:
+                    pass
 
             content = "".join(content_parts)
             was_cancelled = _cancel_flag.is_set()
             print(f"[PromptEnhancer] Done: {len(content.split())} words, thinking={'yes' if thinking_detected else 'no'}, cancelled={'yes' if was_cancelled else 'no'}")
             result = _strip_think_blocks(content)
             if was_cancelled:
-                raise InterruptedError(result)  # pass partial content via exception
+                raise InterruptedError(result)
+            if not completed and result:
+                raise _TruncatedError(result)
             return result
 
         except urllib.error.URLError as e:
             last_err = e
             print(f"[PromptEnhancer] Ollama connection failed (attempt {attempt + 1}): {e.reason}")
             if attempt == 0:
-                _time.sleep(2)
+                time.sleep(2)
         except TimeoutError as e:
             last_err = urllib.error.URLError(str(e))
             print(f"[PromptEnhancer] Timeout (attempt {attempt + 1}): {e}")
             if attempt == 0:
-                _time.sleep(2)
+                time.sleep(2)
 
     raise last_err
 
@@ -1112,11 +1126,11 @@ class PromptEnhancer(scripts.Script):
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        status_msg = f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
-                    else:
-                        status_msg = "<span style='color:#c66'>Cancelled</span>"
-                    print(f"[PromptEnhancer] Prose returning cancel status: {status_msg[:60]}")
-                    return partial or "", status_msg
+                        return partial, f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
+                    return "", "<span style='color:#c66'>Cancelled</span>"
+                except _TruncatedError as e:
+                    result = _clean_output(str(e))
+                    return result, f"<span style='color:#ca6'>Truncated - {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
@@ -1127,7 +1141,7 @@ class PromptEnhancer(scripts.Script):
                     return "", f"<span style='color:#c66'>{msg}</span>"
 
             prose_event = enhance_btn.click(
-                fn=lambda: "<span style='color:#aaa'>Generating prose...</span>",
+                fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating prose...</span>")[-1],
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_enhance,
@@ -1204,7 +1218,7 @@ class PromptEnhancer(scripts.Script):
                         sp = f"{sp}\n\n{wc_prompt}"
 
                 try:
-                    result = _clean_output(_call_llm(existing, api_url, model, sp, temp, think=th))
+                    result = _clean_output(_call_llm(existing, api_url, model, sp, temp, think=th), strip_underscores=not is_tags)
 
                     if is_tags:
                         # Apply tag post-processing
@@ -1227,15 +1241,16 @@ class PromptEnhancer(scripts.Script):
                     else:
                         return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words</span>"
                 except InterruptedError:
-                    print(f"[PromptEnhancer] Remix returning cancel status")
                     return "", "<span style='color:#c66'>Cancelled</span>"
+                except _TruncatedError as e:
+                    return _clean_output(str(e), strip_underscores=not is_tags), "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
                     return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
 
             remix_event = refine_btn.click(
-                fn=lambda x: x,
+                fn=lambda x: (_cancel_flag.clear(), x)[-1],
                 _js=f"""function(x) {{
                     var ta = document.querySelector('#{tab}_prompt textarea');
                     return ta ? [ta.value] : [x];
@@ -1288,7 +1303,7 @@ class PromptEnhancer(scripts.Script):
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
-                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th))
+                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th), strip_underscores=False)
                     # Split concatenated tags, then apply underscore formatting
                     tags = ", ".join(_split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False) else _split_concatenated_tag(t.strip()) for t in tags.split(",") if t.strip())
 
@@ -1314,15 +1329,16 @@ class PromptEnhancer(scripts.Script):
 
                     return tags, status_msg
                 except InterruptedError:
-                    print(f"[PromptEnhancer] Tags returning cancel status")
                     return "", "<span style='color:#c66'>Cancelled</span>"
+                except _TruncatedError as e:
+                    return _clean_output(str(e), strip_underscores=False), "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
                     return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
 
             tags_event = tags_btn.click(
-                fn=lambda: "<span style='color:#aaa'>Generating tags...</span>",
+                fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating tags...</span>")[-1],
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_tags,
