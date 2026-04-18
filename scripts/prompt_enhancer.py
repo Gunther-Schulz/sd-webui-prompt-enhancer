@@ -227,10 +227,15 @@ def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
     if tag in aliases:
         return aliases[tag], None
 
-    # Substring: is a valid tag contained in or containing this tag?
+    # Substring: only match if lengths are within 50% of each other
+    # Prevents "masterpiece" matching "rosa_(masterpiece)_(arknights)"
+    tag_len = len(tag)
     for valid in valid_tags:
-        if len(valid) >= 4 and (valid in tag or tag in valid):
-            return valid, None
+        valid_len = len(valid)
+        if valid_len >= 4 and tag_len >= 4:
+            len_ratio = min(tag_len, valid_len) / max(tag_len, valid_len)
+            if len_ratio >= 0.5 and (valid in tag or tag in valid):
+                return valid, None
 
     # Levenshtein distance (simple implementation for short strings)
     best_match = None
