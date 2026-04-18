@@ -980,7 +980,7 @@ class PromptEnhancer(scripts.Script):
             dd_components = []
             dd_labels = list(_dropdown_order)
 
-            # Layout: 3 dropdowns per row
+            # Layout: 3 dropdowns per row, pad incomplete rows
             for i in range(0, len(dd_labels), 3):
                 row_labels = dd_labels[i:i+3]
                 with gr.Row():
@@ -992,6 +992,9 @@ class PromptEnhancer(scripts.Script):
                         )
                         d.do_not_save_to_config = True
                         dd_components.append(d)
+                    # Pad incomplete rows so dropdowns don't stretch
+                    for _ in range(3 - len(row_labels)):
+                        gr.HTML(value="", visible=True, scale=1)
 
             # ── Wildcards ──
             with gr.Row():
