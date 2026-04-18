@@ -157,6 +157,17 @@
         "Extreme Wide": "extreme wide shot, subject tiny in vast environment, landscape dominance, scale and isolation, epic scope",
         "Body Detail": "tight crop on body, abstracting torso or limbs into form and shape, skin texture, curves and lines, fine art body study"
     },
+    "audio": {
+        "Add Audio Cues": "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, be concrete about what is heard and when",
+        "Ambient City": "ambient city sounds, distant traffic, car horns, pedestrian footsteps, construction hum, urban drone",
+        "Ambient Nature": "ambient nature sounds, birdsong, rustling leaves, flowing water, wind through grass, insects buzzing",
+        "Ambient Indoor": "ambient indoor sounds, clock ticking, refrigerator hum, floorboard creak, muffled voices from another room, air conditioning",
+        "Rain Sounds": "sound of rain, raindrops on roof or window, distant thunder, water dripping, puddle splashes, storm ambience",
+        "Wind": "sound of wind, gusting, howling, gentle breeze, fabric flapping, leaves skittering across ground",
+        "Crowd Murmur": "crowd murmur, overlapping conversations, laughter in background, glasses clinking, general bustle of people",
+        "Music Playing": "music playing in the scene, from a radio or speaker or live performance, describe the genre and mood of the music",
+        "Silence": "near silence, absence of sound, quiet so deep it feels heavy, only the faintest ambient hum or breath audible"
+    },
     "motion": {
         "Frozen Action": "frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action"
     },
