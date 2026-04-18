@@ -167,7 +167,7 @@ REFINE_SYSTEM_PROMPT = (
 )
 
 TAGS_SYSTEM_PROMPTS = {
-    "Underscore (Illustrious)": (
+    "Illustrious": (
         "You are a danbooru tag expert. Convert the user's scene description into danbooru-style tags.\n\n"
         "Rules:\n"
         "- Output a comma-separated list of tags, nothing else\n"
@@ -179,7 +179,7 @@ TAGS_SYSTEM_PROMPTS = {
         "- Include rating tag at end (rating:general, rating:sensitive, rating:questionable, rating:explicit)\n"
         "- When style directions are provided, include relevant tags for them"
     ),
-    "Spaces (NoobAI)": (
+    "NoobAI": (
         "You are a booru tag expert. Convert the user's scene description into booru-style tags for NoobAI XL.\n\n"
         "Rules:\n"
         "- Output a comma-separated list of tags, nothing else\n"
@@ -189,6 +189,20 @@ TAGS_SYSTEM_PROMPTS = {
         "- Then appearance, clothing, pose, expression, setting, composition\n"
         "- Use the user's key descriptive words as tags\n"
         "- Include rating tag at end (rating:general, rating:sensitive, rating:questionable, rating:explicit)\n"
+        "- When style directions are provided, include relevant tags for them"
+    ),
+    "Pony": (
+        "You are a booru tag expert. Convert the user's scene description into tags for Pony Diffusion V6 XL.\n\n"
+        "Rules:\n"
+        "- Output a comma-separated list of tags, nothing else\n"
+        "- Use underscores in multi-word tags (long_hair, blue_eyes)\n"
+        "- Start with score tags: score_9, score_8_up, score_7_up\n"
+        "- Then source tag if applicable (source_anime, source_furry, source_pony, source_cartoon)\n"
+        "- Then subject count (1girl, 1boy, 1other, no_humans, etc.)\n"
+        "- Then appearance, clothing, pose, expression, setting, composition\n"
+        "- Use the user's key descriptive words as tags\n"
+        "- Do NOT use quality words like masterpiece or best_quality\n"
+        "- Include rating tag at end (rating_safe, rating_questionable, rating_explicit)\n"
         "- When style directions are provided, include relevant tags for them"
     ),
 }
