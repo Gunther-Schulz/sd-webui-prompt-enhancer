@@ -171,8 +171,8 @@ TAGS_SYSTEM_PROMPTS = {
         "You are a danbooru tag expert. Convert the user's scene description into danbooru-style tags.\n\n"
         "Rules:\n"
         "- Output a comma-separated list of tags, nothing else\n"
-        "- IMPORTANT: Every multi-word tag MUST use underscores between each word. Never concatenate words. Examples: long_hair NOT longhair, blue_eyes NOT blueeyes, graphic_sexual_act NOT graphicsexualact\n"
-        "- Start with quality tags: masterpiece, best_quality, absurdres\n"
+        "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
+        "- Start with quality tags: masterpiece, best quality, absurdres\n"
         "- Then subject count (1girl, 1boy, 1other, no_humans, etc.)\n"
         "- Then appearance, clothing, pose, expression, setting, composition\n"
         "- Use the user's key descriptive words as tags\n"
@@ -195,7 +195,7 @@ TAGS_SYSTEM_PROMPTS = {
         "You are a booru tag expert. Convert the user's scene description into tags for Pony Diffusion V6 XL.\n\n"
         "Rules:\n"
         "- Output a comma-separated list of tags, nothing else\n"
-        "- IMPORTANT: Every multi-word tag MUST use underscores between each word. Never concatenate words. Examples: long_hair NOT longhair, blue_eyes NOT blueeyes, graphic_sexual_act NOT graphicsexualact\n"
+        "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
         "- Start with score tags: score_9, score_8_up, score_7_up\n"
         "- Then source tag if applicable (source_anime, source_furry, source_pony, source_cartoon)\n"
         "- Then subject count (1girl, 1boy, 1other, no_humans, etc.)\n"
@@ -467,6 +467,9 @@ def generate_tags(source, api_url, model, tag_format, modifiers, wildcards, thin
 
     try:
         tags = _clean_output(_call_llm(source, api_url, model, system_prompt, temperature, think=think))
+        # Post-process: convert spaces to underscores for formats that need them
+        if tag_format in ("Illustrious", "Pony"):
+            tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
         tag_count = len([t for t in tags.split(",") if t.strip()])
         return tags, f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
     except urllib.error.URLError as e:
