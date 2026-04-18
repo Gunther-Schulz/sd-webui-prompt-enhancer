@@ -1112,8 +1112,11 @@ class PromptEnhancer(scripts.Script):
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        return partial, f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
-                    return "", "<span style='color:#c66'>Cancelled</span>"
+                        status_msg = f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
+                    else:
+                        status_msg = "<span style='color:#c66'>Cancelled</span>"
+                    print(f"[PromptEnhancer] Prose returning cancel status: {status_msg[:60]}")
+                    return partial or "", status_msg
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
@@ -1224,6 +1227,7 @@ class PromptEnhancer(scripts.Script):
                     else:
                         return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words</span>"
                 except InterruptedError:
+                    print(f"[PromptEnhancer] Remix returning cancel status")
                     return "", "<span style='color:#c66'>Cancelled</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
@@ -1310,6 +1314,7 @@ class PromptEnhancer(scripts.Script):
 
                     return tags, status_msg
                 except InterruptedError:
+                    print(f"[PromptEnhancer] Tags returning cancel status")
                     return "", "<span style='color:#c66'>Cancelled</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
@@ -1328,12 +1333,19 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Cancel ──
+            # Only sets the threading flag. The generation function detects
+            # it via InterruptedError and returns the "Cancelled" status
+            # through Gradio's normal .then() output delivery.
+            # - No cancels=: that kills the asyncio task, orphaning the return value
+            # - No _js: DOM manipulation can desync Svelte component state
+            # - No outputs: avoids racing with the generation function's status output
+            # - trigger_mode="multiple": default "once" silently drops repeat clicks
             cancel_btn.click(
-                fn=lambda: (_cancel_flag.set(), "<span style='color:#c66'>Cancelled</span>")[-1],
-                inputs=[], outputs=[status],
+                fn=lambda: _cancel_flag.set(),
+                inputs=[], outputs=[],
                 queue=False,
                 show_progress=False,
-                cancels=[prose_event, tags_event, remix_event],
+                trigger_mode="multiple",
             )
 
             # ── Write to main prompt textarea ──
