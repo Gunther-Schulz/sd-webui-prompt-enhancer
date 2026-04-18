@@ -543,19 +543,54 @@ REFINE_SYSTEM_PROMPT = (
 
 _load_tag_formats()
 
-DETAIL_LEVELS = {
-    0: None,  # Auto — no instruction
-    1: {"enhance": "Write a very short, minimal description. Aim for around 50 words.",
-        "tags": "Generate a minimal set of only the most essential tags. Aim for around 8 tags."},
-    2: {"enhance": "Write a short, concise description. Aim for around 100 words.",
-        "tags": "Generate a short, focused set of tags. Aim for around 15 tags."},
-    3: {"enhance": "Write a moderately detailed description. Aim for around 150 words.",
-        "tags": "Generate a balanced set of tags. Aim for around 20 tags."},
-    4: {"enhance": "Write a detailed, vivid description. Aim for around 250 words.",
-        "tags": "Generate a detailed set of tags. Aim for around 35 tags."},
-    5: {"enhance": "Write an extensive, highly detailed description. Aim for around 400 words.",
-        "tags": "Generate an extensive set of tags. Aim for around 55 tags."},
+# Max tokens per forge preset (from backend/diffusion_engine/*.py)
+_PRESET_MAX_TOKENS = {
+    "sd": 75, "xl": 75, "flux": 255, "klein": 255,
+    "qwen": 512, "lumina": 512, "zit": 999, "wan": 512,
+    "anima": 512, "ernie": 512,
 }
+
+# Tag counts per detail level (model-independent)
+_TAG_COUNTS = {0: None, 1: 8, 2: 12, 3: 18, 4: 25, 5: 35, 6: 45, 7: 55, 8: 65, 9: 75, 10: 90}
+
+# Detail level descriptions
+_DETAIL_LABELS = {
+    0: None,
+    1: "very short, minimal",
+    2: "short, concise",
+    3: "brief but complete",
+    4: "moderate",
+    5: "moderately detailed",
+    6: "detailed",
+    7: "detailed, vivid",
+    8: "highly detailed",
+    9: "very detailed, comprehensive",
+    10: "extensive, exhaustive",
+}
+
+
+def _get_word_target(detail, preset="sd"):
+    """Calculate word target based on detail level and forge preset."""
+    if detail == 0:
+        return None
+    max_tokens = _PRESET_MAX_TOKENS.get(preset, 75)
+    # Rough: 1 token ≈ 0.75 words, scale detail 1-10 across 20%-100% of max
+    max_words = int(max_tokens * 0.75)
+    fraction = 0.1 + (detail / 10) * 0.9  # detail 1 = 20%, detail 10 = 100%
+    return max(20, int(max_words * fraction))
+
+
+def _build_detail_instruction(detail, mode="enhance", preset="sd"):
+    """Build detail instruction for enhance or tags."""
+    if detail == 0:
+        return None
+    label = _DETAIL_LABELS.get(detail, "moderate")
+    if mode == "tags":
+        count = _TAG_COUNTS.get(detail, 20)
+        return f"Generate a {label} set of tags. Aim for around {count} tags."
+    else:
+        words = _get_word_target(detail, preset)
+        return f"Write a {label} description. Aim for around {words} words."
 
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
@@ -740,9 +775,14 @@ def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards
         system_prompt = f"{system_prompt}\n\n{INLINE_WILDCARD_INSTRUCTION}"
 
     detail = int(detail) if detail else 0
-    level = DETAIL_LEVELS.get(detail)
-    if level:
-        system_prompt = f"{system_prompt}\n\n{level['enhance']}"
+    try:
+        from modules import shared
+        preset = getattr(shared.opts, "forge_preset", "sd")
+    except Exception:
+        preset = "sd"
+    instruction = _build_detail_instruction(detail, "enhance", preset)
+    if instruction:
+        system_prompt = f"{system_prompt}\n\n{instruction}"
 
     return system_prompt
 
@@ -835,7 +875,7 @@ class PromptEnhancer(scripts.Script):
 
             # ── Detail Level + Temperature + Think ──
             with gr.Row():
-                detail_level = gr.Slider(label="Detail", minimum=0, maximum=5, value=0, step=1, scale=1, info="0=auto 1=minimal 2=short 3=medium 4=detailed 5=extensive")
+                detail_level = gr.Slider(label="Detail", minimum=0, maximum=10, value=0, step=1, scale=1, info="0=auto, 1=minimal ... 10=extensive, scales to model")
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
@@ -1067,9 +1107,9 @@ class PromptEnhancer(scripts.Script):
                     if wc_prompt:
                         user_msg = f"{user_msg}\n\n{wc_prompt}"
                 detail = int(dl) if dl else 0
-                level = DETAIL_LEVELS.get(detail)
-                if level:
-                    user_msg = f"{user_msg}\n\n{level['tags']} Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
+                tag_instruction = _build_detail_instruction(detail, "tags")
+                if tag_instruction:
+                    user_msg = f"{user_msg}\n\n{tag_instruction} Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
                 else:
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
