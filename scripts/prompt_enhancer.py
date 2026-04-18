@@ -532,11 +532,12 @@ REFINE_SYSTEM_PROMPT = (
     "- If a style adds something new (mood, lighting, color), weave it into the existing "
     "description naturally.\n"
     "- If a style conflicts with something already present (different location, different "
-    "time of day, different mood), replace the old element with the new one.\n"
+    "time of day, different mood), REPLACE the old element. Do NOT keep both.\n"
     "- If a wildcard asks you to choose something (location, wardrobe, etc.) and one already "
-    "exists in the prompt, replace it with your creative choice.\n"
-    "- Preserve the original structure, flow, and approximate length.\n"
-    "- Include the style keywords verbatim in the output.\n"
+    "exists in the prompt, REPLACE it completely. Remove the old choice and insert your new one. "
+    "Never accumulate multiple locations, outfits, or time periods.\n"
+    "- Keep the same approximate length. Do not make the prompt longer.\n"
+    "- Use the style keywords naturally in the output.\n"
     "- Output the modified prompt only. No commentary."
 )
 
