@@ -166,6 +166,33 @@ REFINE_SYSTEM_PROMPT = (
     "- Output the modified prompt only. No commentary."
 )
 
+TAGS_SYSTEM_PROMPTS = {
+    "Underscore (Illustrious)": (
+        "You are a danbooru tag expert. Convert the user's scene description into danbooru-style tags.\n\n"
+        "Rules:\n"
+        "- Output a comma-separated list of tags, nothing else\n"
+        "- Use underscores in multi-word tags (long_hair, blue_eyes)\n"
+        "- Start with quality tags: masterpiece, best_quality, absurdres\n"
+        "- Then subject count (1girl, 1boy, 1other, no_humans, etc.)\n"
+        "- Then appearance, clothing, pose, expression, setting, composition\n"
+        "- Use the user's key descriptive words as tags\n"
+        "- Include rating tag at end (rating:general, rating:sensitive, rating:questionable, rating:explicit)\n"
+        "- When style directions are provided, include relevant tags for them"
+    ),
+    "Spaces (NoobAI)": (
+        "You are a booru tag expert. Convert the user's scene description into booru-style tags for NoobAI XL.\n\n"
+        "Rules:\n"
+        "- Output a comma-separated list of tags, nothing else\n"
+        "- Use spaces in multi-word tags (long hair, blue eyes) - NO underscores\n"
+        "- Start with quality tags: masterpiece, best quality, very awa\n"
+        "- Then subject count (1girl, 1boy, 1other, no humans, etc.)\n"
+        "- Then appearance, clothing, pose, expression, setting, composition\n"
+        "- Use the user's key descriptive words as tags\n"
+        "- Include rating tag at end (rating:general, rating:sensitive, rating:questionable, rating:explicit)\n"
+        "- When style directions are provided, include relevant tags for them"
+    ),
+}
+
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
     "For each one, choose a specific, vivid option that creates a coherent scene. "
@@ -400,6 +427,44 @@ def refine_prompt(existing_prompt, source_prompt, api_url, model, modifiers, wil
         return "", f"<span style='color:#c66'>{msg}</span>"
 
 
+def generate_tags(source, api_url, model, tag_format, modifiers, wildcards, think, temperature):
+    source = (source or "").strip()
+    if not source:
+        return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+
+    system_prompt = TAGS_SYSTEM_PROMPTS.get(tag_format, list(TAGS_SYSTEM_PROMPTS.values())[0])
+
+    # Add modifier keywords as style directions
+    style_parts = []
+    for mod_name in (modifiers or []):
+        keywords = _modifiers.get(mod_name, "")
+        if keywords:
+            if mod_name.lower() not in keywords.lower():
+                keywords = f"{mod_name.lower()}, {keywords}"
+            style_parts.append(keywords)
+    if style_parts:
+        system_prompt = f"{system_prompt}\n\nApply these styles: {', '.join(style_parts)}."
+
+    # Wildcards
+    for wc_name in (wildcards or []):
+        wc_prompt = _wildcards.get(wc_name, "")
+        if wc_prompt:
+            system_prompt = f"{system_prompt}\n\n{wc_prompt}"
+
+    try:
+        tags = _clean_output(_call_llm(source, api_url, model, system_prompt, temperature, think=think))
+        tag_count = len([t for t in tags.split(",") if t.strip()])
+        return tags, f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
+    except urllib.error.URLError as e:
+        msg = f"Connection failed: {e.reason} - is Ollama running?"
+        logger.error(msg)
+        return "", f"<span style='color:#c66'>{msg}</span>"
+    except Exception as e:
+        msg = f"{type(e).__name__}: {e}"
+        logger.error(msg)
+        return "", f"<span style='color:#c66'>{msg}</span>"
+
+
 # ── UI ───────────────────────────────────────────────────────────────────────
 
 class PromptEnhancer(scripts.Script):
@@ -441,6 +506,12 @@ class PromptEnhancer(scripts.Script):
                     min_width=120,
                     elem_id=f"{tab}_pe_refine_btn",
                 )
+                tags_btn = gr.Button(
+                    value="\U0001f3f7 Tags",
+                    scale=0,
+                    min_width=100,
+                    elem_id=f"{tab}_pe_tags_btn",
+                )
                 grab_btn = gr.Button(
                     value="\u2b07 Grab from prompt box",
                     scale=0,
@@ -460,14 +531,21 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # ── Base ──
+            # ── Base + Tag Format ──
             with gr.Row():
                 base = gr.Dropdown(
                     label="Base",
                     choices=_base_names(),
                     value="Still",
-                    scale=1,
+                    scale=2,
                     info="Still = image, Scene = video",
+                )
+                tag_format = gr.Dropdown(
+                    label="Tag Format",
+                    choices=list(TAGS_SYSTEM_PROMPTS.keys()),
+                    value=list(TAGS_SYSTEM_PROMPTS.keys())[0],
+                    scale=1,
+                    info="For Tags button only",
                 )
 
             # ── Modifiers + Wildcards ──
@@ -598,6 +676,18 @@ class PromptEnhancer(scripts.Script):
             ).then(
                 fn=refine_prompt,
                 inputs=[prompt_in, source_prompt, api_url, model, modifiers, wildcards, think, temperature],
+                outputs=[prompt_out, status],
+            )
+
+            # Tags: convert source prompt + modifiers into booru tags
+            tags_btn.click(
+                fn=lambda: "<span style='color:#aaa'>Generating tags...</span>",
+                inputs=[],
+                outputs=[status],
+                show_progress=False,
+            ).then(
+                fn=generate_tags,
+                inputs=[source_prompt, api_url, model, tag_format, modifiers, wildcards, think, temperature],
                 outputs=[prompt_out, status],
             )
 
