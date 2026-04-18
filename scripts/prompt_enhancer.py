@@ -598,7 +598,7 @@ def _clean_output(text):
     return text.strip()
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
+def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=120):
     base = _to_ollama_base(api_url)
     payload = {
         "model": model,
@@ -623,7 +623,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
                 headers={"Content-Type": "application/json"},
                 method="POST",
             )
-            with urllib.request.urlopen(req, timeout=600) as resp:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
                 result = json.loads(resp.read().decode("utf-8"))
             content = result.get("message", {}).get("content", "")
             return _strip_think_blocks(content)
@@ -919,7 +919,7 @@ class PromptEnhancer(scripts.Script):
                         sp = f"{sp}\n\n{wc_prompt}"
 
                 try:
-                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
+                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th, timeout=60))
                     if fmt_config.get("use_underscores", False):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
 
