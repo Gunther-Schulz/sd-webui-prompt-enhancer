@@ -1075,17 +1075,7 @@ class PromptEnhancer(scripts.Script):
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
-                grab_btn = gr.Button(value="\u2b07 Grab", scale=0, min_width=80, elem_id=f"{tab}_pe_grab_btn")
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
-
-            grab_btn.click(
-                fn=lambda x: x,
-                _js=f"""function(x) {{
-                    var ta = document.querySelector('#{tab}_prompt textarea');
-                    return ta ? [ta.value] : [x];
-                }}""",
-                inputs=[source_prompt], outputs=[source_prompt], show_progress=False,
-            )
 
             # ── Base + Tag Format + Validation ──
             with gr.Row():
