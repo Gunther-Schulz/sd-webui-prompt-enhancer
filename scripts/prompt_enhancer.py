@@ -1109,7 +1109,7 @@ class PromptEnhancer(scripts.Script):
             # ── Tag Format + Validation ──
             with gr.Row():
                 _tf_names = list(_tag_formats.keys())
-                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1)
+                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="For Hybrid and Tags modes")
                 tag_validation = gr.Radio(
                     label="Tag Validation",
                     choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],
