@@ -818,8 +818,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                         # Don't reset timer for thinking tokens — let it stall out
                         if _time.monotonic() - last_token_time > stall_timeout:
                             print(f"[PromptEnhancer] Aborting: thinking exceeded {stall_timeout}s")
-                            resp.close()
-                            raise TimeoutError(f"Model stuck in thinking mode for {stall_timeout}s")
+                            break
                         continue
 
                     # Content tokens
@@ -830,7 +829,6 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                         # Hard cap on total tokens
                         if len(content_parts) > _MAX_TOKENS:
                             print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TOKENS} tokens")
-                            resp.close()
                             break
 
                     # Check for completion
@@ -840,13 +838,11 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                     # Check stall (no content token for too long)
                     if _time.monotonic() - last_token_time > stall_timeout:
                         print(f"[PromptEnhancer] Aborting: no tokens for {stall_timeout}s")
-                        resp.close()
-                        raise TimeoutError(f"No tokens received for {stall_timeout}s")
+                        break
 
                     # Total time cap (catches thinking disguised as content)
                     if _time.monotonic() - start_time > _MAX_TIME:
                         print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TIME}s total time")
-                        resp.close()
                         break
             finally:
                 resp.close()
@@ -1299,7 +1295,11 @@ class PromptEnhancer(scripts.Script):
 
             # ── Cancel ──
             cancel_btn.click(
-                fn=lambda: "<span style='color:#c66'>Cancelled</span>",
+                fn=lambda: "<span style='color:#c66'>Cancelled (waiting for Ollama to finish...)</span>",
+                _js=f"""function() {{
+                    var el = document.getElementById('{tab}_pe_status');
+                    if (el) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
+                }}""",
                 inputs=[], outputs=[status],
                 cancels=[prose_event, remix_event, tags_event],
                 show_progress=False,
