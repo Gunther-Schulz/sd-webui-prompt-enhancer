@@ -1210,7 +1210,7 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
                 # Build user message with modifiers + wildcards
-                user_msg = source
+                user_msg = f"SOURCE PROMPT: {source}"
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -1268,7 +1268,7 @@ class PromptEnhancer(scripts.Script):
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
-                user_msg = source
+                user_msg = f"SOURCE PROMPT: {source}"
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
