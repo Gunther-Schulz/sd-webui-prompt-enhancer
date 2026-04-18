@@ -427,6 +427,14 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     # Reorder tags into standard danbooru order
     result_tags = _reorder_tags(result_tags)
 
+    # Escape parentheses for SD — danbooru tags like artist_(style) need
+    # \( \) so SD doesn't interpret them as emphasis/weight syntax.
+    def _escape_parens(tag):
+        if "(" in tag and "_(" in tag:
+            return tag.replace("(", r"\(").replace(")", r"\)")
+        return tag
+    result_tags = [_escape_parens(t) for t in result_tags]
+
     stats = {"corrected": corrected, "dropped": dropped, "kept_invalid": kept, "total": len(result_tags)}
     return ", ".join(result_tags), stats
 
@@ -759,8 +767,8 @@ def _clean_tag(tag):
     """Strip LLM meta-annotations from a single tag.
 
     Handles patterns like [Illustrator: X], [style: X], (artist: X),
-    [artist:X] style, etc. Preserves danbooru disambiguation suffixes
-    like _(style) which are part of the tag name.
+    [artist:X] style, "setting: garden", etc. Preserves danbooru
+    disambiguation suffixes like _(style) and weight syntax like (tag:1.2).
     """
     tag = tag.strip()
     # Strip all square brackets (never valid in danbooru tags)
@@ -769,12 +777,22 @@ def _clean_tag(tag):
     # Only strip if tag starts with ( (not a suffix like artist_(style))
     if tag.startswith("(") and not tag.startswith("_("):
         tag = tag.lstrip("(").rstrip(")")
-    # Strip "key: value" prefix for meta-annotations
-    meta_match = re.match(r"^(?:illustrat(?:or|ion)|style|art\s*style|artist|artby|art|color|pose|expression|clothing)\s*:\s*(.+)$", tag, re.IGNORECASE)
+    # Strip "key: value" meta-annotation prefixes generically.
+    # Matches "word: content" or "word word: content" where the key part
+    # is 2+ letters and doesn't look like a danbooru tag (rating:, score_).
+    meta_match = re.match(
+        r"^(?!rating|score)([a-zA-Z][a-zA-Z_ ]{1,30})\s*:\s*(.+)$", tag
+    )
     if meta_match:
-        tag = meta_match.group(1)
+        key = meta_match.group(1).strip().lower()
+        # Only strip if the key looks like a meta-annotation, not a valid tag prefix
+        if key not in ("1", "2", "3"):  # don't strip numeric prefixes
+            tag = meta_match.group(2)
     # Strip trailing " style" when it follows a name: "Kazuhiro Fujita style" -> "Kazuhiro Fujita"
     tag = re.sub(r"\s+style$", "", tag, flags=re.IGNORECASE)
+    # Convert hyphens to underscores (hyphens are never valid in danbooru tags)
+    if "-" in tag and "_" not in tag and " " not in tag:
+        tag = tag.replace("-", "_")
     return tag.strip()
 
 
