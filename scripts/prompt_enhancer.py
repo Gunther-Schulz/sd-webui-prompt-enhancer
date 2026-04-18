@@ -246,6 +246,15 @@ def _has_inline_wildcards(text):
     return bool(re.search(r"\{[^}]+\?\}", text))
 
 
+def _clean_output(text):
+    """Strip markdown formatting and other artifacts from LLM output."""
+    # Remove bold/italic markers
+    text = re.sub(r"\*{1,3}([^*]+)\*{1,3}", r"\1", text)
+    # Remove underscore bold/italic
+    text = re.sub(r"_{1,3}([^_]+)_{1,3}", r"\1", text)
+    return text.strip()
+
+
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
     base = _to_ollama_base(api_url)
     payload = {
@@ -327,7 +336,7 @@ def enhance_prompt(source, api_url, model, base, custom_system_prompt,
         system_prompt = f"{system_prompt}\n\nAim for around {word_limit} words."
 
     try:
-        enhanced = _call_llm(source, api_url, model, system_prompt, temperature, think=think)
+        enhanced = _clean_output(_call_llm(source, api_url, model, system_prompt, temperature, think=think))
         word_count = len(enhanced.split())
         return enhanced, f"<span style='color:#6c6'>OK - enhanced to {word_count} words</span>"
     except urllib.error.URLError as e:
@@ -370,7 +379,7 @@ def refine_prompt(existing_prompt, api_url, model, modifiers, wildcards, think, 
             system_prompt = f"{system_prompt}\n\n{wc_prompt}"
 
     try:
-        refined = _call_llm(existing, api_url, model, system_prompt, temperature, think=think)
+        refined = _clean_output(_call_llm(existing, api_url, model, system_prompt, temperature, think=think))
         word_count = len(refined.split())
         return refined, f"<span style='color:#6c6'>OK - refined to {word_count} words</span>"
     except urllib.error.URLError as e:
