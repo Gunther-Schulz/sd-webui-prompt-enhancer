@@ -17,5 +17,15 @@
         "Imperfection": "Add one realistic imperfection \u2014 slight motion blur on a hand, a stray hair across the face, a wrinkle in fabric, slightly overexposed highlights, a smudge, an asymmetry. Something that makes the image feel real rather than sterile.",
         "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. An empty glass, a packed suitcase, a letter on the table, an open door, untied shoes. Let it sit naturally in the scene without drawing too much attention.",
         "Light Source": "Instead of default natural lighting, invent a specific unusual light source \u2014 TV screen glow, phone screen illumination, passing car headlights, open refrigerator light, a single bare bulb, neon sign reflection, laptop screen in a dark room. Let it define the color and mood."
+    },
+    "anime tags": {
+        "Random Hair": "Choose a specific hair color and hairstyle for the character. Pick from actual danbooru tags like: blonde hair, blue hair, pink hair, silver hair, multicolored hair, twintails, ponytail, braid, bob cut, hime cut, side ponytail, messy hair, long hair, short hair.",
+        "Random Eyes": "Choose a specific eye color and style. Pick from actual danbooru tags like: blue eyes, red eyes, green eyes, heterochromia, glowing eyes, slit pupils, closed eyes, half-closed eyes, empty eyes.",
+        "Random Outfit": "Choose a specific outfit using actual danbooru clothing tags like: school uniform, maid outfit, kimono, dress, armor, hoodie, bikini, sundress, military uniform, chinese clothes, gothic lolita, casual wear, sportswear, lab coat, nurse outfit.",
+        "Random Expression": "Choose a specific facial expression using danbooru tags like: smile, grin, smirk, blush, crying, angry, surprised, pout, ahoge, frown, nervous, embarrassed, dazed, open mouth, teeth.",
+        "Random Pose": "Choose a specific pose using danbooru tags like: sitting, standing, kneeling, lying, leaning forward, arms behind back, hand on hip, crossed arms, peace sign, reaching out, looking back, stretching, hugging own legs.",
+        "Random Accessory": "Choose specific accessories using danbooru tags like: hair ribbon, glasses, choker, earrings, hat, headband, flower in hair, hair clip, scarf, necklace, bracelet, crown, halo, horns, wings.",
+        "Random Background": "Choose a specific background using danbooru tags like: outdoors, indoors, night sky, starry sky, sunset, cityscape, classroom, bedroom, garden, rooftop, beach, forest, ruins, library, cafe.",
+        "Random Series": "Choose a specific anime/game series for the art style influence. Pick from popular copyrights like: touhou, fate series, genshin impact, blue archive, hololive, pokemon, love live, fire emblem, final fantasy, persona."
     }
 }
