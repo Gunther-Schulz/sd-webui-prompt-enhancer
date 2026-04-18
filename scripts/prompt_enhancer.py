@@ -368,6 +368,11 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     kept = 0
 
     for tag in raw_tags:
+        # Strip LLM meta-annotations: [style: X], (artist: X), etc.
+        tag = _clean_tag(tag)
+        if not tag:
+            continue
+
         lookup = tag.replace(" ", "_") if not use_underscores else tag
 
         # Common LLM mistakes — correct before any other check
@@ -748,6 +753,29 @@ def _clean_output(text, strip_underscores=True):
     if strip_underscores:
         text = re.sub(r"_{1,3}([^_]+)_{1,3}", r"\1", text)
     return text.strip()
+
+
+def _clean_tag(tag):
+    """Strip LLM meta-annotations from a single tag.
+
+    Handles patterns like [Illustrator: X], [style: X], (artist: X),
+    [artist:X] style, etc. Preserves danbooru disambiguation suffixes
+    like _(style) which are part of the tag name.
+    """
+    tag = tag.strip()
+    # Strip all square brackets (never valid in danbooru tags)
+    tag = tag.replace("[", "").replace("]", "")
+    # Strip paren-wrapped meta: (illustrator: X) -> X, but keep _(suffix) intact
+    # Only strip if tag starts with ( (not a suffix like artist_(style))
+    if tag.startswith("(") and not tag.startswith("_("):
+        tag = tag.lstrip("(").rstrip(")")
+    # Strip "key: value" prefix for meta-annotations
+    meta_match = re.match(r"^(?:illustrat(?:or|ion)|style|art\s*style|artist|artby|art|color|pose|expression|clothing)\s*:\s*(.+)$", tag, re.IGNORECASE)
+    if meta_match:
+        tag = meta_match.group(1)
+    # Strip trailing " style" when it follows a name: "Kazuhiro Fujita style" -> "Kazuhiro Fujita"
+    tag = re.sub(r"\s+style$", "", tag, flags=re.IGNORECASE)
+    return tag.strip()
 
 
 def _split_concatenated_tag(tag):
