@@ -756,9 +756,12 @@ def _split_concatenated_tag(tag):
     return tag
 
 
+import threading
+
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 _MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "1000"))
 _MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
+_cancel_flag = threading.Event()
 
 
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
@@ -777,6 +780,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
         "think": bool(think),
         "stream": True,
     }
+    _cancel_flag.clear()
     data = json.dumps(payload).encode("utf-8")
     url = f"{base}/api/chat"
     stall_timeout = timeout or _STALL_TIMEOUT
@@ -801,6 +805,10 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
 
             try:
                 for line in resp:
+                    # Check cancel flag
+                    if _cancel_flag.is_set():
+                        print(f"[PromptEnhancer] Cancelled by user")
+                        break
                     line = line.decode("utf-8").strip()
                     if not line:
                         continue
@@ -1294,8 +1302,12 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Cancel ──
+            def _do_cancel():
+                _cancel_flag.set()
+                return "<span style='color:#c66'>Cancelled</span>"
+
             cancel_btn.click(
-                fn=lambda: "<span style='color:#c66'>Cancelled (waiting for Ollama to finish...)</span>",
+                fn=_do_cancel,
                 _js=f"""function() {{
                     var el = document.getElementById('{tab}_pe_status');
                     if (el) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
