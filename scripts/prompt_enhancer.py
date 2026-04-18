@@ -757,7 +757,7 @@ def _split_concatenated_tag(tag):
 
 
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
-_MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "2000"))
+_MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "1000"))
 _MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
 
 

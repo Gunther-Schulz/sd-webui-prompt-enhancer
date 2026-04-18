@@ -129,7 +129,7 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 |----------|---------|-------------|
 | `PROMPT_ENHANCER_LOCAL` | (none) | Comma-separated directories for local modifier overrides |
 | `PROMPT_ENHANCER_STALL_TIMEOUT` | 10 | Abort if no tokens received for this many seconds |
-| `PROMPT_ENHANCER_MAX_TOKENS` | 2000 | Hard cap on output tokens |
+| `PROMPT_ENHANCER_MAX_TOKENS` | 1000 | Hard cap on output tokens |
 | `PROMPT_ENHANCER_MAX_TIME` | 60 | Hard cap on total generation time in seconds |
 
 ## Published modifiers
