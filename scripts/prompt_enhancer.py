@@ -109,7 +109,8 @@ def _scan_modifier_files(directory):
     """Scan a directory for modifier YAML/JSON files.
 
     Returns dict: dropdown_name -> {category: {modifier: keywords}}.
-    Skips _bases.* files.
+    Skips _bases.* files. Uses _label field from YAML if present,
+    otherwise derives label from filename.
     """
     result = {}
     if not directory or not os.path.isdir(directory):
@@ -122,10 +123,10 @@ def _scan_modifier_files(directory):
             continue
         if not name.endswith((".yaml", ".yml", ".json")):
             continue
-        # Dropdown label from filename: "visual-style.yaml" -> "Visual Style"
-        label = stem.replace("-", " ").replace("_", " ").title()
         data = _load_file(os.path.join(directory, name))
         if data:
+            # Use _label from YAML if present, else derive from filename
+            label = data.pop("_label", None) or stem.replace("-", " ").replace("_", " ").title()
             result[label] = data
     return result
 
