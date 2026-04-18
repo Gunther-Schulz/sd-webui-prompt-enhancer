@@ -1028,8 +1028,9 @@ class PromptEnhancer(scripts.Script):
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, m_still, m_scene, m_audio, *args):
                 th, temp = args[-2], args[-1]
-                wc = args[-3]
-                dd_vals = args[:-3]
+                wl = args[-3]
+                wc = args[-4]
+                dd_vals = args[:-4]
 
                 source = (source or "").strip()
                 if not source:
@@ -1050,7 +1051,9 @@ class PromptEnhancer(scripts.Script):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
                         user_msg = f"{user_msg}\n\n{wc_prompt}"
-                user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
+                # Convert word limit to approximate tag count (roughly 1 tag per 8-10 words)
+                tag_count_target = max(10, int(int(wl) / 8)) if wl and int(wl) > 0 else 20
+                user_msg = f"{user_msg}\n\nGenerate approximately {tag_count_target} tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
                     tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
@@ -1090,7 +1093,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
-                       + [wildcards, think, temperature],
+                       + [wildcards, word_limit, think, temperature],
                 outputs=[prompt_out, status],
             )
 
