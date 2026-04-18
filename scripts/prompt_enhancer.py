@@ -724,7 +724,12 @@ _DEFAULT_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TIMEOUT", "45"))
 _DEFAULT_TAGS_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TAGS_TIMEOUT", "30"))
 
 
+_STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
+
+
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
+    import time as _time
+
     base = _to_ollama_base(api_url)
     # Prepend /no_think to user message for Qwen3 models that ignore think:false
     user_content = prompt if think else f"/no_think\n{prompt}"
@@ -736,13 +741,13 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
         ],
         "options": {"temperature": float(temperature)},
         "think": bool(think),
-        "stream": False,
+        "stream": True,
     }
-    if timeout is None:
-        timeout = _DEFAULT_TIMEOUT
     data = json.dumps(payload).encode("utf-8")
     url = f"{base}/api/chat"
-    print(f"[PromptEnhancer] LLM call: model={model}, think={think}, temp={temperature}, timeout={timeout}s, prompt_len={len(prompt)}, system_len={len(system_prompt)}")
+    stall_timeout = timeout or _STALL_TIMEOUT
+    print(f"[PromptEnhancer] LLM call: model={model}, think={think}, temp={temperature}, stall={stall_timeout}s, prompt_len={len(prompt)}, system_len={len(system_prompt)}")
+
     last_err = None
     for attempt in range(2):
         try:
@@ -753,16 +758,68 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                 headers={"Content-Type": "application/json"},
                 method="POST",
             )
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
-            content = result.get("message", {}).get("content", "")
+            # Initial connection timeout
+            resp = urllib.request.urlopen(req, timeout=30)
+            content_parts = []
+            last_token_time = _time.monotonic()
+            thinking_detected = False
+
+            try:
+                for line in resp:
+                    line = line.decode("utf-8").strip()
+                    if not line:
+                        continue
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+
+                    # Check for thinking tokens (Qwen3 ignoring think:false)
+                    thinking_text = chunk.get("message", {}).get("thinking", "")
+                    if thinking_text and not think:
+                        if not thinking_detected:
+                            thinking_detected = True
+                            print(f"[PromptEnhancer] WARNING: Model is thinking despite think=false")
+                        # Don't reset timer for thinking tokens — let it stall out
+                        if _time.monotonic() - last_token_time > stall_timeout:
+                            print(f"[PromptEnhancer] Aborting: thinking exceeded {stall_timeout}s")
+                            resp.close()
+                            raise TimeoutError(f"Model stuck in thinking mode for {stall_timeout}s")
+                        continue
+
+                    # Content tokens
+                    token = chunk.get("message", {}).get("content", "")
+                    if token:
+                        content_parts.append(token)
+                        last_token_time = _time.monotonic()
+
+                    # Check for completion
+                    if chunk.get("done", False):
+                        break
+
+                    # Check stall (no content token for too long)
+                    if _time.monotonic() - last_token_time > stall_timeout:
+                        print(f"[PromptEnhancer] Aborting: no tokens for {stall_timeout}s")
+                        resp.close()
+                        raise TimeoutError(f"No tokens received for {stall_timeout}s")
+            finally:
+                resp.close()
+
+            content = "".join(content_parts)
+            print(f"[PromptEnhancer] Done: {len(content.split())} words, thinking={'yes' if thinking_detected else 'no'}")
             return _strip_think_blocks(content)
+
         except urllib.error.URLError as e:
             last_err = e
             print(f"[PromptEnhancer] Ollama connection failed (attempt {attempt + 1}): {e.reason}")
             if attempt == 0:
-                import time
-                time.sleep(2)
+                _time.sleep(2)
+        except TimeoutError as e:
+            last_err = urllib.error.URLError(str(e))
+            print(f"[PromptEnhancer] Timeout (attempt {attempt + 1}): {e}")
+            if attempt == 0:
+                _time.sleep(2)
+
     raise last_err
 
 
