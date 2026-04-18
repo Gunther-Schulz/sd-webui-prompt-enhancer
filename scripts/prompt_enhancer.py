@@ -1309,8 +1309,13 @@ class PromptEnhancer(scripts.Script):
                     print(f"[PromptEnhancer] Hybrid pass 3/3 (summarize): → NL supplement")
 
                     # Pass 3: summarize prose to 1-2 compositional sentences
+                    # Include modifier context so stylistic choices survive
+                    summarize_sp = SUMMARIZE_SYSTEM_PROMPT
+                    style_str = _build_style_string(mods)
+                    if style_str:
+                        summarize_sp = f"{summarize_sp}\n\nThe following styles were applied: {style_str} Ensure these stylistic choices are reflected in the compositional summary."
                     nl_supplement = _clean_output(
-                        _call_llm(prose, api_url, model, SUMMARIZE_SYSTEM_PROMPT, temp, think=th, seed=int(sd)),
+                        _call_llm(prose, api_url, model, summarize_sp, temp, think=th, seed=int(sd)),
                     )
 
                     # Run tags through full post-processing pipeline
