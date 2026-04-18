@@ -289,8 +289,13 @@ _WHITELISTED_TAGS = {
 _RATING_PREFIXES = ("rating:", "rating_")
 
 
-def _validate_tags(tags_str, tag_format, drop_invalid=False):
+def _validate_tags(tags_str, tag_format, mode="Check"):
     """Validate and correct tags against the database.
+
+    Modes:
+      Check  — exact + alias match only, keep unrecognized
+      Fuzzy  — exact + alias + fuzzy correction, keep unrecognized
+      Strict — exact + alias only, drop unrecognized
 
     Returns (corrected_tags_str, stats_dict).
     """
@@ -299,9 +304,9 @@ def _validate_tags(tags_str, tag_format, drop_invalid=False):
         return tags_str, {"error": "No tag database available"}
 
     aliases = _tag_databases.get(f"{tag_format}_aliases", {})
-
-    # Determine format
     use_underscores = tag_format in ("Illustrious", "Pony")
+    use_fuzzy = mode == "Fuzzy"
+    drop_invalid = mode == "Strict"
 
     raw_tags = [t.strip() for t in tags_str.split(",") if t.strip()]
     result_tags = []
@@ -310,28 +315,35 @@ def _validate_tags(tags_str, tag_format, drop_invalid=False):
     kept = 0
 
     for tag in raw_tags:
-        # Normalize for lookup
         lookup = tag.replace(" ", "_") if not use_underscores else tag
 
-        # Whitelisted tags (quality, score, source) always pass
+        # Whitelisted tags always pass
         if lookup in _WHITELISTED_TAGS or any(lookup.startswith(p) for p in _RATING_PREFIXES):
             result_tags.append(tag)
             continue
 
+        # Exact match
         if lookup in valid_tags:
             result_tags.append(tag)
             continue
 
-        # Try to find closest
-        match, unmatched = _find_closest_tag(lookup, valid_tags, aliases)
-        if match:
-            # Restore format
-            if use_underscores:
-                result_tags.append(match)
-            else:
-                result_tags.append(match.replace("_", " "))
+        # Alias match (always applied in all modes)
+        if lookup in aliases:
+            match = aliases[lookup]
+            result_tags.append(match if use_underscores else match.replace("_", " "))
             corrected += 1
-        elif drop_invalid:
+            continue
+
+        # Fuzzy match (only in Fuzzy mode)
+        if use_fuzzy:
+            match, _ = _find_closest_tag(lookup, valid_tags, {})  # skip aliases, already checked
+            if match:
+                result_tags.append(match if use_underscores else match.replace("_", " "))
+                corrected += 1
+                continue
+
+        # Unrecognized tag
+        if drop_invalid:
             dropped += 1
         else:
             result_tags.append(tag)
@@ -665,7 +677,7 @@ class PromptEnhancer(scripts.Script):
             with gr.Row():
                 base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 tag_format = gr.Dropdown(label="Tag Format", choices=list(TAGS_SYSTEM_PROMPTS.keys()), value=list(TAGS_SYSTEM_PROMPTS.keys())[0], scale=1)
-                tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Validate", "Strict"], value="Validate", scale=1)
+                tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Check", "Fuzzy", "Strict"], value="Check", scale=1)
                 tag_validation.do_not_save_to_config = True
 
             # ── Auto-generated modifier dropdowns (one per file) ──
@@ -868,7 +880,7 @@ class PromptEnhancer(scripts.Script):
 
                     # Validate tags against database
                     if validation_mode != "Off":
-                        tags, stats = _validate_tags(tags, tag_fmt, drop_invalid=(validation_mode == "Strict"))
+                        tags, stats = _validate_tags(tags, tag_fmt, mode=validation_mode)
                         tag_count = stats.get("total", tag_count)
 
                         parts = [f"{tag_count} tags"]
