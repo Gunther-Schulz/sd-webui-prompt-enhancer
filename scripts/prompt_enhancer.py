@@ -941,6 +941,7 @@ class PromptEnhancer(scripts.Script):
                 enhance_btn = gr.Button(value="\u270d Prose", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
+                cancel_btn = gr.Button(value="\u2716 Cancel", variant="stop", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
                 grab_btn = gr.Button(value="\u2b07 Grab", scale=0, min_width=80, elem_id=f"{tab}_pe_grab_btn")
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
@@ -1093,7 +1094,7 @@ class PromptEnhancer(scripts.Script):
                     logger.error(msg)
                     return "", f"<span style='color:#c66'>{msg}</span>"
 
-            enhance_btn.click(
+            prose_event = enhance_btn.click(
                 fn=lambda: "<span style='color:#aaa'>Generating prose...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
@@ -1198,7 +1199,7 @@ class PromptEnhancer(scripts.Script):
                 except Exception as e:
                     return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
 
-            refine_btn.click(
+            remix_event = refine_btn.click(
                 fn=lambda x: x,
                 _js=f"""function(x) {{
                     var ta = document.querySelector('#{tab}_prompt textarea');
@@ -1282,7 +1283,7 @@ class PromptEnhancer(scripts.Script):
                 except Exception as e:
                     return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
 
-            tags_btn.click(
+            tags_event = tags_btn.click(
                 fn=lambda: "<span style='color:#aaa'>Generating tags...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
@@ -1291,6 +1292,14 @@ class PromptEnhancer(scripts.Script):
                        + mode_inputs + dd_components
                        + [wildcards, detail_level, think, temperature],
                 outputs=[prompt_out, status],
+            )
+
+            # ── Cancel ──
+            cancel_btn.click(
+                fn=lambda: "<span style='color:#c66'>Cancelled</span>",
+                inputs=[], outputs=[status],
+                cancels=[prose_event, remix_event, tags_event],
+                show_progress=False,
             )
 
             # ── Write to main prompt textarea ──
