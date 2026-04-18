@@ -798,13 +798,26 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             )
             # Initial connection timeout
             resp = urllib.request.urlopen(req, timeout=30)
+            # Set socket timeout so reads unblock periodically for cancel checks
+            resp.fp.raw._sock.settimeout(2.0)
             content_parts = []
             start_time = _time.monotonic()
             last_token_time = start_time
             thinking_detected = False
 
             try:
-                for line in resp:
+                import socket
+                while True:
+                    try:
+                        line = resp.readline()
+                    except (socket.timeout, TimeoutError):
+                        # Socket timeout — no data yet, check cancel and continue
+                        if _cancel_flag.is_set():
+                            print(f"[PromptEnhancer] Cancelled by user")
+                            break
+                        continue
+                    if not line:
+                        break  # EOF
                     # Check cancel flag
                     if _cancel_flag.is_set():
                         print(f"[PromptEnhancer] Cancelled by user")
