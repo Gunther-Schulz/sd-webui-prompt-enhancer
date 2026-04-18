@@ -1200,6 +1200,7 @@ class PromptEnhancer(scripts.Script):
                 wc = args[-6]
                 dd_vals = args[:-6]
 
+                t0 = time.monotonic()
                 source = (source or "").strip()
                 if not source:
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
@@ -1223,7 +1224,8 @@ class PromptEnhancer(scripts.Script):
                     result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
                     if prepend and source:
                         result = f"{source}\n\n{result}"
-                    return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
+                    elapsed = f"{time.monotonic() - t0:.1f}s"
+                    return result, f"<span style='color:#6c6'>OK - {len(result.split())} words, {elapsed}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
@@ -1258,6 +1260,7 @@ class PromptEnhancer(scripts.Script):
                 prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
                 wc = args[-6]
                 dd_vals = args[:-6]
+                t0 = time.monotonic()
 
                 source = (source or "").strip()
                 if not source:
@@ -1324,7 +1327,8 @@ class PromptEnhancer(scripts.Script):
                     final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
                     if prepend and source:
                         final = f"{source}\n\n{final}"
-                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
+                    elapsed = f"{time.monotonic() - t0:.1f}s"
+                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
@@ -1390,6 +1394,7 @@ class PromptEnhancer(scripts.Script):
                 prepend, sd, th, temp = args[-4], args[-3], args[-2], args[-1]
                 wc = args[-5]
                 dd_vals = args[:-5]
+                t0 = time.monotonic()
 
                 existing = (existing or "").strip()
                 print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}")
@@ -1432,7 +1437,8 @@ class PromptEnhancer(scripts.Script):
                     )
 
                     if fmt == "prose":
-                        return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words</span>"
+                        elapsed = f"{time.monotonic() - t0:.1f}s"
+                        return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words, {elapsed}</span>"
 
                     if fmt == "hybrid":
                         # Split tags and NL, post-process tags only
@@ -1458,7 +1464,8 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("kept_invalid"):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
-                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
+                    elapsed = f"{time.monotonic() - t0:.1f}s"
+                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
                     return "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
@@ -1491,6 +1498,7 @@ class PromptEnhancer(scripts.Script):
                 prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
                 wc = args[-6]
                 dd_vals = args[:-6]
+                t0 = time.monotonic()
 
                 source = (source or "").strip()
                 if not source:
@@ -1537,7 +1545,8 @@ class PromptEnhancer(scripts.Script):
 
                     if prepend and source:
                         tags = f"{source}\n\n{tags}"
-                    return tags, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
+                    elapsed = f"{time.monotonic() - t0:.1f}s"
+                    return tags, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
                     return "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
