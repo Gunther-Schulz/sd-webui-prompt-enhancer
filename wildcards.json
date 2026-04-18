@@ -32,5 +32,12 @@
         "Random Series": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style \u2014 character proportions, color palette, linework, and general aesthetic.",
         "Random Art Movement": "Choose a specific art movement and apply its principles: art nouveau, art deco, impressionism, expressionism, pop art, surrealism, ukiyo-e, baroque, minimalism, constructivism.",
         "Random Medium": "Choose a specific art medium and make the image look like it was created with it: watercolor, oil paint, colored pencil, ink wash, chalk pastel, gouache, screen print, woodblock print, digital painting, marker."
+    },
+    "anime style": {
+        "Anime Artist": "Choose a specific anime/manga artist known to illustration AI models. Pick from well-known danbooru artists like: tony taka, hara, naga u, bkub, ojipon, yaegashi nan, redjuice, wlop, lack, saitom, tiv, kantoku, misoni comi, fuzichoco, ciloranko, mika pikazo, ask, or any other well-known anime illustrator. Apply their distinctive art style.",
+        "Anime Series Style": "Choose a specific anime/manga/game series and apply its distinctive visual style. Pick from: touhou, fate series, genshin impact, blue archive, hololive, pokemon, arknights, azur lane, honkai, love live, fire emblem, persona, nier automata, chainsaw man, jujutsu kaisen, spy x family, bocchi the rock, frieren, dungeon meshi.",
+        "Anime Character Archetype": "Choose a specific anime character archetype and apply it: tsundere, yandere, kuudere, dandere, genki girl, ojou-sama, tomboy, miko, idol, magical girl, knight, witch, catgirl, maid, princess, delinquent, student council president, childhood friend.",
+        "Anime Color Scheme": "Choose a distinctive anime color scheme: pastel and soft like slice of life, dark and desaturated like seinen, vivid and oversaturated like shonen, warm golden like romance, cool blue like psychological, neon and high contrast like cyberpunk anime, muted earth tones like isekai.",
+        "Anime Era": "Choose a specific anime visual era: 80s OVA (heavy shading, angular, detailed mechanical), 90s cel (warm palette, hand-painted backgrounds), 2000s digital (sharp lines, flat shading), 2010s polished (complex hair shading, lighting effects), modern (soft gradients, detailed backgrounds, cinematic)."
     }
 }
