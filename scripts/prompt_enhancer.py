@@ -266,7 +266,10 @@ def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
         if best_prefix:
             return best_prefix, None
 
-    # Levenshtein distance (simple implementation for short strings)
+    # Levenshtein distance — skip for short tags (< 5 chars) where
+    # edit distance 1-3 produces nonsensical matches (low→cow, red→rend)
+    if tag_len < 5:
+        return None, tag
     best_match = None
     best_dist = max_distance + 1
     for valid in valid_tags:
@@ -378,7 +381,9 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
         if not tag:
             continue
 
-        lookup = tag.replace(" ", "_") if not use_underscores else tag
+        # Always use underscores for lookup (DB and corrections use underscores).
+        # use_underscores only controls output format, not lookup.
+        lookup = tag.replace(" ", "_")
 
         # Common LLM mistakes — correct before any other check
         if lookup in _TAG_CORRECTIONS:
