@@ -543,6 +543,20 @@ REFINE_SYSTEM_PROMPT = (
 
 _load_tag_formats()
 
+DETAIL_LEVELS = {
+    0: None,  # Auto — no instruction
+    1: {"enhance": "Write a very short, minimal description. Only the essentials, no elaboration.",
+        "tags": "Generate a minimal set of only the most essential tags."},
+    2: {"enhance": "Write a short, concise description. Brief but complete.",
+        "tags": "Generate a short, focused set of tags. Keep it concise."},
+    3: {"enhance": "Write a moderately detailed description. Balanced coverage.",
+        "tags": "Generate a balanced set of tags with good coverage."},
+    4: {"enhance": "Write a detailed, vivid description. Include rich specifics.",
+        "tags": "Generate a detailed, comprehensive set of tags."},
+    5: {"enhance": "Write an extensive, highly detailed description. Cover every aspect thoroughly.",
+        "tags": "Generate an extensive, exhaustive set of tags covering every detail."},
+}
+
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
     "For each one, choose a specific, vivid option that creates a coherent scene. "
@@ -704,7 +718,7 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
     raise last_err
 
 
-def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards_list, source="", word_limit=0):
+def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards_list, source="", detail=3):
     """Assemble the complete system prompt from all layers."""
     if base_name == "Custom":
         system_prompt = (custom_system_prompt or "").strip()
@@ -725,9 +739,10 @@ def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards
     if source and _has_inline_wildcards(source):
         system_prompt = f"{system_prompt}\n\n{INLINE_WILDCARD_INSTRUCTION}"
 
-    word_limit = int(word_limit) if word_limit else 0
-    if word_limit > 0:
-        system_prompt = f"{system_prompt}\n\nAim for around {word_limit} words."
+    detail = int(detail) if detail else 0
+    level = DETAIL_LEVELS.get(detail)
+    if level:
+        system_prompt = f"{system_prompt}\n\n{level['enhance']}"
 
     return system_prompt
 
@@ -818,10 +833,9 @@ class PromptEnhancer(scripts.Script):
                 wildcards = gr.Dropdown(label="Wildcards", choices=list(_wildcard_choices), value=[], multiselect=True, scale=1)
                 wildcards.do_not_save_to_config = True
 
-            # ── Limits + Temperature + Think ──
+            # ── Detail Level + Temperature + Think ──
             with gr.Row():
-                word_limit = gr.Slider(label="Word Limit", minimum=0, maximum=500, value=150, step=10, scale=1, info="For Enhance, 0 = no limit")
-                tag_limit = gr.Slider(label="Tag Count", minimum=0, maximum=80, value=20, step=1, scale=1, info="For Tags, 0 = no limit")
+                detail_level = gr.Slider(label="Detail", minimum=0, maximum=5, value=0, step=1, scale=1, info="0=auto 1=minimal 2=short 3=medium 4=detailed 5=extensive")
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
@@ -879,7 +893,7 @@ class PromptEnhancer(scripts.Script):
 
             # ── Enhance ──
             def _enhance(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
-                wl, th, temp = args[-3], args[-2], args[-1]
+                dl, th, temp = args[-3], args[-2], args[-1]
                 wc = args[-4]
                 dd_vals = args[:-4]
 
@@ -888,7 +902,7 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
-                sp = _assemble_system_prompt(base_name, custom_sp, mods, wc, source, wl)
+                sp = _assemble_system_prompt(base_name, custom_sp, mods, wc, source, dl)
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
 
@@ -912,7 +926,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + mode_inputs + dd_components
-                       + [wildcards, word_limit, think, temperature],
+                       + [wildcards, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -1029,7 +1043,7 @@ class PromptEnhancer(scripts.Script):
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, m_still, m_scene, m_audio, *args):
                 th, temp = args[-2], args[-1]
-                tl = args[-3]
+                dl = args[-3]
                 wc = args[-4]
                 dd_vals = args[:-4]
 
@@ -1052,9 +1066,10 @@ class PromptEnhancer(scripts.Script):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
                         user_msg = f"{user_msg}\n\n{wc_prompt}"
-                tag_count_target = int(tl) if tl else 0
-                if tag_count_target > 0:
-                    user_msg = f"{user_msg}\n\nGenerate approximately {tag_count_target} tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
+                detail = int(dl) if dl else 0
+                level = DETAIL_LEVELS.get(detail)
+                if level:
+                    user_msg = f"{user_msg}\n\n{level['tags']} Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
                 else:
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
@@ -1096,7 +1111,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
-                       + [wildcards, tag_limit, think, temperature],
+                       + [wildcards, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
@@ -1120,11 +1135,11 @@ class PromptEnhancer(scripts.Script):
         self.infotext_fields = [
             (source_prompt, "PE Source"),
             (base, "PE Base"),
-            (word_limit, "PE WordLimit"),
+            (detail_level, "PE Detail"),
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
         ]
-        self.paste_field_names = ["PE Source", "PE Base", "PE WordLimit", "PE Wildcards", "PE Think"]
+        self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Wildcards", "PE Think"]
 
         # Store dropdown references for process()
         self._dd_components = dd_components
@@ -1132,13 +1147,13 @@ class PromptEnhancer(scripts.Script):
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
                 mode_still, mode_scene, mode_audio,
-                *dd_components, wildcards, word_limit, think, temperature]
+                *dd_components, wildcards, detail_level, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 mode_still, mode_scene, mode_audio, *args):
-        # args = *dd_values, wildcards, word_limit, think, temperature
+        # args = *dd_values, wildcards, detail_level, think, temperature
         wildcards = args[-4]
-        word_limit = args[-3]
+        detail_level = args[-3]
         think = args[-2]
         dd_vals = args[:-4]
 
@@ -1146,8 +1161,8 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Source"] = source_prompt
         if base:
             p.extra_generation_params["PE Base"] = base
-        if word_limit and int(word_limit) != 150:
-            p.extra_generation_params["PE WordLimit"] = int(word_limit)
+        if detail_level and int(detail_level) != 0:
+            p.extra_generation_params["PE Detail"] = int(detail_level)
 
         all_mod_names = []
         if mode_still:
