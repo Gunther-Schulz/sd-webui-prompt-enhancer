@@ -592,6 +592,12 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
         words = _get_word_target(detail, preset)
         return f"Write a {label} description. Aim for around {words} words."
 
+WILDCARD_PREAMBLE = (
+    "IMPORTANT: When making creative choices below, be genuinely surprising and varied. "
+    "Do NOT default to the most popular or obvious option. Avoid repeating the same choice "
+    "across requests. Pick something unexpected and distinctive each time."
+)
+
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
     "For each one, choose a specific, vivid option that creates a coherent scene. "
@@ -766,12 +772,15 @@ def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards
     if style_str:
         system_prompt = f"{system_prompt}\n\n{style_str}"
 
+    has_wildcards = any(_wildcards.get(wc, "") for wc in (wildcards_list or []))
+    has_inline = source and _has_inline_wildcards(source)
+    if has_wildcards or has_inline:
+        system_prompt = f"{system_prompt}\n\n{WILDCARD_PREAMBLE}"
     for wc_name in (wildcards_list or []):
         wc_prompt = _wildcards.get(wc_name, "")
         if wc_prompt:
             system_prompt = f"{system_prompt}\n\n{wc_prompt}"
-
-    if source and _has_inline_wildcards(source):
+    if has_inline:
         system_prompt = f"{system_prompt}\n\n{INLINE_WILDCARD_INSTRUCTION}"
 
     detail = int(detail) if detail else 0
@@ -1030,6 +1039,8 @@ class PromptEnhancer(scripts.Script):
                 style_str = _build_style_string(mods)
                 if style_str:
                     sp = f"{sp}\n\n{style_str}"
+                if any(_wildcards.get(w, "") for w in (wc or [])):
+                    sp = f"{sp}\n\n{WILDCARD_PREAMBLE}"
                 for wc_name in (wc or []):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
@@ -1103,6 +1114,8 @@ class PromptEnhancer(scripts.Script):
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
+                if any(_wildcards.get(w, "") for w in (wc or [])):
+                    user_msg = f"{user_msg}\n\n{WILDCARD_PREAMBLE}"
                 for wc_name in (wc or []):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
