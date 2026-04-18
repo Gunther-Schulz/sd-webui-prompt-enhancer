@@ -352,15 +352,23 @@ def enhance_prompt(source, api_url, model, base, custom_system_prompt,
         return "", f"<span style='color:#c66'>{msg}</span>"
 
 
-def refine_prompt(existing_prompt, api_url, model, modifiers, wildcards, think, temperature):
+def refine_prompt(existing_prompt, source_prompt, api_url, model, modifiers, wildcards, think, temperature):
     existing = (existing_prompt or "").strip()
     if not existing:
         return "", "<span style='color:#c66'>No prompt to refine. Generate one first with Enhance.</span>"
 
-    if not modifiers and not wildcards:
-        return "", "<span style='color:#c66'>Select modifiers or wildcards to apply.</span>"
+    source = (source_prompt or "").strip()
+    has_modifiers = bool(modifiers or wildcards)
+    has_source = bool(source)
+
+    if not has_modifiers and not has_source:
+        return "", "<span style='color:#c66'>Select modifiers/wildcards or update the source prompt.</span>"
 
     system_prompt = REFINE_SYSTEM_PROMPT
+
+    # Source prompt changes
+    if has_source:
+        system_prompt = f"{system_prompt}\n\nThe user has provided updated subject/scene direction. Integrate these changes into the existing prompt, replacing conflicting elements:\n{source}"
 
     # Build style changes to apply
     style_parts = []
@@ -589,7 +597,7 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             ).then(
                 fn=refine_prompt,
-                inputs=[prompt_in, api_url, model, modifiers, wildcards, think, temperature],
+                inputs=[prompt_in, source_prompt, api_url, model, modifiers, wildcards, think, temperature],
                 outputs=[prompt_out, status],
             )
 
