@@ -354,8 +354,57 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
             result_tags.append(tag)
             kept += 1
 
+    # Reorder tags into standard danbooru order
+    result_tags = _reorder_tags(result_tags)
+
     stats = {"corrected": corrected, "dropped": dropped, "kept_invalid": kept, "total": len(result_tags)}
     return ", ".join(result_tags), stats
+
+
+# Known tags for ordering buckets
+_QUALITY_TAGS = {
+    "masterpiece", "best_quality", "amazing_quality", "good_quality",
+    "normal_quality", "low_quality", "worst_quality", "absurdres", "highres",
+    "very_awa",
+    "score_9", "score_8_up", "score_7_up", "score_6_up", "score_5_up", "score_4_up",
+}
+_SOURCE_TAGS = {"source_anime", "source_furry", "source_pony", "source_cartoon"}
+_SUBJECT_TAGS = {
+    "1girl", "2girls", "3girls", "4girls", "5girls", "6+girls", "multiple_girls",
+    "1boy", "2boys", "3boys", "4boys", "5boys", "6+boys", "multiple_boys",
+    "1other", "solo", "no_humans", "male_focus", "female_focus",
+}
+_RATING_TAGS = {
+    "rating:general", "rating:sensitive", "rating:questionable", "rating:explicit",
+    "rating_safe", "rating_questionable", "rating_explicit",
+}
+
+
+def _reorder_tags(tags):
+    """Reorder tags into standard danbooru convention.
+
+    Order: quality -> source -> subject count -> everything else -> rating
+    """
+    quality = []
+    source = []
+    subjects = []
+    rating = []
+    rest = []
+
+    for tag in tags:
+        lookup = tag.replace(" ", "_")
+        if lookup in _QUALITY_TAGS:
+            quality.append(tag)
+        elif lookup in _SOURCE_TAGS:
+            source.append(tag)
+        elif lookup in _SUBJECT_TAGS:
+            subjects.append(tag)
+        elif lookup in _RATING_TAGS:
+            rating.append(tag)
+        else:
+            rest.append(tag)
+
+    return quality + source + subjects + rest + rating
 
 
 # ── Config state ─────────────────────────────────────────────────────────────
