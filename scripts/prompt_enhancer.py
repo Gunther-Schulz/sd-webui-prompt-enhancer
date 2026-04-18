@@ -593,6 +593,20 @@ REFINE_SYSTEM_PROMPT = (
     "- Output the modified prompt only. No commentary."
 )
 
+REFINE_HYBRID_SYSTEM_PROMPT = (
+    "You are a prompt editor. You are given a prompt in hybrid format: danbooru-style "
+    "tags on the first line, then a blank line, then a short natural language description.\n\n"
+    "Modify BOTH the tags AND the NL description to integrate the requested style changes. "
+    "Keep the same format: tags first, blank line, then updated NL description.\n\n"
+    "Rules:\n"
+    "- Add or replace tags as needed for the new style\n"
+    "- Update the NL description to reflect the style change\n"
+    "- If a style conflicts with existing elements, REPLACE them. Do NOT keep both.\n"
+    "- If a wildcard asks you to choose something and one already exists, REPLACE it completely.\n"
+    "- Keep approximately the same number of tags and NL length\n"
+    "- Output only the modified hybrid prompt. No commentary."
+)
+
 _load_tag_formats()
 
 # Max tokens per forge preset (from backend/diffusion_engine/*.py)
@@ -835,6 +849,25 @@ def _split_concatenated_tag(tag):
     # All lowercase concatenated — can't reliably split without a dictionary
     # Return as-is, validation will handle it
     return tag
+
+
+def _postprocess_tags(tag_str, tag_fmt, validation_mode):
+    """Apply full tag post-processing pipeline.
+
+    Handles: concatenation split, underscore formatting, validation,
+    reordering, paren escaping. Returns (processed_tags, stats_or_None).
+    """
+    fmt_config = _tag_formats.get(tag_fmt, {})
+    use_underscores = fmt_config.get("use_underscores", False)
+    tag_str = ", ".join(
+        _split_concatenated_tag(t.strip()).replace(" ", "_") if use_underscores
+        else _split_concatenated_tag(t.strip())
+        for t in tag_str.split(",") if t.strip()
+    )
+    if validation_mode != "Off":
+        tag_str, stats = _validate_tags(tag_str, tag_fmt, mode=validation_mode)
+        return tag_str, stats
+    return tag_str, None
 
 
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
@@ -1274,34 +1307,20 @@ class PromptEnhancer(scripts.Script):
                     nl_supplement = parts[1].strip() if len(parts) > 1 else ""
 
                     # Run tags through full post-processing pipeline
-                    tag_str = ", ".join(
-                        _split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False)
-                        else _split_concatenated_tag(t.strip())
-                        for t in tag_str.split(",") if t.strip()
-                    )
-
-                    if validation_mode != "Off":
-                        tag_str, stats = _validate_tags(tag_str, tag_fmt, mode=validation_mode)
-                        tag_count = stats.get("total", 0)
-                        status_parts = [f"{tag_count} tags + NL"]
+                    tag_str, stats = _postprocess_tags(tag_str, tag_fmt, validation_mode)
+                    tag_count = stats.get("total", 0) if stats else len([t for t in tag_str.split(",") if t.strip()])
+                    status_parts = [f"{tag_count} tags + NL"]
+                    if stats:
                         if stats.get("corrected"):
                             status_parts.append(f"{stats['corrected']} corrected")
                         if stats.get("dropped"):
                             status_parts.append(f"{stats['dropped']} dropped")
                         if stats.get("kept_invalid"):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
-                        status_msg = f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
-                    else:
-                        tag_count = len([t for t in tag_str.split(",") if t.strip()])
-                        status_msg = f"<span style='color:#6c6'>OK - {tag_count} tags + NL</span>"
 
                     # Rejoin tags + NL supplement
-                    if nl_supplement:
-                        final = f"{tag_str}\n\n{nl_supplement}"
-                    else:
-                        final = tag_str
-
-                    return final, status_msg
+                    final = f"{tag_str}\n\n{nl_supplement}" if nl_supplement else tag_str
+                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
@@ -1331,22 +1350,22 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Remix ──
-            def _is_tag_format(text):
-                """Detect if text looks like comma-separated tags vs flowing paragraph.
-
-                Also handles hybrid format (tags + blank line + NL supplement)
-                by checking only the first paragraph.
-                """
+            def _detect_format(text):
+                """Detect prompt format: 'prose', 'tags', or 'hybrid'."""
                 if not text:
-                    return False
-                # Check first paragraph only (hybrid format has tags before blank line)
-                first_para = text.split("\n\n")[0]
+                    return "prose"
+                paragraphs = text.split("\n\n")
+                first_para = paragraphs[0]
                 parts = [p.strip() for p in first_para.split(",")]
                 if len(parts) < 3:
-                    return False
-                # Tags: many short segments. Paragraph: few long segments.
+                    return "prose"
                 avg_len = sum(len(p) for p in parts) / len(parts)
-                return avg_len < 30 and len(parts) >= 5
+                if avg_len >= 30 or len(parts) < 5:
+                    return "prose"
+                # First paragraph is tags — check if there's an NL supplement after
+                if len(paragraphs) > 1 and paragraphs[1].strip():
+                    return "hybrid"
+                return "tags"
 
             REFINE_TAGS_SYSTEM_PROMPT = (
                 "You are a tag editor. You are given an existing set of comma-separated image generation tags. "
@@ -1380,14 +1399,14 @@ class PromptEnhancer(scripts.Script):
                 if not mods and not wc and not source:
                     return "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
 
-                is_tags = _is_tag_format(existing)
-                print(f"[PromptEnhancer] Remix: detected={'tags' if is_tags else 'paragraph'}")
+                fmt = _detect_format(existing)
+                print(f"[PromptEnhancer] Remix: detected={fmt}")
 
-                if is_tags:
-                    # Tag mode refine
+                if fmt == "hybrid":
+                    sp = REFINE_HYBRID_SYSTEM_PROMPT
+                elif fmt == "tags":
                     sp = REFINE_TAGS_SYSTEM_PROMPT
                 else:
-                    # Paragraph mode refine
                     sp = REFINE_SYSTEM_PROMPT
 
                 if source:
@@ -1403,32 +1422,43 @@ class PromptEnhancer(scripts.Script):
                         sp = f"{sp}\n\n{wc_prompt}"
 
                 try:
-                    result = _clean_output(_call_llm(existing, api_url, model, sp, temp, think=th), strip_underscores=not is_tags)
+                    result = _clean_output(
+                        _call_llm(existing, api_url, model, sp, temp, think=th),
+                        strip_underscores=(fmt == "prose"),
+                    )
 
-                    if is_tags:
-                        # Apply tag post-processing
-                        fmt_config = _tag_formats.get(tag_fmt, {})
-                        # Split concatenated tags, then apply underscore formatting
-                        result = ", ".join(_split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False) else _split_concatenated_tag(t.strip()) for t in result.split(",") if t.strip())
-                        if validation_mode != "Off":
-                            result, stats = _validate_tags(result, tag_fmt, mode=validation_mode)
-                            tag_count = stats.get("total", 0)
-                            parts = [f"{tag_count} tags"]
-                            if stats.get("corrected"):
-                                parts.append(f"{stats['corrected']} corrected")
-                            if stats.get("dropped"):
-                                parts.append(f"{stats['dropped']} dropped")
-                            if stats.get("kept_invalid"):
-                                parts.append(f"{stats['kept_invalid']} unverified")
-                            return result, f"<span style='color:#6c6'>OK - remixed {', '.join(parts)}</span>"
-                        tag_count = len([t for t in result.split(",") if t.strip()])
-                        return result, f"<span style='color:#6c6'>OK - remixed to {tag_count} tags</span>"
-                    else:
+                    if fmt == "prose":
                         return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words</span>"
+
+                    if fmt == "hybrid":
+                        # Split tags and NL, post-process tags only
+                        parts = result.split("\n\n", 1)
+                        tag_str = parts[0].strip()
+                        nl_supplement = parts[1].strip() if len(parts) > 1 else ""
+                        tag_str, stats = _postprocess_tags(tag_str, tag_fmt, validation_mode)
+                        tag_count = stats.get("total", 0) if stats else len([t for t in tag_str.split(",") if t.strip()])
+                        final = f"{tag_str}\n\n{nl_supplement}" if nl_supplement else tag_str
+                        status_parts = [f"remixed {tag_count} tags + NL"]
+                    else:
+                        # Pure tags
+                        result, stats = _postprocess_tags(result, tag_fmt, validation_mode)
+                        tag_count = stats.get("total", 0) if stats else len([t for t in result.split(",") if t.strip()])
+                        final = result
+                        status_parts = [f"remixed {tag_count} tags"]
+
+                    if stats:
+                        if stats.get("corrected"):
+                            status_parts.append(f"{stats['corrected']} corrected")
+                        if stats.get("dropped"):
+                            status_parts.append(f"{stats['dropped']} dropped")
+                        if stats.get("kept_invalid"):
+                            status_parts.append(f"{stats['kept_invalid']} unverified")
+
+                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
                 except InterruptedError:
                     return "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
-                    return _clean_output(str(e), strip_underscores=not is_tags), "<span style='color:#ca6'>Truncated</span>"
+                    return _clean_output(str(e), strip_underscores=(fmt == "prose")), "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
@@ -1489,30 +1519,20 @@ class PromptEnhancer(scripts.Script):
 
                 try:
                     tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th), strip_underscores=False)
-                    # Split concatenated tags, then apply underscore formatting
-                    tags = ", ".join(_split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False) else _split_concatenated_tag(t.strip()) for t in tags.split(",") if t.strip())
-
-                    tag_count = len([t for t in tags.split(",") if t.strip()])
-
-                    # Validate tags against database
-                    if validation_mode != "Off":
-                        tags, stats = _validate_tags(tags, tag_fmt, mode=validation_mode)
-                        tag_count = stats.get("total", tag_count)
-
-                        parts = [f"{tag_count} tags"]
+                    tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
+                    tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
+                    status_parts = [f"{tag_count} tags"]
+                    if stats:
                         if stats.get("corrected"):
-                            parts.append(f"{stats['corrected']} corrected")
+                            status_parts.append(f"{stats['corrected']} corrected")
                         if stats.get("dropped"):
-                            parts.append(f"{stats['dropped']} dropped")
+                            status_parts.append(f"{stats['dropped']} dropped")
                         if stats.get("kept_invalid"):
-                            parts.append(f"{stats['kept_invalid']} unverified")
+                            status_parts.append(f"{stats['kept_invalid']} unverified")
                         if stats.get("error"):
-                            parts.append(stats["error"])
-                        status_msg = f"<span style='color:#6c6'>OK - {', '.join(parts)}</span>"
-                    else:
-                        status_msg = f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
+                            status_parts.append(stats["error"])
 
-                    return tags, status_msg
+                    return tags, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}</span>"
                 except InterruptedError:
                     return "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:

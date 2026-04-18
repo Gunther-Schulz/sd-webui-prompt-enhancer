@@ -2,15 +2,16 @@
 
 A Stable Diffusion WebUI extension that builds prompts using a local LLM. Works with [Forge Neo](https://github.com/Haoming02/sd-webui-forge-classic), Forge, and AUTOMATIC1111.
 
-Takes your short prompt and expands it into a detailed description or booru-style tags using a locally-running language model. No cloud APIs, no data leaves your machine.
+Takes your short prompt and expands it into a detailed description, booru-style tags, or a hybrid of both using a locally-running language model. No cloud APIs, no data leaves your machine.
 
 ## Features
 
 - **Local LLM powered** — uses Ollama or any OpenAI-compatible API
-- **Three generation modes** — Prose (flowing paragraph), Tags (booru tags), Remix (modify existing)
+- **Four generation modes** — Prose (flowing paragraph), Hybrid (tags + NL supplement), Tags (booru tags), Remix (modify existing)
 - **Mode checkboxes** — Still (frozen moment), Scene (action over time), Audio (sound cues)
 - **130+ categorized modifiers** — organized into auto-generated dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
 - **Tag generation & validation** — Illustrious, NoobAI, Pony formats with auto-downloaded danbooru databases, alias correction, fuzzy matching, deduplication, and standard tag ordering
+- **Tag post-processing** — strips LLM meta-annotations, converts hyphens, escapes parentheses for SD, prefix-matches danbooru disambiguation suffixes
 - **Wildcards** — creative LLM choices: surprise location, random artist, anime era, narrative detail, and more
 - **Inline wildcards** — `{name?}` placeholders in your prompt
 - **Local overrides** — extend with your own YAML files; each file becomes a dropdown
@@ -70,21 +71,28 @@ Restart the WebUI.
 3. Optionally check **Still** (frozen moment), **Scene** (action over time), or **Audio** (sound cues)
 4. Optionally select modifiers from the categorized dropdowns (Subject, Setting, Lighting & Mood, etc.)
 5. Optionally select **Wildcards** for creative LLM choices
-6. Click **✍ Prose** for a flowing paragraph, or **🏷 Tags** for booru-style tags
+6. Choose a generation mode:
+
+### Generation modes
+
+**Prose** — Click **✍ Prose** for a flowing paragraph. Best for Flux, SD3, and other natural-language models.
+
+**Hybrid** — Click **✨ Hybrid** for danbooru-style tags followed by a short NL description. Two-pass pipeline: the LLM first generates a rich prose description (with wildcards/modifiers applied), then extracts tags + a brief NL supplement from it. Best for Illustrious, NoobAI, and Pony — follows the community-recommended "tags + NL" format where tags provide precise control and the NL supplement captures compositional details that tags alone cannot express.
+
+**Tags** — Click **🏷 Tags** for pure booru-style tags. Uses the selected tag format's system prompt directly. Tags are post-processed through validation, correction, reordering, and paren escaping.
 
 ### Tag generation
 
-Click **Tags** to generate danbooru-style tags instead of a flowing paragraph:
+Both **Hybrid** and **Tags** modes use the tag post-processing pipeline:
 
 1. Select a **Tag Format** — Illustrious, NoobAI, or Pony
 2. Choose a **Tag Validation** mode (Check recommended)
-3. Click **Tags**
 
-Tag databases are automatically downloaded on first use (~2-3 MB per format). Tags are validated, corrected (aliases, common mistakes like `1man` → `1boy`), deduplicated, and reordered into standard danbooru convention.
+Tag databases are automatically downloaded on first use (~2-3 MB per format). Tags are validated, corrected (aliases, common mistakes like `1man` → `1boy`), deduplicated, and reordered into standard danbooru convention. Parentheses in disambiguation suffixes (e.g., `artist_(style)`) are automatically escaped for SD.
 
 **Validation modes:**
 - **Off** — raw LLM output, no validation
-- **Check** — exact match + alias correction, keep unrecognized (default, safe)
+- **Check** — exact match + alias + prefix matching, keep unrecognized (default, safe)
 - **Fuzzy** — alias + fuzzy string matching, keep unrecognized
 - **Strict** — alias only, drop unrecognized tags
 - **Fuzzy Strict** — alias + fuzzy matching, drop unrecognized
@@ -96,7 +104,7 @@ Already have an enhanced prompt and want to tweak it?
 1. Select new modifiers or wildcards, or update the source prompt
 2. Click **🔀 Remix** instead of Prose
 3. The LLM reads the current prompt from the main textarea and integrates the changes without rewriting everything
-4. Remix auto-detects whether the existing prompt is prose or tags and outputs the same format
+4. Remix auto-detects whether the existing prompt is prose, tags, or hybrid format and applies the appropriate system prompt and post-processing
 
 ### Inline wildcards
 
@@ -108,7 +116,7 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 
 ### Cancel
 
-Click **❌ Cancel** to abort any running Prose, Tags, or Remix generation.
+Click **❌ Cancel** to abort any running generation. Works reliably across multiple clicks.
 
 ## Configuration
 
@@ -116,7 +124,7 @@ Click **❌ Cancel** to abort any running Prose, Tags, or Remix generation.
 |---------|---------|-------------|
 | Mode | (none) | Checkboxes: Still (frozen moment), Scene (action over time), Audio (sound cues) |
 | Base | Default | System prompt template (Default or Custom) |
-| Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony (for Tags button) |
+| Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony (for Tags and Hybrid buttons) |
 | Tag Validation | Check | How to validate generated tags against the database |
 | Modifiers | (none) | Multiple categorized dropdowns auto-generated from YAML files |
 | Wildcards | (none) | Creative delegation — let the LLM make choices |
@@ -213,10 +221,11 @@ My Custom Base: |
 ## How it works
 
 1. **Prose**: source prompt is sent to the local LLM with system prompt (base + modifiers + detail level) and wildcards in the user message. The LLM returns a detailed flowing paragraph.
-2. **Tags**: source prompt + modifiers + wildcards are sent as a structured user message with tag format instructions. LLM generates booru tags which are validated, corrected, deduplicated, and reordered.
-3. **Remix**: the current prompt is sent back to the LLM with new modifiers/wildcards to integrate. Auto-detects prose vs tags format and applies appropriate post-processing.
-4. **Streaming**: all LLM calls use streaming with real-time stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
-5. The output is written to the main prompt textbox and all settings are saved to image metadata for reproducibility.
+2. **Hybrid**: two-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 sends that prose to the LLM with the selected tag format's instructions plus an NL supplement directive, producing tags + a brief NL description. Tags go through the full post-processing pipeline.
+3. **Tags**: source prompt + modifiers + wildcards are sent as a structured user message with tag format instructions. LLM generates booru tags which are validated, corrected, deduplicated, reordered, and paren-escaped.
+4. **Remix**: the current prompt is sent back to the LLM with new modifiers/wildcards to integrate. Auto-detects prose, tags, or hybrid format and uses the appropriate refine prompt and post-processing.
+5. **Streaming**: all LLM calls use streaming with real-time stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
+6. The output is written to the main prompt textbox and all settings are saved to image metadata for reproducibility.
 
 ## License
 
