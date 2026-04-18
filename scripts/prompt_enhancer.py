@@ -894,7 +894,32 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Refine ──
-            def _refine(existing, source, api_url, model, m_still, m_scene, m_audio, *args):
+            def _is_tag_format(text):
+                """Detect if text looks like comma-separated tags vs flowing paragraph."""
+                if not text:
+                    return False
+                parts = [p.strip() for p in text.split(",")]
+                if len(parts) < 3:
+                    return False
+                # Tags: many short segments. Paragraph: few long segments.
+                avg_len = sum(len(p) for p in parts) / len(parts)
+                return avg_len < 30 and len(parts) >= 5
+
+            REFINE_TAGS_SYSTEM_PROMPT = (
+                "You are a tag editor. You are given an existing set of comma-separated image generation tags. "
+                "Modify them according to the requested changes.\n\n"
+                "Rules:\n"
+                "- Output a comma-separated list of tags, nothing else\n"
+                "- If new styles are requested, add relevant tags\n"
+                "- If a wildcard asks you to choose something (location, wardrobe, etc.) and matching tags "
+                "already exist, REPLACE them. Do not accumulate.\n"
+                "- If the user provides updated direction, adjust tags to match. Remove contradicting tags.\n"
+                "- Keep the same tag format and conventions as the input\n"
+                "- Output only the modified tag list. No commentary."
+            )
+
+            def _refine(existing, source, api_url, model, tag_fmt, validation_mode,
+                        m_still, m_scene, m_audio, *args):
                 th, temp = args[-2], args[-1]
                 wc = args[-3]
                 dd_vals = args[:-3]
@@ -911,7 +936,16 @@ class PromptEnhancer(scripts.Script):
                 if not mods and not wc and not source:
                     return "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
 
-                sp = REFINE_SYSTEM_PROMPT
+                is_tags = _is_tag_format(existing)
+                print(f"[PromptEnhancer] Refine: detected={'tags' if is_tags else 'paragraph'}")
+
+                if is_tags:
+                    # Tag mode refine
+                    sp = REFINE_TAGS_SYSTEM_PROMPT
+                else:
+                    # Paragraph mode refine
+                    sp = REFINE_SYSTEM_PROMPT
+
                 if source:
                     sp = f"{sp}\n\nThe user has provided updated direction. Integrate:\n{source}"
                 style_str = _build_style_string(mods)
@@ -924,7 +958,27 @@ class PromptEnhancer(scripts.Script):
 
                 try:
                     result = _clean_output(_call_llm(existing, api_url, model, sp, temp, think=th))
-                    return result, f"<span style='color:#6c6'>OK - refined to {len(result.split())} words</span>"
+
+                    if is_tags:
+                        # Apply tag post-processing
+                        fmt_config = _tag_formats.get(tag_fmt, {})
+                        if fmt_config.get("use_underscores", False):
+                            result = ", ".join(t.strip().replace(" ", "_") for t in result.split(",") if t.strip())
+                        if validation_mode != "Off":
+                            result, stats = _validate_tags(result, tag_fmt, mode=validation_mode)
+                            tag_count = stats.get("total", 0)
+                            parts = [f"{tag_count} tags"]
+                            if stats.get("corrected"):
+                                parts.append(f"{stats['corrected']} corrected")
+                            if stats.get("dropped"):
+                                parts.append(f"{stats['dropped']} dropped")
+                            if stats.get("kept_invalid"):
+                                parts.append(f"{stats['kept_invalid']} unverified")
+                            return result, f"<span style='color:#6c6'>OK - refined {', '.join(parts)}</span>"
+                        tag_count = len([t for t in result.split(",") if t.strip()])
+                        return result, f"<span style='color:#6c6'>OK - refined to {tag_count} tags</span>"
+                    else:
+                        return result, f"<span style='color:#6c6'>OK - refined to {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
@@ -942,7 +996,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_refine,
-                inputs=[prompt_in, source_prompt, api_url, model]
+                inputs=[prompt_in, source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
                        + [wildcards, think, temperature],
                 outputs=[prompt_out, status],
