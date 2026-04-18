@@ -1096,8 +1096,9 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt], outputs=[source_prompt], show_progress=False,
             )
 
-            # ── Mode checkboxes ──
+            # ── Mode checkboxes + Base ──
             with gr.Row():
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 mode_still = gr.Checkbox(label="Still", value=False, elem_id=f"{tab}_pe_mode_still", info="Frozen moment")
                 mode_scene = gr.Checkbox(label="Scene", value=False, elem_id=f"{tab}_pe_mode_scene", info="Action over time")
                 mode_audio = gr.Checkbox(label="Audio", value=False, elem_id=f"{tab}_pe_mode_audio", info="Sound cues")
@@ -1105,15 +1106,14 @@ class PromptEnhancer(scripts.Script):
                 mode_scene.do_not_save_to_config = True
                 mode_audio.do_not_save_to_config = True
 
-            # ── Base + Tag Format ──
+            # ── Tag Format + Validation ──
             with gr.Row():
-                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 _tf_names = list(_tag_formats.keys())
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1)
                 tag_validation = gr.Radio(
                     label="Tag Validation",
                     choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],
-                    value="Check", scale=1,
+                    value="Check", scale=2,
                     info="Off=raw | Check=alias | Fuzzy=alias+guess | Strict=alias+drop | Fuzzy Strict=guess+drop",
                 )
                 tag_validation.do_not_save_to_config = True
