@@ -383,11 +383,17 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
             continue
 
         # Alias match (always applied in all modes)
+        # Skip if the alias target is less specific (shorter) than the original
         if lookup in aliases:
             match = aliases[lookup]
-            result_tags.append(match if use_underscores else match.replace("_", " "))
-            corrected += 1
-            continue
+            if len(match) >= len(lookup):
+                result_tags.append(match if use_underscores else match.replace("_", " "))
+                corrected += 1
+                continue
+            else:
+                # Original is more specific (e.g. muscular_male -> muscular), keep original
+                result_tags.append(tag)
+                continue
 
         # Fuzzy match (only in Fuzzy mode)
         if use_fuzzy:
