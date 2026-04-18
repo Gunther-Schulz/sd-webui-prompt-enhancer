@@ -285,8 +285,13 @@ _WHITELISTED_TAGS = {
     "source_anime", "source_furry", "source_pony", "source_cartoon",
 }
 
-# Rating tag prefixes — any tag starting with these is valid
-_RATING_PREFIXES = ("rating:", "rating_")
+# Valid rating tags (explicit list, not prefix matching)
+_VALID_RATINGS = {
+    # Danbooru style (Illustrious, NoobAI)
+    "rating:general", "rating:sensitive", "rating:questionable", "rating:explicit",
+    # Pony style
+    "rating_safe", "rating_questionable", "rating_explicit",
+}
 
 
 def _validate_tags(tags_str, tag_format, mode="Check"):
@@ -318,7 +323,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
         lookup = tag.replace(" ", "_") if not use_underscores else tag
 
         # Whitelisted tags always pass
-        if lookup in _WHITELISTED_TAGS or any(lookup.startswith(p) for p in _RATING_PREFIXES):
+        if lookup in _WHITELISTED_TAGS or lookup in _VALID_RATINGS:
             result_tags.append(tag)
             continue
 
