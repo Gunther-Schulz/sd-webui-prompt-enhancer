@@ -1329,14 +1329,11 @@ class PromptEnhancer(scripts.Script):
 
             # ── Cancel ──
             cancel_btn.click(
-                fn=lambda: _cancel_flag.set(),
-                _js=f"""function() {{
-                    var el = document.getElementById('{tab}_pe_status');
-                    if (el && el.innerHTML.indexOf('...') > -1) el.innerHTML = "<span style='color:#c66'>Cancelling...</span>";
-                }}""",
-                inputs=[], outputs=[],
+                fn=lambda: (_cancel_flag.set(), "<span style='color:#c66'>Cancelled</span>")[-1],
+                inputs=[], outputs=[status],
                 queue=False,
                 show_progress=False,
+                cancels=[prose_event, tags_event, remix_event],
             )
 
             # ── Write to main prompt textarea ──
