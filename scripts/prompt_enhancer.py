@@ -394,6 +394,16 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
             corrected += 1
             continue
 
+        # Prefix match: "artist_name" -> "artist_name_(style)" etc.
+        # Catches LLM omitting danbooru disambiguation suffixes.
+        prefix = lookup + "_("
+        prefix_matches = [v for v in valid_tags if v.startswith(prefix)]
+        if len(prefix_matches) == 1:
+            match = prefix_matches[0]
+            result_tags.append(match if use_underscores else match.replace("_", " "))
+            corrected += 1
+            continue
+
         # Fuzzy match (only in Fuzzy mode)
         if use_fuzzy:
             match, _ = _find_closest_tag(lookup, valid_tags, {})  # skip aliases, already checked
