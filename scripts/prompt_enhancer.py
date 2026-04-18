@@ -273,6 +273,22 @@ def _levenshtein(s1, s2):
     return prev_row[-1]
 
 
+# Model-specific tags that aren't in the danbooru database but are valid triggers
+_WHITELISTED_TAGS = {
+    # Quality tags
+    "masterpiece", "best_quality", "amazing_quality", "good_quality",
+    "normal_quality", "low_quality", "worst_quality", "absurdres", "highres",
+    "very_awa",
+    # Score tags (Pony)
+    "score_9", "score_8_up", "score_7_up", "score_6_up", "score_5_up", "score_4_up",
+    # Source tags (Pony)
+    "source_anime", "source_furry", "source_pony", "source_cartoon",
+}
+
+# Rating tag prefixes — any tag starting with these is valid
+_RATING_PREFIXES = ("rating:", "rating_")
+
+
 def _validate_tags(tags_str, tag_format, drop_invalid=False):
     """Validate and correct tags against the database.
 
@@ -296,6 +312,11 @@ def _validate_tags(tags_str, tag_format, drop_invalid=False):
     for tag in raw_tags:
         # Normalize for lookup
         lookup = tag.replace(" ", "_") if not use_underscores else tag
+
+        # Whitelisted tags (quality, score, source) always pass
+        if lookup in _WHITELISTED_TAGS or any(lookup.startswith(p) for p in _RATING_PREFIXES):
+            result_tags.append(tag)
+            continue
 
         if lookup in valid_tags:
             result_tags.append(tag)
