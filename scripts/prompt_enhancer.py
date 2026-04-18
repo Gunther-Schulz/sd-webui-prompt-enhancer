@@ -249,15 +249,22 @@ def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
     if tag in aliases:
         return aliases[tag], None
 
-    # Substring: only match if lengths are within 50% of each other
-    # Prevents "masterpiece" matching "rosa_(masterpiece)_(arknights)"
+    # Prefix substring: match if our tag is a prefix of a valid tag
+    # (e.g., "highres" starts with "high"). Only for tags 5+ chars to
+    # avoid short-word false positives. Length ratio prevents wild mismatches.
     tag_len = len(tag)
-    for valid in valid_tags:
-        valid_len = len(valid)
-        if valid_len >= 4 and tag_len >= 4:
-            len_ratio = min(tag_len, valid_len) / max(tag_len, valid_len)
-            if len_ratio >= 0.5 and (valid in tag or tag in valid):
-                return valid, None
+    if tag_len >= 5:
+        best_prefix = None
+        best_prefix_len = 999
+        for valid in valid_tags:
+            valid_len = len(valid)
+            len_ratio = tag_len / valid_len if valid_len > 0 else 0
+            if len_ratio >= 0.5 and valid.startswith(tag):
+                if valid_len < best_prefix_len:
+                    best_prefix = valid
+                    best_prefix_len = valid_len
+        if best_prefix:
+            return best_prefix, None
 
     # Levenshtein distance (simple implementation for short strings)
     best_match = None
@@ -399,13 +406,16 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
         # Prefix match: "artist_name" -> "artist_name_(style)" etc.
         # Catches LLM omitting danbooru disambiguation suffixes.
-        prefix = lookup + "_("
-        prefix_matches = [v for v in valid_tags if v.startswith(prefix)]
-        if len(prefix_matches) == 1:
-            match = prefix_matches[0]
-            result_tags.append(match if use_underscores else match.replace("_", " "))
-            corrected += 1
-            continue
+        # Only for multi-word tags (contain underscore) to avoid matching
+        # common words like "high" -> "high_(hgih)" or "dusty" -> "dusty_(gravity_daze)".
+        if "_" in lookup:
+            prefix = lookup + "_("
+            prefix_matches = [v for v in valid_tags if v.startswith(prefix)]
+            if len(prefix_matches) == 1:
+                match = prefix_matches[0]
+                result_tags.append(match if use_underscores else match.replace("_", " "))
+                corrected += 1
+                continue
 
         # Fuzzy match (only in Fuzzy mode)
         if use_fuzzy:
