@@ -1,4 +1,5 @@
 # Audio — sound descriptions for video models
+_label: Audio
 
 audio:
   Add Audio Cues: include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, be concrete about what is heard and when

@@ -125,8 +125,11 @@ def _scan_modifier_files(directory):
             continue
         data = _load_file(os.path.join(directory, name))
         if data:
-            # Use _label from YAML if present, else derive from filename
-            label = data.pop("_label", None) or stem.replace("-", " ").replace("_", " ").title()
+            # Require _label in YAML for dropdown name
+            label = data.pop("_label", None)
+            if not label:
+                logger.warning(f"Skipping {name}: missing _label field")
+                continue
             result[label] = data
     return result
 
