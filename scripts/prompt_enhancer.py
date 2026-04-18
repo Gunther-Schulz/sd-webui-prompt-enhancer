@@ -52,13 +52,6 @@ def _load_tag_formats():
             }
 
 
-# Mode keywords (rendered as checkboxes, not in files)
-MODE_KEYWORDS = {
-    "Still": "frozen moment, static composition, describe a single instant in time, no temporal language, no movement, captured pose",
-    "Scene": "chronological action, present-progressive verbs, temporal flow, describe movement unfolding over time, use connectors like as then while, no timestamps or scene cuts",
-    "Audio": "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, ambient sounds and sound effects, be concrete about what is heard and when",
-}
-
 
 # ── File loading ─────────────────────────────────────────────────────────────
 
@@ -670,15 +663,9 @@ def _base_names():
     return names
 
 
-def _collect_modifiers(mode_still, mode_scene, mode_audio, dropdown_selections):
+def _collect_modifiers(dropdown_selections):
     """Collect all selected modifiers into a list of (name, keywords) tuples."""
     result = []
-    if mode_still:
-        result.append(("Still", MODE_KEYWORDS["Still"]))
-    if mode_scene:
-        result.append(("Scene", MODE_KEYWORDS["Scene"]))
-    if mode_audio:
-        result.append(("Audio", MODE_KEYWORDS["Audio"]))
     for selections in dropdown_selections:
         for name in (selections or []):
             keywords = _all_modifiers.get(name, "")
@@ -1096,18 +1083,9 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt], outputs=[source_prompt], show_progress=False,
             )
 
-            # ── Mode checkboxes + Base ──
+            # ── Base + Tag Format + Validation ──
             with gr.Row():
-                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
-                mode_still = gr.Checkbox(label="Still", value=False, elem_id=f"{tab}_pe_mode_still", info="Frozen moment")
-                mode_scene = gr.Checkbox(label="Scene", value=False, elem_id=f"{tab}_pe_mode_scene", info="Action over time")
-                mode_audio = gr.Checkbox(label="Audio", value=False, elem_id=f"{tab}_pe_mode_audio", info="Sound cues")
-                mode_still.do_not_save_to_config = True
-                mode_scene.do_not_save_to_config = True
-                mode_audio.do_not_save_to_config = True
-
-            # ── Tag Format + Validation ──
-            with gr.Row():
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="System prompt for Prose/Hybrid")
                 _tf_names = list(_tag_formats.keys())
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="For Hybrid and Tags modes")
                 tag_validation = gr.Radio(
@@ -1209,10 +1187,8 @@ class PromptEnhancer(scripts.Script):
             prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
 
-            mode_inputs = [mode_still, mode_scene, mode_audio]
-
             # ── Prose ──
-            def _enhance(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
+            def _enhance(source, api_url, model, base_name, custom_sp, *args):
                 sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
                 wc = args[-5]
                 dd_vals = args[:-5]
@@ -1221,7 +1197,7 @@ class PromptEnhancer(scripts.Script):
                 if not source:
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
-                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name, custom_sp, mods, dl)
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
@@ -1259,14 +1235,14 @@ class PromptEnhancer(scripts.Script):
             ).then(
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
-                       + mode_inputs + dd_components
+                       + dd_components
                        + [wildcards, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
             def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
-                        m_still, m_scene, m_audio, *args):
+                        *args):
                 sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
                 wc = args[-5]
                 dd_vals = args[:-5]
@@ -1275,7 +1251,7 @@ class PromptEnhancer(scripts.Script):
                 if not source:
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
-                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name, custom_sp, mods, dl)
                 if not sp:
                     return "", "<span style='color:#c66'>No system prompt configured.</span>"
@@ -1355,7 +1331,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_hybrid,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         tag_format, tag_validation]
-                       + mode_inputs + dd_components
+                       + dd_components
                        + [wildcards, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
@@ -1393,7 +1369,7 @@ class PromptEnhancer(scripts.Script):
             )
 
             def _refine(existing, source, api_url, model, tag_fmt, validation_mode,
-                        m_still, m_scene, m_audio, *args):
+                        *args):
                 sd, th, temp = args[-3], args[-2], args[-1]
                 wc = args[-4]
                 dd_vals = args[:-4]
@@ -1404,7 +1380,7 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>No prompt to remix. Generate one first with Prose or Tags.</span>"
 
                 source = (source or "").strip()
-                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                mods = _collect_modifiers(dd_vals)
                 print(f"[PromptEnhancer] Remix: mods={len(mods)}, wc={len(wc or [])}, source={'yes' if source else 'no'}")
 
                 if not mods and not wc and not source:
@@ -1488,13 +1464,13 @@ class PromptEnhancer(scripts.Script):
             ).then(
                 fn=_refine,
                 inputs=[prompt_in, source_prompt, api_url, model, tag_format, tag_validation]
-                       + mode_inputs + dd_components
+                       + dd_components
                        + [wildcards, seed, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Tags ──
-            def _tags(source, api_url, model, tag_fmt, validation_mode, m_still, m_scene, m_audio, *args):
+            def _tags(source, api_url, model, tag_fmt, validation_mode, *args):
                 sd, dl, th, temp = args[-4], args[-3], args[-2], args[-1]
                 wc = args[-5]
                 dd_vals = args[:-5]
@@ -1509,7 +1485,7 @@ class PromptEnhancer(scripts.Script):
                     return "", "<span style='color:#c66'>No tag format configured.</span>"
 
                 # Build user message with everything explicit
-                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                mods = _collect_modifiers(dd_vals)
                 user_msg = f"Scene: {source}"
                 style_str = _build_style_string(mods)
                 if style_str:
@@ -1558,7 +1534,7 @@ class PromptEnhancer(scripts.Script):
             ).then(
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
-                       + mode_inputs + dd_components
+                       + dd_components
                        + [wildcards, seed, detail_level, think, temperature],
                 outputs=[prompt_out, status],
             )
@@ -1613,10 +1589,6 @@ class PromptEnhancer(scripts.Script):
             (source_prompt, "PE Source"),
             (base, "PE Base"),
             (detail_level, "PE Detail"),
-            # Mode checkboxes
-            (mode_still, lambda params: "Still" in _parse_modifiers(params)),
-            (mode_scene, lambda params: "Scene" in _parse_modifiers(params)),
-            (mode_audio, lambda params: "Audio" in _parse_modifiers(params)),
             # Wildcards
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
@@ -1629,11 +1601,10 @@ class PromptEnhancer(scripts.Script):
         self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think", "PE Seed"]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
-                mode_still, mode_scene, mode_audio,
                 *dd_components, wildcards, seed, detail_level, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
-                mode_still, mode_scene, mode_audio, *args):
+                *args):
         # args = *dd_values, wildcards, seed, detail_level, think, temperature
         wildcards = args[-5]
         pe_seed = args[-4]
@@ -1649,12 +1620,6 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Detail"] = int(detail_level)
 
         all_mod_names = []
-        if mode_still:
-            all_mod_names.append("Still")
-        if mode_scene:
-            all_mod_names.append("Scene")
-        if mode_audio:
-            all_mod_names.append("Audio")
         for dd_val in dd_vals:
             if dd_val:
                 all_mod_names.extend(dd_val)

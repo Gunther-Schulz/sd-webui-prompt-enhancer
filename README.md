@@ -8,7 +8,7 @@ Takes your short prompt and expands it into a detailed description, booru-style 
 
 - **Local LLM powered** — uses Ollama or any OpenAI-compatible API
 - **Four generation modes** — Prose (flowing paragraph), Hybrid (tags + NL supplement), Tags (booru tags), Remix (modify existing)
-- **Mode checkboxes** — Still (frozen moment), Scene (action over time), Audio (sound cues)
+- **Mode modifiers** — Still (frozen moment), Scene (action over time), Audio (sound cues) — available in the Mode dropdown alongside other modifiers
 - **130+ categorized modifiers** — organized into auto-generated dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
 - **Tag generation & validation** — Illustrious, NoobAI, Pony formats with auto-downloaded danbooru databases, alias correction, fuzzy matching, deduplication, and standard tag ordering
 - **Tag post-processing** — strips LLM meta-annotations, converts hyphens, escapes parentheses for SD, prefix-matches danbooru disambiguation suffixes
@@ -70,8 +70,7 @@ Restart the WebUI.
 
 1. Open the **Prompt Enhancer** accordion in the txt2img or img2img tab
 2. Type your prompt in the **Source Prompt** box (or click **Grab** to pull from the main prompt area)
-3. Optionally check **Still** (frozen moment), **Scene** (action over time), or **Audio** (sound cues)
-4. Optionally select modifiers from the categorized dropdowns (Subject, Setting, Lighting & Mood, etc.)
+3. Optionally select modifiers from the categorized dropdowns (Mode, Subject, Setting, Lighting & Mood, etc.)
 5. Optionally select **Wildcards** for creative LLM choices
 6. Choose a generation mode:
 
@@ -124,7 +123,7 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Mode | (none) | Checkboxes: Still (frozen moment), Scene (action over time), Audio (sound cues) |
+| Mode | (none) | Dropdown: Still (frozen moment), Scene (action over time), Audio (sound cues) |
 | Base | Default | System prompt template (Default or Custom) |
 | Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony (for Tags and Hybrid buttons) |
 | Tag Validation | Check | How to validate generated tags against the database |
@@ -152,6 +151,7 @@ Modifiers are organized into YAML files in the `modifiers/` directory. Each file
 
 | Dropdown | Categories |
 |----------|------------|
+| **Mode** | mode (Still, Scene, Audio) |
 | **Subject** | genre, subject, activity, relationship |
 | **Setting** | setting, time period, aesthetic |
 | **Lighting & Mood** | lighting, mood, atmosphere, emotion |
