@@ -959,17 +959,21 @@ class PromptEnhancer(scripts.Script):
                 sp = fmt_config.get("system_prompt", "")
                 if not sp:
                     return "", "<span style='color:#c66'>No tag format configured.</span>"
+
+                # Build user message with everything explicit
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                user_msg = f"Scene: {source}"
                 style_str = _build_style_string(mods)
                 if style_str:
-                    sp = f"{sp}\n\n{style_str}"
+                    user_msg = f"{user_msg}\n\n{style_str}"
                 for wc_name in (wc or []):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
-                        sp = f"{sp}\n\n{wc_prompt}"
+                        user_msg = f"{user_msg}\n\n{wc_prompt}"
+                user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
-                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
+                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
                     if fmt_config.get("use_underscores", False):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
 
