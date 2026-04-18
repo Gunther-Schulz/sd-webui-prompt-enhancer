@@ -639,8 +639,8 @@ class PromptEnhancer(scripts.Script):
             with gr.Row():
                 base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 tag_format = gr.Dropdown(label="Tag Format", choices=list(TAGS_SYSTEM_PROMPTS.keys()), value=list(TAGS_SYSTEM_PROMPTS.keys())[0], scale=1)
-                drop_invalid_tags = gr.Checkbox(label="Drop Invalid Tags", value=False, scale=0, min_width=130)
-                drop_invalid_tags.do_not_save_to_config = True
+                tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Validate", "Strict"], value="Validate", scale=1)
+                tag_validation.do_not_save_to_config = True
 
             # ── Auto-generated modifier dropdowns (one per file) ──
             dd_components = []
@@ -814,7 +814,7 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Tags ──
-            def _tags(source, api_url, model, tag_fmt, drop_invalid, m_still, m_scene, m_audio, *args):
+            def _tags(source, api_url, model, tag_fmt, validation_mode, m_still, m_scene, m_audio, *args):
                 th, temp = args[-2], args[-1]
                 wc = args[-3]
                 dd_vals = args[:-3]
@@ -838,21 +838,25 @@ class PromptEnhancer(scripts.Script):
                     if tag_fmt in ("Illustrious", "Pony"):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
 
-                    # Validate tags against database
-                    tags, stats = _validate_tags(tags, tag_fmt, drop_invalid=drop_invalid)
-                    tag_count = stats.get("total", len([t for t in tags.split(",") if t.strip()]))
+                    tag_count = len([t for t in tags.split(",") if t.strip()])
 
-                    # Build status message
-                    parts = [f"{tag_count} tags"]
-                    if stats.get("corrected"):
-                        parts.append(f"{stats['corrected']} corrected")
-                    if stats.get("dropped"):
-                        parts.append(f"{stats['dropped']} dropped")
-                    if stats.get("kept_invalid"):
-                        parts.append(f"{stats['kept_invalid']} unverified")
-                    if stats.get("error"):
-                        parts.append(stats["error"])
-                    status_msg = f"<span style='color:#6c6'>OK - {', '.join(parts)}</span>"
+                    # Validate tags against database
+                    if validation_mode != "Off":
+                        tags, stats = _validate_tags(tags, tag_fmt, drop_invalid=(validation_mode == "Strict"))
+                        tag_count = stats.get("total", tag_count)
+
+                        parts = [f"{tag_count} tags"]
+                        if stats.get("corrected"):
+                            parts.append(f"{stats['corrected']} corrected")
+                        if stats.get("dropped"):
+                            parts.append(f"{stats['dropped']} dropped")
+                        if stats.get("kept_invalid"):
+                            parts.append(f"{stats['kept_invalid']} unverified")
+                        if stats.get("error"):
+                            parts.append(stats["error"])
+                        status_msg = f"<span style='color:#6c6'>OK - {', '.join(parts)}</span>"
+                    else:
+                        status_msg = f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
 
                     return tags, status_msg
                 except urllib.error.URLError as e:
@@ -865,7 +869,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_tags,
-                inputs=[source_prompt, api_url, model, tag_format, drop_invalid_tags]
+                inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + mode_inputs + dd_components
                        + [wildcards, think, temperature],
                 outputs=[prompt_out, status],
