@@ -941,7 +941,7 @@ class PromptEnhancer(scripts.Script):
                 enhance_btn = gr.Button(value="\u270d Prose", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
-                cancel_btn = gr.Button(value="\u2716 Cancel", variant="stop", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
+                cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
                 grab_btn = gr.Button(value="\u2b07 Grab", scale=0, min_width=80, elem_id=f"{tab}_pe_grab_btn")
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
