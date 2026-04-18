@@ -510,7 +510,11 @@ class PromptEnhancer(scripts.Script):
                 model = gr.Dropdown(label="Model", choices=initial_models, value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0], allow_custom_value=True, scale=2)
             with gr.Row():
                 _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL", "")
-                local_dir_path = gr.Textbox(label="Local Overrides Directory", placeholder=f"Using: {_env_local}" if _env_local else "Path to directory with local YAML/JSON files", scale=3)
+                local_dir_path = gr.Textbox(
+                    label="Local Overrides",
+                    placeholder=f"Using: {_env_local}" if _env_local else "Comma-separated dirs (refreshes content only, restart for new dropdowns)",
+                    scale=3,
+                )
                 reload_btn = gr.Button(value="\U0001f504 Reload", scale=0, min_width=100)
                 refresh_models_btn = gr.Button(value="\U0001f504 Models", scale=0, min_width=100)
 

@@ -93,8 +93,9 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Base | Still | Still = image description, Scene = video with chronological flow |
-| Modifiers | (none) | Categorized style keywords layered on top of the base prompt |
+| Mode | (none) | Checkboxes: Still (image), Scene (video), Audio (sound cues) |
+| Base | Default | System prompt template (Default or Custom) |
+| Modifiers | (none) | Multiple categorized dropdowns (one per YAML file) |
 | Wildcards | (none) | Creative delegation - let the LLM make choices |
 | Word Limit | 150 | Target output length in words |
 | Temperature | 0.7 | Creativity (0 = deterministic, 2 = very creative) |
@@ -132,45 +133,48 @@ All modifiers are keyword strings organized by category:
 
 ## Local overrides
 
-You can extend the extension with your own modifiers and base prompts via a local directory. Files in this directory are never committed to git.
+Extend the extension with your own modifiers and base prompts. Each YAML file in a local directory becomes its own dropdown in the UI. Files are never committed to git.
 
 ### Setup
 
-Point to your local directory via:
-- The **Local Overrides Directory** field in the UI, or
-- The `PROMPT_ENHANCER_LOCAL` environment variable
+Set the `PROMPT_ENHANCER_LOCAL` environment variable to one or more comma-separated directories:
 
-### Directory structure
-
-```
-/path/to/your/overrides/
-  _bases.yaml       # adds to the Base dropdown (special, underscore prefix)
-  my-styles.yaml    # adds to the Modifiers dropdown
-  another.yaml      # adds to the Modifiers dropdown
-  ...
+```bash
+PROMPT_ENHANCER_LOCAL="/home/user/my-modifiers, /home/user/experimental"
 ```
 
-- `_bases.yaml` is reserved for base prompt overrides (flat format: `name: prompt`)
-- All other `.yaml`/`.yml`/`.json` files are loaded as modifier overrides (categorized format)
-- Files are loaded in alphabetical order; later files override earlier ones for duplicate keys
-- New categories appear in the dropdown; entries in existing categories are merged
+The **Local Overrides** field in the UI can also specify directories, but only for refreshing *content* of existing dropdowns. **New files require a Forge restart** to create new dropdowns.
 
-### YAML format for modifiers
+### How it works
+
+Each `.yaml` file becomes a dropdown. The filename determines the dropdown label:
+
+```
+/home/user/my-modifiers/
+  _bases.yaml       # extends the Base dropdown (underscore prefix = special)
+  nsfw.yaml          # creates "Nsfw" dropdown
+  my-styles.yaml     # creates "My Styles" dropdown
+```
+
+Files with the same name as published ones (e.g., `subject.yaml`) merge their content into the existing dropdown.
+
+### YAML format
+
+All files use the same two-level format — categories containing named keyword strings:
 
 ```yaml
-# my-styles.yaml
-my custom category:
+# my-styles.yaml — becomes "My Styles" dropdown
+my category:
   Cozy Autumn: autumn, warm tones, falling leaves, golden light, wood smoke
   Rainy Tokyo: tokyo streets, neon reflections, rain, umbrellas, night
 
-# Extend an existing category
-lighting:
-  Studio Strobe: studio strobe, hard flash, sharp shadows, commercial lighting
+another category:
+  Something: keyword, string, here
 ```
 
-See `modifiers.local.example.yaml` in the extension directory for more examples.
+### Base prompt overrides
 
-### YAML format for base prompts
+`_bases.yaml` uses a flat format — name and full system prompt:
 
 ```yaml
 # _bases.yaml
