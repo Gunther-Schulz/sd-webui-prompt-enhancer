@@ -11,6 +11,7 @@ import urllib.error
 import gradio as gr
 
 from modules import scripts
+from modules.ui_components import ToolButton
 
 logger = logging.getLogger("prompt_enhancer")
 
@@ -1149,8 +1150,8 @@ class PromptEnhancer(scripts.Script):
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.8, step=0.05, scale=2, info="0 = deterministic, 2 = creative")
                 seed = gr.Number(label="Seed", value=-1, minimum=-1, step=1, scale=1, info="-1 = random", precision=0, elem_id=f"{tab}_pe_seed")
                 seed.do_not_save_to_config = True
-                seed_random_btn = gr.Button(value="\U0001f3b2", scale=0, min_width=28, size="sm", elem_id=f"{tab}_pe_seed_random")
-                seed_reuse_btn = gr.Button(value="\u267b", scale=0, min_width=28, size="sm", elem_id=f"{tab}_pe_seed_reuse")
+                seed_random_btn = ToolButton(value="\U0001f3b2", elem_id=f"{tab}_pe_seed_random")
+                seed_reuse_btn = ToolButton(value="\u267b", elem_id=f"{tab}_pe_seed_reuse")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
                 seed_random_btn.click(fn=lambda: -1, inputs=[], outputs=[seed], show_progress=False)
