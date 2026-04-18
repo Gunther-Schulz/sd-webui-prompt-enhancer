@@ -23,15 +23,30 @@ except ImportError:
 
 BASES_FILENAME = "_bases"
 _TAGS_DIR = os.path.join(_EXT_DIR, "tags")
+_TAG_FORMATS_DIR = os.path.join(_EXT_DIR, "tag-formats")
 
-# Tag database download URLs and filenames per format
-TAG_DB_URLS = {
-    "Illustrious": ("https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv", "illustrious.csv"),
-    "NoobAI": ("https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/NoobAIXL1.1_dash.csv", "noobai.csv"),
-    "Pony": ("https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv", "illustrious.csv"),  # reuse Illustrious
-}
+_tag_formats = {}    # format_name -> {system_prompt, use_underscores, tag_db, tag_db_url}
+_tag_databases = {}  # db_filename -> set of valid tags
 
-_tag_databases = {}  # format_name -> set of valid tags
+def _load_tag_formats():
+    """Load tag format definitions from tag-formats/ directory."""
+    global _tag_formats
+    _tag_formats = {}
+    if not os.path.isdir(_TAG_FORMATS_DIR):
+        return
+    for name in sorted(os.listdir(_TAG_FORMATS_DIR)):
+        if not name.endswith((".yaml", ".yml", ".json")):
+            continue
+        data = _load_file(os.path.join(_TAG_FORMATS_DIR, name))
+        if data and "system_prompt" in data:
+            label = os.path.splitext(name)[0].replace("-", " ").replace("_", " ").title()
+            _tag_formats[label] = {
+                "system_prompt": data["system_prompt"].strip(),
+                "use_underscores": data.get("use_underscores", False),
+                "tag_db": data.get("tag_db", ""),
+                "tag_db_url": data.get("tag_db_url", ""),
+            }
+
 
 # Mode keywords (rendered as checkboxes, not in files)
 MODE_KEYWORDS = {
@@ -158,11 +173,12 @@ def _build_dropdown_data(categories_dict):
 
 # ── Tag database ─────────────────────────────────────────────────────────────
 
-def _download_tag_db(tag_format):
-    """Download tag database for the given format if not cached."""
-    if tag_format not in TAG_DB_URLS:
+def _download_tag_db(fmt_config):
+    """Download tag database if not cached. Returns True if available."""
+    filename = fmt_config.get("tag_db", "")
+    url = fmt_config.get("tag_db_url", "")
+    if not filename or not url:
         return False
-    url, filename = TAG_DB_URLS[tag_format]
     os.makedirs(_TAGS_DIR, exist_ok=True)
     local_path = os.path.join(_TAGS_DIR, filename)
     if os.path.isfile(local_path):
@@ -182,13 +198,18 @@ def _download_tag_db(tag_format):
 
 def _load_tag_db(tag_format):
     """Load tag database into memory. Returns set of valid tag strings."""
-    if tag_format in _tag_databases:
-        return _tag_databases[tag_format]
-
-    if not _download_tag_db(tag_format):
+    fmt_config = _tag_formats.get(tag_format, {})
+    filename = fmt_config.get("tag_db", "")
+    if not filename:
         return set()
 
-    _, filename = TAG_DB_URLS[tag_format]
+    # Cache by filename (multiple formats can share a DB)
+    if filename in _tag_databases:
+        return _tag_databases[filename]
+
+    if not _download_tag_db(fmt_config):
+        return set()
+
     local_path = os.path.join(_TAGS_DIR, filename)
     tags = set()
     aliases = {}
@@ -211,9 +232,9 @@ def _load_tag_db(tag_format):
         logger.error(f"Failed to load tag database: {e}")
         return set()
 
-    _tag_databases[tag_format] = tags
-    _tag_databases[f"{tag_format}_aliases"] = aliases
-    logger.info(f"Loaded {len(tags)} tags + {len(aliases)} aliases for {tag_format}")
+    _tag_databases[filename] = tags
+    _tag_databases[f"{filename}_aliases"] = aliases
+    logger.info(f"Loaded {len(tags)} tags + {len(aliases)} aliases from {filename}")
     return tags
 
 
@@ -308,8 +329,10 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     if not valid_tags:
         return tags_str, {"error": "No tag database available"}
 
-    aliases = _tag_databases.get(f"{tag_format}_aliases", {})
-    use_underscores = tag_format in ("Illustrious", "Pony")
+    fmt_config = _tag_formats.get(tag_format, {})
+    db_filename = fmt_config.get("tag_db", "")
+    aliases = _tag_databases.get(f"{db_filename}_aliases", {})
+    use_underscores = fmt_config.get("use_underscores", False)
     use_fuzzy = mode in ("Fuzzy", "Fuzzy Strict")
     drop_invalid = mode in ("Strict", "Fuzzy Strict")
 
@@ -478,49 +501,7 @@ REFINE_SYSTEM_PROMPT = (
     "- Output the modified prompt only. No commentary."
 )
 
-TAGS_SYSTEM_PROMPTS = {
-    "Illustrious": (
-        "You are a danbooru tag expert. Convert the user's scene description into danbooru-style tags.\n\n"
-        "Rules:\n"
-        "- Output a comma-separated list of tags, nothing else\n"
-        "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
-        "- Start with quality tags: masterpiece, best quality, absurdres\n"
-        "- Then ALL subject count tags — one for each person/entity (e.g. 1girl, 1boy for a couple). Never omit a subject.\n"
-        "- For multiple subjects, prefix attributes with who they belong to (e.g. muscular male, long hair female) to avoid ambiguity. Do not use bare attributes like 'muscular' when multiple subjects are present.\n"
-        "- Then appearance, clothing, pose, expression, setting, composition\n"
-        "- Use the user's key descriptive words as tags\n"
-        "- MUST end with exactly one rating tag matching the content: rating:general (SFW), rating:sensitive (swimsuits, mild), rating:questionable (nudity, suggestive), rating:explicit (sex, genitalia). No other rating values.\n"
-        "- When style directions are provided, include relevant tags for them"
-    ),
-    "NoobAI": (
-        "You are a booru tag expert. Convert the user's scene description into booru-style tags for NoobAI XL.\n\n"
-        "Rules:\n"
-        "- Output a comma-separated list of tags, nothing else\n"
-        "- Use spaces in multi-word tags (long hair, blue eyes) - NO underscores\n"
-        "- Start with quality tags: masterpiece, best quality, very awa\n"
-        "- Then ALL subject count tags — one for each person/entity (e.g. 1girl, 1boy for a couple). Never omit a subject.\n"
-        "- For multiple subjects, prefix attributes with who they belong to (e.g. muscular male, long hair female) to avoid ambiguity. Do not use bare attributes like 'muscular' when multiple subjects are present.\n"
-        "- Then appearance, clothing, pose, expression, setting, composition\n"
-        "- Use the user's key descriptive words as tags\n"
-        "- MUST end with exactly one rating tag matching the content: rating:general (SFW), rating:sensitive (swimsuits, mild), rating:questionable (nudity, suggestive), rating:explicit (sex, genitalia). No other rating values.\n"
-        "- When style directions are provided, include relevant tags for them"
-    ),
-    "Pony": (
-        "You are a booru tag expert. Convert the user's scene description into tags for Pony Diffusion V6 XL.\n\n"
-        "Rules:\n"
-        "- Output a comma-separated list of tags, nothing else\n"
-        "- Use spaces between words in multi-word tags (long hair, blue eyes)\n"
-        "- Start with score tags: score 9, score 8 up, score 7 up\n"
-        "- Then source tag if applicable (source anime, source furry, source pony, source cartoon)\n"
-        "- Then ALL subject count tags — one for each person/entity (e.g. 1girl, 1boy for a couple). Never omit a subject.\n"
-        "- For multiple subjects, prefix attributes with who they belong to (e.g. muscular male, long hair female) to avoid ambiguity. Do not use bare attributes like 'muscular' when multiple subjects are present.\n"
-        "- Then appearance, clothing, pose, expression, setting, composition\n"
-        "- Use the user's key descriptive words as tags\n"
-        "- Do NOT use quality words like masterpiece or best quality\n"
-        "- MUST end with exactly one rating tag matching the content: rating safe (SFW), rating questionable (suggestive/nudity), rating explicit (sex, genitalia). No other rating values.\n"
-        "- When style directions are provided, include relevant tags for them"
-    ),
-}
+_load_tag_formats()
 
 INLINE_WILDCARD_INSTRUCTION = (
     "The user's prompt contains placeholders in {name?} format. "
@@ -733,7 +714,8 @@ class PromptEnhancer(scripts.Script):
             # ── Base + Tag Format ──
             with gr.Row():
                 base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
-                tag_format = gr.Dropdown(label="Tag Format", choices=list(TAGS_SYSTEM_PROMPTS.keys()), value=list(TAGS_SYSTEM_PROMPTS.keys())[0], scale=1)
+                _tf_names = list(_tag_formats.keys())
+                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1)
                 tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"], value="Check", scale=1)
                 tag_validation.do_not_save_to_config = True
 
@@ -918,7 +900,10 @@ class PromptEnhancer(scripts.Script):
                 if not source:
                     return "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
-                sp = TAGS_SYSTEM_PROMPTS.get(tag_fmt, list(TAGS_SYSTEM_PROMPTS.values())[0])
+                fmt_config = _tag_formats.get(tag_fmt, {})
+                sp = fmt_config.get("system_prompt", "")
+                if not sp:
+                    return "", "<span style='color:#c66'>No tag format configured.</span>"
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
                 style_str = _build_style_string(mods)
                 if style_str:
@@ -930,7 +915,7 @@ class PromptEnhancer(scripts.Script):
 
                 try:
                     tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
-                    if tag_fmt in ("Illustrious", "Pony"):
+                    if fmt_config.get("use_underscores", False):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
 
                     tag_count = len([t for t in tags.split(",") if t.strip()])
