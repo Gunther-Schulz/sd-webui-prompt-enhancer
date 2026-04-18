@@ -435,7 +435,9 @@ def _reorder_tags(tags):
     """Reorder tags into standard danbooru convention.
 
     Order: quality -> source -> subject count -> everything else -> rating
+    Also deduplicates and enforces single rating tag (keeps last).
     """
+    seen = set()
     quality = []
     source = []
     subjects = []
@@ -443,7 +445,12 @@ def _reorder_tags(tags):
     rest = []
 
     for tag in tags:
+        # Deduplicate
         lookup = tag.replace(" ", "_")
+        if lookup in seen:
+            continue
+        seen.add(lookup)
+
         if lookup in _QUALITY_TAGS:
             quality.append(tag)
         elif lookup in _SOURCE_TAGS:
@@ -454,6 +461,10 @@ def _reorder_tags(tags):
             rating.append(tag)
         else:
             rest.append(tag)
+
+    # Enforce single rating (keep last if multiple)
+    if len(rating) > 1:
+        rating = [rating[-1]]
 
     return quality + source + subjects + rest + rating
 
