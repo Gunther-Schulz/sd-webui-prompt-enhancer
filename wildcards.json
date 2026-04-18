@@ -26,5 +26,11 @@
         "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. An empty glass, a packed suitcase, a letter on the table, an open door, untied shoes. Let it sit naturally in the scene without drawing too much attention.",
         "Light Source": "Instead of default natural lighting, invent a specific unusual light source \u2014 TV screen glow, phone screen illumination, passing car headlights, open refrigerator light, a single bare bulb, neon sign reflection, laptop screen in a dark room. Let it define the color and mood.",
         "Random Background": "Choose a specific background or setting: outdoors, night sky, starry sky, sunset, cityscape, classroom, bedroom, garden, rooftop, beach, forest, ruins, library, cafe, train station, alley."
+    },
+    "style influence": {
+        "Random Artist": "Choose a specific artist or illustrator whose style should influence this image. Pick someone well-known with a distinctive visual style. Apply their characteristic techniques, color choices, and composition tendencies.",
+        "Random Series": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style \u2014 character proportions, color palette, linework, and general aesthetic.",
+        "Random Art Movement": "Choose a specific art movement and apply its principles: art nouveau, art deco, impressionism, expressionism, pop art, surrealism, ukiyo-e, baroque, minimalism, constructivism.",
+        "Random Medium": "Choose a specific art medium and make the image look like it was created with it: watercolor, oil paint, colored pencil, ink wash, chalk pastel, gouache, screen print, woodblock print, digital painting, marker."
     }
 }
