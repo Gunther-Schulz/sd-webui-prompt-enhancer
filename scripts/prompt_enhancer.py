@@ -171,7 +171,7 @@ TAGS_SYSTEM_PROMPTS = {
         "You are a danbooru tag expert. Convert the user's scene description into danbooru-style tags.\n\n"
         "Rules:\n"
         "- Output a comma-separated list of tags, nothing else\n"
-        "- Use underscores in multi-word tags (long_hair, blue_eyes)\n"
+        "- IMPORTANT: Every multi-word tag MUST use underscores between each word. Never concatenate words. Examples: long_hair NOT longhair, blue_eyes NOT blueeyes, graphic_sexual_act NOT graphicsexualact\n"
         "- Start with quality tags: masterpiece, best_quality, absurdres\n"
         "- Then subject count (1girl, 1boy, 1other, no_humans, etc.)\n"
         "- Then appearance, clothing, pose, expression, setting, composition\n"
@@ -195,7 +195,7 @@ TAGS_SYSTEM_PROMPTS = {
         "You are a booru tag expert. Convert the user's scene description into tags for Pony Diffusion V6 XL.\n\n"
         "Rules:\n"
         "- Output a comma-separated list of tags, nothing else\n"
-        "- Use underscores in multi-word tags (long_hair, blue_eyes)\n"
+        "- IMPORTANT: Every multi-word tag MUST use underscores between each word. Never concatenate words. Examples: long_hair NOT longhair, blue_eyes NOT blueeyes, graphic_sexual_act NOT graphicsexualact\n"
         "- Start with score tags: score_9, score_8_up, score_7_up\n"
         "- Then source tag if applicable (source_anime, source_furry, source_pony, source_cartoon)\n"
         "- Then subject count (1girl, 1boy, 1other, no_humans, etc.)\n"
@@ -514,17 +514,18 @@ class PromptEnhancer(scripts.Script):
                     min_width=120,
                     elem_id=f"{tab}_pe_enhance_btn",
                 )
+                tags_btn = gr.Button(
+                    value="\U0001f3f7 Tags",
+                    variant="primary",
+                    scale=0,
+                    min_width=100,
+                    elem_id=f"{tab}_pe_tags_btn",
+                )
                 refine_btn = gr.Button(
                     value="\U0001f527 Refine",
                     scale=0,
                     min_width=120,
                     elem_id=f"{tab}_pe_refine_btn",
-                )
-                tags_btn = gr.Button(
-                    value="\U0001f3f7 Tags",
-                    scale=0,
-                    min_width=100,
-                    elem_id=f"{tab}_pe_tags_btn",
                 )
                 grab_btn = gr.Button(
                     value="\u2b07 Grab from prompt box",
