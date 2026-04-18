@@ -1,0 +1,32 @@
+# Lighting & Mood
+
+lighting:
+  Golden Hour: golden hour, warm amber light, long shadows, sun flare, soft directional warmth, peach and gold sky
+  Candlelight: candlelight, warm flickering light, deep moving shadows, pools of golden illumination, partial illumination, intimate
+  Neon Glow: neon lighting, colored reflections on wet surfaces, blue pink purple magenta, urban nocturnal, rain-slicked streets, glowing signs
+  Backlit: backlit, rim lighting, lens flare, glowing edges, subject in relative shadow, light source behind subject
+  Volumetric Light: volumetric light, visible light rays, shafts of sunlight, beams through dust or fog, god rays, light occupying space
+
+mood:
+  Film Noir: film noir, chiaroscuro, deep shadows, sharp highlights, rain-slicked surfaces, venetian blind shadows, low-key lighting, dangerous, stylized
+  Dreamy: dreamy, ethereal, soft focus, hazy light, lens flare, pastel or desaturated tones, weightless, otherworldly
+  Horror: horror, unsettling lighting, underlit faces, sickly color casts, deep shadows, uncanny stillness, implied threat, dread
+  Gritty: gritty, urban, harsh fluorescent or sodium vapor lighting, concrete, graffiti, worn surfaces, visual noise, raw, street-level
+  Fantasy: fantasy, painterly, rich saturated colors, dramatic composition, theatrical lighting, mythic, golden light, concept art aesthetic
+
+atmosphere:
+  Fog: fog, mist, reduced visibility, distant silhouettes, diffused light, god rays, glowing halos, quiet, isolated, mysterious
+  Rain: rain, wet surfaces, reflections, raindrops, puddles mirroring lights, overcast diffused light, cool blue-grey cast, glistening
+  Dust and Haze: dust, haze, smoke, particles in light beams, diffused rays, warm atmospheric glow, thick textured air
+
+emotion:
+  Melancholy: melancholy, sadness, wistful, heavy-lidded eyes, downcast gaze, subdued posture, muted tones
+  Joy: joy, genuine smile, bright eyes, open posture, warmth, lightness, natural laughter
+  Anger: anger, tense jaw, furrowed brow, clenched hands, rigid posture, confrontational energy
+  Fear: fear, wide eyes, tense body, defensive posture, shrinking back, vulnerability, unease
+  Serenity: serenity, calm, closed or half-closed eyes, relaxed shoulders, peaceful expression, stillness
+  Loneliness: loneliness, isolation, single figure in empty space, distant gaze, self-contained posture
+  Tension: tension, stiff posture, held breath, clenched muscles, uneasy stillness, something about to happen
+  Nostalgia: nostalgia, bittersweet, distant gaze, soft unfocused eyes, memory, longing for the past
+  Contemplation: contemplation, thoughtful, inward gaze, hand on chin or temple, quiet focus, introspection
+  Defiance: defiance, chin raised, direct stare, squared shoulders, unyielding stance, resistance

@@ -1,0 +1,35 @@
+# Setting — where and when
+
+setting:
+  Urban: urban setting, city streets, buildings, traffic, signage, concrete, crowds or empty sidewalks
+  Rural: rural setting, countryside, fields, farmland, dirt roads, open sky, isolation
+  Underwater: underwater, submerged, water distortion, floating hair and fabric, blue-green light, bubbles
+  Aerial: aerial view, bird's-eye perspective, landscape from above, patterns visible only from height
+  Indoor: indoor setting, interior space, walls and ceiling, furniture, artificial and window light
+  Rooftop: rooftop, elevated urban vantage, city skyline backdrop, open sky above, edge of building
+  Underground: underground, tunnel or basement or cave, low ceiling, artificial light, enclosed space
+  Forest: forest setting, trees, undergrowth, dappled light through canopy, bark texture, moss, earth tones
+  Desert: desert setting, sand or cracked earth, harsh sun, minimal vegetation, heat shimmer, vast emptiness
+  Coastal: coastal setting, ocean or sea, waves, sand or rocks, salt air, horizon line, water light
+  Industrial: industrial setting, factories, machinery, pipes, metal surfaces, concrete floors, utilitarian
+  Domestic: domestic setting, home interior, personal objects, lived-in space, comfort or clutter, familiar
+
+time period:
+  Medieval: medieval era, stone and wood, candlelight and torchlight, armor or rough cloth, feudal setting
+  Victorian: victorian era, ornate interiors, gas lamps, corsets and tailcoats, dark wood, lace, formal posture
+  1920s Art Deco: 1920s, art deco, geometric patterns, flapper dress, jazz age, gold and black, opulent
+  1950s Americana: 1950s, americana, chrome and pastel, diners, cars with fins, rockabilly, optimistic suburban
+  1970s: 1970s, warm earth tones, shag carpet, bell-bottoms, wood paneling, soft focus, analog warmth
+  1980s: 1980s, neon colors, big hair, synthwave aesthetic, VHS texture, bold graphic patterns
+  Futuristic: futuristic, advanced technology, clean or dystopian surfaces, LED lighting, minimal or maximal design
+  Ancient: ancient era, stone temples, draped fabric, torchlight, weathered surfaces, mythic scale
+
+aesthetic:
+  Japanese: japanese aesthetic, wabi-sabi, clean lines, natural materials, paper screens, zen minimalism
+  Nordic: nordic aesthetic, muted earth tones, raw wood, wool textures, minimal, cold light, functional beauty
+  Mediterranean: mediterranean aesthetic, warm stone, terracotta, olive and ochre tones, bright sun, whitewashed walls
+  Tropical: tropical aesthetic, lush green, bright flowers, warm humid light, palm fronds, saturated color
+  Parisian: parisian aesthetic, elegant, iron balconies, cafe tables, muted sophistication, soft overcast light
+  Brutalist: brutalist aesthetic, raw concrete, massive geometric forms, stark shadows, imposing scale, utilitarian
+  Art Nouveau: art nouveau, organic flowing lines, floral motifs, ornamental detail, stained glass, decorative elegance
+  Bohemian: bohemian aesthetic, layered textiles, warm colors, eclectic objects, plants, relaxed imperfection

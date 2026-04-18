@@ -13,6 +13,7 @@ logger = logging.getLogger("prompt_enhancer")
 
 # ── Extension root directory ─────────────────────────────────────────────────
 _EXT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_MODIFIERS_DIR = os.path.join(_EXT_DIR, "modifiers")
 
 try:
     import yaml
@@ -22,38 +23,18 @@ except ImportError:
 
 BASES_FILENAME = "_bases"
 
-# Mode keywords (hardcoded, rendered as checkboxes)
+# Mode keywords (rendered as checkboxes, not in files)
 MODE_KEYWORDS = {
     "Still": "frozen moment, static composition, describe a single instant in time, no temporal language, no movement, captured pose",
     "Scene": "chronological action, present-progressive verbs, temporal flow, describe movement unfolding over time, use connectors like as then while, no timestamps or scene cuts",
     "Audio": "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, ambient sounds and sound effects, be concrete about what is heard and when",
 }
 
-# UI group definitions: group_key -> list of category names that belong in it
-UI_GROUPS = {
-    "subject": ["genre", "subject", "activity", "relationship"],
-    "setting": ["setting", "time period", "aesthetic"],
-    "lighting_mood": ["lighting", "mood", "atmosphere", "emotion"],
-    "visual_style": ["color", "art style", "anime", "cinema style", "photography format", "vintage format"],
-    "camera": ["perspective", "distance", "focus", "technique", "motion", "material"],
-    "audio": ["audio"],
-}
 
-# Human-readable labels for UI groups
-UI_GROUP_LABELS = {
-    "subject": "Subject",
-    "setting": "Setting",
-    "lighting_mood": "Lighting & Mood",
-    "visual_style": "Visual Style",
-    "camera": "Camera",
-    "audio": "Audio",
-}
-
-
-# ── File loading helpers ─────────────────────────────────────────────────────
+# ── File loading ─────────────────────────────────────────────────────────────
 
 def _load_file(path):
-    """Load a JSON or YAML file and return its parsed content as a dict."""
+    """Load a JSON or YAML file and return parsed content."""
     try:
         with open(path, "r", encoding="utf-8") as f:
             if _HAS_YAML and path.endswith((".yaml", ".yml")):
@@ -93,16 +74,16 @@ def _load_local_bases(local_dir):
     return {}
 
 
-def _load_local_modifiers(local_dir):
-    """Load all files except _bases.* from the local directory.
+def _scan_modifier_files(directory):
+    """Scan a directory for modifier YAML/JSON files.
 
-    Local files use the same three-level structure (group > category > modifiers).
-    Returns merged three-level dict.
+    Returns dict: dropdown_name -> {category: {modifier: keywords}}.
+    Skips _bases.* files.
     """
-    if not local_dir:
-        return {}
-    merged = {}
-    for name in sorted(os.listdir(local_dir)):
+    result = {}
+    if not directory or not os.path.isdir(directory):
+        return result
+    for name in sorted(os.listdir(directory)):
         if name.startswith("."):
             continue
         stem = os.path.splitext(name)[0]
@@ -110,120 +91,65 @@ def _load_local_modifiers(local_dir):
             continue
         if not name.endswith((".yaml", ".yml", ".json")):
             continue
-        data = _load_file(os.path.join(local_dir, name))
+        # Dropdown label from filename: "visual-style.yaml" -> "Visual Style"
+        label = stem.replace("-", " ").replace("_", " ").title()
+        data = _load_file(os.path.join(directory, name))
         if data:
-            # Merge at group level, then category level
-            for group, categories in data.items():
-                if not isinstance(categories, dict):
-                    continue
-                if group not in merged:
-                    merged[group] = {}
-                for cat, items in categories.items():
-                    if not isinstance(items, dict):
-                        continue
-                    if cat not in merged[group]:
-                        merged[group][cat] = {}
-                    merged[group][cat].update(items)
-    return merged
+            result[label] = data
+    return result
 
 
-def _merge_three_level(base, override):
-    """Merge two three-level dicts (group > category > modifiers)."""
+def _merge_modifier_dicts(base, override):
+    """Merge two dropdown-level dicts. Same dropdown name -> merge categories."""
     merged = {}
-    for group, categories in base.items():
-        if isinstance(categories, dict):
-            merged[group] = {}
-            for cat, items in categories.items():
-                if isinstance(items, dict):
-                    merged[group][cat] = dict(items)
-    for group, categories in override.items():
+    for label, categories in base.items():
+        merged[label] = {}
+        for cat, items in categories.items():
+            if isinstance(items, dict):
+                merged[label][cat] = dict(items)
+    for label, categories in override.items():
         if not isinstance(categories, dict):
             continue
-        if group not in merged:
-            merged[group] = {}
+        if label not in merged:
+            merged[label] = {}
         for cat, items in categories.items():
             if not isinstance(items, dict):
                 continue
-            if cat not in merged[group]:
-                merged[group][cat] = {}
-            merged[group][cat].update(items)
+            if cat not in merged[label]:
+                merged[label][cat] = {}
+            merged[label][cat].update(items)
     return merged
+
+
+def _build_dropdown_data(categories_dict):
+    """Build flat lookup and choice list from a single dropdown's categories."""
+    flat = {}
+    choices = []
+    for cat_name, items in categories_dict.items():
+        if not isinstance(items, dict):
+            continue
+        separator = f"\u2500\u2500\u2500\u2500\u2500 {cat_name.title()} \u2500\u2500\u2500\u2500\u2500"
+        choices.append(separator)
+        for name, keywords in items.items():
+            if isinstance(keywords, str):
+                flat[name] = keywords
+                choices.append(name)
+    return flat, choices
 
 
 # ── Config state ─────────────────────────────────────────────────────────────
 
 _bases = {}
-_all_modifiers = {}       # flat: name -> keywords (for lookup)
-_group_choices = {}       # group_key -> [choice_list with separators]
+_all_modifiers = {}          # flat: name -> keywords (for lookup across all dropdowns)
+_dropdown_order = []         # list of dropdown labels in display order
+_dropdown_choices = {}       # label -> [choice_list with separators]
 _wildcards = {}
 _wildcard_choices = []
 
 
-def _build_group_choices(mod_data):
-    """Build per-group choice lists from three-level modifier data.
-
-    Also builds the flat lookup dict.
-    Returns (flat_dict, group_choices_dict).
-    """
-    flat = {}
-    group_choices = {gk: [] for gk in UI_GROUPS}
-
-    # Build a reverse map: category_name -> group_key
-    cat_to_group = {}
-    for gk, cats in UI_GROUPS.items():
-        for cat in cats:
-            cat_to_group[cat] = gk
-
-    # Walk the three-level data
-    for group_name, categories in mod_data.items():
-        if not isinstance(categories, dict):
-            continue
-        for cat_name, items in categories.items():
-            if not isinstance(items, dict):
-                continue
-            # Determine which UI group this category belongs to
-            target_group = cat_to_group.get(cat_name)
-            if not target_group:
-                # Unknown category from local override — find by group name
-                target_group = group_name if group_name in UI_GROUPS else None
-            if not target_group:
-                # Still unknown — put in a catch-all
-                if "other" not in group_choices:
-                    group_choices["other"] = []
-                target_group = "other"
-
-            separator = f"\u2500\u2500\u2500\u2500\u2500 {cat_name.title()} \u2500\u2500\u2500\u2500\u2500"
-            group_choices[target_group].append(separator)
-            for name, keywords in items.items():
-                if isinstance(keywords, str):
-                    flat[name] = keywords
-                    group_choices[target_group].append(name)
-
-    # Remove empty groups
-    group_choices = {k: v for k, v in group_choices.items() if v}
-
-    return flat, group_choices
-
-
-def _build_wildcard_choices(wc_data):
-    """Build flat dict and choice list from two-level wildcard data."""
-    flat = {}
-    choices = []
-    for category, items in wc_data.items():
-        if not isinstance(items, dict):
-            continue
-        separator = f"\u2500\u2500\u2500\u2500\u2500 {category.title()} \u2500\u2500\u2500\u2500\u2500"
-        choices.append(separator)
-        for name, prompt in items.items():
-            if isinstance(prompt, str):
-                flat[name] = prompt
-                choices.append(name)
-    return flat, choices
-
-
 def _reload_all(local_dir_path=""):
     """Reload all config files from disk."""
-    global _bases, _all_modifiers, _group_choices, _wildcards, _wildcard_choices
+    global _bases, _all_modifiers, _dropdown_order, _dropdown_choices, _wildcards, _wildcard_choices
 
     local_dir = _get_local_dir(local_dir_path)
 
@@ -231,18 +157,33 @@ def _reload_all(local_dir_path=""):
     _bases = {k: v for k, v in _load_file(os.path.join(_EXT_DIR, "bases.json")).items() if isinstance(v, str)}
     _bases.update(_load_local_bases(local_dir))
 
-    # Modifiers (three-level YAML)
-    mod_data = _load_file(os.path.join(_EXT_DIR, "modifiers.yaml"))
-    # Remove "mode" from modifiers — it's handled as checkboxes
-    mod_data.pop("mode", None)
-    local_mods = _load_local_modifiers(local_dir)
-    if local_mods:
-        mod_data = _merge_three_level(mod_data, local_mods)
-    _all_modifiers, _group_choices = _build_group_choices(mod_data)
+    # Modifiers: scan extension modifiers/ dir + local dir, merge
+    ext_mods = _scan_modifier_files(_MODIFIERS_DIR)
+    local_mods = _scan_modifier_files(local_dir)
+    all_mods = _merge_modifier_dicts(ext_mods, local_mods)
 
-    # Wildcards (two-level)
+    _all_modifiers = {}
+    _dropdown_order = []
+    _dropdown_choices = {}
+    for label in sorted(all_mods.keys()):
+        flat, choices = _build_dropdown_data(all_mods[label])
+        if choices:
+            _dropdown_order.append(label)
+            _dropdown_choices[label] = choices
+            _all_modifiers.update(flat)
+
+    # Wildcards
     wc_data = _load_file(os.path.join(_EXT_DIR, "wildcards.json"))
-    _wildcards, _wildcard_choices = _build_wildcard_choices(wc_data)
+    _wildcards = {}
+    _wildcard_choices = []
+    for cat, items in wc_data.items():
+        if not isinstance(items, dict):
+            continue
+        _wildcard_choices.append(f"\u2500\u2500\u2500\u2500\u2500 {cat.title()} \u2500\u2500\u2500\u2500\u2500")
+        for name, prompt in items.items():
+            if isinstance(prompt, str):
+                _wildcards[name] = prompt
+                _wildcard_choices.append(name)
 
 
 _reload_all()
@@ -322,35 +263,31 @@ def _base_names():
     return names
 
 
-def _collect_all_modifiers(*dropdown_values, mode_still=False, mode_scene=False, mode_audio=False):
-    """Collect all selected modifiers from mode checkboxes and all dropdowns into one list."""
-    all_mods = []
-    # Mode checkboxes
+def _collect_modifiers(mode_still, mode_scene, mode_audio, dropdown_selections):
+    """Collect all selected modifiers into a list of (name, keywords) tuples."""
+    result = []
     if mode_still:
-        all_mods.append(("Still", MODE_KEYWORDS["Still"]))
+        result.append(("Still", MODE_KEYWORDS["Still"]))
     if mode_scene:
-        all_mods.append(("Scene", MODE_KEYWORDS["Scene"]))
+        result.append(("Scene", MODE_KEYWORDS["Scene"]))
     if mode_audio:
-        all_mods.append(("Audio", MODE_KEYWORDS["Audio"]))
-    # All dropdown selections
-    for selections in dropdown_values:
+        result.append(("Audio", MODE_KEYWORDS["Audio"]))
+    for selections in dropdown_selections:
         for name in (selections or []):
             keywords = _all_modifiers.get(name, "")
             if keywords:
-                all_mods.append((name, keywords))
-    return all_mods
+                result.append((name, keywords))
+    return result
 
 
 def _build_style_string(mod_list):
-    """Build the 'Apply these styles:' string from a list of (name, keywords) tuples."""
-    style_parts = []
+    """Build the 'Apply these styles:' string."""
+    parts = []
     for name, keywords in mod_list:
         if name.lower() not in keywords.lower():
             keywords = f"{name.lower()}, {keywords}"
-        style_parts.append(keywords)
-    if style_parts:
-        return f"Apply these styles: {', '.join(style_parts)}."
-    return ""
+        parts.append(keywords)
+    return f"Apply these styles: {', '.join(parts)}." if parts else ""
 
 
 # ── Ollama ───────────────────────────────────────────────────────────────────
@@ -440,137 +377,32 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False):
     raise last_err
 
 
-def enhance_prompt(source, api_url, model, base_name, custom_system_prompt,
-                   mode_still, mode_scene, mode_audio,
-                   dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-                   wildcards, word_limit, think, temperature):
-    source = (source or "").strip()
-    if not source:
-        return "", "<span style='color:#c66'>Source prompt is empty.</span>"
-
+def _assemble_system_prompt(base_name, custom_system_prompt, mod_list, wildcards_list, source="", word_limit=0):
+    """Assemble the complete system prompt from all layers."""
     if base_name == "Custom":
         system_prompt = (custom_system_prompt or "").strip()
     else:
         system_prompt = _bases.get(base_name, "")
     if not system_prompt:
-        return "", "<span style='color:#c66'>No system prompt configured.</span>"
+        return None
 
-    all_mods = _collect_all_modifiers(
-        dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-        mode_still=mode_still, mode_scene=mode_scene, mode_audio=mode_audio,
-    )
-    style_str = _build_style_string(all_mods)
+    style_str = _build_style_string(mod_list)
     if style_str:
         system_prompt = f"{system_prompt}\n\n{style_str}"
 
-    for wc_name in (wildcards or []):
+    for wc_name in (wildcards_list or []):
         wc_prompt = _wildcards.get(wc_name, "")
         if wc_prompt:
             system_prompt = f"{system_prompt}\n\n{wc_prompt}"
 
-    if _has_inline_wildcards(source):
+    if source and _has_inline_wildcards(source):
         system_prompt = f"{system_prompt}\n\n{INLINE_WILDCARD_INSTRUCTION}"
 
-    word_limit = int(word_limit)
+    word_limit = int(word_limit) if word_limit else 0
     if word_limit > 0:
         system_prompt = f"{system_prompt}\n\nAim for around {word_limit} words."
 
-    try:
-        enhanced = _clean_output(_call_llm(source, api_url, model, system_prompt, temperature, think=think))
-        word_count = len(enhanced.split())
-        return enhanced, f"<span style='color:#6c6'>OK - enhanced to {word_count} words</span>"
-    except urllib.error.URLError as e:
-        msg = f"Connection failed: {e.reason} - is Ollama running?"
-        logger.error(msg)
-        return "", f"<span style='color:#c66'>{msg}</span>"
-    except Exception as e:
-        msg = f"{type(e).__name__}: {e}"
-        logger.error(msg)
-        return "", f"<span style='color:#c66'>{msg}</span>"
-
-
-def refine_prompt(existing_prompt, source_prompt, api_url, model,
-                  mode_still, mode_scene, mode_audio,
-                  dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-                  wildcards, think, temperature):
-    existing = (existing_prompt or "").strip()
-    if not existing:
-        return "", "<span style='color:#c66'>No prompt to refine. Generate one first with Enhance.</span>"
-
-    source = (source_prompt or "").strip()
-    all_mods = _collect_all_modifiers(
-        dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-        mode_still=mode_still, mode_scene=mode_scene, mode_audio=mode_audio,
-    )
-
-    if not all_mods and not wildcards and not source:
-        return "", "<span style='color:#c66'>Select modifiers/wildcards or update the source prompt.</span>"
-
-    system_prompt = REFINE_SYSTEM_PROMPT
-
-    if source:
-        system_prompt = f"{system_prompt}\n\nThe user has provided updated subject/scene direction. Integrate these changes into the existing prompt, replacing conflicting elements:\n{source}"
-
-    style_str = _build_style_string(all_mods)
-    if style_str:
-        system_prompt = f"{system_prompt}\n\n{style_str}"
-
-    for wc_name in (wildcards or []):
-        wc_prompt = _wildcards.get(wc_name, "")
-        if wc_prompt:
-            system_prompt = f"{system_prompt}\n\n{wc_prompt}"
-
-    try:
-        refined = _clean_output(_call_llm(existing, api_url, model, system_prompt, temperature, think=think))
-        word_count = len(refined.split())
-        return refined, f"<span style='color:#6c6'>OK - refined to {word_count} words</span>"
-    except urllib.error.URLError as e:
-        msg = f"Connection failed: {e.reason} - is Ollama running?"
-        logger.error(msg)
-        return "", f"<span style='color:#c66'>{msg}</span>"
-    except Exception as e:
-        msg = f"{type(e).__name__}: {e}"
-        logger.error(msg)
-        return "", f"<span style='color:#c66'>{msg}</span>"
-
-
-def generate_tags(source, api_url, model, tag_format,
-                  mode_still, mode_scene, mode_audio,
-                  dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-                  wildcards, think, temperature):
-    source = (source or "").strip()
-    if not source:
-        return "", "<span style='color:#c66'>Source prompt is empty.</span>"
-
-    system_prompt = TAGS_SYSTEM_PROMPTS.get(tag_format, list(TAGS_SYSTEM_PROMPTS.values())[0])
-
-    all_mods = _collect_all_modifiers(
-        dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-        mode_still=mode_still, mode_scene=mode_scene, mode_audio=mode_audio,
-    )
-    style_str = _build_style_string(all_mods)
-    if style_str:
-        system_prompt = f"{system_prompt}\n\n{style_str}"
-
-    for wc_name in (wildcards or []):
-        wc_prompt = _wildcards.get(wc_name, "")
-        if wc_prompt:
-            system_prompt = f"{system_prompt}\n\n{wc_prompt}"
-
-    try:
-        tags = _clean_output(_call_llm(source, api_url, model, system_prompt, temperature, think=think))
-        if tag_format in ("Illustrious", "Pony"):
-            tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
-        tag_count = len([t for t in tags.split(",") if t.strip()])
-        return tags, f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
-    except urllib.error.URLError as e:
-        msg = f"Connection failed: {e.reason} - is Ollama running?"
-        logger.error(msg)
-        return "", f"<span style='color:#c66'>{msg}</span>"
-    except Exception as e:
-        msg = f"{type(e).__name__}: {e}"
-        logger.error(msg)
-        return "", f"<span style='color:#c66'>{msg}</span>"
+    return system_prompt
 
 
 # ── UI ───────────────────────────────────────────────────────────────────────
@@ -595,34 +427,15 @@ class PromptEnhancer(scripts.Script):
 
             # ── Source prompt ──
             source_prompt = gr.Textbox(
-                label="Source Prompt",
-                lines=3,
+                label="Source Prompt", lines=3,
                 placeholder="Type your prompt here, then click Enhance... Use {name?} for inline wildcards.",
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
-                enhance_btn = gr.Button(
-                    value="\U0001f4a1 Enhance",
-                    variant="primary",
-                    scale=0, min_width=120,
-                    elem_id=f"{tab}_pe_enhance_btn",
-                )
-                tags_btn = gr.Button(
-                    value="\U0001f3f7 Tags",
-                    variant="primary",
-                    scale=0, min_width=100,
-                    elem_id=f"{tab}_pe_tags_btn",
-                )
-                refine_btn = gr.Button(
-                    value="\U0001f527 Refine",
-                    scale=0, min_width=120,
-                    elem_id=f"{tab}_pe_refine_btn",
-                )
-                grab_btn = gr.Button(
-                    value="\u2b07 Grab",
-                    scale=0, min_width=80,
-                    elem_id=f"{tab}_pe_grab_btn",
-                )
+                enhance_btn = gr.Button(value="\U0001f4a1 Enhance", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
+                tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
+                refine_btn = gr.Button(value="\U0001f527 Refine", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
+                grab_btn = gr.Button(value="\u2b07 Grab", scale=0, min_width=80, elem_id=f"{tab}_pe_grab_btn")
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             grab_btn.click(
@@ -631,9 +444,7 @@ class PromptEnhancer(scripts.Script):
                     var ta = document.querySelector('#{tab}_prompt textarea');
                     return ta ? [ta.value] : [x];
                 }}""",
-                inputs=[source_prompt],
-                outputs=[source_prompt],
-                show_progress=False,
+                inputs=[source_prompt], outputs=[source_prompt], show_progress=False,
             )
 
             # ── Mode checkboxes ──
@@ -647,156 +458,157 @@ class PromptEnhancer(scripts.Script):
 
             # ── Base + Tag Format ──
             with gr.Row():
-                base = gr.Dropdown(
-                    label="Base",
-                    choices=_base_names(),
-                    value="Default",
-                    scale=2,
-                )
-                tag_format = gr.Dropdown(
-                    label="Tag Format",
-                    choices=list(TAGS_SYSTEM_PROMPTS.keys()),
-                    value=list(TAGS_SYSTEM_PROMPTS.keys())[0],
-                    scale=1,
-                )
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
+                tag_format = gr.Dropdown(label="Tag Format", choices=list(TAGS_SYSTEM_PROMPTS.keys()), value=list(TAGS_SYSTEM_PROMPTS.keys())[0], scale=1)
 
-            # ── Modifier dropdowns (grouped) ──
-            dd = {}
-            with gr.Row():
-                dd["subject"] = gr.Dropdown(
-                    label="Subject",
-                    choices=_group_choices.get("subject", []),
-                    value=[], multiselect=True, scale=1,
-                )
-                dd["setting"] = gr.Dropdown(
-                    label="Setting",
-                    choices=_group_choices.get("setting", []),
-                    value=[], multiselect=True, scale=1,
-                )
-                dd["lighting_mood"] = gr.Dropdown(
-                    label="Lighting & Mood",
-                    choices=_group_choices.get("lighting_mood", []),
-                    value=[], multiselect=True, scale=1,
-                )
-            with gr.Row():
-                dd["visual_style"] = gr.Dropdown(
-                    label="Visual Style",
-                    choices=_group_choices.get("visual_style", []),
-                    value=[], multiselect=True, scale=1,
-                )
-                dd["camera"] = gr.Dropdown(
-                    label="Camera",
-                    choices=_group_choices.get("camera", []),
-                    value=[], multiselect=True, scale=1,
-                )
-                dd["audio"] = gr.Dropdown(
-                    label="Audio",
-                    choices=_group_choices.get("audio", []),
-                    value=[], multiselect=True, scale=1,
-                )
+            # ── Auto-generated modifier dropdowns (one per file) ──
+            dd_components = []
+            dd_labels = list(_dropdown_order)
+
+            # Layout: 3 dropdowns per row
+            for i in range(0, len(dd_labels), 3):
+                row_labels = dd_labels[i:i+3]
+                with gr.Row():
+                    for label in row_labels:
+                        d = gr.Dropdown(
+                            label=label,
+                            choices=_dropdown_choices.get(label, []),
+                            value=[], multiselect=True, scale=1,
+                        )
+                        d.do_not_save_to_config = True
+                        dd_components.append(d)
 
             # ── Wildcards ──
             with gr.Row():
-                wildcards = gr.Dropdown(
-                    label="Wildcards",
-                    choices=list(_wildcard_choices),
-                    value=[], multiselect=True, scale=1,
-                )
+                wildcards = gr.Dropdown(label="Wildcards", choices=list(_wildcard_choices), value=[], multiselect=True, scale=1)
+                wildcards.do_not_save_to_config = True
 
             # ── Word Limit + Temperature + Think ──
             with gr.Row():
-                word_limit = gr.Slider(
-                    label="Word Limit", minimum=20, maximum=500,
-                    value=150, step=10, scale=1,
-                )
-                temperature = gr.Slider(
-                    label="Temperature", minimum=0.0, maximum=2.0,
-                    value=0.7, step=0.05, scale=1,
-                )
+                word_limit = gr.Slider(label="Word Limit", minimum=20, maximum=500, value=150, step=10, scale=1)
+                temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1)
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
 
             # ── Custom system prompt ──
-            custom_system_prompt = gr.Textbox(
-                label="Custom System Prompt",
-                lines=4, visible=False,
-                placeholder="Enter your custom system prompt...",
-            )
-            base.change(
-                fn=lambda b: gr.update(visible=(b == "Custom")),
-                inputs=[base], outputs=[custom_system_prompt],
-                show_progress=False,
-            )
+            custom_system_prompt = gr.Textbox(label="Custom System Prompt", lines=4, visible=False, placeholder="Enter your custom system prompt...")
+            base.change(fn=lambda b: gr.update(visible=(b == "Custom")), inputs=[base], outputs=[custom_system_prompt], show_progress=False)
 
             # ── API + reload ──
             with gr.Row():
                 api_url = gr.Textbox(label="API URL", value=DEFAULT_API_URL, scale=3)
-                model = gr.Dropdown(
-                    label="Model",
-                    choices=initial_models,
-                    value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0],
-                    allow_custom_value=True, scale=2,
-                )
+                model = gr.Dropdown(label="Model", choices=initial_models, value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0], allow_custom_value=True, scale=2)
             with gr.Row():
                 _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL", "")
-                local_dir_path = gr.Textbox(
-                    label="Local Overrides Directory",
-                    placeholder=f"Using: {_env_local}" if _env_local else "Path to directory with local YAML/JSON files",
-                    scale=3,
-                )
-                reload_btn = gr.Button(value="\U0001f504 Reload Config", scale=0, min_width=140)
-                refresh_models_btn = gr.Button(value="\U0001f504 Models", scale=0, min_width=120)
+                local_dir_path = gr.Textbox(label="Local Overrides Directory", placeholder=f"Using: {_env_local}" if _env_local else "Path to directory with local YAML/JSON files", scale=3)
+                reload_btn = gr.Button(value="\U0001f504 Reload", scale=0, min_width=100)
+                refresh_models_btn = gr.Button(value="\U0001f504 Models", scale=0, min_width=100)
 
             # ── Reload wiring ──
-            def _do_refresh(current_base, s, se, lm, vs, ca, au, wc, local_path):
+            # Note: reload rebuilds dropdowns but can't add/remove them dynamically.
+            # New files require a Forge restart. Existing dropdown contents are refreshed.
+            def _do_refresh(current_base, *args):
+                # Last arg is local_dir_path, second-to-last is wildcards
+                local_path = args[-1]
+                wc_val = args[-2]
+                dd_vals = args[:-2]
+
                 _reload_all(local_path)
-                bn = _base_names()
-                wcc = list(_wildcard_choices)
-                results = [
-                    gr.update(choices=bn, value=current_base if current_base in bn else bn[0]),
-                ]
-                for gk in ["subject", "setting", "lighting_mood", "visual_style", "camera", "audio"]:
-                    choices = _group_choices.get(gk, [])
-                    results.append(gr.update(choices=choices, value=[]))
-                results.append(gr.update(choices=wcc, value=[w for w in (wc or []) if w in _wildcards]))
+                results = [gr.update(choices=_base_names(), value=current_base if current_base in _bases else "Default")]
+                for i, label in enumerate(dd_labels):
+                    choices = _dropdown_choices.get(label, [])
+                    old_val = dd_vals[i] if i < len(dd_vals) else []
+                    results.append(gr.update(choices=choices, value=[v for v in (old_val or []) if v in _all_modifiers]))
+                results.append(gr.update(choices=list(_wildcard_choices), value=[w for w in (wc_val or []) if w in _wildcards]))
                 return results
 
             reload_btn.click(
                 fn=_do_refresh,
-                inputs=[base, dd["subject"], dd["setting"], dd["lighting_mood"],
-                        dd["visual_style"], dd["camera"], dd["audio"], wildcards, local_dir_path],
-                outputs=[base, dd["subject"], dd["setting"], dd["lighting_mood"],
-                         dd["visual_style"], dd["camera"], dd["audio"], wildcards],
+                inputs=[base] + dd_components + [wildcards, local_dir_path],
+                outputs=[base] + dd_components + [wildcards],
                 show_progress=False,
             )
-            refresh_models_btn.click(
-                fn=_refresh_models,
-                inputs=[api_url, model], outputs=[model],
-                show_progress=False,
-            )
+            refresh_models_btn.click(fn=_refresh_models, inputs=[api_url, model], outputs=[model], show_progress=False)
 
             # ── Hidden bridges ──
             prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
 
-            # Common input lists
             mode_inputs = [mode_still, mode_scene, mode_audio]
-            dd_inputs = [dd["subject"], dd["setting"], dd["lighting_mood"],
-                         dd["visual_style"], dd["camera"], dd["audio"]]
 
             # ── Enhance ──
+            def _enhance(source, api_url, model, base_name, custom_sp, m_still, m_scene, m_audio, *args):
+                wl, th, temp = args[-3], args[-2], args[-1]
+                wc = args[-4]
+                dd_vals = args[:-4]
+
+                source = (source or "").strip()
+                if not source:
+                    return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+
+                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                sp = _assemble_system_prompt(base_name, custom_sp, mods, wc, source, wl)
+                if not sp:
+                    return "", "<span style='color:#c66'>No system prompt configured.</span>"
+
+                try:
+                    result = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
+                    return result, f"<span style='color:#6c6'>OK - {len(result.split())} words</span>"
+                except urllib.error.URLError as e:
+                    msg = f"Connection failed: {e.reason} - is Ollama running?"
+                    logger.error(msg)
+                    return "", f"<span style='color:#c66'>{msg}</span>"
+                except Exception as e:
+                    msg = f"{type(e).__name__}: {e}"
+                    logger.error(msg)
+                    return "", f"<span style='color:#c66'>{msg}</span>"
+
             enhance_btn.click(
                 fn=lambda: "<span style='color:#aaa'>Enhancing...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
-                fn=enhance_prompt,
+                fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
-                       + mode_inputs + dd_inputs
+                       + mode_inputs + dd_components
                        + [wildcards, word_limit, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Refine ──
+            def _refine(existing, source, api_url, model, m_still, m_scene, m_audio, *args):
+                th, temp = args[-2], args[-1]
+                wc = args[-3]
+                dd_vals = args[:-3]
+
+                existing = (existing or "").strip()
+                if not existing:
+                    return "", "<span style='color:#c66'>No prompt to refine.</span>"
+
+                source = (source or "").strip()
+                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+
+                if not mods and not wc and not source:
+                    return "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
+
+                sp = REFINE_SYSTEM_PROMPT
+                if source:
+                    sp = f"{sp}\n\nThe user has provided updated direction. Integrate:\n{source}"
+                style_str = _build_style_string(mods)
+                if style_str:
+                    sp = f"{sp}\n\n{style_str}"
+                for wc_name in (wc or []):
+                    wc_prompt = _wildcards.get(wc_name, "")
+                    if wc_prompt:
+                        sp = f"{sp}\n\n{wc_prompt}"
+
+                try:
+                    result = _clean_output(_call_llm(existing, api_url, model, sp, temp, think=th))
+                    return result, f"<span style='color:#6c6'>OK - refined to {len(result.split())} words</span>"
+                except urllib.error.URLError as e:
+                    return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
+                except Exception as e:
+                    return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
+
             refine_btn.click(
                 fn=lambda x: x,
                 _js=f"""function(x) {{
@@ -808,21 +620,51 @@ class PromptEnhancer(scripts.Script):
                 fn=lambda: "<span style='color:#aaa'>Refining...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
-                fn=refine_prompt,
+                fn=_refine,
                 inputs=[prompt_in, source_prompt, api_url, model]
-                       + mode_inputs + dd_inputs
+                       + mode_inputs + dd_components
                        + [wildcards, think, temperature],
                 outputs=[prompt_out, status],
             )
 
             # ── Tags ──
+            def _tags(source, api_url, model, tag_fmt, m_still, m_scene, m_audio, *args):
+                th, temp = args[-2], args[-1]
+                wc = args[-3]
+                dd_vals = args[:-3]
+
+                source = (source or "").strip()
+                if not source:
+                    return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+
+                sp = TAGS_SYSTEM_PROMPTS.get(tag_fmt, list(TAGS_SYSTEM_PROMPTS.values())[0])
+                mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
+                style_str = _build_style_string(mods)
+                if style_str:
+                    sp = f"{sp}\n\n{style_str}"
+                for wc_name in (wc or []):
+                    wc_prompt = _wildcards.get(wc_name, "")
+                    if wc_prompt:
+                        sp = f"{sp}\n\n{wc_prompt}"
+
+                try:
+                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th))
+                    if tag_fmt in ("Illustrious", "Pony"):
+                        tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
+                    tag_count = len([t for t in tags.split(",") if t.strip()])
+                    return tags, f"<span style='color:#6c6'>OK - {tag_count} tags</span>"
+                except urllib.error.URLError as e:
+                    return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
+                except Exception as e:
+                    return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
+
             tags_btn.click(
                 fn=lambda: "<span style='color:#aaa'>Generating tags...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
-                fn=generate_tags,
+                fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format]
-                       + mode_inputs + dd_inputs
+                       + mode_inputs + dd_components
                        + [wildcards, think, temperature],
                 outputs=[prompt_out, status],
             )
@@ -844,9 +686,6 @@ class PromptEnhancer(scripts.Script):
             )
 
         # ── Metadata ──
-        all_dd_components = [dd["subject"], dd["setting"], dd["lighting_mood"],
-                             dd["visual_style"], dd["camera"], dd["audio"]]
-
         self.infotext_fields = [
             (source_prompt, "PE Source"),
             (base, "PE Base"),
@@ -854,17 +693,24 @@ class PromptEnhancer(scripts.Script):
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
         ]
-        self.paste_field_names = [
-            "PE Source", "PE Base", "PE WordLimit", "PE Wildcards", "PE Think",
-        ]
+        self.paste_field_names = ["PE Source", "PE Base", "PE WordLimit", "PE Wildcards", "PE Think"]
+
+        # Store dropdown references for process()
+        self._dd_components = dd_components
+        self._mode_inputs = [mode_still, mode_scene, mode_audio]
+
         return [source_prompt, api_url, model, base, custom_system_prompt,
                 mode_still, mode_scene, mode_audio,
-                *all_dd_components, wildcards, word_limit, think, temperature]
+                *dd_components, wildcards, word_limit, think, temperature]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
-                mode_still, mode_scene, mode_audio,
-                dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio,
-                wildcards, word_limit, think, temperature):
+                mode_still, mode_scene, mode_audio, *args):
+        # args = *dd_values, wildcards, word_limit, think, temperature
+        wildcards = args[-4]
+        word_limit = args[-3]
+        think = args[-2]
+        dd_vals = args[:-4]
+
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
         if base:
@@ -872,7 +718,6 @@ class PromptEnhancer(scripts.Script):
         if word_limit and int(word_limit) != 150:
             p.extra_generation_params["PE WordLimit"] = int(word_limit)
 
-        # Collect all modifiers for metadata
         all_mod_names = []
         if mode_still:
             all_mod_names.append("Still")
@@ -880,12 +725,11 @@ class PromptEnhancer(scripts.Script):
             all_mod_names.append("Scene")
         if mode_audio:
             all_mod_names.append("Audio")
-        for dd_val in [dd_subject, dd_setting, dd_lighting_mood, dd_visual_style, dd_camera, dd_audio]:
+        for dd_val in dd_vals:
             if dd_val:
                 all_mod_names.extend(dd_val)
         if all_mod_names:
             p.extra_generation_params["PE Modifiers"] = ", ".join(all_mod_names)
-
         if wildcards:
             p.extra_generation_params["PE Wildcards"] = ", ".join(wildcards)
         if think:

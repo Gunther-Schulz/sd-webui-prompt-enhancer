@@ -1,0 +1,49 @@
+# Subject — who/what is in the scene
+
+genre:
+  Studio Portrait: studio portrait, controlled environment, solid or gradient background, classic portrait lighting, shallow depth of field, headshot or three-quarter framing
+  Environmental Portrait: environmental portrait, subject in natural context, workplace or home setting, available light, environment tells the story, moderate depth of field
+  Street: street photography, candid, urban, unposed, spontaneous composition, decisive moment
+  Landscape: landscape, wide angle, deep depth of field, foreground interest, sky detail, rule of thirds, sense of scale
+  Architecture: architectural photography, wide angle, corrected verticals, geometric patterns, symmetry, leading lines, material textures
+  Product: product photography, isolated subject, clean background, precise lighting, material qualities, commercial composition
+  Food: food photography, overhead or 45-degree angle, soft directional light, texture emphasis, complementary props, appetizing colors
+  Wildlife: wildlife photography, background compression, bokeh, eye-level with subject, natural habitat, animal behavior
+  Sports: sports photography, peak action, fast shutter freeze, shallow depth of field, tight crop, implied movement
+  Editorial Fashion: editorial fashion, high-fashion, stylized, commanding poses, dramatic precise lighting, clean graphic composition, strong lines
+  Amateur Snapshot: amateur snapshot, authentically imperfect, slightly off composition, mixed available lighting, ungraded colors, candid
+  Mirror Composition: mirror composition, reflective surfaces, dual perspectives, frame-within-frame, subject and reflection, lighting across both planes
+
+subject:
+  Solo: single subject, alone in frame, full attention on one person or object
+  Couple: two subjects, pair, relationship implied through proximity and body language
+  Group: group of people, crowd, multiple subjects interacting or coexisting in frame
+  Animal: animal subject, creature behavior, fur or feather or scale texture, non-human presence
+  Object: object as subject, inanimate focus, material texture, form and function, still life quality
+  Hands Detail: hands as focal point, gesture, grip, touch, texture of skin, rings or tools, expressive fingers
+
+activity:
+  Dancing: dancing, mid-movement, flowing fabric, dynamic pose, rhythm, body in motion
+  Running: running, full stride, hair and clothing trailing, forward momentum, athletic posture
+  Fighting: fighting, combat stance, physical tension, impact, aggression, defensive or offensive pose
+  Eating: eating, food in hand or at mouth, table setting, casual or formal dining, social moment
+  Reading: reading, book or paper in hand, absorbed, downcast eyes, quiet concentration
+  Sleeping: sleeping, eyes closed, relaxed muscles, vulnerable, peaceful, resting pose
+  Embracing: embracing, arms wrapped around another, closeness, faces near, protective or tender hold
+  Working: working, hands engaged with tools or materials, focused expression, task-oriented posture
+  Playing: playing, playful energy, spontaneous movement, light-hearted, toys or games or sport
+  Smoking: smoking, cigarette or pipe, exhaled smoke, casual grip, contemplative or distracted
+  Performing: performing, stage presence, projected expression, audience-aware pose, theatrical energy
+
+relationship:
+  Intimate: intimate, tender closeness, gentle touch, faces close together, private moment, soft connection
+  Romantic: romantic, loving gaze, physical closeness, warmth between subjects, affectionate gesture
+  Passionate: passionate, intense physical closeness, urgent touch, locked gaze, heat, desire
+  Playful: playful between subjects, teasing gesture, shared laughter, light physical contact, mischief
+  Confrontational: confrontational, facing each other, tense body language, aggressive posture, argument, conflict
+  Protective: protective, one subject shielding or holding the other, guardian stance, arm around shoulder
+  Distant: emotional distance, physical separation, averted gazes, space between subjects, longing or coldness
+  Eye Contact: direct eye contact between subjects, locked gazes, unspoken communication, connection
+  Touch: physical contact, holding hands, leaning on shoulder, back-to-back, intertwined limbs, skin contact
+  Power Dynamic: power dynamic, dominant and submissive posture, one leading the other, height or position difference
+  Mirrored Poses: mirrored poses, symmetrical positioning, matching gestures, visual echo between subjects

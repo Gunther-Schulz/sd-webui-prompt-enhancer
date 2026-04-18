@@ -1,0 +1,76 @@
+# Visual Style
+
+color:
+  Black and White: black and white, monochrome, tonal contrast, no color, luminance, grain, interplay of light and dark
+  Vintage Film: vintage film, film grain, color shifts, warm highlights, faded blacks, expired film stock, nostalgic, textured
+  Cinematic Grade: cinematic color grade, teal-and-orange, crushed blacks, lifted shadows, midtone desaturation, Hollywood film look
+  Pastel: pastel, soft desaturated colors, blush pink, powder blue, lavender, mint, cream, lifted highlights, gentle, delicate
+  Retro: retro, era-specific film stock, analog imperfections, grain, light leaks, color shifts, period-authentic styling
+
+art style:
+  Oil Painting: oil painting, visible brushstrokes, rich color, thick impasto texture, canvas surface, classical painting technique
+  Watercolor: watercolor, soft washes, bleeding edges, translucent layers, paper texture showing through, delicate, flowing
+  Pencil Sketch: pencil sketch, graphite on paper, hatching and cross-hatching, tonal shading, raw linework, hand-drawn
+  Charcoal Drawing: charcoal drawing, deep blacks, smudged edges, rough paper texture, dramatic contrast, expressive marks
+  Digital Art: digital art, clean lines, vibrant colors, smooth gradients, polished rendering, concept art quality
+  3D Render: 3D render, CGI, volumetric lighting, subsurface scattering, physically based materials, ray-traced reflections
+  Comic Book: comic book, bold ink outlines, halftone dots, dynamic panel composition, flat bold colors, graphic novel
+  Pixel Art: pixel art, low resolution, visible pixels, limited color palette, retro game aesthetic, 8-bit or 16-bit
+
+anime:
+  Anime: anime style, drawn not photographic, Japanese animation, stylized features, illustrated
+  Anime Classic Cel: anime style, cel-shaded, large expressive eyes, clean outlines, flat color fills, traditional hand-drawn animation aesthetic
+  Anime Modern: modern anime, digital coloring, soft gradients, detailed hair highlights, subtle shading, post-2010s anime aesthetic, Kyoto Animation or Ufotable quality
+  Anime 80s: 80s anime, high detail mechanical design, sharp angular faces, heavy shadow, OVA quality, Akira or Macross aesthetic, dramatic lighting
+  Anime 90s: 90s anime, hand-painted cel, visible brushwork in backgrounds, warm color palette, VHS softness, Evangelion or Cowboy Bebop era
+  Anime 2000s: 2000s anime, early digital coloring, sharp clean lines, slightly flat shading, bold saturated colors, Bleach or Fullmetal Alchemist era, widescreen transition
+  Anime 2010s: 2010s anime, polished digital production, detailed lighting effects, complex hair shading, smooth animation quality, Attack on Titan or Sword Art Online era
+  Anime Chibi: chibi style, super-deformed proportions, oversized head, tiny body, cute exaggerated expressions, comedic
+  Anime Shonen: shonen anime, dynamic action lines, speed lines, intense expressions, muscular builds, battle-ready poses, Dragon Ball or Naruto energy
+  Anime Shoujo: shoujo anime, soft features, sparkling eyes, flower motifs, pastel backgrounds, romantic atmosphere, elegant flowing lines
+  Anime Ghibli: Studio Ghibli style, painterly backgrounds, naturalistic lighting, gentle character design, whimsical, hand-painted watercolor skies, Miyazaki warmth
+  Anime Makoto Shinkai: Makoto Shinkai style, photorealistic backgrounds, hyper-detailed clouds and light, lens flare, vivid color saturation, emotional atmosphere, Your Name aesthetic
+  Anime Satoshi Kon: Satoshi Kon style, reality-bending, fluid transitions, psychological intensity, detailed adult faces, cinematic framing, Perfect Blue or Paprika aesthetic
+  Anime Junji Ito: Junji Ito style, horror manga, extreme detail in grotesque forms, spiral patterns, body horror, black ink heavy, unsettling, Uzumaki aesthetic
+  Anime Takeshi Obata: Takeshi Obata style, highly detailed realistic anatomy, sharp features, dramatic shading, intricate clothing folds, Death Note or Bakuman aesthetic
+  Anime CLAMP: CLAMP style, elongated proportions, flowing fabric and hair, ornate costumes, art nouveau influence, ethereal, Cardcaptor Sakura or xxxHolic aesthetic
+  Anime Trigger: Studio Trigger style, exaggerated poses, thick dynamic outlines, explosive energy, vivid neon colors, kinetic motion, Kill la Kill or Promare aesthetic
+  Anime Mappa: MAPPA style, fluid dark animation, gritty realism, detailed facial expressions, cinematic composition, Jujutsu Kaisen or Chainsaw Man aesthetic
+  Anime Seinen: seinen anime, mature themes, realistic proportions, muted color palette, psychological depth, detailed environments, Berserk or Vinland Saga tone
+  Anime Isekai: isekai anime, fantasy world, RPG elements, magical effects, guild halls and forests, adventurer outfits, colorful and fantastical
+  Anime Mecha: mecha anime, detailed mechanical design, cockpit interior, giant robot proportions, thruster effects, metallic reflections, Gundam or Code Geass aesthetic
+  Anime Slice of Life: slice of life anime, warm soft colors, everyday settings, school or home interior, gentle expressions, peaceful atmosphere, cozy mundane beauty
+  Anime Cyberpunk: cyberpunk anime, neon-lit cityscapes, augmented bodies, holographic displays, rain and reflections, gritty futuristic, Ghost in the Shell or Psycho-Pass aesthetic
+  Anime Watercolor: anime watercolor style, soft painted edges, visible brush texture, bleeding colors, delicate washes, dreamlike, illustrated book quality
+  Anime Flat Design: modern flat anime, minimal shading, bold clean colors, geometric simplification, graphic poster quality, Tatami Galaxy or Monogatari aesthetic
+
+cinema style:
+  Blockbuster: blockbuster film look, high production value, dramatic lighting, epic scale, polished color grade, wide aspect ratio
+  Indie Film: indie film, natural lighting, handheld camera feel, muted colors, intimate framing, understated, authentic
+  Documentary: documentary, observational, available light, unposed, raw and authentic, journalistic framing, truth-seeking
+  Home Video: home video, handheld, shaky, amateur framing, family recording, unplanned, autofocus hunting, zooming in and out, casual narration implied
+  Security Camera: security camera, CCTV, fixed overhead angle, wide angle distortion, low resolution, timestamp overlay, grainy, surveillance footage
+  Dashcam: dashcam, fixed forward view, windshield reflections, through-glass perspective, road ahead, real-time capture, mundane turned dramatic
+  Found Footage: found footage, discovered recording, degraded quality, unstable handheld, horror or mystery context, partial framing, something not meant to be seen
+  Music Video: music video, stylized, bold color, high contrast, fast cuts implied, performance energy, glamorous or gritty
+  Horror Film: horror film, desaturated, sickly green or blue cast, underlit, jump-scare framing, something lurking, dread
+  Arthouse: arthouse cinema, deliberate composition, long-take framing, muted palette, symbolic staging, contemplative, austere
+  Wes Anderson: wes anderson style, symmetrical composition, pastel palette, centered framing, whimsical, deadpan, dollhouse aesthetic
+  Wong Kar-wai: wong kar-wai style, smeared neon, motion blur, saturated red and green, melancholic, step-printed, urban romance
+  Kubrick: kubrick style, one-point perspective, symmetrical wide angle, cold precision, unsettling stillness, geometric composition
+
+photography format:
+  Polaroid: polaroid, instant film, white border frame, slightly washed colors, soft focus, casual snapshot feel
+  35mm Film: 35mm film, natural grain, slight color cast, analog texture, photojournalistic, classic film photography
+  Medium Format: medium format, high resolution, shallow depth of field, smooth tonal gradation, fine detail, Hasselblad aesthetic
+  Disposable Camera: disposable camera, flash on, harsh direct flash, red-eye, rough grain, off-center framing, party snapshot
+  Infrared: infrared photography, false color, white foliage, dark skies, surreal tones, thermal glow effect
+  Cross-Processed: cross-processed film, extreme color shifts, high contrast, oversaturated, green or magenta cast, unpredictable color
+
+vintage format:
+  Daguerreotype: daguerreotype, earliest photography, silver plate, mirror-like surface, long exposure stillness, 1840s portrait
+  Tintype: tintype, dark metallic plate, low contrast, rough edges, civil war era, scratched and imperfect surface
+  Kodachrome: kodachrome, warm saturated color, rich reds and blues, sharp detail, 1960s-70s slide film, National Geographic look
+  VHS: VHS, analog video, scan lines, color bleeding, tracking artifacts, low resolution, fuzzy warm distortion, 1980s-90s home video
+  Early Digital: early digital camera, low megapixel, slight pixelation, oversaturated auto-white-balance, flash red-eye, 2000s snapshot
+  Instagram Circa 2012: early instagram, square crop, heavy filter, vignette, faded blacks, orange and teal shift, overprocessed nostalgia
