@@ -641,6 +641,9 @@ class PromptEnhancer(scripts.Script):
                 mode_still = gr.Checkbox(label="Still", value=False, elem_id=f"{tab}_pe_mode_still")
                 mode_scene = gr.Checkbox(label="Scene", value=False, elem_id=f"{tab}_pe_mode_scene")
                 mode_audio = gr.Checkbox(label="Audio", value=False, elem_id=f"{tab}_pe_mode_audio")
+                mode_still.do_not_save_to_config = True
+                mode_scene.do_not_save_to_config = True
+                mode_audio.do_not_save_to_config = True
 
             # ── Base + Tag Format ──
             with gr.Row():
@@ -711,6 +714,7 @@ class PromptEnhancer(scripts.Script):
                     value=0.7, step=0.05, scale=1,
                 )
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
+                think.do_not_save_to_config = True
 
             # ── Custom system prompt ──
             custom_system_prompt = gr.Textbox(
