@@ -876,6 +876,7 @@ class PromptEnhancer(scripts.Script):
             # ── Detail Level + Temperature + Think ──
             with gr.Row():
                 detail_level = gr.Slider(label="Detail", minimum=0, maximum=10, value=0, step=1, scale=1, info="0=auto, 1=minimal ... 10=extensive, scales to model")
+                detail_level.do_not_save_to_config = True
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
