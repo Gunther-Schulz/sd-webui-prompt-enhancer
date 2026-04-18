@@ -725,6 +725,7 @@ _DEFAULT_TAGS_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TAGS_TIMEOUT", "30")
 
 
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
+_MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "2000"))
 
 
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None):
@@ -792,6 +793,11 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                     if token:
                         content_parts.append(token)
                         last_token_time = _time.monotonic()
+                        # Hard cap on total tokens
+                        if len(content_parts) > _MAX_TOKENS:
+                            print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TOKENS} tokens")
+                            resp.close()
+                            break
 
                     # Check for completion
                     if chunk.get("done", False):
@@ -950,7 +956,7 @@ class PromptEnhancer(scripts.Script):
             with gr.Row():
                 detail_level = gr.Slider(label="Detail", minimum=0, maximum=10, value=0, step=1, scale=1, info="0=auto, 1=minimal ... 10=extensive, scales to model")
                 detail_level.do_not_save_to_config = True
-                temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
+                temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.8, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
 
