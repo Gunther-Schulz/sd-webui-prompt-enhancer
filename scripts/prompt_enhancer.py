@@ -305,8 +305,8 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
     aliases = _tag_databases.get(f"{tag_format}_aliases", {})
     use_underscores = tag_format in ("Illustrious", "Pony")
-    use_fuzzy = mode == "Fuzzy"
-    drop_invalid = mode == "Strict"
+    use_fuzzy = mode in ("Fuzzy", "Fuzzy Strict")
+    drop_invalid = mode in ("Strict", "Fuzzy Strict")
 
     raw_tags = [t.strip() for t in tags_str.split(",") if t.strip()]
     result_tags = []
@@ -677,7 +677,7 @@ class PromptEnhancer(scripts.Script):
             with gr.Row():
                 base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=2)
                 tag_format = gr.Dropdown(label="Tag Format", choices=list(TAGS_SYSTEM_PROMPTS.keys()), value=list(TAGS_SYSTEM_PROMPTS.keys())[0], scale=1)
-                tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Check", "Fuzzy", "Strict"], value="Check", scale=1)
+                tag_validation = gr.Radio(label="Tag Validation", choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"], value="Check", scale=1)
                 tag_validation.do_not_save_to_config = True
 
             # ── Auto-generated modifier dropdowns (one per file) ──
