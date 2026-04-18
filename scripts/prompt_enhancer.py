@@ -820,8 +820,8 @@ class PromptEnhancer(scripts.Script):
 
             # ── Limits + Temperature + Think ──
             with gr.Row():
-                word_limit = gr.Slider(label="Word Limit", minimum=20, maximum=500, value=150, step=10, scale=1, info="For Enhance")
-                tag_limit = gr.Slider(label="Tag Count", minimum=5, maximum=80, value=20, step=1, scale=1, info="For Tags")
+                word_limit = gr.Slider(label="Word Limit", minimum=0, maximum=500, value=150, step=10, scale=1, info="For Enhance, 0 = no limit")
+                tag_limit = gr.Slider(label="Tag Count", minimum=0, maximum=80, value=20, step=1, scale=1, info="For Tags, 0 = no limit")
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.7, step=0.05, scale=1, info="0 = deterministic, 2 = creative")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
@@ -1052,8 +1052,11 @@ class PromptEnhancer(scripts.Script):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
                         user_msg = f"{user_msg}\n\n{wc_prompt}"
-                tag_count_target = int(tl) if tl and int(tl) > 0 else 20
-                user_msg = f"{user_msg}\n\nGenerate approximately {tag_count_target} tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
+                tag_count_target = int(tl) if tl else 0
+                if tag_count_target > 0:
+                    user_msg = f"{user_msg}\n\nGenerate approximately {tag_count_target} tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
+                else:
+                    user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 try:
                     tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
