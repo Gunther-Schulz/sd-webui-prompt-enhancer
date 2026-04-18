@@ -310,12 +310,18 @@ _WHITELISTED_TAGS = {
 _TAG_CORRECTIONS = {
     "1man": "1boy",
     "1woman": "1girl",
+    "1female": "1girl",
+    "1male": "1boy",
     "man": "male_focus",
     "woman": "1girl",
+    "female": "1girl",
+    "male": "1boy",
     "girl": "1girl",
     "boy": "1boy",
     "2girl": "2girls",
     "2boy": "2boys",
+    "2men": "2boys",
+    "2women": "2girls",
     "3girl": "3girls",
     "3boy": "3boys",
 }
