@@ -684,6 +684,40 @@ def _refresh_models(api_url, current_model):
     return gr.update(choices=models, value=value)
 
 
+def _get_ollama_status(api_url):
+    """Get Ollama status info: running, model loaded, GPU/CPU."""
+    try:
+        base = _to_ollama_base(api_url)
+        req = urllib.request.Request(f"{base}/api/version", method="GET")
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            version_data = json.loads(resp.read().decode("utf-8"))
+        version = version_data.get("version", "?")
+
+        # Check loaded models
+        req = urllib.request.Request(f"{base}/api/ps", method="GET")
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            ps_data = json.loads(resp.read().decode("utf-8"))
+
+        models = ps_data.get("models", [])
+        if models:
+            m = models[0]
+            name = m.get("name", "?")
+            vram = m.get("size_vram", 0)
+            total = m.get("size", 0)
+            if vram > 0 and total > 0:
+                gpu_pct = int(vram / total * 100)
+                mode = f"GPU ({gpu_pct}%)" if gpu_pct > 50 else f"CPU ({100-gpu_pct}% offloaded)"
+            elif vram > 0:
+                mode = "GPU"
+            else:
+                mode = "CPU"
+            return f"<span style='color:#6c6'>Ollama v{version} \u2022 {name} \u2022 {mode}</span>"
+        else:
+            return f"<span style='color:#aaa'>Ollama v{version} \u2022 no model loaded</span>"
+    except Exception:
+        return "<span style='color:#c66'>Ollama not running</span>"
+
+
 # ── Core logic ───────────────────────────────────────────────────────────────
 
 def _strip_think_blocks(text):
@@ -981,6 +1015,7 @@ class PromptEnhancer(scripts.Script):
                 local_dir_path.do_not_save_to_config = True
                 reload_btn = gr.Button(value="\U0001f504 Reload", scale=0, min_width=100)
                 refresh_models_btn = gr.Button(value="\U0001f504 Models", scale=0, min_width=100)
+            ollama_status = gr.HTML(value=_get_ollama_status(DEFAULT_API_URL))
 
             # ── Reload wiring ──
             # Note: reload rebuilds dropdowns but can't add/remove them dynamically.
@@ -1006,7 +1041,9 @@ class PromptEnhancer(scripts.Script):
                 outputs=[base] + dd_components + [wildcards],
                 show_progress=False,
             )
-            refresh_models_btn.click(fn=_refresh_models, inputs=[api_url, model], outputs=[model], show_progress=False)
+            def _refresh_models_and_status(api_url, current_model):
+                return _refresh_models(api_url, current_model), _get_ollama_status(api_url)
+            refresh_models_btn.click(fn=_refresh_models_and_status, inputs=[api_url, model], outputs=[model, ollama_status], show_progress=False)
 
             # ── Hidden bridges ──
             prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
