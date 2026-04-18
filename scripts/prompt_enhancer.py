@@ -598,7 +598,7 @@ def _clean_output(text):
     return text.strip()
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=120):
+def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=45):
     base = _to_ollama_base(api_url)
     payload = {
         "model": model,
@@ -919,7 +919,7 @@ class PromptEnhancer(scripts.Script):
                         sp = f"{sp}\n\n{wc_prompt}"
 
                 try:
-                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th, timeout=60))
+                    tags = _clean_output(_call_llm(source, api_url, model, sp, temp, think=th, timeout=30))
                     if fmt_config.get("use_underscores", False):
                         tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
 
