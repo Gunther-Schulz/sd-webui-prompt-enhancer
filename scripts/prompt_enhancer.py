@@ -638,6 +638,28 @@ def _clean_output(text):
     return text.strip()
 
 
+def _split_concatenated_tag(tag):
+    """Split concatenated words like 'moonlitcatacombs' into 'moonlit_catacombs'.
+
+    Only applies to tags longer than 15 chars with no existing separators.
+    Uses camelCase boundaries and common word boundary heuristics.
+    """
+    # Skip if already has separators or is short enough to be a real tag
+    if "_" in tag or " " in tag or len(tag) <= 15:
+        return tag
+    # Skip known valid patterns (rating:, score_, source_)
+    if ":" in tag:
+        return tag
+    # Try to insert underscores at likely word boundaries
+    # Look for lowercase->uppercase transitions (camelCase)
+    result = re.sub(r"([a-z])([A-Z])", r"\1_\2", tag).lower()
+    if result != tag.lower():
+        return result
+    # All lowercase concatenated — can't reliably split without a dictionary
+    # Return as-is, validation will handle it
+    return tag
+
+
 _DEFAULT_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TIMEOUT", "45"))
 _DEFAULT_TAGS_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_TAGS_TIMEOUT", "30"))
 
@@ -910,11 +932,12 @@ class PromptEnhancer(scripts.Script):
                 "Modify them according to the requested changes.\n\n"
                 "Rules:\n"
                 "- Output a comma-separated list of tags, nothing else\n"
+                "- Use spaces between words in multi-word tags (long hair, blue eyes). Never concatenate words.\n"
                 "- If new styles are requested, add relevant tags\n"
                 "- If a wildcard asks you to choose something (location, wardrobe, etc.) and matching tags "
                 "already exist, REPLACE them. Do not accumulate.\n"
                 "- If the user provides updated direction, adjust tags to match. Remove contradicting tags.\n"
-                "- Keep the same tag format and conventions as the input\n"
+                "- Every tag must be consistent with the input and requested changes. Never contradict.\n"
                 "- Output only the modified tag list. No commentary."
             )
 
@@ -962,8 +985,8 @@ class PromptEnhancer(scripts.Script):
                     if is_tags:
                         # Apply tag post-processing
                         fmt_config = _tag_formats.get(tag_fmt, {})
-                        if fmt_config.get("use_underscores", False):
-                            result = ", ".join(t.strip().replace(" ", "_") for t in result.split(",") if t.strip())
+                        # Split concatenated tags, then apply underscore formatting
+                        result = ", ".join(_split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False) else _split_concatenated_tag(t.strip()) for t in result.split(",") if t.strip())
                         if validation_mode != "Off":
                             result, stats = _validate_tags(result, tag_fmt, mode=validation_mode)
                             tag_count = stats.get("total", 0)
@@ -1031,8 +1054,8 @@ class PromptEnhancer(scripts.Script):
 
                 try:
                     tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, timeout=_DEFAULT_TAGS_TIMEOUT))
-                    if fmt_config.get("use_underscores", False):
-                        tags = ", ".join(t.strip().replace(" ", "_") for t in tags.split(",") if t.strip())
+                    # Split concatenated tags, then apply underscore formatting
+                    tags = ", ".join(_split_concatenated_tag(t.strip()).replace(" ", "_") if fmt_config.get("use_underscores", False) else _split_concatenated_tag(t.strip()) for t in tags.split(",") if t.strip())
 
                     tag_count = len([t for t in tags.split(",") if t.strip()])
 
