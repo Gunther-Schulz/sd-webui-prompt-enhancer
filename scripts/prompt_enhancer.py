@@ -790,9 +790,9 @@ class PromptEnhancer(scripts.Script):
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1)
                 tag_validation = gr.Radio(
                     label="Tag Validation",
-                    choices=["Off", "Check", "Strict", "Fuzzy", "Fuzzy Strict"],
+                    choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],
                     value="Check", scale=1,
-                    info="Off=raw | Check=alias only | Strict=alias+drop | Fuzzy=alias+guess | Fuzzy Strict=guess+drop",
+                    info="Off=raw | Check=alias | Fuzzy=alias+guess | Strict=alias+drop | Fuzzy Strict=guess+drop",
                 )
                 tag_validation.do_not_save_to_config = True
 
