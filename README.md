@@ -7,18 +7,22 @@ Takes your short prompt and expands it into a detailed description using a local
 ## Features
 
 - **Local LLM powered** - uses Ollama or any OpenAI-compatible API
-- **Two base modes** - Still (image) and Scene (video with chronological flow)
-- **120+ categorized modifiers** - genre, lighting, mood, emotion, activity, perspective, camera distance, art style, cinema style, audio cues, and more
+- **Three action buttons** - Enhance (flowing prompt), Tags (booru tags), Refine (modify existing)
+- **Mode checkboxes** - Still (frozen moment), Scene (action over time), Audio (sound cues)
+- **130+ categorized modifiers** - organized into multiple dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
+- **Tag generation** - booru-style tags for Illustrious, NoobAI, and Pony models with tag validation
+- **Tag validation** - auto-downloaded danbooru tag databases, alias correction, fuzzy matching, 5 validation modes
 - **Wildcards** - let the LLM make creative choices (surprise location, unexpected angle, narrative detail, etc.)
-- **Refine button** - apply modifiers to an already-enhanced prompt without re-enhancing from scratch
 - **Inline wildcards** - use `{name?}` placeholders in your prompt for the LLM to fill creatively
-- **Local overrides** - extend with your own modifiers and base prompts via YAML/JSON files in a local directory
-- **Keyword preservation** - style keywords are included verbatim in the output so the image generator recognizes them
-- **Word limit slider** - target output length (20-500 words)
-- **Auto-retry** - retries once on Ollama connection failure (model reload after keep-alive expiry)
+- **Refine button** - apply modifiers to an already-enhanced prompt without re-enhancing from scratch
+- **Local overrides** - extend with your own modifiers via YAML files; each file becomes a dropdown
+- **Tag formats from YAML** - add support for new models by dropping a tag format YAML file
+- **Keyword preservation** - style keywords are included verbatim so the image generator recognizes them
+- **Auto-retry** - retries once on Ollama connection failure
+- **Configurable timeouts** - per-operation timeouts via environment variables
 - **Zero VRAM impact** - runs the LLM on CPU by default
 - **Works in both txt2img and img2img** tabs
-- **Metadata saved** - source prompt, base, modifiers, and wildcards stored in generated images
+- **Metadata saved** - source prompt, modifiers, and wildcards stored in generated images
 
 ## Requirements
 
@@ -39,7 +43,7 @@ OLLAMA_NUM_GPU=0 OLLAMA_KEEP_ALIVE=0 ollama serve
 
 **`huihui_ai/qwen3.5-abliterated:9b`** (~6 GB) - best balance of quality and instruction following. This is the default.
 
-The 4b variant is not recommended as it produces noticeably lower quality enhancements. Larger models (14b+) work well if you have the RAM but are slower on CPU.
+The 4b variant is not recommended as it produces noticeably lower quality output. Larger models (14b+) work well if you have the RAM but are slower on CPU.
 
 "Abliterated" models have refusal behaviors removed, which is useful for unrestricted creative content. Standard models work fine for general use.
 
@@ -65,21 +69,35 @@ Restart the WebUI.
 
 1. Open the **Prompt Enhancer** accordion in the txt2img or img2img tab
 2. Type your prompt in the **Source Prompt** box (or click **Grab** to pull from the main prompt area)
-3. Choose a **Base** - Still for images, Scene for video
-4. Optionally select **Modifiers** (categorized: genre, lighting, mood, etc.)
+3. Optionally check **Still** (image), **Scene** (video), or **Audio** (sound cues)
+4. Optionally select modifiers from the categorized dropdowns (Subject, Setting, Lighting & Mood, etc.)
 5. Optionally select **Wildcards** for creative LLM choices
-6. Adjust **Word Limit** as needed
-7. Click **Enhance** - the enhanced prompt is written to the main prompt box
+6. Click **Enhance** for a flowing paragraph, or **Tags** for booru-style tags
+
+### Tag generation
+
+Click **Tags** to generate danbooru-style tags instead of a flowing paragraph:
+
+1. Select a **Tag Format** - Illustrious, NoobAI, or Pony
+2. Choose a **Tag Validation** mode (Check recommended)
+3. Click **Tags**
+
+Tag databases are automatically downloaded on first use (~2-3 MB per format). Tags are validated, corrected (aliases, common mistakes like `1man` → `1boy`), deduplicated, and reordered into standard danbooru convention.
+
+**Validation modes:**
+- **Off** - raw LLM output, no validation
+- **Check** - exact match + alias correction, keep unrecognized (default, safe)
+- **Fuzzy** - alias + fuzzy string matching, keep unrecognized
+- **Strict** - alias only, drop unrecognized tags
+- **Fuzzy Strict** - alias + fuzzy matching, drop unrecognized
 
 ### Refining an existing prompt
 
 Already have an enhanced prompt and want to tweak it?
 
-1. Select new modifiers or wildcards
+1. Select new modifiers or wildcards, or update the source prompt
 2. Click **Refine** instead of Enhance
 3. The LLM reads the current prompt from the main textarea and integrates the changes without rewriting everything
-
-This lets you iteratively adjust style, mood, location, etc. without starting over.
 
 ### Inline wildcards
 
@@ -93,47 +111,56 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Mode | (none) | Checkboxes: Still (image), Scene (video), Audio (sound cues) |
+| Mode | (none) | Checkboxes: Still (frozen moment), Scene (action over time), Audio (sound cues) |
 | Base | Default | System prompt template (Default or Custom) |
-| Modifiers | (none) | Multiple categorized dropdowns (one per YAML file) |
-| Wildcards | (none) | Creative delegation - let the LLM make choices |
+| Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony (for Tags button) |
+| Tag Validation | Check | How to validate generated tags against the database |
+| Modifiers | (none) | Multiple categorized dropdowns auto-generated from YAML files |
+| Wildcards | (none) | Creative delegation — let the LLM make choices |
 | Word Limit | 150 | Target output length in words |
 | Temperature | 0.7 | Creativity (0 = deterministic, 2 = very creative) |
-| Think | off | Let model reason before answering (slower, may improve quality) |
+| Think | off | Let model reason before answering (slower) |
 | API URL | `http://localhost:11434` | Ollama API endpoint |
 | Model | `huihui_ai/qwen3.5-abliterated:9b` | LLM model (auto-detected from Ollama) |
 
-## Modifier categories
+### Environment variables
 
-All modifiers are keyword strings organized by category:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PROMPT_ENHANCER_LOCAL` | (none) | Comma-separated directories for local modifier overrides |
+| `PROMPT_ENHANCER_TIMEOUT` | 45 | Enhance/Refine LLM timeout in seconds |
+| `PROMPT_ENHANCER_TAGS_TIMEOUT` | 30 | Tags LLM timeout in seconds |
 
-| Category | Examples |
-|----------|----------|
-| Genre | Studio Portrait, Street, Landscape, Food, Editorial Fashion, ... |
-| Lighting | Golden Hour, Candlelight, Neon Glow, Backlit, Volumetric Light |
-| Mood | Film Noir, Dreamy, Horror, Gritty, Fantasy |
-| Emotion | Melancholy, Joy, Serenity, Tension, Defiance, ... |
-| Activity | Dancing, Running, Reading, Embracing, Performing, ... |
-| Relationship | Intimate, Romantic, Confrontational, Protective, Eye Contact, ... |
-| Setting | Urban, Rural, Underwater, Rooftop, Forest, Coastal, ... |
-| Time Period | Medieval, Victorian, 1920s Art Deco, 1970s, Futuristic, ... |
-| Subject | Solo, Couple, Group, Hands Detail, ... |
-| Material | Leather, Silk, Lace, Metal, Glass, Wet Skin |
-| Aesthetic | Japanese, Nordic, Mediterranean, Parisian, Brutalist, ... |
-| Perspective | First Person, Low Angle, Bird's Eye, Dutch Angle, Over the Shoulder, ... |
-| Technique | Long Exposure, Double Exposure, Tilt-Shift, Macro, Silhouette, ... |
-| Color | Black and White, Vintage Film, Cinematic Grade, Pastel, Retro |
-| Photography Format | Polaroid, 35mm Film, Medium Format, Disposable Camera, ... |
-| Art Style | Oil Painting, Watercolor, Anime, Comic Book, 3D Render, Pixel Art, ... |
-| Cinema Style | Blockbuster, Indie Film, Home Video, Wes Anderson, Kubrick, ... |
-| Vintage Format | Daguerreotype, Kodachrome, VHS, Early Digital, ... |
-| Audio | Add Audio Cues, Ambient City, Rain Sounds, Silence, ... |
-| Atmosphere | Fog, Rain, Dust and Haze |
-| Motion | Frozen Action |
+## Published modifiers
+
+Modifiers are organized into YAML files in the `modifiers/` directory. Each file becomes a dropdown in the UI:
+
+| Dropdown | Categories |
+|----------|------------|
+| **Subject** | genre, subject, activity, relationship |
+| **Setting** | setting, time period, aesthetic |
+| **Lighting & Mood** | lighting, mood, atmosphere, emotion |
+| **Visual Style** | color, art style, anime (25 sub-styles), cinema style, photography format, vintage format |
+| **Camera** | perspective, distance, focus, technique, motion, material |
+| **Audio** | ambient types, silence |
+
+## Tag formats
+
+Tag format definitions live in `tag-formats/` as YAML files. Each file defines:
+
+```yaml
+system_prompt: |
+  (LLM instructions for generating tags)
+use_underscores: true
+tag_db: illustrious.csv
+tag_db_url: https://...
+```
+
+Add support for new models by dropping a YAML file — no code changes needed.
 
 ## Local overrides
 
-Extend the extension with your own modifiers and base prompts. Each YAML file in a local directory becomes its own dropdown in the UI. Files are never committed to git.
+Extend the extension with your own modifiers and base prompts. Each YAML file in a local directory becomes its own dropdown in the UI.
 
 ### Setup
 
@@ -143,7 +170,7 @@ Set the `PROMPT_ENHANCER_LOCAL` environment variable to one or more comma-separa
 PROMPT_ENHANCER_LOCAL="/home/user/my-modifiers, /home/user/experimental"
 ```
 
-The **Local Overrides** field in the UI can also specify directories, but only for refreshing *content* of existing dropdowns. **New files require a Forge restart** to create new dropdowns.
+The **Local Overrides** field in the UI can refresh content of existing dropdowns. **New files require a Forge restart** to create new dropdowns.
 
 ### How it works
 
@@ -151,9 +178,9 @@ Each `.yaml` file becomes a dropdown. The filename determines the dropdown label
 
 ```
 /home/user/my-modifiers/
-  _bases.yaml       # extends the Base dropdown (underscore prefix = special)
-  nsfw.yaml          # creates "Nsfw" dropdown
-  my-styles.yaml     # creates "My Styles" dropdown
+  _bases.yaml        # extends the Base dropdown (underscore prefix = special)
+  nsfw.yaml           # creates "Nsfw" dropdown
+  my-styles.yaml      # creates "My Styles" dropdown
 ```
 
 Files with the same name as published ones (e.g., `subject.yaml`) merge their content into the existing dropdown.
@@ -167,9 +194,6 @@ All files use the same two-level format — categories containing named keyword 
 my category:
   Cozy Autumn: autumn, warm tones, falling leaves, golden light, wood smoke
   Rainy Tokyo: tokyo streets, neon reflections, rain, umbrellas, night
-
-another category:
-  Something: keyword, string, here
 ```
 
 ### Base prompt overrides
@@ -177,19 +201,17 @@ another category:
 `_bases.yaml` uses a flat format — name and full system prompt:
 
 ```yaml
-# _bases.yaml
 My Custom Base: |
   You are a Creative Assistant. Given a user's raw input, expand it into
   a detailed prompt for...
-  (full system prompt here)
 ```
 
 ## How it works
 
-1. Your source prompt is sent to the local LLM with a system prompt assembled from: base + modifier keywords + wildcard instructions + word limit
-2. The LLM returns an expanded, detailed version with style keywords preserved verbatim
-3. The enhanced text is written to the main prompt textbox
-4. Settings are saved to generated image metadata for reproducibility
+1. **Enhance**: source prompt + modifiers + wildcards are assembled into a system prompt, sent to the local LLM, which returns a detailed flowing paragraph
+2. **Tags**: source prompt + modifiers are sent as a structured user message, LLM generates booru tags, which are then validated, corrected, deduplicated, and reordered
+3. **Refine**: the current enhanced prompt is sent back to the LLM with new modifiers to integrate without rewriting
+4. The output is written to the main prompt textbox and settings are saved to image metadata
 
 ## License
 
