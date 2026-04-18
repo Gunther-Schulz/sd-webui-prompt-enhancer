@@ -761,7 +761,7 @@ class PromptEnhancer(scripts.Script):
             with gr.Row():
                 enhance_btn = gr.Button(value="\U0001f4a1 Enhance", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
-                refine_btn = gr.Button(value="\U0001f527 Refine", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
+                refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 grab_btn = gr.Button(value="\u2b07 Grab", scale=0, min_width=80, elem_id=f"{tab}_pe_grab_btn")
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
@@ -950,7 +950,7 @@ class PromptEnhancer(scripts.Script):
                 existing = (existing or "").strip()
                 print(f"[PromptEnhancer] Refine: existing_len={len(existing)}, source_len={len((source or '').strip())}")
                 if not existing:
-                    return "", "<span style='color:#c66'>No prompt to refine. Generate one first with Enhance.</span>"
+                    return "", "<span style='color:#c66'>No prompt to remix. Generate one first with Enhance or Tags.</span>"
 
                 source = (source or "").strip()
                 mods = _collect_modifiers(m_still, m_scene, m_audio, dd_vals)
@@ -997,11 +997,11 @@ class PromptEnhancer(scripts.Script):
                                 parts.append(f"{stats['dropped']} dropped")
                             if stats.get("kept_invalid"):
                                 parts.append(f"{stats['kept_invalid']} unverified")
-                            return result, f"<span style='color:#6c6'>OK - refined {', '.join(parts)}</span>"
+                            return result, f"<span style='color:#6c6'>OK - remixed {', '.join(parts)}</span>"
                         tag_count = len([t for t in result.split(",") if t.strip()])
-                        return result, f"<span style='color:#6c6'>OK - refined to {tag_count} tags</span>"
+                        return result, f"<span style='color:#6c6'>OK - remixed to {tag_count} tags</span>"
                     else:
-                        return result, f"<span style='color:#6c6'>OK - refined to {len(result.split())} words</span>"
+                        return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
@@ -1015,7 +1015,7 @@ class PromptEnhancer(scripts.Script):
                 }}""",
                 inputs=[prompt_in], outputs=[prompt_in], show_progress=False,
             ).then(
-                fn=lambda: "<span style='color:#aaa'>Refining...</span>",
+                fn=lambda: "<span style='color:#aaa'>Remixing...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_refine,
