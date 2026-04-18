@@ -1,47 +1,47 @@
 {
     "scene": {
-        "Surprise Location": "Choose a specific, interesting location for this scene. Be creative and unexpected \u2014 avoid generic settings. Describe the location with concrete details that make it vivid and real.",
-        "Surprise Time": "Choose a specific time of day. Describe its natural lighting \u2014 direction, color temperature, shadow length \u2014 and how it shapes the mood of the scene.",
-        "Surprise Wardrobe": "Choose specific clothing and accessories for the subject. The choices should feel deliberate and fitting for the scene's mood and context.",
-        "Surprise Props": "Add two or three specific objects or environmental details. They should feel natural to the scene and add visual richness \u2014 not random, but creatively chosen to ground the image.",
-        "Surprise Palette": "Commit to a deliberate color palette of two to four colors. Weave these colors through every element \u2014 clothing, environment, lighting, props.",
-        "Surprise Weather": "Choose specific weather conditions. Describe their visual impact \u2014 how they affect light, surfaces, the subject, and the overall atmosphere."
+        "Surprise Location": "Choose a specific, interesting location for this scene. Describe it with concrete details.",
+        "Surprise Time": "Choose a specific time of day. Describe its natural lighting and how it shapes the mood.",
+        "Surprise Wardrobe": "Choose specific clothing and accessories for the subject that fit the scene's mood.",
+        "Surprise Props": "Add two or three specific objects or environmental details that enrich the scene naturally.",
+        "Surprise Palette": "Commit to a deliberate color palette of two to four colors. Weave them through every element.",
+        "Surprise Weather": "Choose specific weather conditions. Describe their visual impact on light, surfaces, and atmosphere."
     },
     "character": {
-        "Random Hair": "Choose a specific hair color and hairstyle for the character. Be distinctive \u2014 pick an unusual combination, not the most common one.",
-        "Random Eyes": "Choose a specific eye color and style for the character. Pick something distinctive and fitting for the mood.",
-        "Random Outfit": "Choose a specific outfit for the character. Pick something that fits the scene but is not the most obvious choice.",
-        "Random Expression": "Choose a specific facial expression that tells a story. Not just a smile \u2014 pick something with nuance.",
-        "Random Pose": "Choose a specific body pose. Pick something dynamic or expressive, not a default standing pose.",
-        "Random Accessory": "Choose one or two specific accessories that add character. Something that tells you about who this person is."
+        "Random Hair": "Choose a specific hair color and hairstyle for the character. Be distinctive.",
+        "Random Eyes": "Choose a specific eye color and style for the character.",
+        "Random Outfit": "Choose a specific outfit for the character that fits the scene.",
+        "Random Expression": "Choose a specific facial expression that tells a story.",
+        "Random Pose": "Choose a specific body pose. Something dynamic or expressive.",
+        "Random Accessory": "Choose one or two specific accessories that add character."
     },
     "creative": {
-        "Unexpected Angle": "Choose a surprising camera angle that adds visual interest. The angle should feel motivated, not gimmicky.",
-        "Story Moment": "Place the subject at a specific narrative beat \u2014 arriving, leaving, discovering, waiting, reacting, deciding. Let that moment drive the pose, expression, and energy of the scene.",
-        "Texture Focus": "Pick one dominant texture and make it a central visual element. Describe it in rich tactile detail and let it anchor the composition.",
-        "Contrast Pairing": "Build the scene around a visual contrast \u2014 old and new, natural and artificial, still and moving, soft and hard. Use this tension as the compositional backbone.",
-        "Era": "Place the scene in a specific decade. Reflect that era authentically in clothing, hairstyles, decor, technology, color palette, and visual style.",
-        "Emotion": "Choose a specific emotion and let it drive every visual choice \u2014 pose, expression, lighting mood, color temperature, composition.",
-        "Imperfection": "Add one realistic imperfection \u2014 something that makes the image feel real rather than sterile. A small flaw that adds authenticity.",
-        "Narrative Detail": "Add one small environmental detail that implies a story \u2014 something that happened before or will happen after this moment. Let it sit naturally without drawing too much attention.",
-        "Light Source": "Instead of default natural lighting, invent a specific unusual light source. Let it define the color and mood of the entire scene.",
-        "Random Background": "Choose a specific, unexpected background or setting. Avoid the most common or generic choices."
+        "Unexpected Angle": "Choose a surprising camera angle that adds visual interest.",
+        "Story Moment": "Place the subject at a specific narrative beat \u2014 arriving, leaving, discovering, waiting, reacting. Let it drive the pose and energy.",
+        "Texture Focus": "Pick one dominant texture and make it a central visual element.",
+        "Contrast Pairing": "Build the scene around a visual contrast \u2014 old and new, natural and artificial, still and moving, soft and hard.",
+        "Era": "Place the scene in a specific decade. Reflect it in clothing, decor, technology, and visual style.",
+        "Emotion": "Choose a specific emotion and let it drive every visual choice.",
+        "Imperfection": "Add one realistic imperfection that makes the image feel authentic.",
+        "Narrative Detail": "Add one small environmental detail that implies a story before or after this moment.",
+        "Light Source": "Invent a specific unusual light source. Let it define the color and mood.",
+        "Random Background": "Choose a specific, unexpected background or setting."
     },
     "style influence": {
-        "Random Artist": "Choose a specific artist or illustrator whose style should influence this image. Do not pick the most famous one. Pick someone with a distinctive, recognizable visual style. Apply their characteristic techniques, color choices, and composition tendencies.",
-        "Random Series": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style. Do not pick the most popular series. Choose one with a recognizable aesthetic.",
-        "Random Art Movement": "Choose a specific art movement and apply its principles throughout the image. Pick one that creates an interesting visual result for this particular scene.",
-        "Random Medium": "Choose a specific art medium and make the image look like it was created with it. Pick something that fits the mood of the scene."
+        "Random Artist": "Choose a specific artist or illustrator with a distinctive visual style. Apply their techniques, color choices, and composition.",
+        "Random Series": "Choose a specific anime, manga, or game franchise. Apply its distinctive visual style.",
+        "Random Art Movement": "Choose a specific art movement. Apply its principles throughout the image.",
+        "Random Medium": "Choose a specific art medium. Make the image look like it was created with it."
     },
     "anime style": {
-        "Anime Artist": "Choose a specific anime or manga illustrator with a distinctive art style. Do not pick the most famous one. Pick someone whose linework, coloring, or composition is immediately recognizable. Apply their distinctive art style throughout.",
-        "Anime Series Style": "Choose a specific anime, manga, or game franchise and apply its distinctive visual style. Do not pick the most popular series. Choose one with a recognizable aesthetic.",
-        "Anime Character Archetype": "Choose a specific anime character archetype and apply it to the character's personality, pose, and expression. Pick one that fits the scene interestingly.",
-        "Anime Color Scheme": "Choose a distinctive anime color scheme that matches a specific genre or mood. Let the palette drive the entire image's feel.",
-        "Anime Era": "Choose a specific anime visual era and apply its conventions \u2014 the shading style, linework, color palette, and overall aesthetic of that period.",
-        "Anime Race": "Choose a specific anime creature or race type for the character. Pick one with distinctive visual features.",
-        "Anime Weapon": "Choose a specific weapon for the character. Pick something that fits the scene and reveals character personality.",
-        "Anime Season": "Choose a specific season and apply its visual conventions \u2014 the plants, light quality, clothing, and atmosphere typical of that time of year.",
-        "Anime Composition": "Choose a specific framing and composition. Pick an angle that adds drama or intimacy to this particular scene."
+        "Anime Artist": "Choose a specific anime or manga illustrator with a distinctive art style. Apply their linework, coloring, and composition.",
+        "Anime Series Style": "Choose a specific anime, manga, or game franchise. Apply its distinctive visual aesthetic.",
+        "Anime Character Archetype": "Choose a specific anime character archetype. Apply it to personality, pose, and expression.",
+        "Anime Color Scheme": "Choose a distinctive anime color scheme matching a specific genre or mood.",
+        "Anime Era": "Choose a specific anime visual era. Apply its shading style, linework, color palette, and aesthetic.",
+        "Anime Race": "Choose a specific anime creature or race type with distinctive visual features.",
+        "Anime Weapon": "Choose a specific weapon that fits the scene and reveals character.",
+        "Anime Season": "Choose a specific season. Apply its plants, light quality, clothing, and atmosphere.",
+        "Anime Composition": "Choose a specific framing and composition that adds drama or intimacy."
     }
 }
