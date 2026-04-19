@@ -1816,11 +1816,13 @@ class PromptEnhancer(scripts.Script):
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 *args):
         # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb
-        wildcards = args[-7]
-        pe_seed = args[-6]
-        detail_level = args[-5]
-        think = args[-4]
         neg_cb = args[-1]
+        temp = args[-2]
+        think = args[-3]
+        detail_level = args[-4]
+        pe_seed = args[-5]
+        prepend = args[-6]
+        wildcards = args[-7]
         dd_vals = args[:-7]
 
         if source_prompt:
