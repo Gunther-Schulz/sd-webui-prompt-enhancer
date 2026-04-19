@@ -63,7 +63,7 @@ negative: |
   (comma-separated negative keywords/tags that should be avoided in the image)
 
   Negative rules:
-  - Keep negatives concise — no more than 15-20 keywords.
+  - Keep negatives at an appropriate length for the scene. Never exceed 100 keywords.
   - Only include negatives that specifically contradict elements in your positive output.
   - Do not add generic quality negatives (those are handled separately).
   - Do not repeat or rephrase the same concept multiple times.
