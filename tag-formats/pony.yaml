@@ -19,6 +19,12 @@ system_prompt: |
 
 use_underscores: true
 
+negative_quality_tags:
+  - score_4
+  - score_3
+  - score_2
+  - score_1
+
 # Reuses Illustrious tag database (covers danbooru portion of Pony's training)
 tag_db: illustrious.csv
 tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv

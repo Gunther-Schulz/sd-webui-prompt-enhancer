@@ -17,5 +17,10 @@ system_prompt: |
 
 use_underscores: true
 
+negative_quality_tags:
+  - worst_quality
+  - low_quality
+  - bad_quality
+
 tag_db: illustrious.csv
 tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv

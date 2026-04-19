@@ -17,5 +17,10 @@ system_prompt: |
 
 use_underscores: false
 
+negative_quality_tags:
+  - worst quality
+  - low quality
+  - bad quality
+
 tag_db: noobai.csv
 tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/NoobAIXL1.1_dash.csv

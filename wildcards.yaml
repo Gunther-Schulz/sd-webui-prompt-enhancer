@@ -1,0 +1,48 @@
+# Wildcard prompts — creative choices the LLM makes for you
+# Organized by category (shown as separators in the UI dropdown)
+# Override or extend via _wildcards.yaml in your local overrides directory
+
+scene:
+  Surprise Location: "Choose a specific, interesting location for this scene. Describe it with concrete details."
+  Surprise Time: "Choose a specific time of day. Describe its natural lighting and how it shapes the mood."
+  Surprise Wardrobe: "Choose specific clothing and accessories for the subject that fit the scene's mood."
+  Surprise Props: "Add two or three specific objects or environmental details that ground the scene."
+  Surprise Palette: "Commit to a deliberate color palette of two to four colors. Weave them through every element."
+  Surprise Weather: "Choose specific weather conditions. Describe their visual impact on the scene."
+
+character:
+  Random Hair: "Choose a specific hair color and hairstyle for the character."
+  Random Eyes: "Choose a specific eye color and style for the character."
+  Random Outfit: "Choose a specific outfit for the character that fits the scene."
+  Random Expression: "Choose a specific facial expression that tells a story."
+  Random Pose: "Choose a specific body pose that adds energy or emotion."
+  Random Accessory: "Choose one or two specific accessories that add character."
+
+creative:
+  Unexpected Angle: "Choose a surprising camera angle that adds visual interest."
+  Story Moment: "Place the subject at a specific narrative beat — arriving, leaving, discovering, waiting, reacting. Let it drive the pose and energy."
+  Texture Focus: "Pick one dominant texture and make it a central visual element."
+  Contrast Pairing: "Build the scene around a visual contrast — old and new, natural and artificial, still and moving."
+  Era: "Place the scene in a specific decade. Reflect it authentically in every detail."
+  Emotion: "Choose a specific emotion and let it drive every visual choice."
+  Imperfection: "Add one realistic imperfection that makes the image feel real rather than sterile."
+  Narrative Detail: "Add one small environmental detail that implies a story before or after this moment."
+  Light Source: "Invent a specific unusual light source. Let it define the color and mood."
+  Random Background: "Choose a specific, unexpected background or setting."
+
+style influence:
+  Random Artist: "Choose a specific artist or illustrator. Apply their characteristic techniques and style."
+  Random Series: "Choose a specific franchise and apply its distinctive visual style and aesthetic."
+  Random Art Movement: "Choose a specific art movement and apply its principles throughout."
+  Random Medium: "Choose a specific art medium and make the image look like it was created with it."
+
+anime style:
+  Anime Artist: "Choose a specific anime or manga illustrator. Apply their distinctive art style."
+  Anime Series Style: "Choose a specific anime, manga, or game franchise. Apply its distinctive visual aesthetic."
+  Anime Character Archetype: "Choose a specific anime character archetype and apply it to the character."
+  Anime Color Scheme: "Choose a distinctive anime color scheme that matches a specific genre or mood."
+  Anime Era: "Choose a specific anime visual era and apply its conventions."
+  Anime Race: "Choose a specific anime creature or race type for the character."
+  Anime Weapon: "Choose a specific weapon for the character that fits the scene."
+  Anime Season: "Choose a specific season and apply its visual conventions."
+  Anime Composition: "Choose a specific framing and composition that adds drama or intimacy."

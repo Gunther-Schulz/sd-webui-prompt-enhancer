@@ -5,8 +5,10 @@
 #   - The PROMPT_ENHANCER_LOCAL environment variable
 #
 # File conventions in the local directory:
-#   _bases.yaml  → adds entries to the Base dropdown (flat: name -> prompt)
-#   *.yaml       → adds entries to the Modifiers dropdown (categorized)
+#   _bases.yaml     → adds entries to the Base dropdown (flat: name -> prompt)
+#   _wildcards.yaml → adds wildcard prompts (category -> name -> prompt)
+#   _prompts.yaml   → overrides operational prompts (summarize, remix_*, negative, etc.)
+#   *.yaml          → adds entries to the Modifiers dropdown (categorized)
 #
 # Modifier format: categories containing named keyword strings.
 # Categories can match existing ones (entries are merged) or be new.

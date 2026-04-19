@@ -47,6 +47,7 @@ def _load_tag_formats():
             _tag_formats[label] = {
                 "system_prompt": data["system_prompt"].strip(),
                 "use_underscores": data.get("use_underscores", False),
+                "negative_quality_tags": data.get("negative_quality_tags", []),
                 "tag_db": data.get("tag_db", ""),
                 "tag_db_url": data.get("tag_db_url", ""),
             }
@@ -523,16 +524,37 @@ _dropdown_order = []         # list of dropdown labels in display order
 _dropdown_choices = {}       # label -> [choice_list with separators]
 _wildcards = {}
 _wildcard_choices = []
+_prompts = {}                # operational prompts loaded from prompts.yaml
+
+
+def _load_wildcards(wc_data):
+    """Parse wildcard data dict into flat lookup and UI choice list."""
+    wildcards = {}
+    choices = []
+    for cat, items in wc_data.items():
+        if not isinstance(items, dict):
+            continue
+        choices.append(f"\u2500\u2500\u2500\u2500\u2500 {cat.title()} \u2500\u2500\u2500\u2500\u2500")
+        for name, prompt in items.items():
+            if isinstance(prompt, str):
+                wildcards[name] = prompt
+                choices.append(name)
+    return wildcards, choices
 
 
 def _reload_all(local_dir_path=""):
     """Reload all config files from disk."""
-    global _bases, _all_modifiers, _dropdown_order, _dropdown_choices, _wildcards, _wildcard_choices
+    global _bases, _all_modifiers, _dropdown_order, _dropdown_choices, _wildcards, _wildcard_choices, _prompts
 
     local_dirs = _get_local_dirs(local_dir_path)
 
-    # Bases
-    _bases = {k: v for k, v in _load_file(os.path.join(_EXT_DIR, "bases.json")).items() if isinstance(v, str)}
+    # Bases (YAML, with local overrides)
+    _bases = {}
+    for ext in (".yaml", ".yml", ".json"):
+        path = os.path.join(_EXT_DIR, "bases" + ext)
+        if os.path.isfile(path):
+            _bases = {k: v for k, v in _load_file(path).items() if isinstance(v, str)}
+            break
     _bases.update(_load_local_bases(local_dirs))
 
     # Modifiers: scan extension modifiers/ dir + all local dirs, merge
@@ -551,62 +573,45 @@ def _reload_all(local_dir_path=""):
             _dropdown_choices[label] = choices
             _all_modifiers.update(flat)
 
-    # Wildcards
-    wc_data = _load_file(os.path.join(_EXT_DIR, "wildcards.json"))
-    _wildcards = {}
-    _wildcard_choices = []
-    for cat, items in wc_data.items():
-        if not isinstance(items, dict):
-            continue
-        _wildcard_choices.append(f"\u2500\u2500\u2500\u2500\u2500 {cat.title()} \u2500\u2500\u2500\u2500\u2500")
-        for name, prompt in items.items():
-            if isinstance(prompt, str):
-                _wildcards[name] = prompt
-                _wildcard_choices.append(name)
+    # Wildcards (YAML, with local overrides)
+    wc_data = {}
+    for ext in (".yaml", ".yml", ".json"):
+        path = os.path.join(_EXT_DIR, "wildcards" + ext)
+        if os.path.isfile(path):
+            wc_data = _load_file(path) or {}
+            break
+    # Merge local wildcards
+    for local_dir in local_dirs:
+        for ext in (".yaml", ".yml", ".json"):
+            path = os.path.join(local_dir, "_wildcards" + ext)
+            if os.path.isfile(path):
+                local_wc = _load_file(path) or {}
+                for cat, items in local_wc.items():
+                    if isinstance(items, dict):
+                        wc_data.setdefault(cat, {}).update(items)
+    _wildcards, _wildcard_choices = _load_wildcards(wc_data)
+
+    # Prompts (YAML, with local overrides)
+    _prompts = {}
+    for ext in (".yaml", ".yml", ".json"):
+        path = os.path.join(_EXT_DIR, "prompts" + ext)
+        if os.path.isfile(path):
+            data = _load_file(path) or {}
+            _prompts = {k: v.strip() if isinstance(v, str) else v for k, v in data.items()}
+            break
+    # Merge local prompt overrides
+    for local_dir in local_dirs:
+        for ext in (".yaml", ".yml", ".json"):
+            path = os.path.join(local_dir, "_prompts" + ext)
+            if os.path.isfile(path):
+                local_p = _load_file(path) or {}
+                for k, v in local_p.items():
+                    if isinstance(v, str):
+                        _prompts[k] = v.strip()
 
 
 _reload_all()
 
-
-# ── Constants ────────────────────────────────────────────────────────────────
-
-SUMMARIZE_SYSTEM_PROMPT = (
-    "Condense the given image description into 1-2 sentences that capture only "
-    "compositional details: spatial relationships, lighting direction, camera angle, "
-    "and mood. Do not list objects or attributes \u2014 those are already covered by tags. "
-    "Output only the condensed sentences. No commentary."
-)
-
-REFINE_SYSTEM_PROMPT = (
-    "You are a prompt editor. You are given an already-complete image/video generation prompt. "
-    "Do NOT rewrite, expand, or re-enhance it. Your only job is to integrate the requested "
-    "style changes into the existing text.\n\n"
-    "Rules:\n"
-    "- If a style adds something new (mood, lighting, color), weave it into the existing "
-    "description naturally.\n"
-    "- If a style conflicts with something already present (different location, different "
-    "time of day, different mood), REPLACE the old element. Do NOT keep both.\n"
-    "- If a wildcard asks you to choose something (location, wardrobe, etc.) and one already "
-    "exists in the prompt, REPLACE it completely. Remove the old choice and insert your new one. "
-    "Never accumulate multiple locations, outfits, or time periods.\n"
-    "- Keep the same approximate length. Do not make the prompt longer.\n"
-    "- Use the style keywords naturally in the output.\n"
-    "- Output the modified prompt only. No commentary."
-)
-
-REFINE_HYBRID_SYSTEM_PROMPT = (
-    "You are a prompt editor. You are given a prompt in hybrid format: danbooru-style "
-    "tags on the first line, then a blank line, then a short natural language description.\n\n"
-    "Modify BOTH the tags AND the NL description to integrate the requested style changes. "
-    "Keep the same format: tags first, blank line, then updated NL description.\n\n"
-    "Rules:\n"
-    "- Add or replace tags as needed for the new style\n"
-    "- Update the NL description to reflect the style change\n"
-    "- If a style conflicts with existing elements, REPLACE them. Do NOT keep both.\n"
-    "- If a wildcard asks you to choose something and one already exists, REPLACE it completely.\n"
-    "- Keep approximately the same number of tags and NL length\n"
-    "- Output only the modified hybrid prompt. No commentary."
-)
 
 _load_tag_formats()
 
@@ -661,17 +666,6 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
         words = _get_word_target(detail, preset)
         return f"Write a {label} description. Aim for around {words} words."
 
-WILDCARD_PREAMBLE = (
-    "IMPORTANT: You MUST address every creative choice instruction below \u2014 do not skip any. "
-    "Name your choices explicitly in the output. "
-    "Be genuinely surprising and varied. Do NOT default to the most popular or obvious option."
-)
-
-INLINE_WILDCARD_INSTRUCTION = (
-    "The user's prompt contains placeholders in {name?} format. "
-    "For each one, choose a specific, vivid option that creates a coherent scene. "
-    "Replace the placeholder with your choice seamlessly."
-)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -769,7 +763,7 @@ def _get_ollama_status(api_url):
                 mode = "CPU"
             return f"<span style='color:#6c6'>Ollama v{version} \u2022 {name} \u2022 {mode}</span>"
         else:
-            return f"<span style='color:#aaa'>Ollama v{version} \u2022 no model loaded</span>"
+            return f"<span style='color:#6c6'>Ollama v{version} \u2022 connected</span>"
     except Exception:
         return "<span style='color:#c66'>Ollama not running</span>"
 
@@ -844,6 +838,26 @@ def _split_concatenated_tag(tag):
     # All lowercase concatenated — can't reliably split without a dictionary
     # Return as-is, validation will handle it
     return tag
+
+
+def _split_positive_negative(text):
+    """Split LLM output at POSITIVE:/NEGATIVE: markers.
+
+    Returns (positive, negative).  If no markers found, returns (text, "").
+    """
+    # Case-insensitive search for markers
+    pos_match = re.search(r"(?i)^POSITIVE:\s*\n?", text, re.MULTILINE)
+    neg_match = re.search(r"(?i)^NEGATIVE:\s*\n?", text, re.MULTILINE)
+    if not neg_match:
+        # No NEGATIVE marker — treat entire text as positive
+        return text.strip(), ""
+    if pos_match:
+        positive = text[pos_match.end():neg_match.start()].strip()
+    else:
+        # NEGATIVE marker but no POSITIVE marker — everything before is positive
+        positive = text[:neg_match.start()].strip()
+    negative = text[neg_match.end():].strip()
+    return positive, negative
 
 
 def _postprocess_tags(tag_str, tag_fmt, validation_mode):
@@ -1022,13 +1036,13 @@ def _build_wildcard_text(wildcards_list, source=""):
     has_inline = source and _has_inline_wildcards(source)
     has_wildcards = any(_wildcards.get(wc, "") for wc in (wildcards_list or []))
     if has_wildcards or has_inline:
-        parts.append(WILDCARD_PREAMBLE)
+        parts.append(_prompts.get("wildcard_preamble", ""))
     for wc_name in (wildcards_list or []):
         wc_prompt = _wildcards.get(wc_name, "")
         if wc_prompt:
             parts.append(wc_prompt)
     if has_inline:
-        parts.append(INLINE_WILDCARD_INSTRUCTION)
+        parts.append(_prompts.get("inline_wildcard", ""))
     return "\n\n".join(parts) if parts else ""
 
 
@@ -1086,8 +1100,10 @@ class PromptEnhancer(scripts.Script):
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
-                prepend_source = gr.Checkbox(label="Prepend (Prose)", value=False, scale=0, min_width=80)
+                prepend_source = gr.Checkbox(label="Prepend (Prose)", value=False, scale=0, min_width=60)
                 prepend_source.do_not_save_to_config = True
+                negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=60)
+                negative_prompt_cb.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # ── Base + Tag Format + Validation ──
@@ -1193,22 +1209,28 @@ class PromptEnhancer(scripts.Script):
             # ── Hidden bridges ──
             prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
             prompt_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_out")
+            negative_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_in")
+            negative_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_out")
 
             # ── Prose ──
             def _enhance(source, api_url, model, base_name, custom_sp, *args):
-                prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
-                wc = args[-6]
-                dd_vals = args[:-6]
+                neg_cb, temp = args[-1], args[-2]
+                prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
+                wc = args[-7]
+                dd_vals = args[:-7]
 
                 t0 = time.monotonic()
                 source = (source or "").strip()
                 if not source:
-                    return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+                    return "", "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
-                    return "", "<span style='color:#c66'>No system prompt configured.</span>"
+                    return "", "", "<span style='color:#c66'>No system prompt configured.</span>"
+
+                if neg_cb:
+                    sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 # Build user message with modifiers + wildcards
                 user_msg = f"SOURCE PROMPT: {source}"
@@ -1219,29 +1241,33 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}")
+                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}, neg={neg_cb}")
                 try:
-                    result = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
+                    raw = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
+                    if neg_cb:
+                        result, negative = _split_positive_negative(raw)
+                    else:
+                        result, negative = raw, ""
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    return result, f"<span style='color:#6c6'>OK - {len(result.split())} words, {elapsed}</span>"
+                    return result, negative, f"<span style='color:#6c6'>OK - {len(result.split())} words, {elapsed}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        return partial, f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
-                    return "", "<span style='color:#c66'>Cancelled</span>"
+                        return partial, "", f"<span style='color:#c66'>Cancelled - {len(partial.split())} words (partial)</span>"
+                    return "", "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
                     result = _clean_output(str(e))
-                    return result, f"<span style='color:#ca6'>Truncated - {len(result.split())} words</span>"
+                    return result, "", f"<span style='color:#ca6'>Truncated - {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
-                    return "", f"<span style='color:#c66'>{msg}</span>"
+                    return "", "", f"<span style='color:#c66'>{msg}</span>"
                 except Exception as e:
                     msg = f"{type(e).__name__}: {e}"
                     logger.error(msg)
-                    return "", f"<span style='color:#c66'>{msg}</span>"
+                    return "", "", f"<span style='color:#c66'>{msg}</span>"
 
             prose_event = enhance_btn.click(
                 fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating prose...</span>")[-1],
@@ -1250,26 +1276,35 @@ class PromptEnhancer(scripts.Script):
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + dd_components
-                       + [wildcards, prepend_source, seed, detail_level, think, temperature],
-                outputs=[prompt_out, status],
+                       + [wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                outputs=[prompt_out, negative_out, status],
             )
 
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
             def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
                         *args):
-                prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
-                wc = args[-6]
-                dd_vals = args[:-6]
+                neg_cb, temp = args[-1], args[-2]
+                prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
+                wc = args[-7]
+                dd_vals = args[:-7]
                 t0 = time.monotonic()
 
                 source = (source or "").strip()
                 if not source:
-                    return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+                    return "", "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
-                    return "", "<span style='color:#c66'>No system prompt configured.</span>"
+                    return "", "", "<span style='color:#c66'>No system prompt configured.</span>"
+
+                if neg_cb:
+                    fmt_config = _tag_formats.get(tag_fmt, {})
+                    neg_quality = fmt_config.get("negative_quality_tags", [])
+                    neg_hint = ""
+                    if neg_quality:
+                        neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
+                    sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
 
                 user_msg = f"SOURCE PROMPT: {source}"
                 style_str = _build_style_string(mods)
@@ -1279,19 +1314,26 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}")
+                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}")
                 try:
                     # Pass 1: generate prose (uses base + modifiers + detail level)
-                    prose = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
-                    if not prose:
-                        return "", "<span style='color:#c66'>Prose generation returned empty.</span>"
+                    prose_raw = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)))
+                    if not prose_raw:
+                        return "", "", "<span style='color:#c66'>Prose generation returned empty.</span>"
+
+                    # Split negative from prose before passes 2 & 3
+                    if neg_cb:
+                        prose, negative = _split_positive_negative(prose_raw)
+                    else:
+                        prose, negative = prose_raw, ""
+
                     print(f"[PromptEnhancer] Hybrid pass 2/3 (tags): {len(prose.split())} words → tags")
 
                     # Pass 2: extract tags (tag format prompt + wildcard context)
                     fmt_config = _tag_formats.get(tag_fmt, {})
                     tag_sp = fmt_config.get("system_prompt", "")
                     if not tag_sp:
-                        return "", "<span style='color:#c66'>No tag format configured.</span>"
+                        return "", "", "<span style='color:#c66'>No tag format configured.</span>"
                     # Append wildcard context so pass 2 knows what creative choices
                     # were requested and can tag them (artist, era, medium, etc.)
                     if wc_text:
@@ -1304,13 +1346,17 @@ class PromptEnhancer(scripts.Script):
 
                     # Pass 3: summarize prose to 1-2 compositional sentences
                     # Include modifier context so stylistic choices survive
-                    summarize_sp = SUMMARIZE_SYSTEM_PROMPT
+                    summarize_sp = _prompts.get("summarize", "")
                     style_str = _build_style_string(mods)
                     if style_str:
                         summarize_sp = f"{summarize_sp}\n\nThe following styles were applied: {style_str} Ensure these stylistic choices are reflected in the compositional summary."
                     nl_supplement = _clean_output(
                         _call_llm(prose, api_url, model, summarize_sp, temp, think=th, seed=int(sd)),
                     )
+
+                    # Post-process negative tags through tag pipeline when applicable
+                    if neg_cb and negative:
+                        negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
 
                     # Run tags through full post-processing pipeline
                     tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
@@ -1326,22 +1372,22 @@ class PromptEnhancer(scripts.Script):
 
                     final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
+                    return final, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        return partial, f"<span style='color:#c66'>Cancelled (partial)</span>"
-                    return "", "<span style='color:#c66'>Cancelled</span>"
+                        return partial, "", f"<span style='color:#c66'>Cancelled (partial)</span>"
+                    return "", "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
-                    return _clean_output(str(e), strip_underscores=False), "<span style='color:#ca6'>Truncated</span>"
+                    return _clean_output(str(e), strip_underscores=False), "", "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
-                    return "", f"<span style='color:#c66'>{msg}</span>"
+                    return "", "", f"<span style='color:#c66'>{msg}</span>"
                 except Exception as e:
                     msg = f"{type(e).__name__}: {e}"
                     logger.error(msg)
-                    return "", f"<span style='color:#c66'>{msg}</span>"
+                    return "", "", f"<span style='color:#c66'>{msg}</span>"
 
             hybrid_event = hybrid_btn.click(
                 fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating hybrid (prose \u2192 tags+NL)...</span>")[-1],
@@ -1351,8 +1397,8 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, prepend_source, seed, detail_level, think, temperature],
-                outputs=[prompt_out, status],
+                       + [wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                outputs=[prompt_out, negative_out, status],
             )
 
             # ── Remix ──
@@ -1373,48 +1419,39 @@ class PromptEnhancer(scripts.Script):
                     return "hybrid"
                 return "tags"
 
-            REFINE_TAGS_SYSTEM_PROMPT = (
-                "You are a tag editor. You are given an existing set of comma-separated image generation tags. "
-                "Modify them according to the requested changes.\n\n"
-                "Rules:\n"
-                "- Output a comma-separated list of tags, nothing else\n"
-                "- Use spaces between words in multi-word tags (long hair, blue eyes). Never concatenate words.\n"
-                "- If new styles are requested, add relevant tags\n"
-                "- If a wildcard asks you to choose something (location, wardrobe, etc.) and matching tags "
-                "already exist, REPLACE them. Do not accumulate.\n"
-                "- If the user provides updated direction, adjust tags to match. Remove contradicting tags.\n"
-                "- Every tag must be consistent with the input and requested changes. Never contradict.\n"
-                "- Output only the modified tag list. No commentary."
-            )
-
-            def _refine(existing, source, api_url, model, tag_fmt, validation_mode,
+            def _refine(existing, existing_neg, source, api_url, model, tag_fmt, validation_mode,
                         *args):
-                prepend, sd, th, temp = args[-4], args[-3], args[-2], args[-1]
-                wc = args[-5]
-                dd_vals = args[:-5]
+                neg_cb, temp = args[-1], args[-2]
+                prepend, sd, th = args[-5], args[-4], args[-3]
+                wc = args[-6]
+                dd_vals = args[:-6]
                 t0 = time.monotonic()
 
                 existing = (existing or "").strip()
-                print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}")
+                existing_neg = (existing_neg or "").strip()
+                print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
                 if not existing:
-                    return "", "<span style='color:#c66'>No prompt to remix. Generate one first with Prose or Tags.</span>"
+                    return "", "", "<span style='color:#c66'>No prompt to remix. Generate one first with Prose or Tags.</span>"
 
                 source = (source or "").strip()
                 mods = _collect_modifiers(dd_vals)
                 print(f"[PromptEnhancer] Remix: mods={len(mods)}, wc={len(wc or [])}, source={'yes' if source else 'no'}")
 
                 if not mods and not wc and not source:
-                    return "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
+                    return "", "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
 
                 fmt = _detect_format(existing)
                 print(f"[PromptEnhancer] Remix: detected={fmt}")
 
                 if fmt == "hybrid":
-                    sp = REFINE_HYBRID_SYSTEM_PROMPT
+                    sp = _prompts.get("remix_hybrid", "")
                 elif fmt == "tags":
-                    sp = REFINE_TAGS_SYSTEM_PROMPT
+                    sp = _prompts.get("remix_tags", "")
                 else:
-                    sp = REFINE_SYSTEM_PROMPT
+                    sp = _prompts.get("remix_prose", "")
+
+                if neg_cb:
+                    sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 if source:
                     sp = f"{sp}\n\nThe user has provided updated direction. Integrate:\n{source}"
@@ -1422,21 +1459,31 @@ class PromptEnhancer(scripts.Script):
                 if style_str:
                     sp = f"{sp}\n\n{style_str}"
                 if any(_wildcards.get(w, "") for w in (wc or [])):
-                    sp = f"{sp}\n\n{WILDCARD_PREAMBLE}"
+                    sp = f"{sp}\n\n{_prompts.get('wildcard_preamble', '')}"
                 for wc_name in (wc or []):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
                         sp = f"{sp}\n\n{wc_prompt}"
 
+                # Build user message — include current negative if checkbox is on
+                user_msg = existing
+                if neg_cb and existing_neg:
+                    user_msg = f"{user_msg}\n\nCurrent negative prompt:\n{existing_neg}"
+
                 try:
-                    result = _clean_output(
-                        _call_llm(existing, api_url, model, sp, temp, think=th, seed=int(sd)),
+                    raw = _clean_output(
+                        _call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)),
                         strip_underscores=(fmt == "prose"),
                     )
 
+                    if neg_cb:
+                        result, negative = _split_positive_negative(raw)
+                    else:
+                        result, negative = raw, ""
+
                     if fmt == "prose":
                         elapsed = f"{time.monotonic() - t0:.1f}s"
-                        return result, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words, {elapsed}</span>"
+                        return result, negative, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words, {elapsed}</span>"
 
                     if fmt == "hybrid":
                         # Split tags and NL, post-process tags only
@@ -1454,6 +1501,10 @@ class PromptEnhancer(scripts.Script):
                         final = result
                         status_parts = [f"remixed {tag_count} tags"]
 
+                    # Post-process negative tags
+                    if neg_cb and negative:
+                        negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+
                     if stats:
                         if stats.get("corrected"):
                             status_parts.append(f"{stats['corrected']} corrected")
@@ -1463,49 +1514,58 @@ class PromptEnhancer(scripts.Script):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
+                    return final, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
-                    return "", "<span style='color:#c66'>Cancelled</span>"
+                    return "", "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
-                    return _clean_output(str(e), strip_underscores=(fmt == "prose")), "<span style='color:#ca6'>Truncated</span>"
+                    return _clean_output(str(e), strip_underscores=(fmt == "prose")), "", "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
-                    return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
+                    return "", "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
-                    return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
+                    return "", "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
 
             remix_event = refine_btn.click(
-                fn=lambda x: (_cancel_flag.clear(), x)[-1],
-                _js=f"""function(x) {{
+                fn=lambda x, y: (_cancel_flag.clear(), x, y)[1:],
+                _js=f"""function(x, y) {{
                     var ta = document.querySelector('#{tab}_prompt textarea');
-                    return ta ? [ta.value] : [x];
+                    var neg = document.querySelector('#{tab}_neg_prompt textarea');
+                    return [ta ? ta.value : x, neg ? neg.value : y];
                 }}""",
-                inputs=[prompt_in], outputs=[prompt_in], show_progress=False,
+                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
             ).then(
                 fn=lambda: "<span style='color:#aaa'>Remixing...</span>",
                 inputs=[], outputs=[status], show_progress=False,
             ).then(
                 fn=_refine,
-                inputs=[prompt_in, source_prompt, api_url, model, tag_format, tag_validation]
+                inputs=[prompt_in, negative_in, source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, prepend_source, seed, think, temperature],
-                outputs=[prompt_out, status],
+                       + [wildcards, prepend_source, seed, think, temperature, negative_prompt_cb],
+                outputs=[prompt_out, negative_out, status],
             )
 
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, *args):
-                prepend, sd, dl, th, temp = args[-5], args[-4], args[-3], args[-2], args[-1]
-                wc = args[-6]
-                dd_vals = args[:-6]
+                neg_cb, temp = args[-1], args[-2]
+                prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
+                wc = args[-7]
+                dd_vals = args[:-7]
                 t0 = time.monotonic()
 
                 source = (source or "").strip()
                 if not source:
-                    return "", "<span style='color:#c66'>Source prompt is empty.</span>"
+                    return "", "", "<span style='color:#c66'>Source prompt is empty.</span>"
 
                 fmt_config = _tag_formats.get(tag_fmt, {})
                 sp = fmt_config.get("system_prompt", "")
                 if not sp:
-                    return "", "<span style='color:#c66'>No tag format configured.</span>"
+                    return "", "", "<span style='color:#c66'>No tag format configured.</span>"
+
+                if neg_cb:
+                    neg_quality = fmt_config.get("negative_quality_tags", [])
+                    neg_hint = ""
+                    if neg_quality:
+                        neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
+                    sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
 
                 # Build user message with everything explicit
                 mods = _collect_modifiers(dd_vals)
@@ -1514,7 +1574,7 @@ class PromptEnhancer(scripts.Script):
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
                 if any(_wildcards.get(w, "") for w in (wc or [])):
-                    user_msg = f"{user_msg}\n\n{WILDCARD_PREAMBLE}"
+                    user_msg = f"{user_msg}\n\n{_prompts.get('wildcard_preamble', '')}"
                 for wc_name in (wc or []):
                     wc_prompt = _wildcards.get(wc_name, "")
                     if wc_prompt:
@@ -1526,8 +1586,14 @@ class PromptEnhancer(scripts.Script):
                 else:
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
+                print(f"[PromptEnhancer] Tags: model={model}, think={th}, seed={int(sd)}, neg={neg_cb}")
                 try:
-                    tags = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)), strip_underscores=False)
+                    raw = _clean_output(_call_llm(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)), strip_underscores=False)
+                    if neg_cb:
+                        tags, negative = _split_positive_negative(raw)
+                        negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+                    else:
+                        tags, negative = raw, ""
                     tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
@@ -1542,15 +1608,15 @@ class PromptEnhancer(scripts.Script):
                             status_parts.append(stats["error"])
 
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    return tags, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
+                    return tags, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
-                    return "", "<span style='color:#c66'>Cancelled</span>"
+                    return "", "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
-                    return _clean_output(str(e), strip_underscores=False), "<span style='color:#ca6'>Truncated</span>"
+                    return _clean_output(str(e), strip_underscores=False), "", "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
-                    return "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
+                    return "", "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
-                    return "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
+                    return "", "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
 
             tags_event = tags_btn.click(
                 fn=lambda: (_cancel_flag.clear(), "<span style='color:#aaa'>Generating tags...</span>")[-1],
@@ -1559,8 +1625,8 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, prepend_source, seed, detail_level, think, temperature],
-                outputs=[prompt_out, status],
+                       + [wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                outputs=[prompt_out, negative_out, status],
             )
 
             # ── Cancel ──
@@ -1595,6 +1661,22 @@ class PromptEnhancer(scripts.Script):
                 inputs=[prompt_out], outputs=[prompt_out], show_progress=False,
             )
 
+            # ── Write to negative prompt textarea ──
+            negative_out.change(
+                fn=None,
+                _js=f"""function(v) {{
+                    if (v) {{
+                        var ta = document.querySelector('#{tab}_neg_prompt textarea');
+                        if (ta) {{
+                            ta.value = v;
+                            ta.dispatchEvent(new Event('input', {{bubbles: true}}));
+                        }}
+                    }}
+                    return v;
+                }}""",
+                inputs=[negative_out], outputs=[negative_out], show_progress=False,
+            )
+
         # ── Metadata ──
         def _parse_modifiers(params):
             """Parse PE Modifiers string into a set of names."""
@@ -1625,16 +1707,18 @@ class PromptEnhancer(scripts.Script):
         self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think", "PE Seed"]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
-                *dd_components, wildcards, prepend_source, seed, detail_level, think, temperature]
+                *dd_components, wildcards, prepend_source, seed, detail_level, think, temperature,
+                negative_prompt_cb]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 *args):
-        # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature
-        wildcards = args[-6]
-        pe_seed = args[-5]
-        detail_level = args[-4]
-        think = args[-3]
-        dd_vals = args[:-6]
+        # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb
+        wildcards = args[-7]
+        pe_seed = args[-6]
+        detail_level = args[-5]
+        think = args[-4]
+        neg_cb = args[-1]
+        dd_vals = args[:-7]
 
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
@@ -1653,5 +1737,7 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Wildcards"] = ", ".join(wildcards)
         if think:
             p.extra_generation_params["PE Think"] = True
+        if neg_cb:
+            p.extra_generation_params["PE Negative"] = True
         if _last_seed >= 0:
             p.extra_generation_params["PE Seed"] = _last_seed
