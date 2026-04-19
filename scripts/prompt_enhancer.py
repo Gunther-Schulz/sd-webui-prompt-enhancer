@@ -988,6 +988,22 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                     if token:
                         content_parts.append(token)
                         last_token_time = time.monotonic()
+                        # Repetition detection: check last N tokens for loops
+                        if len(content_parts) >= 10:
+                            recent = content_parts[-10:]
+                            # If the last 10 tokens are all identical, it's looping
+                            if len(set(recent)) == 1:
+                                text = "".join(content_parts)
+                                # Find where repetition started by looking for the repeated phrase
+                                repeated = recent[0].strip()
+                                if repeated:
+                                    # Trim output to before the repetition
+                                    first_repeat = text.find(repeated + repeated)
+                                    if first_repeat > 0:
+                                        text = text[:first_repeat + len(repeated)]
+                                        content_parts = [text]
+                                print(f"[PromptEnhancer] Aborting: repetition loop detected ('{repeated[:30]}...')")
+                                break
                         # Update shared progress for live status
                         if _progress is not None:
                             elapsed = last_token_time - start_time
