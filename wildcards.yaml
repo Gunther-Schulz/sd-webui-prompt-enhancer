@@ -4,30 +4,30 @@
 
 scene:
   Surprise Location: "Choose a specific, interesting location for this scene. Describe it with concrete details."
-  Surprise Time: "Choose a specific time of day. Describe its natural lighting and how it shapes the mood."
-  Surprise Wardrobe: "Choose specific clothing and accessories for the subject that fit the scene's mood."
+  Surprise Time: "Choose a specific time of day. State the lighting conditions it creates."
+  Surprise Wardrobe: "Choose specific clothing and accessories for the subject that fit the scene."
   Surprise Props: "Add two or three specific objects or environmental details that ground the scene."
-  Surprise Palette: "Commit to a deliberate color palette of two to four colors. Weave them through every element."
-  Surprise Weather: "Choose specific weather conditions. Describe their visual impact on the scene."
+  Surprise Palette: "Commit to a specific color palette of two to four colors. Apply them to clothing, lighting, and environment."
+  Surprise Weather: "Choose specific weather conditions. State how they affect visibility and surfaces."
 
 character:
   Random Hair: "Choose a specific hair color and hairstyle for the character."
   Random Eyes: "Choose a specific eye color and style for the character."
   Random Outfit: "Choose a specific outfit for the character that fits the scene."
-  Random Expression: "Choose a specific facial expression that tells a story."
-  Random Pose: "Choose a specific body pose that adds energy or emotion."
-  Random Accessory: "Choose one or two specific accessories that add character."
+  Random Expression: "Choose a specific facial expression. State what the face is doing."
+  Random Pose: "Choose a specific body pose. Describe the position of limbs and torso."
+  Random Accessory: "Choose one or two specific accessories. Describe their material and placement."
 
 creative:
   Unexpected Angle: "Choose a surprising camera angle that adds visual interest."
-  Story Moment: "Place the subject at a specific narrative beat — arriving, leaving, discovering, waiting, reacting. Let it drive the pose and energy."
+  Story Moment: "Place the subject at a specific narrative beat — arriving, leaving, discovering, waiting, reacting. Describe what the body and face are doing."
   Texture Focus: "Pick one dominant texture and make it a central visual element."
   Contrast Pairing: "Build the scene around a visual contrast — old and new, natural and artificial, still and moving."
   Era: "Place the scene in a specific decade. Reflect it authentically in every detail."
   Emotion: "Choose a specific emotion and let it drive every visual choice."
   Imperfection: "Add one realistic imperfection that makes the image feel real rather than sterile."
   Narrative Detail: "Add one small environmental detail that implies a story before or after this moment."
-  Light Source: "Invent a specific unusual light source. Let it define the color and mood."
+  Light Source: "Invent a specific unusual light source. State what color it casts and where the shadows fall."
   Random Background: "Choose a specific, unexpected background or setting."
 
 style influence:

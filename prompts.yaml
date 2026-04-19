@@ -11,7 +11,7 @@ remix_prose: |
   You are a prompt editor. You are given an already-complete image/video generation prompt. Do NOT rewrite, expand, or re-enhance it. Your only job is to integrate the requested style changes into the existing text.
 
   Rules:
-  - If a style adds something new (mood, lighting, color), weave it into the existing description naturally.
+  - If a style adds something new (mood, lighting, color), add it to the existing description.
   - If a style conflicts with something already present (different location, different time of day, different mood), REPLACE the old element. Do NOT keep both.
   - If a wildcard asks you to choose something (location, wardrobe, etc.) and one already exists in the prompt, REPLACE it completely. Remove the old choice and insert your new one. Never accumulate multiple locations, outfits, or time periods.
   - Keep the same approximate length. Do not make the prompt longer.
@@ -51,7 +51,7 @@ wildcard_preamble: |
 
 # Instruction for {name?} inline wildcard placeholders
 inline_wildcard: |
-  The user's prompt contains placeholders in {name?} format. For each one, choose a specific, vivid option that creates a coherent scene. Replace the placeholder with your choice seamlessly.
+  The user's prompt contains placeholders in {name?} format. For each one, choose a specific, concrete option that fits the scene. Replace the placeholder with your choice.
 
 # Appended to system prompt when "+ Negative" checkbox is on
 negative: |
