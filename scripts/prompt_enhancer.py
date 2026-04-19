@@ -1804,11 +1804,11 @@ class PromptEnhancer(scripts.Script):
         self.infotext_fields = [
             (source_prompt, "PE Source"),
             (base, "PE Base"),
-            (detail_level, "PE Detail"),
+            (detail_level, lambda params: min(10, max(0, int(params.get("PE Detail", 0)))) if params.get("PE Detail") else 0),
             # Wildcards
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
-            (seed, "PE Seed"),
+            (seed, lambda params: int(params.get("PE Seed", -1)) if params.get("PE Seed") else -1),
         ]
         # Add each modifier dropdown
         for i, label in enumerate(dd_labels):
