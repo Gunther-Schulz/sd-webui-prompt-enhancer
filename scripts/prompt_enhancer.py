@@ -1671,7 +1671,7 @@ class PromptEnhancer(scripts.Script):
 
                 # Build user message with everything explicit
                 mods = _collect_modifiers(dd_vals)
-                user_msg = f"Scene: {source}"
+                user_msg = f"SOURCE PROMPT: {source}"
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
