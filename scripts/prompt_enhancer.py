@@ -882,6 +882,57 @@ def _postprocess_tags(tag_str, tag_fmt, validation_mode):
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 _MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "1000"))
 _MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
+
+
+def _detect_repetition(text):
+    """Detect repetitive output by tracking unique content ratio.
+
+    Splits text into comma/period-separated segments. If the last 20 segments
+    contain fewer than 30% unique values (compared to what appeared earlier),
+    the output is looping. Returns trimmed text if detected, None otherwise.
+    """
+    # Split on commas and periods to get segments
+    segments = [s.strip().lower() for s in re.split(r"[,.\n]+", text) if s.strip()]
+    if len(segments) < 30:
+        return None
+    # Check: of the last 20 segments, how many are duplicates of earlier segments?
+    early = set(segments[:-20])
+    recent = segments[-20:]
+    if not early:
+        return None
+    repeated = sum(1 for s in recent if s in early)
+    ratio = repeated / len(recent)
+    if ratio >= 0.7:
+        # 70%+ of recent segments already appeared — it's looping
+        # Trim to the point where content was still fresh
+        # Walk backwards to find where repetition started
+        seen = set()
+        trim_idx = len(segments)
+        dup_streak = 0
+        for i in range(len(segments) - 1, -1, -1):
+            if segments[i] in seen:
+                dup_streak += 1
+            else:
+                if dup_streak > 5:
+                    trim_idx = i + 1
+                    break
+                dup_streak = 0
+            seen.add(segments[i])
+        # Rebuild text from non-repeated segments
+        # Find character position of the trim point
+        parts = re.split(r"([,.\n]+)", text)
+        seg_count = 0
+        char_pos = 0
+        for part in parts:
+            if part.strip() and not re.match(r"^[,.\n]+$", part):
+                seg_count += 1
+                if seg_count > trim_idx:
+                    break
+            char_pos += len(part)
+        trimmed = text[:char_pos].rstrip(" ,.\n")
+        print(f"[PromptEnhancer] Aborting: repetition detected ({ratio:.0%} of last 20 segments are repeats)")
+        return trimmed
+    return None
 _cancel_flag = threading.Event()
 _last_seed = -1
 
@@ -988,21 +1039,12 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
                     if token:
                         content_parts.append(token)
                         last_token_time = time.monotonic()
-                        # Repetition detection: check last N tokens for loops
-                        if len(content_parts) >= 10:
-                            recent = content_parts[-10:]
-                            # If the last 10 tokens are all identical, it's looping
-                            if len(set(recent)) == 1:
-                                text = "".join(content_parts)
-                                # Find where repetition started by looking for the repeated phrase
-                                repeated = recent[0].strip()
-                                if repeated:
-                                    # Trim output to before the repetition
-                                    first_repeat = text.find(repeated + repeated)
-                                    if first_repeat > 0:
-                                        text = text[:first_repeat + len(repeated)]
-                                        content_parts = [text]
-                                print(f"[PromptEnhancer] Aborting: repetition loop detected ('{repeated[:30]}...')")
+                        # Repetition detection: check every 20 tokens
+                        if len(content_parts) % 20 == 0 and len(content_parts) >= 40:
+                            text = "".join(content_parts)
+                            repetition = _detect_repetition(text)
+                            if repetition:
+                                content_parts = [repetition]
                                 break
                         # Update shared progress for live status
                         if _progress is not None:
