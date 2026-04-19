@@ -1086,7 +1086,7 @@ class PromptEnhancer(scripts.Script):
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
-                prepend_source = gr.Checkbox(label="Prepend Source", value=False, scale=0, min_width=80)
+                prepend_source = gr.Checkbox(label="Prepend (Prose)", value=False, scale=0, min_width=80)
                 prepend_source.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
@@ -1325,8 +1325,6 @@ class PromptEnhancer(scripts.Script):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
                     final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
-                    if prepend and source:
-                        final = f"{source}\n\n{final}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
                     return final, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError as e:
@@ -1543,8 +1541,6 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("error"):
                             status_parts.append(stats["error"])
 
-                    if prepend and source:
-                        tags = f"{source}\n\n{tags}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
                     return tags, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
