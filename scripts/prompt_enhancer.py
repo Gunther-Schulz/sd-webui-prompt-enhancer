@@ -907,7 +907,14 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_content},
         ],
-        "options": {"temperature": float(temperature), "seed": int(seed)},
+        "options": {
+            "temperature": float(temperature),
+            "seed": int(seed),
+            "top_k": 20,
+            "top_p": 0.95 if think else 0.8,
+            "repeat_penalty": 1.5,
+            "presence_penalty": 1.5,
+        },
         "think": bool(think),
         "stream": True,
     }
