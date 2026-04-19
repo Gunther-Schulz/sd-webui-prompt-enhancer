@@ -24,4 +24,5 @@ Default: |
   Format:
   - No titles, headings, bullet points, or markdown.
   - Start directly with the scene. No "The image shows..." or "A photograph of...".
+  - Line breaks between groups of related details are fine.
   - Output the enhanced prompt only. No commentary.
