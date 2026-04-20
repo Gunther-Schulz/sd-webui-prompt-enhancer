@@ -1,9 +1,8 @@
 # Focus — emphasis and grounding directives
 _label: Focus
 
-# These directives shape what DRAWS THE EYE or what GROUNDS the image.
-# Useful for pushing the LLM past generic output toward distinctive
-# details.
+# Directives that shape what DRAWS THE EYE or what GROUNDS the image.
+# Useful for pushing past generic output toward distinctive details.
 
 focus:
   🎲 Random Imperfection:
@@ -15,3 +14,12 @@ focus:
   🎲 Random Contrast Pairing:
     behavioral: "Build the scene around a visual contrast (be surprising) — old and new, natural and artificial, still and moving, etc. Let the contrast structure the composition."
     keywords: ""
+  Fabric Focus:
+    behavioral: "Fabric is the dominant texture — weave, drape, stitch detail, wear patterns. Describe specific fabric qualities and how light interacts with them."
+    keywords: "fabric emphasis, visible weave texture, fabric drape and folds, stitch detail, fabric wear patterns, light across cloth surface"
+  Skin Focus:
+    behavioral: "Skin is the dominant texture — pores, freckles, micro-moisture, fine hair, subtle color variation. Describe specific skin qualities at close range."
+    keywords: "skin emphasis, pores visible, freckle detail, fine body hair, subtle skin color variation, tactile skin quality"
+  Surface Wear:
+    behavioral: "Surface wear is prominent — scratches, chips, oxidation, patina, fading, fingerprints. Describe specific signs of use or age on named surfaces."
+    keywords: "surface wear, scratches, chipping, oxidation, patina, fading, fingerprints, age-worn textures"

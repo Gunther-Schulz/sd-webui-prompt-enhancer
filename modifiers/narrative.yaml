@@ -1,8 +1,8 @@
 # Narrative — story beats and implied-story detail
 _label: Narrative
 
-# These are scene-enrichment directives that add storytelling layer
-# to the image (what happened, what's happening, how it feels).
+# Scene-enrichment directives that add a storytelling layer to the image
+# (what happened, what's happening, how it feels).
 
 narrative:
   🎲 Random Story Moment:
@@ -14,3 +14,15 @@ narrative:
   🎲 Random Emotion:
     behavioral: "Choose a specific emotion (be surprising) and let it drive every visual choice — expression, posture, light, color."
     keywords: ""
+  Arriving:
+    behavioral: "The subject is in the moment of arrival — still adjusting, possibly mid-step or just-stopped, with the before-state still visible in body and posture."
+    keywords: "arrival, mid-step or just stopped, alert posture, adjusting to new space, eyes taking in surroundings, gear or bag still held"
+  Leaving:
+    behavioral: "The subject is in the moment of leaving — turning away, half-out-of-frame, carrying something, looking back or looking forward."
+    keywords: "departure, turning away, moving toward exit, partial back view, carrying something, bittersweet or resolute expression"
+  Discovering:
+    behavioral: "The subject is discovering something — mid-realization, body leaning in, gaze locked, expression shifting toward surprise or recognition."
+    keywords: "moment of discovery, leaning forward, locked gaze, dawning realization, parted lips, hand raised, wide eyes"
+  Waiting:
+    behavioral: "The subject is waiting — a held pause, body settled but attentive, mind elsewhere, the scene charged with before-something-happens tension."
+    keywords: "waiting, held pose, settled body, attentive alertness, patient or impatient demeanor, eyes on the middle distance"

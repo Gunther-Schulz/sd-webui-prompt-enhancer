@@ -62,32 +62,17 @@ style influence:
     keywords: ""
 
 anime:
-  🎲 Random Anime Artist:
-    behavioral: "Choose a specific anime or manga illustrator (be surprising). Apply their distinctive art style."
+  🎲 Random Anime Style:
+    behavioral: "Choose a specific anime visual style (be surprising) — a distinctive illustrator, franchise, or character archetype — and apply its hallmarks."
     keywords: ""
-  🎲 Random Anime Franchise:
-    behavioral: "Choose a specific anime, manga, or game franchise (be surprising). Apply its distinctive visual aesthetic."
+  🎲 Random Anime Era:
+    behavioral: "Choose a specific anime era or season (be surprising) and apply its visual conventions."
     keywords: ""
-  🎲 Random Anime Archetype:
-    behavioral: "Choose a specific anime character archetype (be surprising) and apply it to the character."
+  🎲 Random Anime Element:
+    behavioral: "Add a surprising anime element — a specific creature race, weapon, or distinctive framing — that fits the scene."
     keywords: ""
   🎲 Random Anime Color Scheme:
     behavioral: "Choose a distinctive anime color scheme (be surprising) that matches a specific genre or mood."
-    keywords: ""
-  🎲 Random Anime Era:
-    behavioral: "Choose a specific anime visual era (be surprising) and apply its conventions."
-    keywords: ""
-  🎲 Random Anime Race:
-    behavioral: "Choose a specific anime creature or race type (be surprising) for the character."
-    keywords: ""
-  🎲 Random Anime Weapon:
-    behavioral: "Choose a specific weapon for the character (be surprising) that fits the scene."
-    keywords: ""
-  🎲 Random Anime Season:
-    behavioral: "Choose a specific season (be surprising) and apply its visual conventions."
-    keywords: ""
-  🎲 Random Anime Composition:
-    behavioral: "Choose a specific framing and composition (be surprising) that adds drama or intimacy."
     keywords: ""
   Anime:
     behavioral: "Anime style."
