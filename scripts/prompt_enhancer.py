@@ -1881,6 +1881,23 @@ class PromptEnhancer(scripts.Script):
                 return [m for m in saved if m in dd_choices and m in _all_modifiers]
             return restore
 
+        def _restore_tag_format(params):
+            val = params.get("PE Tag Format", "")
+            return val if val in _tag_formats else gr.update()
+
+        def _restore_tag_validation(params):
+            val = params.get("PE Tag Validation", "")
+            return val if val in ("Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict") else gr.update()
+
+        def _restore_temperature(params):
+            raw = params.get("PE Temperature", "")
+            if not raw:
+                return gr.update()
+            try:
+                return max(0.0, min(2.0, float(raw)))
+            except (TypeError, ValueError):
+                return gr.update()
+
         self.infotext_fields = [
             (source_prompt, "PE Source"),
             (base, "PE Base"),
@@ -1889,28 +1906,38 @@ class PromptEnhancer(scripts.Script):
             (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
             (seed, lambda params: int(params.get("PE Seed", -1)) if params.get("PE Seed") else -1),
+            (tag_format, _restore_tag_format),
+            (tag_validation, _restore_tag_validation),
+            (temperature, _restore_temperature),
+            (prepend_source, lambda params: params.get("PE Prepend", "").lower() == "true"),
         ]
         # Add each modifier dropdown
         for i, label in enumerate(dd_labels):
             self.infotext_fields.append((dd_components[i], _make_dd_restore(label)))
 
-        self.paste_field_names = ["PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards", "PE Think", "PE Seed"]
+        self.paste_field_names = [
+            "PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards",
+            "PE Think", "PE Seed", "PE Tag Format", "PE Tag Validation",
+            "PE Temperature", "PE Prepend",
+        ]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
                 *dd_components, wildcards, prepend_source, seed, detail_level, think, temperature,
-                negative_prompt_cb]
+                negative_prompt_cb, tag_format, tag_validation]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 *args):
-        # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb
-        neg_cb = args[-1]
-        temp = args[-2]
-        think = args[-3]
-        detail_level = args[-4]
-        pe_seed = args[-5]
-        prepend = args[-6]
-        wildcards = args[-7]
-        dd_vals = args[:-7]
+        # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation
+        tag_validation = args[-1]
+        tag_format = args[-2]
+        neg_cb = args[-3]
+        temp = args[-4]
+        think = args[-5]
+        detail_level = args[-6]
+        pe_seed = args[-7]
+        prepend = args[-8]
+        wildcards = args[-9]
+        dd_vals = args[:-9]
 
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
@@ -1933,3 +1960,11 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Negative"] = True
         if _last_seed >= 0:
             p.extra_generation_params["PE Seed"] = _last_seed
+        if tag_format:
+            p.extra_generation_params["PE Tag Format"] = tag_format
+        if tag_validation:
+            p.extra_generation_params["PE Tag Validation"] = tag_validation
+        if temp is not None:
+            p.extra_generation_params["PE Temperature"] = round(float(temp), 3)
+        if prepend:
+            p.extra_generation_params["PE Prepend"] = True
