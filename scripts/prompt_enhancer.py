@@ -1207,7 +1207,7 @@ class PromptEnhancer(scripts.Script):
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
-                prepend_source = gr.Checkbox(label="Prepend (Prose)", value=False, scale=0, min_width=60)
+                prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=60)
                 prepend_source.do_not_save_to_config = True
                 negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=60)
                 negative_prompt_cb.do_not_save_to_config = True
@@ -1518,6 +1518,8 @@ class PromptEnhancer(scripts.Script):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
                     final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
+                    if prepend and source:
+                        final = f"{source}\n\n{final}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
                     yield final, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError as e:
@@ -1639,6 +1641,8 @@ class PromptEnhancer(scripts.Script):
                         result, negative = raw, ""
 
                     if fmt == "prose":
+                        if prepend and source:
+                            result = f"{source}\n\n{result}"
                         elapsed = f"{time.monotonic() - t0:.1f}s"
                         yield result, negative, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words, {elapsed}</span>"
                         return
@@ -1671,6 +1675,8 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("kept_invalid"):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
+                    if prepend and source:
+                        final = f"{source}\n\n{final}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
                     yield final, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
@@ -1777,6 +1783,8 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("error"):
                             status_parts.append(stats["error"])
 
+                    if prepend and source:
+                        tags = f"{source}\n\n{tags}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
                     yield tags, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
                 except InterruptedError:
