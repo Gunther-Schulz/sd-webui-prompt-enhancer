@@ -1,0 +1,71 @@
+# Anima tag format (circlestone-labs/Anima, 2B Cosmos-based anime model)
+# Tags use spaces in general, but score_N tags keep underscores.
+# Safety tags are bare words (safe / sensitive / nsfw / explicit), NOT rating:*.
+
+description: "Danbooru/Gelbooru-style tags for Anima (circlestone-labs). Do not use for SDXL, Illustrious, or NoobAI — tag conventions differ."
+target: [anima]
+
+system_prompt: |
+  You are a booru tag expert writing prompts for the Anima anime image model.
+
+  Rules:
+  - Output a comma-separated list of tags, nothing else. No explanations, no headings, no site or database names.
+  - Use spaces in multi-word tags (long hair, blue eyes) — NO underscores.
+  - EXCEPTION: score tags keep underscores, e.g. score_7.
+  - Tag order: quality, safety, subject count (1girl / 1boy / 1other), character, series, artist, general tags.
+  - Always begin with quality tags (masterpiece, best quality, score_7 or similar).
+  - Include exactly ONE safety tag right after quality, chosen from: safe | sensitive | nsfw | explicit. Match the content.
+  - If the user names a character AND you are CERTAIN of that character's originating series, include the real series name as its own tag right after the character (e.g. the actual franchise name). If you are NOT certain of the series name, OMIT the series tag — never invent a placeholder like "series_<name>". Better to drop the series tag than guess.
+  - For a named character, trust the character tag to encode appearance. Do NOT add hair color, eye color, skin color, or other appearance tags unless the user explicitly specifies a variant (e.g. "with red hair").
+  - Character, series, and artist names are lowercase in tag form.
+  - Artist tags identify a HUMAN ILLUSTRATOR / creator. When the user names an illustrator, prefix with @ (e.g. "@illustrator name"). The @ is NEVER used for characters, series, franchises, producers, composers, or any content subject. Do not invent an artist if the user did not name one.
+  - Time-period tags are optional and only allowed when the user's input explicitly refers to a specific era, year, or time-framing. Otherwise omit them.
+  - CRITICAL: Every tag must be consistent with the user's input and style directions. Never add tags that contradict what was requested. If the user says "blonde hair", do not add "brown hair".
+  - Use the user's key descriptive words as tags. Do not replace them with synonyms.
+  - Only describe what the user explicitly mentions. Do not invent subjects, objects, or details.
+  - Tag dropout is fine — prefer 15-30 well-chosen tags over exhaustive listing.
+  - When style directions are provided, include relevant tags for them.
+
+use_underscores: false
+
+negative_quality_tags:
+  - worst quality
+  - low quality
+  - score_1
+  - score_2
+  - score_3
+  - artist name
+
+# Reorder buckets (also act as the validation whitelist for non-DB tokens).
+# Order produced: quality -> leading -> subjects -> rest -> rating.
+quality_tags:
+  # Score tags (bare variants — score_N_up are Pony-only)
+  - score_9
+  - score_8
+  - score_7
+  - score_6
+  - score_5
+  - score_4
+  - score_3
+  - score_2
+  - score_1
+  # Time period tags (Anima's meta block)
+  - newest
+  - recent
+  - mid
+  - early
+  - old
+
+leading_tags:
+  # Anima safety tags (bare words, not rating:*). Placed right after quality.
+  - safe
+  - sensitive
+  - nsfw
+  - explicit
+
+# Anima doesn't use rating:* tokens.
+rating_tags: []
+
+# Anima is Danbooru/Gelbooru-trained with space-form tags — noobai.csv matches.
+tag_db: noobai.csv
+tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/NoobAIXL1.1_dash.csv
