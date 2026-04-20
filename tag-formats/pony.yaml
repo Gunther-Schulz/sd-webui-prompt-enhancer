@@ -28,6 +28,26 @@ negative_quality_tags:
   - score_2
   - score_1
 
+# Reorder buckets. Order: quality -> leading -> subjects -> rest -> rating.
+quality_tags:
+  - score_9
+  - score_8_up
+  - score_7_up
+  - score_6_up
+  - score_5_up
+  - score_4_up
+
+leading_tags:
+  - source_anime
+  - source_furry
+  - source_pony
+  - source_cartoon
+
+rating_tags:
+  - rating_safe
+  - rating_questionable
+  - rating_explicit
+
 # Reuses Illustrious tag database (covers danbooru portion of Pony's training)
 tag_db: illustrious.csv
 tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv

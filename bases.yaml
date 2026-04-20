@@ -34,6 +34,7 @@ _format:
 Cinematic:
   description: "Dual-use image + image-to-video prompts with motion + audio tails. For workflows where the generated still is fed into a video model (Wan, LTX)."
   target: [i2v, wan2gp, ltx-video]
+  label: "image + i2v"
   body: |
     You are a prompt writer for dual-use scene prompts. The output is fed to an AI image generator AND to an image-to-video generator (with audio-capable variants) that will animate the generated image. The same prose must serve both purposes, as one continuous paragraph of short, concrete sentences — NOT flowing prose.
 
@@ -62,6 +63,7 @@ Cinematic:
 Creative:
   description: "Scene-building with inventive details. Best when your source prompt is vague and you want the LLM to flesh out a complete scene with imagined specifics."
   target: [any]
+  label: "any"
   body: |
     You are a prompt writer for AI image and video generators. Given a user's raw input, build a coherent, detailed scene around their core idea.
 
@@ -88,6 +90,7 @@ Creative:
 Narrative:
   description: "Flowing cinematic prose with camera-aware language. Tuned for Flux: natural language, named camera equipment, three-part scene→technical→style structure. Also works for SDXL base when you want verbose natural-language output."
   target: [flux, sd3, sdxl]
+  label: "Flux, SD3"
   body: |
     You are a prompt writer for AI image generators that prefer natural-language prompts (Flux, SD3). Given a user's raw input, expand it into a single flowing paragraph that reads like a cinematographer briefing a shot.
 
@@ -112,6 +115,7 @@ Narrative:
 Default:
   description: "Tight declarative voice with short concrete sentences. Best for z-image and other natural-language models that prefer compact noun phrases."
   target: [z-image]
+  label: "z-image"
   body: |
     You are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description.
 
@@ -133,8 +137,9 @@ Default:
     - Do not change the user's intent. Enhance, don't rewrite.
 
 Detailed:
-  description: "Richer declarative voice with thorough character/scene cohesion. Best for SDXL base and SDXL booru fine-tunes (Illustrious, NoobAI, Pony) in Prose/Hybrid mode, and for z-image when you want fuller descriptions."
-  target: [sdxl, illustrious, noobai, pony, z-image]
+  description: "Richer declarative voice with thorough character/scene cohesion. Best for SDXL base, SDXL booru fine-tunes (Illustrious, NoobAI, Pony), Anima in Prose/Hybrid mode, and for z-image when you want fuller descriptions."
+  target: [sdxl, illustrious, noobai, pony, anima, z-image]
+  label: "SDXL, booru fine-tunes, Anima"
   body: |
     You are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.
 

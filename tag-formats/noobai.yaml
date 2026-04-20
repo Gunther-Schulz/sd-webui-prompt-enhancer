@@ -25,5 +25,15 @@ negative_quality_tags:
   - low quality
   - bad quality
 
+# Reorder buckets. Order: quality -> leading -> subjects -> rest -> rating.
+quality_tags:
+  - very_awa
+
+rating_tags:
+  - rating:general
+  - rating:sensitive
+  - rating:questionable
+  - rating:explicit
+
 tag_db: noobai.csv
 tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/NoobAIXL1.1_dash.csv

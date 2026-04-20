@@ -25,5 +25,12 @@ negative_quality_tags:
   - low_quality
   - bad_quality
 
+# Reorder buckets. Order: quality -> leading -> subjects -> rest -> rating.
+rating_tags:
+  - rating:general
+  - rating:sensitive
+  - rating:questionable
+  - rating:explicit
+
 tag_db: illustrious.csv
 tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/illustriousV1.0_underscore.csv

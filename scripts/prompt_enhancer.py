@@ -691,32 +691,33 @@ def _base_meta(name):
 def _base_names():
     """Return ordered (label, value) tuples for the Base dropdown.
 
-    Known bases appear first in a curated order with their primary target
-    model family shown in parentheses. Unknown bases (user-defined locals)
-    follow in YAML order. Custom is always last.
+    Label text comes from each base's yaml: an optional `label:` string
+    (used verbatim in the paren) takes precedence over auto-derivation
+    from the `target:` list (first 3 entries joined). Curated bases appear
+    first in a fixed order; user-added bases follow in yaml order.
+    Custom is always last.
     """
-    # Curated order: Default first (primary), then variants by natural grouping.
-    # Labels include short target-family hints for at-a-glance fit.
-    CURATED = [
-        ("Default", "Default (z-image)"),
-        ("Detailed", "Detailed (SDXL, booru fine-tunes)"),
-        ("Narrative", "Narrative (Flux, SD3)"),
-        ("Cinematic", "Cinematic (image + i2v)"),
-        ("Creative", "Creative (any)"),
-    ]
-    known_values = {v for v, _ in CURATED}
-    result = [(label, value) for value, label in CURATED if value in _bases]
-    # User-defined bases not in the curated list
-    for value in _bases.keys():
-        if value.startswith("_") or value in known_values:
-            continue
+    CURATED_ORDER = ["Default", "Detailed", "Narrative", "Cinematic", "Creative"]
+
+    def _label(value):
         meta = _base_meta(value)
-        target = meta.get("target", [])
-        if target and isinstance(target, list):
-            label = f"{value} ({', '.join(str(t) for t in target[:3])})"
-        else:
-            label = value
-        result.append((label, value))
+        paren = meta.get("label")
+        if not paren:
+            target = meta.get("target", [])
+            if target and isinstance(target, list):
+                paren = ", ".join(str(t) for t in target[:3])
+        return f"{value} ({paren})" if paren else value
+
+    result = []
+    seen = set()
+    for value in CURATED_ORDER:
+        if value in _bases:
+            result.append((_label(value), value))
+            seen.add(value)
+    for value in _bases.keys():
+        if value.startswith("_") or value in seen:
+            continue
+        result.append((_label(value), value))
     result.append(("Custom", "Custom"))
     return result
 
