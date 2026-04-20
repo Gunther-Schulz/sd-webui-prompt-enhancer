@@ -1314,9 +1314,9 @@ class PromptEnhancer(scripts.Script):
 
             # ── Base + Tag Format + Validation ──
             with gr.Row():
-                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1)
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="Prose voice — matches the image model family.")
                 _tf_names = list(_tag_formats.keys())
-                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1)
+                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="Tag conventions for booru-trained fine-tunes.")
                 tag_validation = gr.Radio(
                     label="Tag Validation",
                     choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],
