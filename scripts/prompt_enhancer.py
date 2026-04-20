@@ -1326,7 +1326,7 @@ class PromptEnhancer(scripts.Script):
 
             # ── Base + Tag Format + Validation ──
             with gr.Row():
-                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="System prompt for Prose/Hybrid. Default=z-image, Detailed=SDXL+booru, Narrative=Flux/SD3, Creative=scene invention, Cinematic=image+i2v.")
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="System prompt for Prose/Hybrid")
                 _tf_names = list(_tag_formats.keys())
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="Booru-trained SDXL fine-tunes only. Not for base SDXL, Flux, or z-image.")
                 tag_validation = gr.Radio(
@@ -1336,6 +1336,17 @@ class PromptEnhancer(scripts.Script):
                     info="Off=raw | Check=alias | Fuzzy=alias+guess | Strict=alias+drop | Fuzzy Strict=guess+drop",
                 )
                 tag_validation.do_not_save_to_config = True
+
+            def _base_description_html(name):
+                if name == "Custom":
+                    return "<div style='color:#888; font-size:0.9em; margin-top:-8px; padding-left:4px'>User-supplied system prompt (below). Bypasses the shared preamble and format.</div>"
+                meta = _base_meta(name)
+                desc = meta.get("description", "")
+                if not desc:
+                    return ""
+                return f"<div style='color:#888; font-size:0.9em; margin-top:-8px; padding-left:4px'>{desc}</div>"
+
+            base_description = gr.HTML(value=_base_description_html("Default"))
 
             # ── Auto-generated modifier dropdowns (one per file) ──
             dd_components = []
@@ -1379,6 +1390,7 @@ class PromptEnhancer(scripts.Script):
             # ── Custom system prompt ──
             custom_system_prompt = gr.Textbox(label="Custom System Prompt", lines=4, visible=False, placeholder="Enter your custom system prompt...")
             base.change(fn=lambda b: gr.update(visible=(b == "Custom")), inputs=[base], outputs=[custom_system_prompt], show_progress=False)
+            base.change(fn=_base_description_html, inputs=[base], outputs=[base_description], show_progress=False)
 
             # ── API + reload ──
             with gr.Row():

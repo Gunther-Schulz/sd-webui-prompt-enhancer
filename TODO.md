@@ -41,13 +41,6 @@ category get new files.
       Risk: might re-introduce failures the rules were catching. Needs
       testing.
 
-## Small loose ends
-
-- [ ] Decide: should the negative prompt textarea be cleared when the
-      `+ Negative` checkbox is unchecked, or left as-is?
-- [ ] Consider surfacing base / modifier `description` fields in the UI
-      (dropdown tooltips or an info element below selection).
-
 ## Session lessons worth preserving
 
 - **Don't teach the LLM what it already knows.** Qwen-9B knows "golden
