@@ -1301,12 +1301,18 @@ class PromptEnhancer(scripts.Script):
                     old_val = dd_vals[i] if i < len(dd_vals) else []
                     results.append(gr.update(choices=choices, value=[v for v in (old_val or []) if v in _all_modifiers]))
                 results.append(gr.update(choices=list(_wildcard_choices), value=[w for w in (wc_val or []) if w in _wildcards]))
+                msg = (f"<span style='color:#6c6'>Reloaded: {len(_bases)} bases, "
+                       f"{len(_dropdown_order)} modifier groups, "
+                       f"{len(_all_modifiers)} modifiers, "
+                       f"{len(_wildcards)} wildcards, "
+                       f"{len(_prompts)} prompts</span>")
+                results.append(msg)
                 return results
 
             reload_btn.click(
                 fn=_do_refresh,
                 inputs=[base] + dd_components + [wildcards, local_dir_path],
-                outputs=[base] + dd_components + [wildcards],
+                outputs=[base] + dd_components + [wildcards, status],
                 show_progress=False,
             )
             def _refresh_models_and_status(api_url, current_model):
