@@ -1307,7 +1307,7 @@ class PromptEnhancer(scripts.Script):
                 prepend_source.do_not_save_to_config = True
                 negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=110)
                 negative_prompt_cb.do_not_save_to_config = True
-                motion_cb = gr.Checkbox(label="+ Motion", value=False, scale=0, min_width=100, info="motion + audio tails for i2v")
+                motion_cb = gr.Checkbox(label="+ Motion and Audio", value=False, scale=0, min_width=150)
                 motion_cb.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
