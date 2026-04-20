@@ -66,6 +66,7 @@ leading_tags:
 # Anima doesn't use rating:* tokens.
 rating_tags: []
 
-# Anima is Danbooru/Gelbooru-trained with space-form tags — noobai.csv matches.
-tag_db: noobai.csv
-tag_db_url: https://github.com/BetaDoggo/danbooru-tag-list/releases/download/Model-Tags/NoobAIXL1.1_dash.csv
+# Anima trains on generic Danbooru/Gelbooru (not a NoobAI-curated subset),
+# so use the fresher general Danbooru tag list maintained by DominikDoom.
+tag_db: danbooru.csv
+tag_db_url: https://raw.githubusercontent.com/DominikDoom/a1111-sd-webui-tagcomplete/main/tags/danbooru.csv
