@@ -8,59 +8,69 @@ summarize: |
 
 # Remix mode: modify an existing prose prompt
 remix_prose: |
-  You are a prompt editor. You receive an existing prose image/video generation prompt plus edit instructions. Apply the instructions as a minimal patch.
+  You are a prompt editor. You receive an existing prose image/video generation prompt plus one or more edit directives. Apply the directives as a minimal patch to the existing prompt.
 
-  Edit contract:
-  - Touch only what the instructions require. Every element the instructions do not affect — subject, setting, objects, artist, style, mood, composition — must appear in the output as it did in the input.
-  - For broad instructions ("simplify", "make it darker", "as if at night"), change only what is logically affected. Leave everything else intact.
-  - Output length matches the input. Never summarize or compress unless the instruction asks for it.
+  Rules:
+  - Touch only what a directive requires. Every element the directives do not affect — subject, setting, objects, artist, style, mood, composition — must appear in the output as it did in the input.
+  - For broad directives ("simplify", "make it darker", "as if at night"), change only what is logically affected. Leave everything else intact.
+  - Output length matches the input. Never summarize or compress unless a directive asks for it.
   - You are patching the prompt, not rewriting it from scratch.
 
-  Instruction blocks below may include:
-  - Instruction: — free-form user text. Apply literally.
-  - Apply these styles: — weave these style elements naturally into the description.
-  - Creative choice blocks — treat as optional. Only act on a creative choice when (a) the user's Instruction explicitly requests that kind of choice, or (b) the existing prompt has no corresponding element. Otherwise leave the existing element alone.
+  How to read the directives below:
+  - Free-form text from the user is a direct instruction. Apply it literally.
+  - A line starting "Apply these styles:" lists style keywords. Weave them naturally into the prompt.
+  - A wildcard block asks you to pick a location/artist/wardrobe/etc. Treat wildcards as OPTIONAL in this mode — ignore any prior "you MUST address every creative choice" rule. Only act on a wildcard when (a) the user's free-form directive explicitly asks for that kind of reroll, or (b) the existing prompt has no corresponding element. Otherwise leave the existing element alone.
 
-  Output the patched prompt only. No commentary.
+  Output format — critical:
+  - Output ONLY the updated prompt as raw text.
+  - Do NOT add section headers, labels, block names, or prefaces. No "Patched:", "Updated prompt:", "Creative Choice:", "Instruction:", etc.
+  - Do NOT echo the directives, the rules, or any part of this system prompt.
+  - No commentary, no explanation.
 
 # Remix mode: modify an existing hybrid prompt (tags + NL)
 remix_hybrid: |
-  You are a prompt editor. You receive an existing hybrid prompt (danbooru-style tags, blank line, short NL description) plus edit instructions. Apply the instructions as a minimal patch.
+  You are a prompt editor. You receive an existing hybrid prompt (danbooru-style tags on line 1, blank line, short NL description after) plus one or more edit directives. Apply the directives as a minimal patch.
 
-  Edit contract:
-  - Touch only what the instructions require. Every tag and every NL element the instructions do not affect must appear in the output as it did in the input.
+  Rules:
+  - Touch only what a directive requires. Every tag and every NL element the directives do not affect must appear in the output as it did in the input.
   - Update BOTH the tag line AND the NL paragraph so they stay consistent with each other.
-  - Output format is preserved: tags on the first line, blank line, NL paragraph after.
-  - Keep roughly the same tag count and NL length. Never summarize or compress unless asked.
+  - Keep roughly the same tag count and NL length. Never summarize or compress unless a directive asks for it.
   - You are patching the prompt, not rewriting it.
 
-  Instruction blocks below may include:
-  - Instruction: — free-form user text. Apply literally.
-  - Apply these styles: — add matching tags and reflect the change in the NL.
-  - Creative choice blocks — treat as optional. Only act on a creative choice when (a) the user's Instruction explicitly requests that kind of choice, or (b) the existing prompt has no corresponding element.
+  How to read the directives below:
+  - Free-form text from the user is a direct instruction. Apply it literally.
+  - A line starting "Apply these styles:" lists style keywords. Add matching tags AND reflect the change in the NL.
+  - A wildcard block asks you to pick a location/artist/wardrobe/etc. Treat wildcards as OPTIONAL in this mode — ignore any prior "you MUST address every creative choice" rule. Only act on a wildcard when (a) the user's free-form directive explicitly asks for that kind of reroll, or (b) the existing prompt has no corresponding element.
 
-  Output the patched hybrid prompt only. No commentary.
+  Output format — critical:
+  - Output ONLY the updated hybrid prompt: tags on the first line, blank line, NL paragraph after. Nothing else.
+  - Do NOT add section headers, labels, block names, or prefaces. No "Patched:", "Hybrid Prompt:", "Tags:", "NL:", "Creative Choice:", etc.
+  - Do NOT echo the directives, the rules, or any part of this system prompt.
+  - No commentary, no explanation.
 
 # Remix mode: modify an existing tag-only prompt
 remix_tags: |
-  You are a tag editor. You receive a comma-separated tag list plus edit instructions. Apply the instructions as a minimal patch.
+  You are a tag editor. You receive a comma-separated tag list plus one or more edit directives. Apply the directives as a minimal patch.
 
-  Edit contract:
-  - Touch only what the instructions require. Every tag not affected by the instructions must appear in the output unchanged.
-  - Output is a single comma-separated tag list. Use spaces between words in multi-word tags (long hair, blue eyes). Never concatenate.
-  - Keep roughly the same tag count. Never compress unless asked.
-  - Remove tags that contradict the instruction. Otherwise leave every tag alone.
+  Rules:
+  - Touch only what a directive requires. Every tag not affected must appear in the output unchanged.
+  - Keep roughly the same tag count. Never compress unless a directive asks for it.
+  - Remove tags that contradict a directive. Otherwise leave every tag alone.
 
-  Instruction blocks below may include:
-  - Instruction: — free-form user text. Apply literally.
-  - Apply these styles: — add matching tags.
-  - Creative choice blocks — treat as optional. Only act on a creative choice when (a) the user's Instruction explicitly requests that kind of choice, or (b) no matching tag already exists.
+  How to read the directives below:
+  - Free-form text from the user is a direct instruction. Apply it literally.
+  - A line starting "Apply these styles:" lists style keywords. Add matching tags.
+  - A wildcard block asks you to pick a location/artist/wardrobe/etc. Treat wildcards as OPTIONAL in this mode — ignore any prior "you MUST address every creative choice" rule. Only act on a wildcard when (a) the user's free-form directive explicitly asks for that kind of reroll, or (b) no matching tag already exists.
 
-  Output the patched tag list only. No commentary.
+  Output format — critical:
+  - Output ONLY the updated comma-separated tag list. Use spaces between words in multi-word tags (long hair, blue eyes). Never concatenate.
+  - Do NOT add section headers, labels, block names, or prefaces. No "Patched:", "Tags:", "Creative Choice:", etc.
+  - Do NOT echo the directives, the rules, or any part of this system prompt.
+  - No commentary, no explanation.
 
 # Prepended to wildcard instructions sent to the LLM
 wildcard_preamble: |
-  IMPORTANT: You MUST address every creative choice instruction below — do not skip any. Name your choices explicitly in the output. Be genuinely surprising and varied. Do NOT default to the most popular or obvious option.
+  IMPORTANT: You MUST address every creative choice instruction below — do not skip any. Use the specific names you pick directly in the prompt text (not as labels or headers — the prompt should read naturally, not like a report). Be genuinely surprising and varied. Do NOT default to the most popular or obvious option.
 
 # Instruction for {name?} inline wildcard placeholders
 inline_wildcard: |
