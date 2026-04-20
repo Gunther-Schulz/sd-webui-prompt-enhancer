@@ -1,56 +1,48 @@
 # Lighting & Mood
 _label: Lighting & Mood
 
-# Each modifier has:
-#   behavioral: prose instruction for Prose/Hybrid modes (the LLM should
-#               integrate the quality into the scene, never echo the words
-#               verbatim or produce a list)
-#   keywords:   comma-separated keyword string for Tags mode and the
-#               direct-paste button. Echoes are fine here — that's the point
-#               of tag generation.
-#
-# Random-choice modifiers (the "🎲 Random X" ones that replace wildcards)
-# just have behavioral text telling the LLM to pick something — no type
-# field needed. Empty keywords means the LLM synthesizes its own tags.
+# Ultra-minimal behaviorals: 1 sentence describing the effect without
+# naming the label or reusing keyword phrases. Keywords untouched for
+# Tags mode.
 
 lighting:
   Golden Hour:
-    behavioral: "The scene is lit by golden hour light — low-angle warm sunlight, long defined shadows stretching across surfaces, a peach-and-gold cast on the sky and bright planes, possible lens flare or light through foliage. Describe how this light falls on skin, fabric, walls, and foreground textures. Do not name the lighting condition; let the description carry the style."
+    behavioral: "Low-angle sun raking across the scene, amber saturation on bright planes, long stretched cast shadows, peach and gold across the sky."
     keywords: "golden hour, warm amber light, long shadows, sun flare, soft directional warmth, peach and gold sky"
   Candlelight:
-    behavioral: "The scene is lit by candlelight — warm flickering light with moving soft-edged shadows, pools of golden illumination that fall off into darkness, intimate partial reveal with much of the frame in shadow. Describe the light's warmth, its movement, and the deep surrounding darkness. Do not name the lighting condition."
+    behavioral: "A single low-lumen source with a restless glow, deep surrounding dark, soft-edged shadows that drift with the flame."
     keywords: "candlelight, warm flickering light, deep moving shadows, pools of golden illumination, partial illumination, intimate"
   Neon Glow:
-    behavioral: "The scene is lit by neon — saturated colored light (combinations from blues, pinks, purples, magentas), glowing signage, reflections on wet pavement or windows, urban nocturnal atmosphere. Describe the colors the light casts on surfaces and skin, and any reflections. Do not name the style."
+    behavioral: "Saturated colored signage casts blue/pink/magenta light on wet surfaces and skin, nocturnal urban atmosphere."
     keywords: "neon lighting, colored reflections on wet surfaces, blue pink purple magenta, urban nocturnal, rain-slicked streets, glowing signs"
   Backlit:
-    behavioral: "The subject is backlit — the key light source sits behind them, creating a rim of bright light on their outline and silhouette, the front of the subject in relative shadow, possible lens flare. Describe the glowing edge on hair or shoulders, the hazy illumination around the subject, and the darker front. Do not name the lighting technique."
+    behavioral: "Primary light behind the subject — bright rim around the contour, front plane in relative shadow, possible haze bloom."
     keywords: "backlit, rim lighting, lens flare, glowing edges, subject in relative shadow, light source behind subject"
   Volumetric Light:
-    behavioral: "The scene contains visible shafts of light — beams made visible by dust, fog, or moisture, cutting through the air at a clear angle. Describe the physical presence of the light as rays passing through the space, what they illuminate, and the haze they create. Do not name 'volumetric light' as a label."
+    behavioral: "Airborne particles make the light's path physically visible as bright rays through the atmosphere at a defined angle."
     keywords: "volumetric light, visible light rays, shafts of sunlight, beams through dust or fog, god rays, light occupying space"
 
 mood:
   Film Noir:
-    behavioral: "The scene has a film noir mood — high-contrast chiaroscuro lighting with deep shadows and sharp bright highlights, low-key overall exposure, rain-slicked surfaces catching what light there is, the possibility of venetian-blind shadow patterns across walls or faces, a dangerous stylized atmosphere. Describe the balance of shadow and highlight and the specific patterns light makes. Do not use the label."
+    behavioral: "Extreme chiaroscuro with low-key exposure, glossy-wet surfaces, and geometric shadow patterns. Fatalistic tense atmosphere."
     keywords: "film noir, chiaroscuro, deep shadows, sharp highlights, rain-slicked surfaces, venetian blind shadows, low-key lighting, dangerous, stylized"
   Dreamy:
-    behavioral: "The scene feels dreamy and weightless — diffused soft-focus light, a hazy quality as if lit through gauze, pastel or gently desaturated tones, possible lens flare or ethereal glow. Describe the softness, the gentle haze, and the color palette. Do not use the word 'dreamy' or 'ethereal'."
+    behavioral: "A gauzy diffuse quality, washed palette, lifted highlights, subtle bloom around bright spots."
     keywords: "dreamy, ethereal, soft focus, hazy light, lens flare, pastel or desaturated tones, weightless, otherworldly"
   Horror:
-    behavioral: "The scene has an unsettling horror atmosphere — underlit faces with shadows in the wrong places, sickly color casts (greens, yellows, pale cyan), deep pockets of darkness, an uncanny stillness that implies threat. Describe the specific wrongness of the light and color, and the ominous quiet. Do not use the word 'horror' or 'dread'."
+    behavioral: "Light from unnatural angles and sickly-cast color (greens, yellows, pale cyan), empty pockets of shadow, uncanny stillness."
     keywords: "horror, unsettling lighting, underlit faces, sickly color casts, deep shadows, uncanny stillness, implied threat, dread"
   Gritty:
-    behavioral: "The scene is gritty and street-level — harsh practical lighting (fluorescent tubes, sodium-vapor streetlamps), hard-surface urban materials (concrete, graffiti-covered walls, worn metal), a sense of noise and rawness, no glamour. Describe the specific surfaces, the quality of the practical light, and any wear marks. Do not use the word 'gritty'."
+    behavioral: "Harsh utilitarian sources illuminating worn urban hard-surface materials, unglamorous and raw."
     keywords: "gritty, urban, harsh fluorescent or sodium vapor lighting, concrete, graffiti, worn surfaces, visual noise, raw, street-level"
   Fantasy:
-    behavioral: "The scene has a fantasy mood — richly saturated colors, painterly rendering with dramatic composition, theatrical lighting often warm and golden, a mythic or larger-than-life quality. Describe the lush color, the dramatic light, and the heightened reality. Do not use words like 'fantasy' or 'epic'."
+    behavioral: "Lushly saturated color, theatrical painterly composition, warm idealized light, larger-than-life scale."
     keywords: "fantasy, painterly, rich saturated colors, dramatic composition, theatrical lighting, mythic, golden light, concept art aesthetic"
 
 atmosphere:
   Fog:
-    behavioral: "Fog or mist fills the air — reduced visibility with distant objects fading into silhouette, diffused directionless light, halos around any visible light sources, a sense of isolation and quiet. Describe the softness of distance, the glow around lights, and the muted palette. Do not name 'fog' as a label."
+    behavioral: "Thick air reducing visibility, distant objects fading to silhouette, scattered light creating halos around sources, muted palette."
     keywords: "fog, mist, reduced visibility, distant silhouettes, diffused light, god rays, glowing halos, quiet, isolated, mysterious"
   Rain:
-    behavioral: "It is raining — surfaces are wet and reflective, raindrops are visible in the air or on windows, puddles mirror nearby light sources, the light is overcast and diffused with a cool blue-grey cast, everything glistens. Describe the wet surfaces, the reflections, and the specific coldness of the light. Do not use 'rain' as a label word."
+    behavioral: "Water active in the scene — falling, pooling, clinging. Overcast cool blue-grey cast, reflective wet surfaces."
     keywords: "rain, wet surfaces, reflections, raindrops, puddles mirroring lights, overcast diffused light, cool blue-grey cast, glistening"

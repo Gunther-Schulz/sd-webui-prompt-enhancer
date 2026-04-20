@@ -1,26 +1,24 @@
 # Mode — temporal and structural framing
 _label: Temporal Framing
 
-# These modifiers control HOW the scene is described over time, rather than
-# the scene's content. Especially relevant for image-to-video workflows and
-# the Cinematic base.
+# Ultra-minimal: output-structure directives in one sentence each.
 
 temporal framing:
   Still:
-    behavioral: "Describe a single frozen instant. Use only present-tense static language. No verbs that imply motion or change over time. The result is a captured pose, a held moment."
+    behavioral: "Describe a single held instant. No verbs implying motion or change over time."
     keywords: "frozen moment, static composition, describe a single instant in time, no temporal language, no movement, captured pose"
   Scene:
-    behavioral: "Describe action unfolding over a few seconds. Use present-progressive verbs and chronological connectors (as, then, while). Show movement in progress. Do not use timestamps or hard cuts — let actions flow."
+    behavioral: "Describe action unfolding over several seconds, present-progressive verbs, flowing connectors like 'as' and 'while'."
     keywords: "chronological action, present-progressive verbs, temporal flow, describe movement unfolding over time, use connectors like as then while, no timestamps or scene cuts"
   Cinematic:
-    behavioral: "Describe the scene as a camera move — specify the camera's motion (pan, dolly, crane, tracking, push-in, pull-back) and what changes in the frame as the camera moves. Use film language for transitions. The result reads like a shot description."
+    behavioral: "Describe the scene as a camera move — name the camera motion (pan, dolly, push-in, crane, tracking) and what changes in frame during it."
     keywords: "describe as a camera move, pan dolly crane tracking shot, cinematic transitions, opening wide then pushing in, film language"
   POV:
-    behavioral: "Describe the scene from the viewer's first-person perspective — what the viewer sees, hears, touches. Hands or body partially in frame. Use immersive present-tense spatial language ('ahead of you', 'to your left'). The reader IS the subject."
+    behavioral: "First-person voice — the reader IS the subject. Hands or body partially in frame. Present-tense spatial language."
     keywords: "first-person perspective, describe what the viewer sees and feels directly, hands or body partially visible, immersive present-tense spatial language"
   Timelapse:
-    behavioral: "Compress time in the description — show change over hours or days within the same scene. Sunrise to sunset, seasons shifting, clouds racing across the sky, shadows sweeping across the ground. The result describes accelerated transformation, not a moment."
+    behavioral: "Compressed time in one described scene — sunrise to sunset, shifting seasons, sweeping shadows, accelerated transformation."
     keywords: "compress time, show change over hours or days, sunrise to sunset, seasons shifting, clouds racing, shadows sweeping, accelerated transformation"
   Loop:
-    behavioral: "Describe the scene as a seamless loop — end state connects back to beginning state, perpetual cyclical motion, continuous flow with no start or stop. Motion should be circular or repeating, not a single arc."
+    behavioral: "Seamless cycle — end state connecting to beginning, perpetual circular motion, no start or stop."
     keywords: "seamless loop, end connects to beginning, cyclical motion, continuous flow, no start or stop, perpetual movement"

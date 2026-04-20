@@ -1,37 +1,33 @@
 # Audio — sound descriptions for video models
 _label: Audio
 
-# Audio modifiers add diegetic sound descriptions, mainly for image-to-video
-# workflows (the Cinematic base picks these up naturally). Still-image models
-# will mostly ignore these but won't be broken by them.
-#
-# See lighting-mood.yaml for schema notes.
+# Ultra-minimal: state the audio context in one sentence, not a list.
 
 audio:
   Add Audio Cues:
-    behavioral: "Include audio descriptions in the output — concrete sounds integrated chronologically with the visuals. Say what is heard and when. Name specific sounds, not vague atmospheric descriptions. Weave the audio into the scene prose, do not append as a list."
+    behavioral: "Include specific diegetic sound descriptions woven through the visual prose, not as a tail list."
     keywords: "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, be concrete about what is heard and when"
   Ambient City:
-    behavioral: "The audio background is a city ambient soundscape — describe specific urban sounds audible in the scene: distant traffic, car horns, pedestrian footsteps on concrete, the low rumble of construction or air handling, the general drone of a city. Describe each as a specific audible event, not a label."
+    behavioral: "Urban background sound — traffic murmur, foot traffic on pavement, distant construction or mechanical hum."
     keywords: "ambient city sounds, distant traffic, car horns, pedestrian footsteps, construction hum, urban drone"
   Ambient Nature:
-    behavioral: "The audio background is a natural ambient soundscape — describe specific outdoor sounds audible: birdsong of a specific kind, leaves rustling, flowing water, wind moving through grass or branches, insects. Each sound should be a specific audible event."
+    behavioral: "Natural outdoor background — birds of a specific kind, wind through vegetation, moving water, insects."
     keywords: "ambient nature sounds, birdsong, rustling leaves, flowing water, wind through grass, insects buzzing"
   Ambient Indoor:
-    behavioral: "The audio background is an interior ambient soundscape — describe specific small indoor sounds: a clock ticking, the hum of a refrigerator or heating system, a floorboard creak, muffled voices from another room, the low whoosh of air conditioning. Each as a specific audible event."
+    behavioral: "Small interior sounds — a clock, refrigerator or HVAC hum, a creak from a floorboard, muffled distant voices."
     keywords: "ambient indoor sounds, clock ticking, refrigerator hum, floorboard creak, muffled voices from another room, air conditioning"
   Rain Sounds:
-    behavioral: "Rain is audible in the scene — describe specific sounds the rain makes: drops striking a specific surface (roof, window, leaves, pavement), the distant rumble of thunder if appropriate, water running or dripping, possible wind. Describe each as a specific audible event, not as 'rain sounds'."
+    behavioral: "Water striking surfaces — drops on a specific material (roof, window, leaves), drips, distant thunder if fitting."
     keywords: "sound of rain, raindrops on roof or window, distant thunder, water dripping, puddle splashes, storm ambience"
   Wind:
-    behavioral: "Wind is audible in the scene — describe specific sounds the wind makes given the intensity: a gentle breeze, a gusting, or a howl, with effects like fabric flapping, leaves skittering across a surface, or a whistling through gaps. Describe specific events, not 'wind sounds'."
+    behavioral: "Moving air audible as gusts or breeze, with secondary effects — fabric flapping, material skittering, whistling through gaps."
     keywords: "sound of wind, gusting, howling, gentle breeze, fabric flapping, leaves skittering across ground"
   Crowd Murmur:
-    behavioral: "A crowd is audible — describe specific sounds of many people: overlapping conversations, distant laughter, glasses clinking or utensils tapping, the general bustle of footsteps and shifting bodies. Describe as specific audible events, not 'crowd murmur'."
+    behavioral: "Many people audible — overlapping conversation, sporadic laughter, small clinks of glassware, a low collective bustle."
     keywords: "crowd murmur, overlapping conversations, laughter in background, glasses clinking, general bustle of people"
   Music Playing:
-    behavioral: "Music is playing in the scene — describe the specific source (a radio, a speaker, a live performance, etc.) and the character of the music (genre, tempo, mood). Make it feel diegetic — coming from within the scene, not a soundtrack. Be specific about what is playing."
+    behavioral: "Diegetic music — specify the source (radio, speaker, live) and its genre and tempo. Not a soundtrack — from within the scene."
     keywords: "music playing in the scene, from a radio or speaker or live performance, describe the genre and mood of the music"
   Silence:
-    behavioral: "The scene is nearly silent — describe the absence of sound as a felt quality. A quiet deep enough that only the faintest ambient hum or breath is audible. The silence should feel heavy or suspenseful, not merely neutral."
+    behavioral: "Near-total absence of sound, only the faintest hum or breath. The quiet is a felt quality, weighted or suspenseful."
     keywords: "near silence, absence of sound, quiet so deep it feels heavy, only the faintest ambient hum or breath audible"
