@@ -694,9 +694,36 @@ def _base_meta(name):
 
 
 def _base_names():
-    names = [k for k in _bases.keys() if not k.startswith("_")]
-    names.append("Custom")
-    return names
+    """Return ordered (label, value) tuples for the Base dropdown.
+
+    Known bases appear first in a curated order with their primary target
+    model family shown in parentheses. Unknown bases (user-defined locals)
+    follow in YAML order. Custom is always last.
+    """
+    # Curated order: Default first (primary), then variants by natural grouping.
+    # Labels include short target-family hints for at-a-glance fit.
+    CURATED = [
+        ("Default", "Default (z-image)"),
+        ("Detailed", "Detailed (SDXL, booru fine-tunes)"),
+        ("Narrative", "Narrative (Flux, SD3)"),
+        ("Cinematic", "Cinematic (image + i2v)"),
+        ("Creative", "Creative (any)"),
+    ]
+    known_values = {v for v, _ in CURATED}
+    result = [(label, value) for value, label in CURATED if value in _bases]
+    # User-defined bases not in the curated list
+    for value in _bases.keys():
+        if value.startswith("_") or value in known_values:
+            continue
+        meta = _base_meta(value)
+        target = meta.get("target", [])
+        if target and isinstance(target, list):
+            label = f"{value} ({', '.join(str(t) for t in target[:3])})"
+        else:
+            label = value
+        result.append((label, value))
+    result.append(("Custom", "Custom"))
+    return result
 
 
 def _collect_modifiers(dropdown_selections):
@@ -1289,7 +1316,7 @@ class PromptEnhancer(scripts.Script):
 
             # ── Base + Tag Format + Validation ──
             with gr.Row():
-                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="System prompt for Prose/Hybrid")
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1)
                 _tf_names = list(_tag_formats.keys())
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="Booru-trained SDXL fine-tunes only.")
                 tag_validation = gr.Radio(
