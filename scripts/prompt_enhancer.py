@@ -163,33 +163,33 @@ def _merge_modifier_dicts(base, override):
 
 def _normalize_modifier(entry):
     """Normalize a modifier entry to dict form with keys:
-      type:       "fixed" (named style) or "random" (LLM picks from category)
-      behavioral: prose instruction for Prose/Hybrid modes
+      behavioral: prose instruction for Prose/Hybrid modes. The prose
+                  itself tells the LLM whether to apply a named style or
+                  pick one ("The scene is lit by golden hour..." vs
+                  "Choose a specific lighting condition..."). No separate
+                  type flag — the behavioral text carries the meaning.
       keywords:   comma-separated keyword string for Tags mode and
-                  direct-paste button
+                  direct-paste button. May be empty for random-choice
+                  entries where the LLM synthesizes its own tags.
 
     Accepts:
       - str: legacy format. Treated as keywords; behavioral is synthesized.
-      - dict: new format with any subset of the three keys.
+      - dict: new format.
     """
     if isinstance(entry, str):
         kw = entry.strip()
         return {
-            "type": "fixed",
             "behavioral": f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {kw}.",
             "keywords": kw,
         }
     if not isinstance(entry, dict):
         return None
     norm = {
-        "type": entry.get("type", "fixed"),
         "behavioral": (entry.get("behavioral") or "").strip(),
         "keywords": (entry.get("keywords") or "").strip(),
     }
-    # If behavioral is missing but keywords exist, synthesize behavioral
     if not norm["behavioral"] and norm["keywords"]:
         norm["behavioral"] = f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {norm['keywords']}."
-    # An entry with neither is invalid
     if not norm["behavioral"] and not norm["keywords"]:
         return None
     return norm
