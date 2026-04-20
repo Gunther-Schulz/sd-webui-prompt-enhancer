@@ -161,8 +161,46 @@ def _merge_modifier_dicts(base, override):
     return merged
 
 
+def _normalize_modifier(entry):
+    """Normalize a modifier entry to dict form with keys:
+      type:       "fixed" (named style) or "random" (LLM picks from category)
+      behavioral: prose instruction for Prose/Hybrid modes
+      keywords:   comma-separated keyword string for Tags mode and
+                  direct-paste button
+
+    Accepts:
+      - str: legacy format. Treated as keywords; behavioral is synthesized.
+      - dict: new format with any subset of the three keys.
+    """
+    if isinstance(entry, str):
+        kw = entry.strip()
+        return {
+            "type": "fixed",
+            "behavioral": f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {kw}.",
+            "keywords": kw,
+        }
+    if not isinstance(entry, dict):
+        return None
+    norm = {
+        "type": entry.get("type", "fixed"),
+        "behavioral": (entry.get("behavioral") or "").strip(),
+        "keywords": (entry.get("keywords") or "").strip(),
+    }
+    # If behavioral is missing but keywords exist, synthesize behavioral
+    if not norm["behavioral"] and norm["keywords"]:
+        norm["behavioral"] = f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {norm['keywords']}."
+    # An entry with neither is invalid
+    if not norm["behavioral"] and not norm["keywords"]:
+        return None
+    return norm
+
+
 def _build_dropdown_data(categories_dict):
-    """Build flat lookup and choice list from a single dropdown's categories."""
+    """Build flat lookup and choice list from a single dropdown's categories.
+
+    Values in the returned flat dict are normalized modifier dicts (see
+    _normalize_modifier) — callers select behavioral vs keywords based on mode.
+    """
     flat = {}
     choices = []
     for cat_name, items in categories_dict.items():
@@ -170,9 +208,10 @@ def _build_dropdown_data(categories_dict):
             continue
         separator = f"\u2500\u2500\u2500\u2500\u2500 {cat_name.title()} \u2500\u2500\u2500\u2500\u2500"
         choices.append(separator)
-        for name, keywords in items.items():
-            if isinstance(keywords, str):
-                flat[name] = keywords
+        for name, entry in items.items():
+            norm = _normalize_modifier(entry)
+            if norm is not None:
+                flat[name] = norm
                 choices.append(name)
     return flat, choices
 
@@ -696,24 +735,58 @@ def _base_names():
 
 
 def _collect_modifiers(dropdown_selections):
-    """Collect all selected modifiers into a list of (name, keywords) tuples."""
+    """Collect all selected modifiers into a list of (name, normalized_entry) tuples.
+
+    Each normalized_entry is a dict with 'type', 'behavioral', 'keywords'
+    fields. The caller decides which fields to use based on the mode.
+    """
     result = []
     for selections in dropdown_selections:
         for name in (selections or []):
-            keywords = _all_modifiers.get(name, "")
-            if keywords:
-                result.append((name, keywords))
+            entry = _all_modifiers.get(name)
+            if entry:
+                result.append((name, entry))
     return result
 
 
-def _build_style_string(mod_list):
-    """Build the 'Apply these styles:' string."""
-    parts = []
-    for name, keywords in mod_list:
-        if name.lower() not in keywords.lower():
-            keywords = f"{name.lower()}, {keywords}"
-        parts.append(keywords)
-    return f"Apply these styles: {', '.join(parts)}." if parts else ""
+def _build_style_string(mod_list, mode="prose"):
+    """Build the style block for the user message.
+
+    mode:
+      "prose"   — Prose/Hybrid. Uses behavioral field. Anti-echo framing.
+      "tags"    — Tags mode. Uses keywords field. Keyword-echoing framing.
+    """
+    if not mod_list:
+        return ""
+    if mode == "tags":
+        # Tags mode wants keyword echoing; build the classic keyword list.
+        parts = []
+        for name, entry in mod_list:
+            kw = entry.get("keywords") or ""
+            # If keywords empty (e.g., random modifier with no keyword list),
+            # fall back to the behavioral text so the LLM still gets guidance.
+            if not kw:
+                kw = entry.get("behavioral") or ""
+                if not kw:
+                    continue
+            if name.lower() not in kw.lower():
+                kw = f"{name.lower()}, {kw}"
+            parts.append(kw)
+        return f"Apply these styles: {', '.join(parts)}." if parts else ""
+    # Prose/Hybrid: concatenate behavioral descriptions with an
+    # anti-echo header so the LLM integrates rather than lists.
+    behaviorals = []
+    for name, entry in mod_list:
+        text = (entry.get("behavioral") or "").strip()
+        if text:
+            behaviorals.append(text)
+    if not behaviorals:
+        return ""
+    header = ("Style directives for the scene below. Integrate these qualities "
+              "into the description as prose. Do NOT echo the instructions verbatim, "
+              "do NOT produce a list of keywords, do NOT use label-like phrasing. "
+              "Weave the style into the scene naturally.")
+    return header + "\n\n" + "\n\n".join(behaviorals)
 
 
 # ── Ollama ───────────────────────────────────────────────────────────────────
@@ -1779,7 +1852,7 @@ class PromptEnhancer(scripts.Script):
                 # Build user message with everything explicit
                 mods = _collect_modifiers(dd_vals)
                 user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
-                style_str = _build_style_string(mods)
+                style_str = _build_style_string(mods, mode="tags")
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
                 if any(_wildcards.get(w, "") for w in (wc or [])):
