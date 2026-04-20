@@ -32,20 +32,13 @@ category get new files.
       no LLM call. Useful for tag-based workflows where the user wants
       keyword-style additions without prose generation.
 
-## Possible base-prompt cleanup pass
-
-- [ ] Review whether Default / Detailed / Narrative / Creative / Cinematic
-      still have over-engineering (long rule lists protecting against
-      failures Qwen probably wouldn't produce anyway). The session-end
-      lesson: *"what's the minimum Qwen needs?"* applies to bases too.
-      Risk: might re-introduce failures the rules were catching. Needs
-      testing.
-
 ## Session lessons worth preserving
 
-- **Don't teach the LLM what it already knows.** Qwen-9B knows "golden
-  hour", "Wes Anderson", "film noir". Just name the concept; don't
-  describe it in the prompt. Long behaviorals were overcorrection.
+- **Don't teach the LLM what it already knows** — for *concepts*
+  (golden hour, Wes Anderson). Qwen-9B recognizes these; just name
+  them. But *do* scaffold output characteristics (thoroughness,
+  sentence variety, character completeness) — tested 2026-04-20,
+  removing those rules cuts output to ~50% length.
 - **Let the base prompt govern voice.** Modifier delivery should name
   the styles; the base handles HOW they're applied. Adding "apply as
   prose" to the delivery duplicates or contradicts the base.
