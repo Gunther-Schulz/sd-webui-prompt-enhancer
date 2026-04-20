@@ -96,13 +96,17 @@ def _get_local_dirs(ui_path=""):
 
 
 def _load_local_bases(local_dirs):
-    """Load _bases.yaml from all local directories."""
+    """Load _bases.yaml from all local directories.
+
+    Entries may be either a string (legacy: body only) or a dict with
+    keys like 'body', 'target', 'description'.
+    """
     merged = {}
     for local_dir in local_dirs:
         for ext in (".yaml", ".yml", ".json"):
             path = os.path.join(local_dir, BASES_FILENAME + ext)
             if os.path.isfile(path):
-                merged.update({k: v for k, v in _load_file(path).items() if isinstance(v, str)})
+                merged.update({k: v for k, v in _load_file(path).items() if isinstance(v, (str, dict))})
     return merged
 
 
@@ -553,7 +557,7 @@ def _reload_all(local_dir_path=""):
     for ext in (".yaml", ".yml", ".json"):
         path = os.path.join(_EXT_DIR, "bases" + ext)
         if os.path.isfile(path):
-            _bases = {k: v for k, v in _load_file(path).items() if isinstance(v, str)}
+            _bases = {k: v for k, v in _load_file(path).items() if isinstance(v, (str, dict))}
             break
     _bases.update(_load_local_bases(local_dirs))
 
@@ -669,6 +673,21 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
+
+def _base_body(entry):
+    """Return the body string from a base entry (str or dict with 'body')."""
+    if isinstance(entry, dict):
+        return entry.get("body", "")
+    return entry or ""
+
+
+def _base_meta(name):
+    """Return metadata dict (target, description, etc.) for a base, or {}."""
+    entry = _bases.get(name)
+    if isinstance(entry, dict):
+        return {k: v for k, v in entry.items() if k != "body"}
+    return {}
+
 
 def _base_names():
     names = [k for k in _bases.keys() if not k.startswith("_")]
@@ -1133,13 +1152,13 @@ def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
     if base_name == "Custom":
         system_prompt = (custom_system_prompt or "").strip()
     else:
-        body = _bases.get(base_name, "")
+        body = _base_body(_bases.get(base_name))
         if not body:
             return None
         parts = [
-            _bases.get("_preamble", "").strip(),
+            _base_body(_bases.get("_preamble")).strip(),
             body.strip(),
-            _bases.get("_format", "").strip(),
+            _base_body(_bases.get("_format")).strip(),
         ]
         system_prompt = "\n\n".join(p for p in parts if p)
     if not system_prompt:
