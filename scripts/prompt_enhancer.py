@@ -753,18 +753,19 @@ def _build_style_string(mod_list, mode="prose"):
     """Build the style block for the user message.
 
     mode:
-      "prose"   — Prose/Hybrid. Uses behavioral field. Anti-echo framing.
-      "tags"    — Tags mode. Uses keywords field. Keyword-echoing framing.
+      "prose"   — Prose/Hybrid. Uses behavioral field. Emits a
+                  comma-separated list of style directives. The active
+                  base prompt governs HOW these get applied (voice,
+                  structure); we just name the styles.
+      "tags"    — Tags mode. Uses keywords field. Classic "Apply these
+                  styles: kw1, kw2" keyword-echoing directive.
     """
     if not mod_list:
         return ""
     if mode == "tags":
-        # Tags mode wants keyword echoing; build the classic keyword list.
         parts = []
         for name, entry in mod_list:
             kw = entry.get("keywords") or ""
-            # If keywords empty (e.g., random modifier with no keyword list),
-            # fall back to the behavioral text so the LLM still gets guidance.
             if not kw:
                 kw = entry.get("behavioral") or ""
                 if not kw:
@@ -773,20 +774,20 @@ def _build_style_string(mod_list, mode="prose"):
                 kw = f"{name.lower()}, {kw}"
             parts.append(kw)
         return f"Apply these styles: {', '.join(parts)}." if parts else ""
-    # Prose/Hybrid: concatenate behavioral descriptions with an
-    # anti-echo header so the LLM integrates rather than lists.
+    # Prose/Hybrid: short behaviorals concatenate into a compact directive.
+    # Qwen recognizes style/mood/setting concepts directly — we don't need
+    # to teach it, just name them. Base prompt handles voice.
     behaviorals = []
     for name, entry in mod_list:
         text = (entry.get("behavioral") or "").strip()
         if text:
-            behaviorals.append(text)
+            # Strip trailing punctuation so items join cleanly with commas.
+            text = text.rstrip(".!?: ")
+            if text:
+                behaviorals.append(text)
     if not behaviorals:
         return ""
-    header = ("Style directives for the scene below. Integrate these qualities "
-              "into the description as prose. Do NOT echo the instructions verbatim, "
-              "do NOT produce a list of keywords, do NOT use label-like phrasing. "
-              "Weave the style into the scene naturally.")
-    return header + "\n\n" + "\n\n".join(behaviorals)
+    return f"Apply these styles to the scene: {', '.join(behaviorals)}."
 
 
 # ── Ollama ───────────────────────────────────────────────────────────────────

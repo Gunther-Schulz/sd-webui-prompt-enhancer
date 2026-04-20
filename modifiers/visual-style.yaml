@@ -1,208 +1,203 @@
 # Visual Style
 _label: Visual Style
 
-# Disciplined pattern: behavioral uses paraphrased language, avoids
-# reusing exact phrases from keywords, and does not name specific
-# directors/studios/franchises (Tags mode still gets the names via
-# keywords).
-
 color:
   Black and White:
-    behavioral: "The output is monochromatic — no color anywhere, everything rendered in luminance. Describe the relationship between light and dark as the dominant visual concern."
+    behavioral: "Black and white."
     keywords: "black and white, monochrome, tonal contrast, no color, luminance, grain, interplay of light and dark"
   Vintage Film:
-    behavioral: "The image carries the look of aged film stock — subtle color drift, warmth in the highs, muted blacks, a patina of grain. Describe the analog imperfections."
+    behavioral: "Vintage film stock."
     keywords: "vintage film, film grain, color shifts, warm highlights, faded blacks, expired film stock, nostalgic, textured"
   Cinematic Grade:
-    behavioral: "The palette is polished for film — cool skin tones against warm highlights, deep but slightly lifted shadows, muted midtones. Describe the relationships between teal and orange regions."
+    behavioral: "Cinematic teal-and-orange color grade."
     keywords: "cinematic color grade, teal-and-orange, crushed blacks, lifted shadows, midtone desaturation, Hollywood film look"
   Pastel:
-    behavioral: "The palette stays gentle and washed — softly desaturated hues in the cream/blush/powder range, highlights slightly lifted. Describe the quiet color relationships."
+    behavioral: "Pastel palette."
     keywords: "pastel, soft desaturated colors, blush pink, powder blue, lavender, mint, cream, lifted highlights, gentle, delicate"
   Retro:
-    behavioral: "The image carries an era-specific analog fingerprint — grain, light leaks, color drift, dated styling choices. Describe the specific era signs."
+    behavioral: "Retro analog film look."
     keywords: "retro, era-specific film stock, analog imperfections, grain, light leaks, color shifts, period-authentic styling"
 
 art style:
   Oil Painting:
-    behavioral: "The image is rendered with visible paint — thick textured strokes, rich pigment sitting on a woven surface, classical technique. Describe the painterly quality as a medium."
+    behavioral: "Oil painting."
     keywords: "oil painting, visible brushstrokes, rich color, thick impasto texture, canvas surface, classical painting technique"
   Watercolor:
-    behavioral: "The image is rendered with translucent pigment that bleeds at its edges, layered over visible paper texture. Describe the soft diffuse quality."
+    behavioral: "Watercolor painting."
     keywords: "watercolor, soft washes, bleeding edges, translucent layers, paper texture showing through, delicate, flowing"
   Pencil Sketch:
-    behavioral: "The image is a graphite drawing — tonal shading built from hatching strokes, raw hand-drawn line work. Describe the drawing qualities and paper."
+    behavioral: "Pencil sketch."
     keywords: "pencil sketch, graphite on paper, hatching and cross-hatching, tonal shading, raw linework, hand-drawn"
   Charcoal Drawing:
-    behavioral: "The image is a charcoal drawing — rich blacks, smudged gesture marks, dramatic tonal range on textured paper."
+    behavioral: "Charcoal drawing."
     keywords: "charcoal drawing, deep blacks, smudged edges, rough paper texture, dramatic contrast, expressive marks"
   Digital Art:
-    behavioral: "The image is a digital illustration — crisp line work, vibrant color, smooth gradients, polished concept-art finish."
+    behavioral: "Digital art concept illustration."
     keywords: "digital art, clean lines, vibrant colors, smooth gradients, polished rendering, concept art quality"
   3D Render:
-    behavioral: "The image is a computer-rendered scene — materials described by physics (subsurface light, traced reflections), lighting volumes you can see through. Describe the rendered quality."
+    behavioral: "3D render."
     keywords: "3D render, CGI, volumetric lighting, subsurface scattering, physically based materials, ray-traced reflections"
   Comic Book:
-    behavioral: "The image is illustrated as a printed comic page — thick ink outlines, halftone dot patterns, flat bold fills, dynamic panel energy."
+    behavioral: "Comic book illustration."
     keywords: "comic book, bold ink outlines, halftone dots, dynamic panel composition, flat bold colors, graphic novel"
   Pixel Art:
-    behavioral: "The image is built from visible discrete pixels on a low-resolution grid, limited palette, retro-game fidelity (8-bit or 16-bit)."
+    behavioral: "Pixel art."
     keywords: "pixel art, low resolution, visible pixels, limited color palette, retro game aesthetic, 8-bit or 16-bit"
 
 anime:
   Anime:
-    behavioral: "The image is a stylized Japanese animation drawing — not photographic, with characteristic illustrated features, clean line work, and shading conventions of the medium. Describe the drawing qualities."
+    behavioral: "Anime style."
     keywords: "anime style, drawn not photographic, Japanese animation, stylized features, illustrated"
   Anime Classic Cel:
-    behavioral: "The image uses the classic cel-shaded look — oversized expressive eyes, clean outlines, flat color fills in the traditional hand-drawn animation tradition."
+    behavioral: "Classic cel-shaded anime."
     keywords: "anime style, cel-shaded, large expressive eyes, clean outlines, flat color fills, traditional hand-drawn animation aesthetic"
   Anime Modern:
-    behavioral: "The image uses a contemporary polished anime look — digital coloring with gradient blending, highly detailed hair highlights, nuanced shading, post-2010s studio quality."
+    behavioral: "Modern polished anime."
     keywords: "modern anime, digital coloring, soft gradients, detailed hair highlights, subtle shading, post-2010s anime aesthetic, Kyoto Animation or Ufotable quality"
   Anime 80s:
-    behavioral: "80s anime aesthetic — angular face design, heavy shadows, detailed mechanical elements, OVA-era drama."
+    behavioral: "80s anime."
     keywords: "80s anime, high detail mechanical design, sharp angular faces, heavy shadow, OVA quality, Akira or Macross aesthetic, dramatic lighting"
   Anime 90s:
-    behavioral: "90s anime aesthetic — painted cel work with visible brushwork in backgrounds, warm palette, analog-video softness."
+    behavioral: "90s anime."
     keywords: "90s anime, hand-painted cel, visible brushwork in backgrounds, warm color palette, VHS softness, Evangelion or Cowboy Bebop era"
   Anime 2000s:
-    behavioral: "Early-2000s anime aesthetic — early digital coloring with sharp outlines, flatter shading, saturated bold color."
+    behavioral: "Early-2000s anime."
     keywords: "2000s anime, early digital coloring, sharp clean lines, slightly flat shading, bold saturated colors, Bleach or Fullmetal Alchemist era, widescreen transition"
   Anime 2010s:
-    behavioral: "2010s anime aesthetic — heavy digital polish, complex lighting, multi-tone hair shading, smooth render."
+    behavioral: "2010s anime."
     keywords: "2010s anime, polished digital production, detailed lighting effects, complex hair shading, smooth animation quality, Attack on Titan or Sword Art Online era"
   Anime Chibi:
-    behavioral: "The image uses super-deformed proportions — enormous head, tiny body, exaggerated cute expression, comedic rendering."
+    behavioral: "Chibi anime."
     keywords: "chibi style, super-deformed proportions, oversized head, tiny body, cute exaggerated expressions, comedic"
   Anime Shonen:
-    behavioral: "Shonen anime energy — speed lines, dynamic mid-movement poses, intense expressions, muscular battle-ready figures."
+    behavioral: "Shonen anime."
     keywords: "shonen anime, dynamic action lines, speed lines, intense expressions, muscular builds, battle-ready poses, Dragon Ball or Naruto energy"
   Anime Shoujo:
-    behavioral: "The image has the energy of romance-anime — soft gentle features, starry or sparkling eyes, floral decorative motifs, pastel backdrops, elegant flowing lines."
+    behavioral: "Shoujo anime."
     keywords: "shoujo anime, soft features, sparkling eyes, flower motifs, pastel backgrounds, romantic atmosphere, elegant flowing lines"
   Anime Ghibli:
-    behavioral: "Studio Ghibli aesthetic — painterly backgrounds, gentle warmth, watercolor-painted skies, naturalistic character design."
+    behavioral: "Studio Ghibli style."
     keywords: "Studio Ghibli style, painterly backgrounds, naturalistic lighting, gentle character design, whimsical, hand-painted watercolor skies, Miyazaki warmth"
   Anime Makoto Shinkai:
-    behavioral: "Makoto Shinkai aesthetic — extraordinarily detailed clouds and light, strong lens flare, vivid color saturation, emotional atmosphere."
+    behavioral: "Makoto Shinkai style."
     keywords: "Makoto Shinkai style, photorealistic backgrounds, hyper-detailed clouds and light, lens flare, vivid color saturation, emotional atmosphere, Your Name aesthetic"
   Anime Satoshi Kon:
-    behavioral: "Satoshi Kon aesthetic — reality-bending fluid identity transitions, psychological intensity, detailed adult faces, cinematic composition."
+    behavioral: "Satoshi Kon style."
     keywords: "Satoshi Kon style, reality-bending, fluid transitions, psychological intensity, detailed adult faces, cinematic framing, Perfect Blue or Paprika aesthetic"
   Anime Junji Ito:
-    behavioral: "Junji Ito horror-manga aesthetic — extreme detail in grotesque unsettling forms, spiral patterns, body horror, heavy ink."
+    behavioral: "Junji Ito horror manga style."
     keywords: "Junji Ito style, horror manga, extreme detail in grotesque forms, spiral patterns, body horror, black ink heavy, unsettling, Uzumaki aesthetic"
   Anime Takeshi Obata:
-    behavioral: "Takeshi Obata aesthetic — sharp realistic-anatomy features, intricate clothing folds, dramatic shading."
+    behavioral: "Takeshi Obata manga style."
     keywords: "Takeshi Obata style, highly detailed realistic anatomy, sharp features, dramatic shading, intricate clothing folds, Death Note or Bakuman aesthetic"
   Anime CLAMP:
-    behavioral: "CLAMP aesthetic — elongated proportions, flowing fabric and hair, ornate art-nouveau-influenced costumes, ethereal."
+    behavioral: "CLAMP manga style."
     keywords: "CLAMP style, elongated proportions, flowing fabric and hair, ornate costumes, art nouveau influence, ethereal, Cardcaptor Sakura or xxxHolic aesthetic"
   Anime Trigger:
-    behavioral: "Studio Trigger energy — exaggerated dynamic poses, thick outlines, vivid neon color, explosive kinetic feel."
+    behavioral: "Studio Trigger anime style."
     keywords: "Studio Trigger style, exaggerated poses, thick dynamic outlines, explosive energy, vivid neon colors, kinetic motion, Kill la Kill or Promare aesthetic"
   Anime Mappa:
-    behavioral: "MAPPA aesthetic — fluid dark animation, gritty realism, detailed expressions, cinematic composition."
+    behavioral: "MAPPA anime style."
     keywords: "MAPPA style, fluid dark animation, gritty realism, detailed facial expressions, cinematic composition, Jujutsu Kaisen or Chainsaw Man aesthetic"
   Anime Seinen:
-    behavioral: "Seinen anime register — realistic adult proportions, muted palette, psychological weight, detailed environments."
+    behavioral: "Seinen anime."
     keywords: "seinen anime, mature themes, realistic proportions, muted color palette, psychological depth, detailed environments, Berserk or Vinland Saga tone"
   Anime Isekai:
-    behavioral: "The image channels fantasy-world anime — RPG visual cues, magical effects, adventurers in varied gear, guild halls or forest settings, bright and fantastical color."
+    behavioral: "Isekai fantasy anime."
     keywords: "isekai anime, fantasy world, RPG elements, magical effects, guild halls and forests, adventurer outfits, colorful and fantastical"
   Anime Mecha:
-    behavioral: "Giant-robot anime aesthetic — intricate mechanical design, cockpit interior, dramatic scale, thruster effects, metallic reflections."
+    behavioral: "Mecha anime."
     keywords: "mecha anime, detailed mechanical design, cockpit interior, giant robot proportions, thruster effects, metallic reflections, Gundam or Code Geass aesthetic"
   Anime Slice of Life:
-    behavioral: "The image channels gentle everyday anime — warm muted color, ordinary domestic or school settings, peaceful expressions, mundane detail rendered with care."
+    behavioral: "Slice-of-life anime."
     keywords: "slice of life anime, warm soft colors, everyday settings, school or home interior, gentle expressions, peaceful atmosphere, cozy mundane beauty"
   Anime Cyberpunk:
-    behavioral: "Cyberpunk-anime aesthetic — neon-saturated cityscape, augmented bodies, holographic displays, rainy reflections, gritty futurism."
+    behavioral: "Cyberpunk anime."
     keywords: "cyberpunk anime, neon-lit cityscapes, augmented bodies, holographic displays, rain and reflections, gritty futuristic, Ghost in the Shell or Psycho-Pass aesthetic"
   Anime Watercolor:
-    behavioral: "The image is an anime drawing rendered as if in watercolor — soft painted edges, visible brush texture, bleeding color, delicate wash quality."
+    behavioral: "Anime watercolor style."
     keywords: "anime watercolor style, soft painted edges, visible brush texture, bleeding colors, delicate washes, dreamlike, illustrated book quality"
   Anime Flat Design:
-    behavioral: "Flat-anime style — minimal shading, bold clean color fields, geometric simplification, graphic-poster feel."
+    behavioral: "Flat-design anime."
     keywords: "modern flat anime, minimal shading, bold clean colors, geometric simplification, graphic poster quality, Tatami Galaxy or Monogatari aesthetic"
 
 cinema style:
   Blockbuster:
-    behavioral: "The image reads as a high-budget feature film — polished grade, sweeping scale, deliberate dramatic lighting, widescreen framing."
+    behavioral: "Blockbuster film look."
     keywords: "blockbuster film look, high production value, dramatic lighting, epic scale, polished color grade, wide aspect ratio"
   Indie Film:
-    behavioral: "The image reads as a small-budget naturalistic film — available-light feel, a handheld quality, muted unglamorous colors, intimate framing."
+    behavioral: "Indie film look."
     keywords: "indie film, natural lighting, handheld camera feel, muted colors, intimate framing, understated, authentic"
   Documentary:
-    behavioral: "The image reads as observational non-fiction — available light, unstaged subject, raw journalistic framing, authentic mood."
+    behavioral: "Documentary film look."
     keywords: "documentary, observational, available light, unposed, raw and authentic, journalistic framing, truth-seeking"
   Home Video:
-    behavioral: "The image reads as amateur camcorder footage — handheld and unsteady, inexperienced framing, autofocus drift, mundane everyday moment."
+    behavioral: "Amateur home video."
     keywords: "home video, handheld, shaky, amateur framing, family recording, unplanned, autofocus hunting, zooming in and out, casual narration implied"
   Security Camera:
-    behavioral: "The image reads as surveillance footage — elevated fixed viewpoint, wide-angle distortion, low resolution, grain, timestamp visible."
+    behavioral: "Security camera footage."
     keywords: "security camera, CCTV, fixed overhead angle, wide angle distortion, low resolution, timestamp overlay, grainy, surveillance footage"
   Dashcam:
-    behavioral: "The image reads as vehicle camera footage — fixed forward view through a windshield, windshield reflections visible, road stretching ahead."
+    behavioral: "Dashcam footage."
     keywords: "dashcam, fixed forward view, windshield reflections, through-glass perspective, road ahead, real-time capture, mundane turned dramatic"
   Found Footage:
-    behavioral: "The image reads as a recovered recording of something unsettling — degraded signal, unstable handheld work, partial obstructed framing, horror undertone."
+    behavioral: "Found footage."
     keywords: "found footage, discovered recording, degraded quality, unstable handheld, horror or mystery context, partial framing, something not meant to be seen"
   Music Video:
-    behavioral: "The image reads as a frame from a music video — stylized lighting, bold saturated color, high contrast, performance energy, either glamorous or gritty register."
+    behavioral: "Music video still."
     keywords: "music video, stylized, bold color, high contrast, fast cuts implied, performance energy, glamorous or gritty"
   Horror Film:
-    behavioral: "The image reads as a horror-film frame — desaturated, sickly green or blue cast, underlit, a sense of something off-screen lurking, dread-laden framing."
+    behavioral: "Horror film."
     keywords: "horror film, desaturated, sickly green or blue cast, underlit, jump-scare framing, something lurking, dread"
   Arthouse:
-    behavioral: "The image reads as arthouse cinema — deliberate slow composition, muted palette, symbolic staging, contemplative austere mood."
+    behavioral: "Arthouse cinema."
     keywords: "arthouse cinema, deliberate composition, long-take framing, muted palette, symbolic staging, contemplative, austere"
   Wes Anderson:
-    behavioral: "Wes Anderson aesthetic — rigidly centered symmetrical composition, flat pastel palette, deadpan emotional tone, dollhouse-like formal framing."
+    behavioral: "Wes Anderson style."
     keywords: "wes anderson style, symmetrical composition, pastel palette, centered framing, whimsical, deadpan, dollhouse aesthetic"
   Wong Kar-wai:
-    behavioral: "Wong Kar-wai aesthetic — smeared neon, slowed motion blur, saturated red and green, melancholic urban-romance mood."
+    behavioral: "Wong Kar-wai style."
     keywords: "wong kar-wai style, smeared neon, motion blur, saturated red and green, melancholic, step-printed, urban romance"
   Kubrick:
-    behavioral: "Kubrick aesthetic — one-point perspective, symmetrical wide-angle composition, cold precision, unsettling stillness."
+    behavioral: "Kubrick style."
     keywords: "kubrick style, one-point perspective, symmetrical wide angle, cold precision, unsettling stillness, geometric composition"
 
 photography format:
   Polaroid:
-    behavioral: "The image has the look of instant-film — white border, washed-out color, soft focus, casual snapshot quality."
+    behavioral: "Polaroid instant photo."
     keywords: "polaroid, instant film, white border frame, slightly washed colors, soft focus, casual snapshot feel"
   35mm Film:
-    behavioral: "The image has the look of 35mm film — visible grain, a subtle color cast, analog texture, photojournalistic feel."
+    behavioral: "35mm film photo."
     keywords: "35mm film, natural grain, slight color cast, analog texture, photojournalistic, classic film photography"
   Medium Format:
-    behavioral: "The image has the look of medium-format — very high resolution, shallow depth, smooth tone, fine detail."
+    behavioral: "Medium-format photo."
     keywords: "medium format, high resolution, shallow depth of field, smooth tonal gradation, fine detail, Hasselblad aesthetic"
   Disposable Camera:
-    behavioral: "The image has the look of a cheap flash camera — direct harsh flash, possible red-eye, rough grain, slightly off framing."
+    behavioral: "Disposable-camera flash photo."
     keywords: "disposable camera, flash on, harsh direct flash, red-eye, rough grain, off-center framing, party snapshot"
   Infrared:
-    behavioral: "The image uses infrared photography — foliage reads as white, skies dark, surreal tones, a thermal glow quality."
+    behavioral: "Infrared photo."
     keywords: "infrared photography, false color, white foliage, dark skies, surreal tones, thermal glow effect"
   Cross-Processed:
-    behavioral: "The image has extreme color artifacts — unpredictable shifts, oversaturation, high contrast, often a green or magenta cast."
+    behavioral: "Cross-processed film."
     keywords: "cross-processed film, extreme color shifts, high contrast, oversaturated, green or magenta cast, unpredictable color"
 
 vintage format:
   Daguerreotype:
-    behavioral: "The image reads as the earliest photography — a silver plate with a mirror-like surface, the stillness of a long exposure, 1840s portrait sensibility."
+    behavioral: "Daguerreotype photo."
     keywords: "daguerreotype, earliest photography, silver plate, mirror-like surface, long exposure stillness, 1840s portrait"
   Tintype:
-    behavioral: "The image reads as an early metallic-plate photograph — low contrast, rough edges, scratches and imperfections, 19th-century quality."
+    behavioral: "Tintype photo."
     keywords: "tintype, dark metallic plate, low contrast, rough edges, civil war era, scratched and imperfect surface"
   Kodachrome:
-    behavioral: "The image reads as mid-century color slide film — warm saturated palette, rich reds and blues, sharp detail, magazine-photography feel."
+    behavioral: "Kodachrome color slide."
     keywords: "kodachrome, warm saturated color, rich reds and blues, sharp detail, 1960s-70s slide film, National Geographic look"
   VHS:
-    behavioral: "The image reads as analog video recording — visible scan lines, color bleed, tracking artifacts, low resolution, fuzzy warm distortion."
+    behavioral: "VHS analog video."
     keywords: "VHS, analog video, scan lines, color bleeding, tracking artifacts, low resolution, fuzzy warm distortion, 1980s-90s home video"
   Early Digital:
-    behavioral: "The image reads as an early digital camera shot — low megapixel, slight pixelation, oversaturated auto-white-balance, possible flash red-eye."
+    behavioral: "Early digital camera photo."
     keywords: "early digital camera, low megapixel, slight pixelation, oversaturated auto-white-balance, flash red-eye, 2000s snapshot"
   Instagram Circa 2012:
-    behavioral: "The image reads as early smartphone photo filter — square crop, heavy filter, vignette, faded blacks, shifted orange-teal grading."
+    behavioral: "Early Instagram filter."
     keywords: "early instagram, square crop, heavy filter, vignette, faded blacks, orange and teal shift, overprocessed nostalgia"

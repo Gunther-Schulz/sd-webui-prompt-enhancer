@@ -1,24 +1,25 @@
 # Mode — temporal and structural framing
 _label: Temporal Framing
 
-# Ultra-minimal: output-structure directives in one sentence each.
+# These are structural directives (how to describe over time), not
+# aesthetic styles. Behaviorals are short directives.
 
 temporal framing:
   Still:
-    behavioral: "Describe a single held instant. No verbs implying motion or change over time."
+    behavioral: "Describe a single frozen instant. No motion verbs."
     keywords: "frozen moment, static composition, describe a single instant in time, no temporal language, no movement, captured pose"
   Scene:
-    behavioral: "Describe action unfolding over several seconds, present-progressive verbs, flowing connectors like 'as' and 'while'."
+    behavioral: "Describe action unfolding over several seconds, present-progressive verbs."
     keywords: "chronological action, present-progressive verbs, temporal flow, describe movement unfolding over time, use connectors like as then while, no timestamps or scene cuts"
   Cinematic:
-    behavioral: "Describe the scene as a camera move — name the camera motion (pan, dolly, push-in, crane, tracking) and what changes in frame during it."
+    behavioral: "Describe as a camera move (pan, dolly, push-in, etc)."
     keywords: "describe as a camera move, pan dolly crane tracking shot, cinematic transitions, opening wide then pushing in, film language"
   POV:
-    behavioral: "First-person voice — the reader IS the subject. Hands or body partially in frame. Present-tense spatial language."
+    behavioral: "First-person POV."
     keywords: "first-person perspective, describe what the viewer sees and feels directly, hands or body partially visible, immersive present-tense spatial language"
   Timelapse:
-    behavioral: "Compressed time in one described scene — sunrise to sunset, shifting seasons, sweeping shadows, accelerated transformation."
+    behavioral: "Timelapse — compressed time (sunrise to sunset, sweeping shadows)."
     keywords: "compress time, show change over hours or days, sunrise to sunset, seasons shifting, clouds racing, shadows sweeping, accelerated transformation"
   Loop:
-    behavioral: "Seamless cycle — end state connecting to beginning, perpetual circular motion, no start or stop."
+    behavioral: "Seamless loop — end connects to beginning."
     keywords: "seamless loop, end connects to beginning, cyclical motion, continuous flow, no start or stop, perpetual movement"

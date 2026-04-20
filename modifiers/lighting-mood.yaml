@@ -1,48 +1,48 @@
 # Lighting & Mood
 _label: Lighting & Mood
 
-# Ultra-minimal behaviorals: 1 sentence describing the effect without
-# naming the label or reusing keyword phrases. Keywords untouched for
-# Tags mode.
+# Ultra-minimal behaviorals: just name the concept. Qwen-9B knows what
+# golden hour, film noir, fog, etc. look like — we don't teach it, we
+# invoke it. Keywords untouched for Tags mode.
 
 lighting:
   Golden Hour:
-    behavioral: "Low-angle sun raking across the scene, amber saturation on bright planes, long stretched cast shadows, peach and gold across the sky."
+    behavioral: "Golden hour light."
     keywords: "golden hour, warm amber light, long shadows, sun flare, soft directional warmth, peach and gold sky"
   Candlelight:
-    behavioral: "A single low-lumen source with a restless glow, deep surrounding dark, soft-edged shadows that drift with the flame."
+    behavioral: "Candlelight."
     keywords: "candlelight, warm flickering light, deep moving shadows, pools of golden illumination, partial illumination, intimate"
   Neon Glow:
-    behavioral: "Saturated colored signage casts blue/pink/magenta light on wet surfaces and skin, nocturnal urban atmosphere."
+    behavioral: "Neon glow."
     keywords: "neon lighting, colored reflections on wet surfaces, blue pink purple magenta, urban nocturnal, rain-slicked streets, glowing signs"
   Backlit:
-    behavioral: "Primary light behind the subject — bright rim around the contour, front plane in relative shadow, possible haze bloom."
+    behavioral: "Backlit."
     keywords: "backlit, rim lighting, lens flare, glowing edges, subject in relative shadow, light source behind subject"
   Volumetric Light:
-    behavioral: "Airborne particles make the light's path physically visible as bright rays through the atmosphere at a defined angle."
+    behavioral: "Volumetric light with visible beams."
     keywords: "volumetric light, visible light rays, shafts of sunlight, beams through dust or fog, god rays, light occupying space"
 
 mood:
   Film Noir:
-    behavioral: "Extreme chiaroscuro with low-key exposure, glossy-wet surfaces, and geometric shadow patterns. Fatalistic tense atmosphere."
+    behavioral: "Film noir mood."
     keywords: "film noir, chiaroscuro, deep shadows, sharp highlights, rain-slicked surfaces, venetian blind shadows, low-key lighting, dangerous, stylized"
   Dreamy:
-    behavioral: "A gauzy diffuse quality, washed palette, lifted highlights, subtle bloom around bright spots."
+    behavioral: "Dreamy mood."
     keywords: "dreamy, ethereal, soft focus, hazy light, lens flare, pastel or desaturated tones, weightless, otherworldly"
   Horror:
-    behavioral: "Light from unnatural angles and sickly-cast color (greens, yellows, pale cyan), empty pockets of shadow, uncanny stillness."
+    behavioral: "Horror mood."
     keywords: "horror, unsettling lighting, underlit faces, sickly color casts, deep shadows, uncanny stillness, implied threat, dread"
   Gritty:
-    behavioral: "Harsh utilitarian sources illuminating worn urban hard-surface materials, unglamorous and raw."
+    behavioral: "Gritty urban mood."
     keywords: "gritty, urban, harsh fluorescent or sodium vapor lighting, concrete, graffiti, worn surfaces, visual noise, raw, street-level"
   Fantasy:
-    behavioral: "Lushly saturated color, theatrical painterly composition, warm idealized light, larger-than-life scale."
+    behavioral: "Fantasy mood."
     keywords: "fantasy, painterly, rich saturated colors, dramatic composition, theatrical lighting, mythic, golden light, concept art aesthetic"
 
 atmosphere:
   Fog:
-    behavioral: "Thick air reducing visibility, distant objects fading to silhouette, scattered light creating halos around sources, muted palette."
+    behavioral: "Fog in the air."
     keywords: "fog, mist, reduced visibility, distant silhouettes, diffused light, god rays, glowing halos, quiet, isolated, mysterious"
   Rain:
-    behavioral: "Water active in the scene — falling, pooling, clinging. Overcast cool blue-grey cast, reflective wet surfaces."
+    behavioral: "Rain."
     keywords: "rain, wet surfaces, reflections, raindrops, puddles mirroring lights, overcast diffused light, cool blue-grey cast, glistening"

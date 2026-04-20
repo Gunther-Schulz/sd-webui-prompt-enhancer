@@ -3,128 +3,128 @@ _label: Subject
 
 genre:
   Studio Portrait:
-    behavioral: "The image reads as a studio portrait — the subject is isolated against a controlled neutral or gradient background, lit with directional portrait lighting, shallow depth of field, tight framing (headshot or three-quarter). Describe the specific studio feel without naming it as a label."
+    behavioral: "Studio portrait."
     keywords: "studio portrait, controlled environment, solid or gradient background, classic portrait lighting, shallow depth of field, headshot or three-quarter framing"
   Environmental Portrait:
-    behavioral: "The image reads as an environmental portrait — the subject is shown in their natural context (workplace, home, neighborhood), lit with available light, environment visibly tells the story. Moderate depth of field so context stays legible. Describe the subject and their surroundings together."
+    behavioral: "Environmental portrait."
     keywords: "environmental portrait, subject in natural context, workplace or home setting, available light, environment tells the story, moderate depth of field"
   Street:
-    behavioral: "The image reads as street photography — candid, urban, unposed, spontaneously composed, capturing a decisive moment. Describe the urban context and the subject's unguarded action."
+    behavioral: "Street photography."
     keywords: "street photography, candid, urban, unposed, spontaneous composition, decisive moment"
   Landscape:
-    behavioral: "The image reads as a landscape — wide angle, deep depth of field, foreground interest leading to a dramatic sky, rule-of-thirds composition, a strong sense of scale. Describe the landscape features and the composition's geometry."
+    behavioral: "Landscape photography."
     keywords: "landscape, wide angle, deep depth of field, foreground interest, sky detail, rule of thirds, sense of scale"
   Architecture:
-    behavioral: "The image reads as architectural photography — wide angle, vertical lines corrected (not tilted), geometric patterns and symmetry emphasized, leading lines, material textures prominent. Describe the architecture and how it's framed."
+    behavioral: "Architectural photography."
     keywords: "architectural photography, wide angle, corrected verticals, geometric patterns, symmetry, leading lines, material textures"
   Product:
-    behavioral: "The image reads as product photography — the subject object is isolated, clean background, precise directional lighting revealing material qualities (metal, glass, plastic, fabric), commercial composition with deliberate negative space. Describe the object and its presentation."
+    behavioral: "Product photography."
     keywords: "product photography, isolated subject, clean background, precise lighting, material qualities, commercial composition"
   Food:
-    behavioral: "The image reads as food photography — shot at an overhead or 45-degree angle, soft directional light, texture of the food emphasized, complementary props, appetizing color palette. Describe the food specifically and how it's styled."
+    behavioral: "Food photography."
     keywords: "food photography, overhead or 45-degree angle, soft directional light, texture emphasis, complementary props, appetizing colors"
   Wildlife:
-    behavioral: "The image reads as wildlife photography — background compressed by a long lens, bokeh behind the animal, shot at eye level with the subject, natural habitat around them, specific animal behavior captured. Describe the animal and its action in the habitat."
+    behavioral: "Wildlife photography."
     keywords: "wildlife photography, background compression, bokeh, eye-level with subject, natural habitat, animal behavior"
   Sports:
-    behavioral: "The image reads as sports photography — peak action captured with a fast shutter (no motion blur), shallow depth of field isolating the athlete, tight crop, sense of kinetic force even in the frozen moment. Describe the athlete and the moment."
+    behavioral: "Sports photography — peak action."
     keywords: "sports photography, peak action, fast shutter freeze, shallow depth of field, tight crop, implied movement"
   Editorial Fashion:
-    behavioral: "The image reads as editorial fashion — high-fashion styling, commanding stylized poses, dramatic precise lighting, clean graphic composition with strong lines. The subject is posed with intention. Describe the styling and the deliberate composition."
+    behavioral: "Editorial fashion photography."
     keywords: "editorial fashion, high-fashion, stylized, commanding poses, dramatic precise lighting, clean graphic composition, strong lines"
   Amateur Snapshot:
-    behavioral: "The image reads as an amateur snapshot — authentically imperfect, slightly off-kilter composition, mixed available lighting, ungraded colors, candid moment. The result should feel unposed and real, not polished. Describe the slightly awkward but genuine framing."
+    behavioral: "Amateur snapshot — authentically imperfect."
     keywords: "amateur snapshot, authentically imperfect, slightly off composition, mixed available lighting, ungraded colors, candid"
   Mirror Composition:
-    behavioral: "The image uses mirrors or reflective surfaces as a compositional device — the subject appears both directly and in reflection, dual perspectives within one frame, a frame-within-a-frame effect, lighting plays across both planes. Describe the subject and its reflection together."
+    behavioral: "Mirror composition — subject and reflection."
     keywords: "mirror composition, reflective surfaces, dual perspectives, frame-within-frame, subject and reflection, lighting across both planes"
 
 subject:
   Solo:
-    behavioral: "A single subject occupies the frame — alone, with full visual attention on them. No other figures compete for focus."
+    behavioral: "Solo subject."
     keywords: "single subject, alone in frame, full attention on one person or object"
   Couple:
-    behavioral: "Two subjects are framed together as a pair — the relationship between them implied through proximity, body language, or gaze direction. Describe both and what their positioning conveys."
+    behavioral: "Two subjects as a pair."
     keywords: "two subjects, pair, relationship implied through proximity and body language"
   Group:
-    behavioral: "Multiple subjects appear together — a group or crowd, whether interacting with each other or coexisting in the frame. Describe the group dynamics and individual figures within it."
+    behavioral: "Group of people."
     keywords: "group of people, crowd, multiple subjects interacting or coexisting in frame"
   Animal:
-    behavioral: "An animal is the primary subject — describe its species, its specific behavior in the moment, the texture of its fur/feathers/scales. A non-human presence dominates."
+    behavioral: "Animal as primary subject."
     keywords: "animal subject, creature behavior, fur or feather or scale texture, non-human presence"
   Object:
-    behavioral: "An inanimate object is the primary subject — describe its material, form, function, surface texture. Still-life quality with the object commanding full visual attention."
+    behavioral: "Inanimate object as primary subject."
     keywords: "object as subject, inanimate focus, material texture, form and function, still life quality"
   Hands Detail:
-    behavioral: "Hands are the focal point — describe the gesture, grip, or touch; the skin texture and any rings or tools held; the expressive quality of the fingers. Close, intimate attention."
+    behavioral: "Hands as focal point."
     keywords: "hands as focal point, gesture, grip, touch, texture of skin, rings or tools, expressive fingers"
 
 activity:
   Dancing:
-    behavioral: "The subject is dancing mid-movement — flowing fabric, a dynamic pose caught at peak expression, rhythm implied in the body. Describe the specific dance moment and the motion of body and clothing."
+    behavioral: "Dancing mid-movement."
     keywords: "dancing, mid-movement, flowing fabric, dynamic pose, rhythm, body in motion"
   Running:
-    behavioral: "The subject is running at full stride — hair and clothing trailing, forward momentum, athletic posture. Describe the specific stride position and the pull of motion."
+    behavioral: "Running at full stride."
     keywords: "running, full stride, hair and clothing trailing, forward momentum, athletic posture"
   Fighting:
-    behavioral: "The subject is fighting — in a combat stance with physical tension visible, aggressive or defensive pose, implied impact. Describe the specific fighting moment and the body's commitment to it."
+    behavioral: "Fighting."
     keywords: "fighting, combat stance, physical tension, impact, aggression, defensive or offensive pose"
   Eating:
-    behavioral: "The subject is eating — food in hand or at mouth, a table setting around them, either casual or formal dining context, a social moment. Describe the specific eating action and its context."
+    behavioral: "Eating."
     keywords: "eating, food in hand or at mouth, table setting, casual or formal dining, social moment"
   Reading:
-    behavioral: "The subject is reading — a book or paper in hand, absorbed in it, downcast eyes, quiet concentration. Describe the reading material and the quality of their attention."
+    behavioral: "Reading, absorbed."
     keywords: "reading, book or paper in hand, absorbed, downcast eyes, quiet concentration"
   Sleeping:
-    behavioral: "The subject is sleeping — eyes closed, muscles relaxed, a vulnerable peaceful resting pose. Describe the specific sleep position and the stillness."
+    behavioral: "Sleeping."
     keywords: "sleeping, eyes closed, relaxed muscles, vulnerable, peaceful, resting pose"
   Embracing:
-    behavioral: "The subject is embracing another — arms wrapped around someone, faces close, a protective or tender hold. Describe the specific embrace and the closeness."
+    behavioral: "Embracing."
     keywords: "embracing, arms wrapped around another, closeness, faces near, protective or tender hold"
   Working:
-    behavioral: "The subject is working — hands engaged with tools or materials, a focused expression, a task-oriented posture. Describe the specific work being done and the concentration."
+    behavioral: "Working, focused on a task."
     keywords: "working, hands engaged with tools or materials, focused expression, task-oriented posture"
   Playing:
-    behavioral: "The subject is playing — playful energy, spontaneous movement, light-hearted expression, with toys, games, or sport involved. Describe the specific play and the joy of it."
+    behavioral: "Playing."
     keywords: "playing, playful energy, spontaneous movement, light-hearted, toys or games or sport"
   Smoking:
-    behavioral: "The subject is smoking — a cigarette or pipe in hand, exhaled smoke visible, a casual grip, a contemplative or distracted expression. Describe the specific smoking moment."
+    behavioral: "Smoking."
     keywords: "smoking, cigarette or pipe, exhaled smoke, casual grip, contemplative or distracted"
   Performing:
-    behavioral: "The subject is performing — stage presence, a projected expression for an audience, an audience-aware pose, theatrical energy. Describe the specific performing moment and the stage energy."
+    behavioral: "Performing on stage."
     keywords: "performing, stage presence, projected expression, audience-aware pose, theatrical energy"
 
 relationship:
   Intimate:
-    behavioral: "The subjects are in an intimate configuration — tender closeness, gentle touch, faces close together, a private moment, a soft connection. Describe the specific intimate gesture and the closeness."
+    behavioral: "Intimate configuration between subjects."
     keywords: "intimate, tender closeness, gentle touch, faces close together, private moment, soft connection"
   Romantic:
-    behavioral: "The subjects are in a romantic configuration — loving gaze, physical closeness, visible warmth between them, an affectionate gesture. Describe the specific romantic moment."
+    behavioral: "Romantic configuration between subjects."
     keywords: "romantic, loving gaze, physical closeness, warmth between subjects, affectionate gesture"
   Passionate:
-    behavioral: "The subjects are in a passionate configuration — intense physical closeness, urgent touch, locked gaze, heat and desire palpable. Describe the specific passionate moment and its charge."
+    behavioral: "Passionate configuration between subjects."
     keywords: "passionate, intense physical closeness, urgent touch, locked gaze, heat, desire"
   Playful:
-    behavioral: "The subjects are being playful with each other — teasing gestures, shared laughter, light physical contact, mischief. Describe the specific playful exchange."
+    behavioral: "Playful interaction between subjects."
     keywords: "playful between subjects, teasing gesture, shared laughter, light physical contact, mischief"
   Confrontational:
-    behavioral: "The subjects are in a confrontational configuration — facing each other with tense body language, aggressive posture, argument or conflict implied. Describe the specific confrontation and the tension."
+    behavioral: "Confrontational configuration between subjects."
     keywords: "confrontational, facing each other, tense body language, aggressive posture, argument, conflict"
   Protective:
-    behavioral: "One subject shields or holds another — a guardian stance, an arm around a shoulder, a protective posture. Describe the specific protective gesture and the relationship between the figures."
+    behavioral: "Protective — one subject shielding or holding another."
     keywords: "protective, one subject shielding or holding the other, guardian stance, arm around shoulder"
   Distant:
-    behavioral: "The subjects are emotionally distant from each other — physically separated, averted gazes, space between them, longing or coldness implied. Describe the specific distance and what it suggests."
+    behavioral: "Emotional distance between subjects."
     keywords: "emotional distance, physical separation, averted gazes, space between subjects, longing or coldness"
   Eye Contact:
-    behavioral: "The subjects are locked in direct eye contact — an unspoken communication between them, intense connection. Describe the specific locked gaze and its charge."
+    behavioral: "Direct eye contact between subjects."
     keywords: "direct eye contact between subjects, locked gazes, unspoken communication, connection"
   Touch:
-    behavioral: "The subjects are in physical contact — describe specifically: holding hands, leaning on a shoulder, back-to-back, intertwined limbs, skin against skin. Name the exact point of contact and what it means."
+    behavioral: "Physical contact between subjects."
     keywords: "physical contact, holding hands, leaning on shoulder, back-to-back, intertwined limbs, skin contact"
   Power Dynamic:
-    behavioral: "The subjects show a visible power dynamic — one dominant in posture, the other submissive or following, a height or positional difference. Describe the specific hierarchy in their arrangement."
+    behavioral: "Visible power dynamic between subjects."
     keywords: "power dynamic, dominant and submissive posture, one leading the other, height or position difference"
   Mirrored Poses:
-    behavioral: "The subjects are in mirrored or symmetrical poses — matching gestures, a visual echo between them. Describe the specific symmetry and how it links them."
+    behavioral: "Mirrored or symmetrical poses between subjects."
     keywords: "mirrored poses, symmetrical positioning, matching gestures, visual echo between subjects"

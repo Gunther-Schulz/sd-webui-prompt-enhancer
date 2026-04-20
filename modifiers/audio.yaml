@@ -1,33 +1,34 @@
 # Audio — sound descriptions for video models
 _label: Audio
 
-# Ultra-minimal: state the audio context in one sentence, not a list.
+# Most of these just name the sound context. "Add Audio Cues" is a
+# structural directive (include audio in the prose).
 
 audio:
   Add Audio Cues:
-    behavioral: "Include specific diegetic sound descriptions woven through the visual prose, not as a tail list."
+    behavioral: "Include specific diegetic sounds woven through the prose."
     keywords: "include audio descriptions integrated chronologically with the visuals, describe specific sounds not vague atmosphere, be concrete about what is heard and when"
   Ambient City:
-    behavioral: "Urban background sound — traffic murmur, foot traffic on pavement, distant construction or mechanical hum."
+    behavioral: "Ambient city sounds."
     keywords: "ambient city sounds, distant traffic, car horns, pedestrian footsteps, construction hum, urban drone"
   Ambient Nature:
-    behavioral: "Natural outdoor background — birds of a specific kind, wind through vegetation, moving water, insects."
+    behavioral: "Ambient nature sounds."
     keywords: "ambient nature sounds, birdsong, rustling leaves, flowing water, wind through grass, insects buzzing"
   Ambient Indoor:
-    behavioral: "Small interior sounds — a clock, refrigerator or HVAC hum, a creak from a floorboard, muffled distant voices."
+    behavioral: "Ambient indoor sounds."
     keywords: "ambient indoor sounds, clock ticking, refrigerator hum, floorboard creak, muffled voices from another room, air conditioning"
   Rain Sounds:
-    behavioral: "Water striking surfaces — drops on a specific material (roof, window, leaves), drips, distant thunder if fitting."
+    behavioral: "Rain sounds."
     keywords: "sound of rain, raindrops on roof or window, distant thunder, water dripping, puddle splashes, storm ambience"
   Wind:
-    behavioral: "Moving air audible as gusts or breeze, with secondary effects — fabric flapping, material skittering, whistling through gaps."
+    behavioral: "Wind sounds."
     keywords: "sound of wind, gusting, howling, gentle breeze, fabric flapping, leaves skittering across ground"
   Crowd Murmur:
-    behavioral: "Many people audible — overlapping conversation, sporadic laughter, small clinks of glassware, a low collective bustle."
+    behavioral: "Crowd murmur."
     keywords: "crowd murmur, overlapping conversations, laughter in background, glasses clinking, general bustle of people"
   Music Playing:
-    behavioral: "Diegetic music — specify the source (radio, speaker, live) and its genre and tempo. Not a soundtrack — from within the scene."
+    behavioral: "Diegetic music playing in the scene."
     keywords: "music playing in the scene, from a radio or speaker or live performance, describe the genre and mood of the music"
   Silence:
-    behavioral: "Near-total absence of sound, only the faintest hum or breath. The quiet is a felt quality, weighted or suspenseful."
+    behavioral: "Near silence, heavy quiet."
     keywords: "near silence, absence of sound, quiet so deep it feels heavy, only the faintest ambient hum or breath audible"
