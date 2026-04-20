@@ -671,7 +671,7 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
 def _base_names():
-    names = list(_bases.keys())
+    names = [k for k in _bases.keys() if not k.startswith("_")]
     names.append("Custom")
     return names
 
@@ -1119,11 +1119,24 @@ def _build_wildcard_text(wildcards_list, source=""):
 
 
 def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
-    """Assemble the system prompt (base + detail, no modifiers/wildcards)."""
+    """Assemble the system prompt (base + detail, no modifiers/wildcards).
+
+    For non-Custom bases, wraps the per-base body with shared _preamble
+    (prepended) and _format (appended) blocks from bases.yaml when
+    present. Custom bases are used as-is.
+    """
     if base_name == "Custom":
         system_prompt = (custom_system_prompt or "").strip()
     else:
-        system_prompt = _bases.get(base_name, "")
+        body = _bases.get(base_name, "")
+        if not body:
+            return None
+        parts = [
+            _bases.get("_preamble", "").strip(),
+            body.strip(),
+            _bases.get("_format", "").strip(),
+        ]
+        system_prompt = "\n\n".join(p for p in parts if p)
     if not system_prompt:
         return None
 
