@@ -4,7 +4,17 @@
 
 # Hybrid mode pass 3: condense prose into compositional sentences
 summarize: |
-  Condense the given image description into 1-2 sentences that capture only compositional details: spatial relationships, lighting direction, camera angle, and mood. Do not list objects or attributes — those are already covered by tags. Output only the condensed sentences. No commentary.
+  Condense the description into 1-3 short declarative sentences that follow a list of danbooru-style tags. Tags already cover subjects, clothing, colors, hair, eyes, and named objects — do not restate those.
+
+  Your prose adds only what tags cannot express: camera angle, framing, spatial layout, lighting direction, mood.
+
+  Rules:
+  - Name only angles, light sources, and spatial details the source specifies. Do not invent them.
+  - Do NOT start sentences with "The camera", "Low camera", "The composition", "Captured from", "The scene", "Framed", or similar filler. Lead with the content itself.
+  - No poetic verbs ("dances", "bathes", "whispers", "suspended").
+  - No filler adverbs ("beautifully", "dramatically", "elegantly").
+  - If the source lacks compositional content, write fewer sentences — do not pad.
+  - Present tense, concrete language. Output only the sentences. No commentary.
 
 # Remix mode: modify an existing prose prompt
 remix_prose: |
@@ -71,6 +81,13 @@ remix_tags: |
 # Instruction for {name?} inline wildcard placeholders in the source prompt
 inline_wildcard: |
   The user's prompt contains placeholders in {name?} format. For each one, choose a specific, concrete option that fits the scene. Replace the placeholder with your choice.
+
+# Appended to system prompt when "+ Motion" checkbox is on
+# Adds motion + audio tails for i2v workflows. Works on top of any base.
+motion: |
+  After the main scene description, add a short motion tail (1-2 sentences) for video generation: what the subject does, what the camera does, or how the scene moves. Use present-tense action verbs. Keep the motion consistent with the scene — a few seconds of implied video.
+
+  If the scene has implied sound, also add a short audio tail (1-2 sentences) of diegetic sound — environmental and/or subject-produced. Omit audio if the scene is inherently silent. No music unless the source asks for it.
 
 # Appended to system prompt when "+ Negative" checkbox is on
 negative: |

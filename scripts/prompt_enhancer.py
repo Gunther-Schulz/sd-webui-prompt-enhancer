@@ -44,12 +44,20 @@ def _load_tag_formats():
         data = _load_file(os.path.join(_TAG_FORMATS_DIR, name))
         if data and "system_prompt" in data:
             label = os.path.splitext(name)[0].replace("-", " ").replace("_", " ").title()
+            quality = {t.replace(" ", "_") for t in (data.get("quality_tags") or [])}
+            leading = {t.replace(" ", "_") for t in (data.get("leading_tags") or [])}
+            rating = {t.replace(" ", "_") for t in (data.get("rating_tags") or [])}
+            quality_merged = _UNIVERSAL_QUALITY_TAGS | quality
             _tag_formats[label] = {
                 "system_prompt": data["system_prompt"].strip(),
                 "use_underscores": data.get("use_underscores", False),
                 "negative_quality_tags": data.get("negative_quality_tags", []),
                 "tag_db": data.get("tag_db", ""),
                 "tag_db_url": data.get("tag_db_url", ""),
+                "quality_tags": quality_merged,
+                "leading_tags": leading,
+                "rating_tags": rating,
+                "whitelist_set": quality_merged | leading | rating,
             }
 
 
@@ -349,17 +357,28 @@ def _levenshtein(s1, s2):
     return prev_row[-1]
 
 
-# Model-specific tags that aren't in the danbooru database but are valid triggers
-_WHITELISTED_TAGS = {
-    # Quality tags
+# Universal Danbooru-adjacent quality tokens every booru format accepts.
+# Format-specific quality/leading/rating tokens live in each tag-format yaml.
+_UNIVERSAL_QUALITY_TAGS = {
     "masterpiece", "best_quality", "amazing_quality", "good_quality",
     "normal_quality", "low_quality", "worst_quality", "absurdres", "highres",
-    "very_awa",
-    # Score tags (Pony)
-    "score_9", "score_8_up", "score_7_up", "score_6_up", "score_5_up", "score_4_up",
-    # Source tags (Pony)
-    "source_anime", "source_furry", "source_pony", "source_cartoon",
 }
+
+# Tags that must retain underscores even when the tag-format emits spaces
+# (score_N, year_YYYY, source_*). Used by _format_tag_out().
+_PRESERVE_UNDERSCORE_RE = re.compile(r"^(score_\d+(_up)?|year_\d{4}|source_[a-z]+)$")
+
+
+def _format_tag_out(tag, use_underscores):
+    """Apply the tag-format's underscore/space convention, preserving
+    underscores for canonical tokens like score_7 that are conventionally
+    written with an underscore regardless of format.
+    """
+    if use_underscores:
+        return tag
+    if _PRESERVE_UNDERSCORE_RE.match(tag):
+        return tag
+    return tag.replace("_", " ")
 
 # Common LLM mistakes -> correct danbooru tag
 _TAG_CORRECTIONS = {
@@ -382,15 +401,6 @@ _TAG_CORRECTIONS = {
     "3girl": "3girls",
     "3boy": "3boys",
 }
-
-# Valid rating tags (explicit list, not prefix matching)
-_VALID_RATINGS = {
-    # Danbooru style (Illustrious, NoobAI)
-    "rating:general", "rating:sensitive", "rating:questionable", "rating:explicit",
-    # Pony style
-    "rating_safe", "rating_questionable", "rating_explicit",
-}
-
 
 def _validate_tags(tags_str, tag_format, mode="Check"):
     """Validate and correct tags against the database.
@@ -431,14 +441,13 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
         # Common LLM mistakes — correct before any other check
         if lookup in _TAG_CORRECTIONS:
-            corrected_tag = _TAG_CORRECTIONS[lookup]
-            result_tags.append(corrected_tag if use_underscores else corrected_tag.replace("_", " "))
+            result_tags.append(_format_tag_out(_TAG_CORRECTIONS[lookup], use_underscores))
             corrected += 1
             continue
 
-        # Whitelisted tags always pass
-        if lookup in _WHITELISTED_TAGS or lookup in _VALID_RATINGS:
-            result_tags.append(tag)
+        # Whitelisted tags always pass (per-format quality + leading + rating)
+        if lookup in fmt_config.get("whitelist_set", set()):
+            result_tags.append(_format_tag_out(lookup, use_underscores))
             continue
 
         # Exact match
@@ -448,8 +457,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
         # Alias match (always applied in all modes)
         if lookup in aliases:
-            match = aliases[lookup]
-            result_tags.append(match if use_underscores else match.replace("_", " "))
+            result_tags.append(_format_tag_out(aliases[lookup], use_underscores))
             corrected += 1
             continue
 
@@ -461,8 +469,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
             prefix = lookup + "_("
             prefix_matches = [v for v in valid_tags if v.startswith(prefix)]
             if len(prefix_matches) == 1:
-                match = prefix_matches[0]
-                result_tags.append(match if use_underscores else match.replace("_", " "))
+                result_tags.append(_format_tag_out(prefix_matches[0], use_underscores))
                 corrected += 1
                 continue
 
@@ -470,7 +477,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
         if use_fuzzy:
             match, _ = _find_closest_tag(lookup, valid_tags, {})  # skip aliases, already checked
             if match:
-                result_tags.append(match if use_underscores else match.replace("_", " "))
+                result_tags.append(_format_tag_out(match, use_underscores))
                 corrected += 1
                 continue
 
@@ -482,7 +489,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
             kept += 1
 
     # Reorder tags into standard danbooru order
-    result_tags = _reorder_tags(result_tags)
+    result_tags = _reorder_tags(result_tags, tag_format)
 
     # Escape parentheses for SD — danbooru tags like artist_(style) need
     # \( \) so SD doesn't interpret them as emphasis/weight syntax.
@@ -496,67 +503,55 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     return ", ".join(result_tags), stats
 
 
-# Known tags for ordering buckets
-_QUALITY_TAGS = {
-    "masterpiece", "best_quality", "amazing_quality", "good_quality",
-    "normal_quality", "low_quality", "worst_quality", "absurdres", "highres",
-    "very_awa",
-    "score_9", "score_8_up", "score_7_up", "score_6_up", "score_5_up", "score_4_up",
-}
-_SOURCE_TAGS = {"source_anime", "source_furry", "source_pony", "source_cartoon"}
+# Universal Danbooru subject/count tags (same across Illustrious/NoobAI/Pony/Anima).
 _SUBJECT_TAGS = {
     "1girl", "1girls", "2girls", "3girls", "4girls", "5girls", "6+girls", "multiple_girls",
     "1boy", "1man", "2boys", "3boys", "4boys", "5boys", "6+boys", "multiple_boys",
     "1other", "solo", "no_humans", "male_focus", "female_focus",
     "1woman", "man", "woman", "girl", "boy",
 }
-_RATING_TAGS = {
-    "rating:general", "rating:sensitive", "rating:questionable", "rating:explicit",
-    "rating_safe", "rating_questionable", "rating_explicit",
-}
 
 
-def _reorder_tags(tags):
-    """Reorder tags into standard danbooru convention.
+def _reorder_tags(tags, tag_format):
+    """Reorder tags per the selected format's convention.
 
-    Order: quality -> source -> subject count -> everything else -> rating
-    Also deduplicates and enforces single rating tag (keeps last).
+    Order: quality -> leading -> subjects -> rest -> rating.
+    The quality / leading / rating buckets come from the tag-format yaml.
+    Deduplicates and enforces single rating tag (keeps last).
     """
+    fmt_config = _tag_formats.get(tag_format, {})
+    quality_set = fmt_config.get("quality_tags", _UNIVERSAL_QUALITY_TAGS)
+    leading_set = fmt_config.get("leading_tags", set())
+    rating_set = fmt_config.get("rating_tags", set())
+
     seen = set()
-    quality = []
-    source_tags = []
-    subjects = []
-    rating = []
-    rest = []
+    quality, leading, subjects, rating, rest = [], [], [], [], []
 
     for tag in tags:
-        # Deduplicate
         lookup = tag.replace(" ", "_")
         if lookup in seen:
             continue
         seen.add(lookup)
 
-        if lookup in _QUALITY_TAGS:
+        if lookup in quality_set:
             quality.append(tag)
-        elif lookup in _SOURCE_TAGS:
-            source_tags.append(tag)
+        elif lookup in leading_set:
+            leading.append(tag)
         elif lookup in _SUBJECT_TAGS:
             subjects.append(tag)
-        elif lookup in _RATING_TAGS:
+        elif lookup in rating_set:
             rating.append(tag)
         else:
             rest.append(tag)
 
-    # Enforce single rating (keep last if multiple)
     if len(rating) > 1:
         rating = [rating[-1]]
 
-    # Enforce no_humans: remove contradicting character count tags
     subject_lookups = {t.replace(" ", "_") for t in subjects}
     if "no_humans" in subject_lookups:
         subjects = [t for t in subjects if t.replace(" ", "_") == "no_humans"]
 
-    return quality + source_tags + subjects + rest + rating
+    return quality + leading + subjects + rest + rating
 
 
 # ── Config state ─────────────────────────────────────────────────────────────
@@ -1312,6 +1307,8 @@ class PromptEnhancer(scripts.Script):
                 prepend_source.do_not_save_to_config = True
                 negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=110)
                 negative_prompt_cb.do_not_save_to_config = True
+                motion_cb = gr.Checkbox(label="+ Motion", value=False, scale=0, min_width=100, info="motion + audio tails for i2v")
+                motion_cb.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # ── Base + Tag Format + Validation ──
@@ -1432,9 +1429,10 @@ class PromptEnhancer(scripts.Script):
 
             # ── Prose ──
             def _enhance(source, api_url, model, base_name, custom_sp, *args):
-                neg_cb, temp = args[-1], args[-2]
-                prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
-                dd_vals = args[:-6]
+                motion_cb = args[-1]
+                neg_cb, temp = args[-2], args[-3]
+                prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
+                dd_vals = args[:-7]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
@@ -1446,6 +1444,8 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", "<span style='color:#c66'>No system prompt configured.</span>"
                     return
 
+                if motion_cb:
+                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
@@ -1504,7 +1504,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + dd_components
-                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1512,9 +1512,10 @@ class PromptEnhancer(scripts.Script):
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
             def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
                         *args):
-                neg_cb, temp = args[-1], args[-2]
-                prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
-                dd_vals = args[:-6]
+                motion_cb = args[-1]
+                neg_cb, temp = args[-2], args[-3]
+                prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
+                dd_vals = args[:-7]
                 t0 = time.monotonic()
 
                 source = (source or "").strip()
@@ -1525,6 +1526,8 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", "<span style='color:#c66'>No system prompt configured.</span>"
                     return
 
+                if motion_cb:
+                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
                     fmt_config = _tag_formats.get(tag_fmt, {})
                     neg_quality = fmt_config.get("negative_quality_tags", [])
@@ -1653,7 +1656,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + dd_components
-                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1678,9 +1681,10 @@ class PromptEnhancer(scripts.Script):
 
             def _refine(existing, existing_neg, source, api_url, model, tag_fmt, validation_mode,
                         *args):
-                neg_cb, temp = args[-1], args[-2]
-                prepend, sd, th = args[-5], args[-4], args[-3]
-                dd_vals = args[:-5]
+                motion_cb = args[-1]
+                neg_cb, temp = args[-2], args[-3]
+                prepend, sd, th = args[-6], args[-5], args[-4]
+                dd_vals = args[:-6]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
@@ -1710,6 +1714,8 @@ class PromptEnhancer(scripts.Script):
                 else:
                     sp = _prompts.get("remix_prose", "")
 
+                if motion_cb:
+                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
@@ -1805,16 +1811,17 @@ class PromptEnhancer(scripts.Script):
                 fn=_refine,
                 inputs=[prompt_in, negative_in, source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [prepend_source, seed, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
 
             # ── Tags ──
             def _tags(source, api_url, model, tag_fmt, validation_mode, *args):
-                neg_cb, temp = args[-1], args[-2]
-                prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
-                dd_vals = args[:-6]
+                motion_cb = args[-1]
+                neg_cb, temp = args[-2], args[-3]
+                prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
+                dd_vals = args[:-7]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
@@ -1827,6 +1834,8 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", "<span style='color:#c66'>No tag format configured.</span>"
                     return
 
+                if motion_cb:
+                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
                     neg_quality = fmt_config.get("negative_quality_tags", [])
                     neg_hint = ""
@@ -1902,7 +1911,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1996,6 +2005,7 @@ class PromptEnhancer(scripts.Script):
             (tag_validation, _restore_tag_validation),
             (temperature, _restore_temperature),
             (prepend_source, lambda params: params.get("PE Prepend", "").lower() == "true"),
+            (motion_cb, lambda params: params.get("PE Motion", "").lower() == "true"),
         ]
         # Add each modifier dropdown
         for i, label in enumerate(dd_labels):
@@ -2004,25 +2014,26 @@ class PromptEnhancer(scripts.Script):
         self.paste_field_names = [
             "PE Source", "PE Base", "PE Detail", "PE Modifiers",
             "PE Think", "PE Seed", "PE Tag Format", "PE Tag Validation",
-            "PE Temperature", "PE Prepend",
+            "PE Temperature", "PE Prepend", "PE Motion",
         ]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
                 *dd_components, prepend_source, seed, detail_level, think, temperature,
-                negative_prompt_cb, tag_format, tag_validation]
+                negative_prompt_cb, tag_format, tag_validation, motion_cb]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 *args):
-        # args = *dd_values, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation
-        tag_validation = args[-1]
-        tag_format = args[-2]
-        neg_cb = args[-3]
-        temp = args[-4]
-        think = args[-5]
-        detail_level = args[-6]
-        pe_seed = args[-7]
-        prepend = args[-8]
-        dd_vals = args[:-8]
+        # args = *dd_values, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation, motion_cb
+        motion = args[-1]
+        tag_validation = args[-2]
+        tag_format = args[-3]
+        neg_cb = args[-4]
+        temp = args[-5]
+        think = args[-6]
+        detail_level = args[-7]
+        pe_seed = args[-8]
+        prepend = args[-9]
+        dd_vals = args[:-9]
 
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
@@ -2051,3 +2062,5 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Temperature"] = round(float(temp), 3)
         if prepend:
             p.extra_generation_params["PE Prepend"] = True
+        if motion:
+            p.extra_generation_params["PE Motion"] = True
