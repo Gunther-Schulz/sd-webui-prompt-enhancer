@@ -392,9 +392,9 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     """Validate and correct tags against the database.
 
     Modes:
-      Check  — exact + alias match only, keep unrecognized
-      Fuzzy  — exact + alias + fuzzy correction, keep unrecognized
-      Strict — exact + alias + fuzzy correction, drop unrecognized
+      Check        — exact + alias match only, keep unrecognized
+      Fuzzy        — exact + alias + fuzzy correction, keep unrecognized
+      Fuzzy Strict — exact + alias + fuzzy correction, drop unrecognized
 
     Returns (corrected_tags_str, stats_dict).
     """
@@ -406,8 +406,8 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     db_filename = fmt_config.get("tag_db", "")
     aliases = _tag_databases.get(f"{db_filename}_aliases", {})
     use_underscores = fmt_config.get("use_underscores", False)
-    use_fuzzy = mode in ("Fuzzy", "Strict")
-    drop_invalid = mode == "Strict"
+    use_fuzzy = mode in ("Fuzzy", "Fuzzy Strict")
+    drop_invalid = mode == "Fuzzy Strict"
 
     raw_tags = [t.strip() for t in tags_str.split(",") if t.strip()]
     result_tags = []
@@ -1305,9 +1305,9 @@ class PromptEnhancer(scripts.Script):
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="Tag conventions for booru-trained fine-tunes.")
                 tag_validation = gr.Radio(
                     label="Tag Validation",
-                    choices=["Strict", "Fuzzy", "Check", "Off"],
+                    choices=["Fuzzy Strict", "Fuzzy", "Check", "Off"],
                     value="Fuzzy", scale=2,
-                    info="Strict=guess+drop | Fuzzy=guess+keep | Check=alias only | Off=raw",
+                    info="Fuzzy Strict=guess+drop | Fuzzy=guess+keep | Check=alias only | Off=raw",
                 )
                 tag_validation.do_not_save_to_config = True
 
@@ -1971,11 +1971,11 @@ class PromptEnhancer(scripts.Script):
 
         def _restore_tag_validation(params):
             val = params.get("PE Tag Validation", "")
-            # Migrate legacy "Fuzzy Strict" (since dropped — "Strict" now
-            # always runs fuzzy because it's free with rapidfuzz).
-            if val == "Fuzzy Strict":
-                val = "Strict"
-            return val if val in ("Off", "Check", "Fuzzy", "Strict") else gr.update()
+            # Migrate legacy plain "Strict" (since dropped — Fuzzy Strict
+            # subsumes it now that rapidfuzz makes fuzzy correction free).
+            if val == "Strict":
+                val = "Fuzzy Strict"
+            return val if val in ("Off", "Check", "Fuzzy", "Fuzzy Strict") else gr.update()
 
         def _restore_temperature(params):
             raw = params.get("PE Temperature", "")
