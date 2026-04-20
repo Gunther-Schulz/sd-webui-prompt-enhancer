@@ -8,6 +8,9 @@ import time
 import urllib.request
 import urllib.error
 
+from rapidfuzz import distance as _rf_distance
+from rapidfuzz.process import extractOne as _rf_extract_one
+
 import gradio as gr
 
 from modules import scripts
@@ -271,62 +274,50 @@ def _load_tag_db(tag_format):
             for line in f:
                 parts = line.strip().split(",", 3)
                 if len(parts) >= 1:
-                    tag = parts[0].strip()
+                    # Normalize hyphens to underscores. Some CSVs (e.g.
+                    # noobai.csv) store multi-word tags as "long-hair";
+                    # others (illustrious.csv) as "long_hair". Validation
+                    # looks up via underscore form, so unify at load time
+                    # to avoid every space-form tag missing exact match
+                    # and falling through to the (slower) fuzzy path.
+                    tag = parts[0].strip().replace("-", "_")
                     if tag:
                         tags.add(tag)
                     # Parse aliases (field 4, quoted comma-separated)
                     if len(parts) >= 4 and parts[3]:
                         alias_str = parts[3].strip().strip('"')
                         for alias in alias_str.split(","):
-                            alias = alias.strip()
+                            alias = alias.strip().replace("-", "_")
                             if alias:
                                 aliases[alias] = tag
     except Exception as e:
         logger.error(f"Failed to load tag database: {e}")
         return set()
 
-    # Length-bucketed index for fuzzy matching: lookup tags of compatible
-    # length only, instead of scanning all ~142k entries per query.
-    by_length = {}
-    for t in tags:
-        by_length.setdefault(len(t), []).append(t)
-
     _tag_databases[filename] = tags
     _tag_databases[f"{filename}_aliases"] = aliases
-    _tag_databases[f"{filename}_by_length"] = by_length
     logger.info(f"Loaded {len(tags)} tags + {len(aliases)} aliases from {filename}")
     return tags
 
 
-def _find_closest_tag(tag, valid_tags, aliases, by_length=None, max_distance=3):
+def _find_closest_tag(tag, valid_tags, max_distance=3):
     """Find the closest valid tag for an invalid one.
 
-    Priority: exact alias match > substring match > Levenshtein distance.
-    Returns (corrected_tag, None) or (None, original_tag) if no match.
-
-    When by_length is provided (dict[int, list[str]]), both the prefix
-    and Levenshtein passes iterate only candidates of compatible length
-    (tag_len .. tag_len*2 for prefix, tag_len±max_distance for Levenshtein)
-    instead of scanning the full tag set. This is typically a 5-10x win
-    on top of early-termination in _levenshtein itself.
+    Priority: prefix substring match > Levenshtein distance (via
+    rapidfuzz). Returns (corrected_tag, None) on hit, or
+    (None, original_tag) on miss. Aliases are checked earlier in
+    _validate_tags; this function is only reached for tags that
+    failed exact + alias lookup.
     """
-    # Check aliases first
-    if tag in aliases:
-        return aliases[tag], None
-
-    # Prefix substring: match if our tag is a prefix of a valid tag.
-    # Only for tags 5+ chars to avoid short-word false positives.
-    # Length ratio ≥0.5 → valid_len is in [tag_len, tag_len*2].
     tag_len = len(tag)
+
+    # Prefix substring: our tag is a prefix of a valid tag
+    # (e.g. "highres" is a prefix of "highres_(imageboard)").
+    # Only for tags 5+ chars and where valid_len is in [tag_len, tag_len*2].
     if tag_len >= 5:
         best_prefix = None
         best_prefix_len = 999
-        if by_length is not None:
-            candidates = (v for L in range(tag_len, tag_len * 2 + 1)
-                          for v in by_length.get(L, ()))
-        else:
-            candidates = valid_tags
-        for valid in candidates:
+        for valid in valid_tags:
             valid_len = len(valid)
             if valid_len > 0 and tag_len / valid_len >= 0.5 and valid.startswith(tag):
                 if valid_len < best_prefix_len:
@@ -335,51 +326,21 @@ def _find_closest_tag(tag, valid_tags, aliases, by_length=None, max_distance=3):
         if best_prefix:
             return best_prefix, None
 
-    # Levenshtein distance — skip for short tags (< 5 chars) where
-    # edit distance 1-3 produces nonsensical matches (low→cow, red→rend).
+    # Levenshtein distance via rapidfuzz (C-accelerated; ~100x faster
+    # than the pure-Python loop on a 142k-tag DB). Skip for short tags
+    # where edit distance 1-3 produces nonsensical matches.
     if tag_len < 5:
         return None, tag
-    best_match = None
-    best_dist = max_distance + 1
-    if by_length is not None:
-        candidates = (v for L in range(tag_len - max_distance, tag_len + max_distance + 1)
-                      for v in by_length.get(L, ()))
-    else:
-        candidates = valid_tags
-    for valid in candidates:
-        dist = _levenshtein(tag, valid, max_distance=best_dist - 1)
-        if dist < best_dist:
-            best_dist = dist
-            best_match = valid
-    if best_match and best_dist <= max_distance:
-        return best_match, None
+
+    result = _rf_extract_one(
+        tag, valid_tags,
+        scorer=_rf_distance.Levenshtein.distance,
+        score_cutoff=max_distance,
+    )
+    if result is not None:
+        return result[0], None
 
     return None, tag  # unmatched
-
-
-def _levenshtein(s1, s2, max_distance=None):
-    """Levenshtein distance.
-
-    If max_distance is given, returns max_distance + 1 as soon as the
-    current row's minimum exceeds it (early termination). Callers that
-    only care about "is it within max_distance" skip a lot of work.
-    """
-    if len(s1) < len(s2):
-        return _levenshtein(s2, s1, max_distance)
-    if len(s2) == 0:
-        return len(s1)
-    prev_row = range(len(s2) + 1)
-    for i, c1 in enumerate(s1):
-        curr_row = [i + 1]
-        for j, c2 in enumerate(s2):
-            insertions = prev_row[j + 1] + 1
-            deletions = curr_row[j] + 1
-            substitutions = prev_row[j] + (c1 != c2)
-            curr_row.append(min(insertions, deletions, substitutions))
-        if max_distance is not None and min(curr_row) > max_distance:
-            return max_distance + 1
-        prev_row = curr_row
-    return prev_row[-1]
 
 
 # Universal Danbooru-adjacent quality tokens every booru format accepts.
@@ -444,7 +405,6 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     fmt_config = _tag_formats.get(tag_format, {})
     db_filename = fmt_config.get("tag_db", "")
     aliases = _tag_databases.get(f"{db_filename}_aliases", {})
-    by_length = _tag_databases.get(f"{db_filename}_by_length")
     use_underscores = fmt_config.get("use_underscores", False)
     use_fuzzy = mode in ("Fuzzy", "Fuzzy Strict")
     drop_invalid = mode in ("Strict", "Fuzzy Strict")
@@ -501,7 +461,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
         # Fuzzy match (only in Fuzzy mode)
         if use_fuzzy:
-            match, _ = _find_closest_tag(lookup, valid_tags, {}, by_length=by_length)  # skip aliases, already checked
+            match, _ = _find_closest_tag(lookup, valid_tags)
             if match:
                 result_tags.append(_format_tag_out(match, use_underscores))
                 corrected += 1
