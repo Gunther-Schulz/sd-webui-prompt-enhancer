@@ -285,33 +285,50 @@ def _load_tag_db(tag_format):
         logger.error(f"Failed to load tag database: {e}")
         return set()
 
+    # Length-bucketed index for fuzzy matching: lookup tags of compatible
+    # length only, instead of scanning all ~142k entries per query.
+    by_length = {}
+    for t in tags:
+        by_length.setdefault(len(t), []).append(t)
+
     _tag_databases[filename] = tags
     _tag_databases[f"{filename}_aliases"] = aliases
+    _tag_databases[f"{filename}_by_length"] = by_length
     logger.info(f"Loaded {len(tags)} tags + {len(aliases)} aliases from {filename}")
     return tags
 
 
-def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
+def _find_closest_tag(tag, valid_tags, aliases, by_length=None, max_distance=3):
     """Find the closest valid tag for an invalid one.
 
     Priority: exact alias match > substring match > Levenshtein distance.
     Returns (corrected_tag, None) or (None, original_tag) if no match.
+
+    When by_length is provided (dict[int, list[str]]), both the prefix
+    and Levenshtein passes iterate only candidates of compatible length
+    (tag_len .. tag_len*2 for prefix, tag_len±max_distance for Levenshtein)
+    instead of scanning the full tag set. This is typically a 5-10x win
+    on top of early-termination in _levenshtein itself.
     """
     # Check aliases first
     if tag in aliases:
         return aliases[tag], None
 
-    # Prefix substring: match if our tag is a prefix of a valid tag
-    # (e.g., "highres" starts with "high"). Only for tags 5+ chars to
-    # avoid short-word false positives. Length ratio prevents wild mismatches.
+    # Prefix substring: match if our tag is a prefix of a valid tag.
+    # Only for tags 5+ chars to avoid short-word false positives.
+    # Length ratio ≥0.5 → valid_len is in [tag_len, tag_len*2].
     tag_len = len(tag)
     if tag_len >= 5:
         best_prefix = None
         best_prefix_len = 999
-        for valid in valid_tags:
+        if by_length is not None:
+            candidates = (v for L in range(tag_len, tag_len * 2 + 1)
+                          for v in by_length.get(L, ()))
+        else:
+            candidates = valid_tags
+        for valid in candidates:
             valid_len = len(valid)
-            len_ratio = tag_len / valid_len if valid_len > 0 else 0
-            if len_ratio >= 0.5 and valid.startswith(tag):
+            if valid_len > 0 and tag_len / valid_len >= 0.5 and valid.startswith(tag):
                 if valid_len < best_prefix_len:
                     best_prefix = valid
                     best_prefix_len = valid_len
@@ -319,17 +336,18 @@ def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
             return best_prefix, None
 
     # Levenshtein distance — skip for short tags (< 5 chars) where
-    # edit distance 1-3 produces nonsensical matches (low→cow, red→rend)
+    # edit distance 1-3 produces nonsensical matches (low→cow, red→rend).
     if tag_len < 5:
         return None, tag
     best_match = None
     best_dist = max_distance + 1
-    for valid in valid_tags:
-        # Quick length filter
-        if abs(len(valid) - len(tag)) > max_distance:
-            continue
-        # Calculate distance
-        dist = _levenshtein(tag, valid)
+    if by_length is not None:
+        candidates = (v for L in range(tag_len - max_distance, tag_len + max_distance + 1)
+                      for v in by_length.get(L, ()))
+    else:
+        candidates = valid_tags
+    for valid in candidates:
+        dist = _levenshtein(tag, valid, max_distance=best_dist - 1)
         if dist < best_dist:
             best_dist = dist
             best_match = valid
@@ -339,10 +357,15 @@ def _find_closest_tag(tag, valid_tags, aliases, max_distance=3):
     return None, tag  # unmatched
 
 
-def _levenshtein(s1, s2):
-    """Simple Levenshtein distance."""
+def _levenshtein(s1, s2, max_distance=None):
+    """Levenshtein distance.
+
+    If max_distance is given, returns max_distance + 1 as soon as the
+    current row's minimum exceeds it (early termination). Callers that
+    only care about "is it within max_distance" skip a lot of work.
+    """
     if len(s1) < len(s2):
-        return _levenshtein(s2, s1)
+        return _levenshtein(s2, s1, max_distance)
     if len(s2) == 0:
         return len(s1)
     prev_row = range(len(s2) + 1)
@@ -353,6 +376,8 @@ def _levenshtein(s1, s2):
             deletions = curr_row[j] + 1
             substitutions = prev_row[j] + (c1 != c2)
             curr_row.append(min(insertions, deletions, substitutions))
+        if max_distance is not None and min(curr_row) > max_distance:
+            return max_distance + 1
         prev_row = curr_row
     return prev_row[-1]
 
@@ -419,6 +444,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
     fmt_config = _tag_formats.get(tag_format, {})
     db_filename = fmt_config.get("tag_db", "")
     aliases = _tag_databases.get(f"{db_filename}_aliases", {})
+    by_length = _tag_databases.get(f"{db_filename}_by_length")
     use_underscores = fmt_config.get("use_underscores", False)
     use_fuzzy = mode in ("Fuzzy", "Fuzzy Strict")
     drop_invalid = mode in ("Strict", "Fuzzy Strict")
@@ -475,7 +501,7 @@ def _validate_tags(tags_str, tag_format, mode="Check"):
 
         # Fuzzy match (only in Fuzzy mode)
         if use_fuzzy:
-            match, _ = _find_closest_tag(lookup, valid_tags, {})  # skip aliases, already checked
+            match, _ = _find_closest_tag(lookup, valid_tags, {}, by_length=by_length)  # skip aliases, already checked
             if match:
                 result_tags.append(_format_tag_out(match, use_underscores))
                 corrected += 1
