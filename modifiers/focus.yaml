@@ -1,0 +1,17 @@
+# Focus — emphasis and grounding directives
+_label: Focus
+
+# These directives shape what DRAWS THE EYE or what GROUNDS the image.
+# Useful for pushing the LLM past generic output toward distinctive
+# details.
+
+focus:
+  🎲 Random Imperfection:
+    behavioral: "Add one realistic imperfection that makes the image feel real rather than sterile. Be surprising and specific."
+    keywords: ""
+  🎲 Random Texture Focus:
+    behavioral: "Pick one dominant texture (be surprising) and make it a central visual element throughout the description."
+    keywords: ""
+  🎲 Random Contrast Pairing:
+    behavioral: "Build the scene around a visual contrast (be surprising) — old and new, natural and artificial, still and moving, etc. Let the contrast structure the composition."
+    keywords: ""

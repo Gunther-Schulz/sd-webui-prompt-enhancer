@@ -2,29 +2,6 @@
 
 Forward-looking work. Everything previously in this file has shipped.
 
-## Wildcard unification
-
-Fold the current `wildcards.yaml` system into modifier categories. Every
-category gets a `🎲 Random X` entry; orphans that don't fit an existing
-category get new files.
-
-- [ ] Migrate category-mapped wildcards into their modifier files as
-      random-choice entries:
-    - Random Hair / Eyes / Outfit / Expression / Pose / Accessory → `subject.yaml`
-    - Surprise Location / Background / Weather / Time → `setting.yaml`
-    - Surprise Palette → `visual-style.yaml`
-    - Random Artist / Series / Art Movement / Medium + all Anime-style
-      wildcards → `visual-style.yaml`
-    - Light Source → `lighting-mood.yaml`
-    - Unexpected Angle → `camera.yaml`
-- [ ] Create new modifier files for orphan wildcards:
-    - `narrative.yaml` — Story Moment, Narrative Detail
-    - `focus.yaml` — Imperfection, Texture Focus, Contrast Pairing
-    - Era (wildcard) → goes to `setting.yaml` under time period
-- [ ] Delete `wildcards.yaml` and remove the wildcard code path
-      (`_build_wildcard_text`, `_load_wildcards`, separate dropdown, etc.).
-      The unified modifier system handles everything.
-
 ## New feature
 
 - [ ] "Add modifiers to prompt" button — appends the selected modifiers'

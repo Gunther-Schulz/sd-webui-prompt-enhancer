@@ -29,6 +29,9 @@ perspective:
   Reflection Shot:
     behavioral: "Shot via a reflection (mirror, puddle, window)."
     keywords: "seen through reflection, mirror or puddle or window glass, indirect view, doubled perspective, compositional depth"
+  🎲 Random Unexpected Angle:
+    behavioral: "Choose a surprising camera angle that adds visual interest. Be genuinely unusual — not just a standard shot."
+    keywords: ""
 
 distance:
   Extreme Close-up:

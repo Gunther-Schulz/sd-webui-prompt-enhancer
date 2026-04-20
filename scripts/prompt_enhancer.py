@@ -565,29 +565,12 @@ _bases = {}
 _all_modifiers = {}          # flat: name -> keywords (for lookup across all dropdowns)
 _dropdown_order = []         # list of dropdown labels in display order
 _dropdown_choices = {}       # label -> [choice_list with separators]
-_wildcards = {}
-_wildcard_choices = []
 _prompts = {}                # operational prompts loaded from prompts.yaml
-
-
-def _load_wildcards(wc_data):
-    """Parse wildcard data dict into flat lookup and UI choice list."""
-    wildcards = {}
-    choices = []
-    for cat, items in wc_data.items():
-        if not isinstance(items, dict):
-            continue
-        choices.append(f"\u2500\u2500\u2500\u2500\u2500 {cat.title()} \u2500\u2500\u2500\u2500\u2500")
-        for name, prompt in items.items():
-            if isinstance(prompt, str):
-                wildcards[name] = prompt
-                choices.append(name)
-    return wildcards, choices
 
 
 def _reload_all(local_dir_path=""):
     """Reload all config files from disk."""
-    global _bases, _all_modifiers, _dropdown_order, _dropdown_choices, _wildcards, _wildcard_choices, _prompts
+    global _bases, _all_modifiers, _dropdown_order, _dropdown_choices, _prompts
 
     local_dirs = _get_local_dirs(local_dir_path)
 
@@ -615,24 +598,6 @@ def _reload_all(local_dir_path=""):
             _dropdown_order.append(label)
             _dropdown_choices[label] = choices
             _all_modifiers.update(flat)
-
-    # Wildcards (YAML, with local overrides)
-    wc_data = {}
-    for ext in (".yaml", ".yml", ".json"):
-        path = os.path.join(_EXT_DIR, "wildcards" + ext)
-        if os.path.isfile(path):
-            wc_data = _load_file(path) or {}
-            break
-    # Merge local wildcards
-    for local_dir in local_dirs:
-        for ext in (".yaml", ".yml", ".json"):
-            path = os.path.join(local_dir, "_wildcards" + ext)
-            if os.path.isfile(path):
-                local_wc = _load_file(path) or {}
-                for cat, items in local_wc.items():
-                    if isinstance(items, dict):
-                        wc_data.setdefault(cat, {}).update(items)
-    _wildcards, _wildcard_choices = _load_wildcards(wc_data)
 
     # Prompts (YAML, with local overrides)
     _prompts = {}
@@ -770,8 +735,10 @@ def _build_style_string(mod_list, mode="prose"):
                 kw = entry.get("behavioral") or ""
                 if not kw:
                     continue
-            if name.lower() not in kw.lower():
-                kw = f"{name.lower()}, {kw}"
+            # Strip 🎲 emoji marker from random-entry names before using
+            clean_name = name.replace("\U0001F3B2", "").strip()
+            if clean_name.lower() not in kw.lower():
+                kw = f"{clean_name.lower()}, {kw}"
             parts.append(kw)
         return f"Apply these styles: {', '.join(parts)}." if parts else ""
     # Prose/Hybrid: short behaviorals concatenate into a compact directive.
@@ -1200,20 +1167,16 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
     raise last_err
 
 
-def _build_wildcard_text(wildcards_list, source=""):
-    """Build wildcard instructions for the user message."""
-    parts = []
-    has_inline = source and _has_inline_wildcards(source)
-    has_wildcards = any(_wildcards.get(wc, "") for wc in (wildcards_list or []))
-    if has_wildcards or has_inline:
-        parts.append(_prompts.get("wildcard_preamble", ""))
-    for wc_name in (wildcards_list or []):
-        wc_prompt = _wildcards.get(wc_name, "")
-        if wc_prompt:
-            parts.append(wc_prompt)
-    if has_inline:
-        parts.append(_prompts.get("inline_wildcard", ""))
-    return "\n\n".join(parts) if parts else ""
+def _build_inline_wildcard_text(source):
+    """Return the inline-wildcard directive if source contains {name?} placeholders.
+
+    The previous selected-wildcards system was folded into the modifier
+    system (🎲 Random X entries). This helper only handles the remaining
+    inline {name?} syntax in the source prompt itself.
+    """
+    if source and _has_inline_wildcards(source):
+        return _prompts.get("inline_wildcard", "")
+    return ""
 
 
 def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
@@ -1368,11 +1331,6 @@ class PromptEnhancer(scripts.Script):
                     for _ in range(3 - len(row_labels)):
                         gr.HTML(value="", visible=True, scale=1)
 
-            # ── Wildcards ──
-            with gr.Row():
-                wildcards = gr.Dropdown(label="Wildcards", choices=list(_wildcard_choices), value=[], multiselect=True, scale=1)
-                wildcards.do_not_save_to_config = True
-
             # ── Detail Level + Temperature + Think + Seed ──
             with gr.Row():
                 detail_level = gr.Slider(label="Detail", minimum=0, maximum=10, value=0, step=1, scale=2, info="0=auto, 1=minimal ... 10=extensive, scales to model")
@@ -1412,10 +1370,9 @@ class PromptEnhancer(scripts.Script):
             # Note: reload rebuilds dropdowns but can't add/remove them dynamically.
             # New files require a Forge restart. Existing dropdown contents are refreshed.
             def _do_refresh(current_base, *args):
-                # Last arg is local_dir_path, second-to-last is wildcards
+                # Last arg is local_dir_path
                 local_path = args[-1]
-                wc_val = args[-2]
-                dd_vals = args[:-2]
+                dd_vals = args[:-1]
 
                 _reload_all(local_path)
                 results = [gr.update(choices=_base_names(), value=current_base if current_base in _bases else "Default")]
@@ -1423,19 +1380,17 @@ class PromptEnhancer(scripts.Script):
                     choices = _dropdown_choices.get(label, [])
                     old_val = dd_vals[i] if i < len(dd_vals) else []
                     results.append(gr.update(choices=choices, value=[v for v in (old_val or []) if v in _all_modifiers]))
-                results.append(gr.update(choices=list(_wildcard_choices), value=[w for w in (wc_val or []) if w in _wildcards]))
                 msg = (f"<span style='color:#6c6'>Reloaded: {len(_bases)} bases, "
                        f"{len(_dropdown_order)} modifier groups, "
                        f"{len(_all_modifiers)} modifiers, "
-                       f"{len(_wildcards)} wildcards, "
                        f"{len(_prompts)} prompts</span>")
                 results.append(msg)
                 return results
 
             reload_btn.click(
                 fn=_do_refresh,
-                inputs=[base] + dd_components + [wildcards, local_dir_path],
-                outputs=[base] + dd_components + [wildcards, status],
+                inputs=[base] + dd_components + [local_dir_path],
+                outputs=[base] + dd_components + [status],
                 show_progress=False,
             )
             def _refresh_models_and_status(api_url, current_model):
@@ -1452,8 +1407,7 @@ class PromptEnhancer(scripts.Script):
             def _enhance(source, api_url, model, base_name, custom_sp, *args):
                 neg_cb, temp = args[-1], args[-2]
                 prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
-                wc = args[-7]
-                dd_vals = args[:-7]
+                dd_vals = args[:-6]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
@@ -1468,19 +1422,19 @@ class PromptEnhancer(scripts.Script):
                 if neg_cb:
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
-                # Build user message with modifiers + wildcards
+                # Build user message with modifiers + inline wildcards
                 user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
-                wc_text = _build_wildcard_text(wc, source)
-                if wc_text:
-                    user_msg = f"{user_msg}\n\n{wc_text}"
+                inline_text = _build_inline_wildcard_text(source)
+                if inline_text:
+                    user_msg = f"{user_msg}\n\n{inline_text}"
 
                 initial_status = "\U0001F3B2 Rolling dice (prose)..." if not source else "Generating prose..."
                 yield gr.update(), gr.update(), f"<span style='color:#aaa'>{initial_status}</span>"
 
-                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
+                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     raw = None
                     for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
@@ -1523,7 +1477,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_enhance,
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt]
                        + dd_components
-                       + [wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1533,8 +1487,7 @@ class PromptEnhancer(scripts.Script):
                         *args):
                 neg_cb, temp = args[-1], args[-2]
                 prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
-                wc = args[-7]
-                dd_vals = args[:-7]
+                dd_vals = args[:-6]
                 t0 = time.monotonic()
 
                 source = (source or "").strip()
@@ -1557,9 +1510,9 @@ class PromptEnhancer(scripts.Script):
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
-                wc_text = _build_wildcard_text(wc, source)
-                if wc_text:
-                    user_msg = f"{user_msg}\n\n{wc_text}"
+                inline_text = _build_inline_wildcard_text(source)
+                if inline_text:
+                    user_msg = f"{user_msg}\n\n{inline_text}"
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
@@ -1589,14 +1542,14 @@ class PromptEnhancer(scripts.Script):
 
                     print(f"[PromptEnhancer] Hybrid pass 2/3 (tags): {len(prose.split())} words → tags")
 
-                    # Pass 2: extract tags (tag format prompt + wildcard context)
+                    # Pass 2: extract tags (tag format prompt + style context)
                     fmt_config = _tag_formats.get(tag_fmt, {})
                     tag_sp = fmt_config.get("system_prompt", "")
                     if not tag_sp:
                         yield "", "", "<span style='color:#c66'>No tag format configured.</span>"
                         return
-                    if wc_text:
-                        tag_sp = f"{tag_sp}\n\nThe following creative choices were requested. Ensure they are reflected in the tags:\n{wc_text}"
+                    if style_str:
+                        tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
                     tags_raw = None
                     for chunk in _call_llm_progress(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)):
                         if isinstance(chunk, dict):
@@ -1673,7 +1626,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[source_prompt, api_url, model, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1700,8 +1653,7 @@ class PromptEnhancer(scripts.Script):
                         *args):
                 neg_cb, temp = args[-1], args[-2]
                 prepend, sd, th = args[-5], args[-4], args[-3]
-                wc = args[-6]
-                dd_vals = args[:-6]
+                dd_vals = args[:-5]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
@@ -1715,10 +1667,10 @@ class PromptEnhancer(scripts.Script):
 
                 source = (source or "").strip()
                 mods = _collect_modifiers(dd_vals)
-                print(f"[PromptEnhancer] Remix: mods={len(mods)}, wc={len(wc or [])}, source={'yes' if source else 'no'}")
+                print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
 
-                if not mods and not wc and not source:
-                    yield "", "", "<span style='color:#c66'>Select modifiers/wildcards or update source prompt.</span>"
+                if not mods and not source:
+                    yield "", "", "<span style='color:#c66'>Select modifiers or update source prompt.</span>"
                     return
 
                 fmt = _detect_format(existing)
@@ -1739,12 +1691,6 @@ class PromptEnhancer(scripts.Script):
                 style_str = _build_style_string(mods)
                 if style_str:
                     sp = f"{sp}\n\n{style_str}"
-                if any(_wildcards.get(w, "") for w in (wc or [])):
-                    sp = f"{sp}\n\n{_prompts.get('wildcard_preamble', '')}"
-                for wc_name in (wc or []):
-                    wc_prompt = _wildcards.get(wc_name, "")
-                    if wc_prompt:
-                        sp = f"{sp}\n\n{wc_prompt}"
 
                 # Build user message — include current negative if checkbox is on
                 user_msg = existing
@@ -1832,7 +1778,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_refine,
                 inputs=[prompt_in, negative_in, source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, prepend_source, seed, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, think, temperature, negative_prompt_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1841,8 +1787,7 @@ class PromptEnhancer(scripts.Script):
             def _tags(source, api_url, model, tag_fmt, validation_mode, *args):
                 neg_cb, temp = args[-1], args[-2]
                 prepend, sd, dl, th = args[-6], args[-5], args[-4], args[-3]
-                wc = args[-7]
-                dd_vals = args[:-7]
+                dd_vals = args[:-6]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
@@ -1868,12 +1813,9 @@ class PromptEnhancer(scripts.Script):
                 style_str = _build_style_string(mods, mode="tags")
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
-                if any(_wildcards.get(w, "") for w in (wc or [])):
-                    user_msg = f"{user_msg}\n\n{_prompts.get('wildcard_preamble', '')}"
-                for wc_name in (wc or []):
-                    wc_prompt = _wildcards.get(wc_name, "")
-                    if wc_prompt:
-                        user_msg = f"{user_msg}\n\n{wc_prompt}"
+                inline_text = _build_inline_wildcard_text(source)
+                if inline_text:
+                    user_msg = f"{user_msg}\n\n{inline_text}"
                 detail = int(dl) if dl else 0
                 tag_instruction = _build_detail_instruction(detail, "tags")
                 if tag_instruction:
@@ -1933,7 +1875,7 @@ class PromptEnhancer(scripts.Script):
                 fn=_tags,
                 inputs=[source_prompt, api_url, model, tag_format, tag_validation]
                        + dd_components
-                       + [wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -2021,8 +1963,6 @@ class PromptEnhancer(scripts.Script):
             (source_prompt, "PE Source"),
             (base, "PE Base"),
             (detail_level, lambda params: min(10, max(0, int(params.get("PE Detail", 0)))) if params.get("PE Detail") else 0),
-            # Wildcards
-            (wildcards, lambda params: [w.strip() for w in params.get("PE Wildcards", "").split(",") if w.strip()] if params.get("PE Wildcards") else []),
             (think, "PE Think"),
             (seed, lambda params: int(params.get("PE Seed", -1)) if params.get("PE Seed") else -1),
             (tag_format, _restore_tag_format),
@@ -2035,18 +1975,18 @@ class PromptEnhancer(scripts.Script):
             self.infotext_fields.append((dd_components[i], _make_dd_restore(label)))
 
         self.paste_field_names = [
-            "PE Source", "PE Base", "PE Detail", "PE Modifiers", "PE Wildcards",
+            "PE Source", "PE Base", "PE Detail", "PE Modifiers",
             "PE Think", "PE Seed", "PE Tag Format", "PE Tag Validation",
             "PE Temperature", "PE Prepend",
         ]
 
         return [source_prompt, api_url, model, base, custom_system_prompt,
-                *dd_components, wildcards, prepend_source, seed, detail_level, think, temperature,
+                *dd_components, prepend_source, seed, detail_level, think, temperature,
                 negative_prompt_cb, tag_format, tag_validation]
 
     def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
                 *args):
-        # args = *dd_values, wildcards, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation
+        # args = *dd_values, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation
         tag_validation = args[-1]
         tag_format = args[-2]
         neg_cb = args[-3]
@@ -2055,8 +1995,7 @@ class PromptEnhancer(scripts.Script):
         detail_level = args[-6]
         pe_seed = args[-7]
         prepend = args[-8]
-        wildcards = args[-9]
-        dd_vals = args[:-9]
+        dd_vals = args[:-8]
 
         if source_prompt:
             p.extra_generation_params["PE Source"] = source_prompt
@@ -2071,8 +2010,6 @@ class PromptEnhancer(scripts.Script):
                 all_mod_names.extend(dd_val)
         if all_mod_names:
             p.extra_generation_params["PE Modifiers"] = ", ".join(all_mod_names)
-        if wildcards:
-            p.extra_generation_params["PE Wildcards"] = ", ".join(wildcards)
         if think:
             p.extra_generation_params["PE Think"] = True
         if neg_cb:

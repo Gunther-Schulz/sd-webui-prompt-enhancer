@@ -21,6 +21,9 @@ lighting:
   Volumetric Light:
     behavioral: "Volumetric light with visible beams."
     keywords: "volumetric light, visible light rays, shafts of sunlight, beams through dust or fog, god rays, light occupying space"
+  🎲 Random Light Source:
+    behavioral: "Invent a specific unusual light source. Be surprising. State what color it casts and where the shadows fall."
+    keywords: ""
 
 mood:
   Film Noir:

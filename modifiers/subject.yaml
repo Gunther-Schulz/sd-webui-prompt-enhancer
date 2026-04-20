@@ -59,6 +59,26 @@ subject:
     behavioral: "Hands as focal point."
     keywords: "hands as focal point, gesture, grip, touch, texture of skin, rings or tools, expressive fingers"
 
+character detail:
+  🎲 Random Hair:
+    behavioral: "Choose a specific hair color and hairstyle for the character. Be surprising."
+    keywords: ""
+  🎲 Random Eyes:
+    behavioral: "Choose a specific eye color and style for the character. Be surprising."
+    keywords: ""
+  🎲 Random Outfit:
+    behavioral: "Choose a specific outfit for the character that fits the scene. Be surprising."
+    keywords: ""
+  🎲 Random Expression:
+    behavioral: "Choose a specific facial expression. Be surprising. State what the face is doing."
+    keywords: ""
+  🎲 Random Pose:
+    behavioral: "Choose a specific body pose. Be surprising. Describe the position of limbs and torso."
+    keywords: ""
+  🎲 Random Accessory:
+    behavioral: "Choose one or two specific accessories. Be surprising. Describe their material and placement."
+    keywords: ""
+
 activity:
   Dancing:
     behavioral: "Dancing mid-movement."

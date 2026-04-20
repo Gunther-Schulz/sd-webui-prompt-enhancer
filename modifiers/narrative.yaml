@@ -1,0 +1,16 @@
+# Narrative — story beats and implied-story detail
+_label: Narrative
+
+# These are scene-enrichment directives that add storytelling layer
+# to the image (what happened, what's happening, how it feels).
+
+narrative:
+  🎲 Random Story Moment:
+    behavioral: "Place the subject at a specific narrative beat — arriving, leaving, discovering, waiting, reacting, etc. Be surprising. Describe what the body and face are doing at that moment."
+    keywords: ""
+  🎲 Random Narrative Detail:
+    behavioral: "Add one small environmental detail that implies a story happened before or after this moment. Be surprising and specific."
+    keywords: ""
+  🎲 Random Emotion:
+    behavioral: "Choose a specific emotion (be surprising) and let it drive every visual choice — expression, posture, light, color."
+    keywords: ""

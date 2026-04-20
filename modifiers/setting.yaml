@@ -38,6 +38,15 @@ setting:
   Domestic:
     behavioral: "Domestic home interior."
     keywords: "domestic setting, home interior, personal objects, lived-in space, comfort or clutter, familiar"
+  🎲 Random Setting:
+    behavioral: "Choose a specific, unexpected location or setting for this scene. Be surprising — avoid obvious defaults. Describe it with concrete details."
+    keywords: ""
+  🎲 Random Weather:
+    behavioral: "Choose specific weather conditions (be surprising). State how they affect visibility, surfaces, and mood."
+    keywords: ""
+  🎲 Random Props:
+    behavioral: "Add two or three specific objects or environmental details that ground the scene. Be surprising — not just generic props."
+    keywords: ""
 
 time period:
   Medieval:
@@ -64,6 +73,12 @@ time period:
   Ancient:
     behavioral: "Ancient era."
     keywords: "ancient era, stone temples, draped fabric, torchlight, weathered surfaces, mythic scale"
+  🎲 Random Era:
+    behavioral: "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+    keywords: ""
+  🎲 Random Time of Day:
+    behavioral: "Choose a specific time of day. Be surprising. State the resulting lighting conditions."
+    keywords: ""
 
 aesthetic:
   Japanese:
