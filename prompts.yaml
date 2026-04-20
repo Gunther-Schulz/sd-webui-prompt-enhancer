@@ -78,6 +78,7 @@ negative: |
   CRITICAL — Negative prompt constraints:
   - The NEGATIVE section must ALWAYS be significantly shorter than the POSITIVE section. This is mandatory.
   - Go back and re-read the user's original input (marked "SOURCE PROMPT:"). Base your negatives ONLY on that short text. Ignore style directions, creative choices, and everything you wrote in the POSITIVE section.
+  - If the user's source prompt explicitly asks to avoid, exclude, or remove anything ("avoid blur", "no text", "without people"), route those items to the NEGATIVE section — not the POSITIVE scene.
   - Only include things that would directly ruin the source prompt's intent if they appeared in the image.
   - Quality negatives (worst_quality, low_quality, etc.) are added automatically — do NOT include them.
   - Never repeat the same concept in different words.
