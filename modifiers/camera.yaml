@@ -2,52 +2,130 @@
 _label: Camera
 
 perspective:
-  First Person: first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language
-  Over the Shoulder: over-the-shoulder shot, camera behind one subject looking at another, partial head or shoulder in foreground, conversational framing
-  Low Angle: low angle, camera looking up at subject, imposing, powerful, dominant, subject towers over viewer
-  High Angle: high angle, camera looking down at subject, diminished, vulnerable, small in frame, environmental context visible
-  Bird's Eye: bird's-eye view, directly overhead, looking straight down, flat perspective, patterns and layout visible, god's-eye
-  Worm's Eye: worm's-eye view, camera on ground looking up, extreme low angle, towering subject, sky as background, dramatic scale
-  Dutch Angle: dutch angle, tilted camera, diagonal horizon line, unease, tension, disorientation, off-balance composition
-  Through Object: shot through foreground object, framed by doorway or window or foliage or fence, layered depth, voyeuristic peek
-  Reflection Shot: seen through reflection, mirror or puddle or window glass, indirect view, doubled perspective, compositional depth
+  POV (First Person):
+    behavioral: "The scene is described from first-person POV. The camera is the viewer's eyes. Hands or body partially in frame. Use present-tense spatial language ('ahead of me', 'to my side'). Immersive — the reader IS the subject."
+    keywords: "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language"
+  Over the Shoulder:
+    behavioral: "The framing is over-the-shoulder — the camera sits behind one subject, showing their partial head or shoulder in the foreground while looking at another subject or focal point. Conversational framing, common in dialogue. Describe the layered depth of both figures."
+    keywords: "over-the-shoulder shot, camera behind one subject looking at another, partial head or shoulder in foreground, conversational framing"
+  Low Angle:
+    behavioral: "The camera sits low, looking upward at the subject. The subject towers over the viewer, appears imposing, powerful, dominant. Describe how the low perspective affects what is visible and how the subject fills the frame."
+    keywords: "low angle, camera looking up at subject, imposing, powerful, dominant, subject towers over viewer"
+  High Angle:
+    behavioral: "The camera sits elevated, looking downward at the subject. The subject appears diminished, vulnerable, small in frame, with environmental context visible around and below. Describe what the elevated view reveals."
+    keywords: "high angle, camera looking down at subject, diminished, vulnerable, small in frame, environmental context visible"
+  Bird's Eye:
+    behavioral: "The camera is directly overhead, looking straight down. The perspective is flat. Patterns, layout, and overall arrangement are visible — this is the god's-eye view. Describe what the overhead composition shows."
+    keywords: "bird's-eye view, directly overhead, looking straight down, flat perspective, patterns and layout visible, god's-eye"
+  Worm's Eye:
+    behavioral: "The camera is on the ground, pointed sharply upward. Extreme low angle. The subject looms overhead with the sky as background. Dramatic sense of scale. Describe the towering subject and the upward compression."
+    keywords: "worm's-eye view, camera on ground looking up, extreme low angle, towering subject, sky as background, dramatic scale"
+  Dutch Angle:
+    behavioral: "The camera is tilted. The horizon line runs diagonally. The result feels uneasy, tense, off-balance. Describe the composition with the tilted frame in mind — how it pulls the viewer's balance."
+    keywords: "dutch angle, tilted camera, diagonal horizon line, unease, tension, disorientation, off-balance composition"
+  Through Object:
+    behavioral: "The shot is framed through a foreground object — a doorway, window frame, foliage, a fence. The object partially obscures the view, creating layered depth and a voyeuristic feel. Describe the foreground framing element explicitly."
+    keywords: "shot through foreground object, framed by doorway or window or foliage or fence, layered depth, voyeuristic peek"
+  Reflection Shot:
+    behavioral: "The scene is shown via a reflection — a mirror, a puddle, a window. The view is indirect, with the reflection giving a doubled perspective. Describe the reflective surface and what is seen in it."
+    keywords: "seen through reflection, mirror or puddle or window glass, indirect view, doubled perspective, compositional depth"
 
 distance:
-  Extreme Close-up: extreme close-up, single detail fills the frame, eye or hand or mouth or object, texture and pores visible, intimate
-  Close-up: close-up, head and shoulders, face fills most of frame, expression and skin detail, shallow depth of field
-  Medium Close-up: medium close-up, chest up, upper body framing, conversational distance, expression and gesture visible
-  Medium Shot: medium shot, waist up, most common general framing, body language and expression balanced
-  Medium Wide: medium wide shot, knees up, body language prominent, some environment context visible
-  Full Body: full body shot, head to toe, complete figure visible, pose and stance, clothing and footwear, moderate environment
-  Wide Shot: wide shot, subject with significant environment, full body small in frame, setting context dominant
-  Extreme Wide: extreme wide shot, subject tiny in vast environment, landscape dominance, scale and isolation, epic scope
-  Body Detail: tight crop on body, abstracting torso or limbs into form and shape, skin texture, curves and lines, fine art body study
+  Extreme Close-up:
+    behavioral: "The framing is extremely tight — a single detail fills the frame (an eye, a mouth, a hand gripping an object). Textures and skin pores are visible. Intimate scale."
+    keywords: "extreme close-up, single detail fills the frame, eye or hand or mouth or object, texture and pores visible, intimate"
+  Close-up:
+    behavioral: "The framing is a close-up — head and shoulders, face occupies most of the frame. Expression and skin detail are prominent. Shallow depth of field, background soft."
+    keywords: "close-up, head and shoulders, face fills most of frame, expression and skin detail, shallow depth of field"
+  Medium Close-up:
+    behavioral: "The framing is a medium close-up — chest up, upper body. A conversational distance. Expression and gesture both visible."
+    keywords: "medium close-up, chest up, upper body framing, conversational distance, expression and gesture visible"
+  Medium Shot:
+    behavioral: "The framing is a medium shot — from the waist up. The most common general framing. Body language and expression are both clearly visible."
+    keywords: "medium shot, waist up, most common general framing, body language and expression balanced"
+  Medium Wide:
+    behavioral: "The framing is medium-wide — from the knees up. Body language is prominent, and some surrounding environment is visible."
+    keywords: "medium wide shot, knees up, body language prominent, some environment context visible"
+  Full Body:
+    behavioral: "The framing shows the complete figure head to toe. Pose, stance, clothing, and footwear are all visible. Moderate environmental context around the subject."
+    keywords: "full body shot, head to toe, complete figure visible, pose and stance, clothing and footwear, moderate environment"
+  Wide Shot:
+    behavioral: "The framing is wide — the subject occupies a smaller portion of the frame, with significant environment around them. Setting context dominates the composition."
+    keywords: "wide shot, subject with significant environment, full body small in frame, setting context dominant"
+  Extreme Wide:
+    behavioral: "The framing is extreme wide — the subject is tiny in a vast environment. The landscape dominates. Emphasizes scale and isolation, epic scope."
+    keywords: "extreme wide shot, subject tiny in vast environment, landscape dominance, scale and isolation, epic scope"
+  Body Detail:
+    behavioral: "The framing is a tight crop on a part of the body — torso or limbs abstracted into form and shape. Skin texture, curves and lines. Fine-art body study."
+    keywords: "tight crop on body, abstracting torso or limbs into form and shape, skin texture, curves and lines, fine art body study"
 
 focus:
-  Focus Action: prioritize action, describe movement first and in most detail, supporting elements secondary, dynamic energy central
-  Focus Emotion: prioritize emotion, mood drives every visual choice, viewer should feel the emotion immediately, expression and atmosphere central
-  Focus Setting: prioritize environment, rich setting detail, architecture surfaces light weather objects, subject exists within the world
-  Focus Subject: prioritize the subject's appearance and presence, detailed portrait-like attention, clothing skin features, commanding the frame
-  Focus Composition: prioritize framing and visual balance, geometric arrangement, leading lines, negative space, deliberate placement of elements
-  Focus Texture: prioritize material surfaces and tactile quality, close attention to fabric skin metal wood water, tangible and touchable
+  Focus Action:
+    behavioral: "Prioritize action in the description. Lead with the movement, give it the most detail. Supporting elements are secondary. The scene should feel dynamic and kinetic."
+    keywords: "prioritize action, describe movement first and in most detail, supporting elements secondary, dynamic energy central"
+  Focus Emotion:
+    behavioral: "Prioritize emotion. The mood should drive every visual choice described. The viewer should feel the emotion immediately from the description. Expression and atmosphere central."
+    keywords: "prioritize emotion, mood drives every visual choice, viewer should feel the emotion immediately, expression and atmosphere central"
+  Focus Setting:
+    behavioral: "Prioritize the environment. Rich setting detail — architecture, surfaces, light, weather, objects. The subject exists within the world rather than dominating it."
+    keywords: "prioritize environment, rich setting detail, architecture surfaces light weather objects, subject exists within the world"
+  Focus Subject:
+    behavioral: "Prioritize the subject's appearance and presence. Detailed portrait-like attention — clothing, skin, features, stance. The subject should command the frame."
+    keywords: "prioritize the subject's appearance and presence, detailed portrait-like attention, clothing skin features, commanding the frame"
+  Focus Composition:
+    behavioral: "Prioritize framing and visual balance. Describe the geometric arrangement — leading lines, negative space, where elements sit in the frame and why. Deliberate placement."
+    keywords: "prioritize framing and visual balance, geometric arrangement, leading lines, negative space, deliberate placement of elements"
+  Focus Texture:
+    behavioral: "Prioritize material surfaces and tactile quality. Close attention to what you could touch — fabric, skin, metal, wood, water, stone. Everything described as tangible."
+    keywords: "prioritize material surfaces and tactile quality, close attention to fabric skin metal wood water, tangible and touchable"
 
 technique:
-  Long Exposure: long exposure, motion blur, light trails, silky water, streaked clouds, ghosted figures, time passing in single frame
-  Double Exposure: double exposure, two images blended, portrait filled with landscape, overlapping textures, ghostly composite
-  Tilt-Shift: tilt-shift, miniature effect, extreme selective focus, narrow band of sharpness, diorama, elevated angle, slightly oversaturated
-  Macro: macro, extreme close-up, fine details, shallow depth of field, textures invisible at normal distance
-  Silhouette: silhouette, backlit dark outline, bright background, shape and outline only, contrast between dark figure and luminous background
-  Male Gaze: male gaze, camera lingers on the female subject's body, objectifying framing, emphasis on curves and physical appearance, subject as spectacle, cinematic male perspective
-  Female Gaze: female gaze, emphasis on emotion and context, subject has agency and interiority, intimate but not objectifying, focus on expression and gesture over body, warmth, connection
+  Long Exposure:
+    behavioral: "The image reads as long exposure — motion blur on moving elements, light trails from moving lights, silky smooth water, streaked clouds, possibly ghosted figures. Time has passed within the single frame."
+    keywords: "long exposure, motion blur, light trails, silky water, streaked clouds, ghosted figures, time passing in single frame"
+  Double Exposure:
+    behavioral: "The image reads as double exposure — two distinct scenes or subjects blended into one frame. A portrait filled with landscape, overlapping textures, a ghostly composite. Describe the layering of the two images."
+    keywords: "double exposure, two images blended, portrait filled with landscape, overlapping textures, ghostly composite"
+  Tilt-Shift:
+    behavioral: "The image reads as tilt-shift — a miniature effect where only a narrow band of the frame is in sharp focus and everything above and below is strongly blurred. The result makes the scene look like a scale model. Slightly oversaturated."
+    keywords: "tilt-shift, miniature effect, extreme selective focus, narrow band of sharpness, diorama, elevated angle, slightly oversaturated"
+  Macro:
+    behavioral: "The image is macro-scale — extreme close-up with fine detail visible at a level invisible at normal viewing. Shallow depth of field. Textures and structures rendered with precision."
+    keywords: "macro, extreme close-up, fine details, shallow depth of field, textures invisible at normal distance"
+  Silhouette:
+    behavioral: "The subject is a silhouette — backlit dark outline against a bright background. Shape and contour visible, no internal detail. High contrast between dark figure and luminous background."
+    keywords: "silhouette, backlit dark outline, bright background, shape and outline only, contrast between dark figure and luminous background"
+  Male Gaze:
+    behavioral: "The framing reads as the classic male gaze — the camera lingers on the female subject's body, emphasizing curves and physical appearance, objectifying framing, subject as spectacle. Describe the body and clothing with this spectatorial emphasis."
+    keywords: "male gaze, camera lingers on the female subject's body, objectifying framing, emphasis on curves and physical appearance, subject as spectacle, cinematic male perspective"
+  Female Gaze:
+    behavioral: "The framing reads as the female gaze — emphasis on emotion, context, and interiority. The subject has agency. Intimate but not objectifying. Focus on expression and gesture over body display. Warmth and connection."
+    keywords: "female gaze, emphasis on emotion and context, subject has agency and interiority, intimate but not objectifying, focus on expression and gesture over body, warmth, connection"
 
 motion:
-  Frozen Action: frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action
+  Frozen Action:
+    behavioral: "A peak moment of dynamic motion is captured frozen — hair or fabric suspended mid-movement, splashing water arrested, kinetic force visible but held. Describe the motion as though time has stopped at its most charged instant."
+    keywords: "frozen action, dynamic motion, motion blur, mid-movement, flying hair or fabric, splashing water, kinetic force, peak of action"
 
 material:
-  Leather: leather texture, worn or polished, creases, grain, brown or black, rugged tactile quality
-  Silk: silk fabric, smooth sheen, light-catching folds, delicate drape, luxurious surface
-  Denim: denim texture, indigo blue, visible weave, faded or raw, casual sturdy fabric
-  Lace: lace, delicate pattern, semi-transparent, intricate needlework, feminine detail
-  Metal: metal surfaces, steel or iron or copper, reflections, industrial sheen, cold hard texture
-  Glass: glass, transparent or reflective, refractions, fragile appearance, clean edges, light passing through
-  Wet Skin: wet skin, water droplets on surface, sheen, glistening highlights, tactile moisture
+  Leather:
+    behavioral: "Leather is a prominent material — describe its specific quality (worn, polished, creased, grainy) and color range (browns, blacks). A rugged, tactile surface."
+    keywords: "leather texture, worn or polished, creases, grain, brown or black, rugged tactile quality"
+  Silk:
+    behavioral: "Silk is a prominent material — describe its smooth sheen, the way light catches its folds, the delicate drape. A luxurious surface quality."
+    keywords: "silk fabric, smooth sheen, light-catching folds, delicate drape, luxurious surface"
+  Denim:
+    behavioral: "Denim is a prominent material — describe its indigo blue, visible weave, the possible faded or raw quality. A casual, sturdy fabric."
+    keywords: "denim texture, indigo blue, visible weave, faded or raw, casual sturdy fabric"
+  Lace:
+    behavioral: "Lace is a prominent material — describe its delicate pattern, semi-transparent quality, intricate needlework. A feminine detail."
+    keywords: "lace, delicate pattern, semi-transparent, intricate needlework, feminine detail"
+  Metal:
+    behavioral: "Metal surfaces are prominent — describe specifically which metal (steel, iron, copper), its reflective quality, its industrial sheen, its cold hard texture."
+    keywords: "metal surfaces, steel or iron or copper, reflections, industrial sheen, cold hard texture"
+  Glass:
+    behavioral: "Glass is a prominent material — describe its transparency or reflectivity, any refractions, its fragile clean-edged quality, the way light passes through it."
+    keywords: "glass, transparent or reflective, refractions, fragile appearance, clean edges, light passing through"
+  Wet Skin:
+    behavioral: "The skin is wet — water droplets on the surface, a sheen, glistening highlights. Describe the tactile moisture and how the light catches the wet surface."
+    keywords: "wet skin, water droplets on surface, sheen, glistening highlights, tactile moisture"
