@@ -211,15 +211,75 @@ my category:
   Rainy Tokyo: tokyo streets, neon reflections, rain, umbrellas, night
 ```
 
-### Base prompt overrides
+### Authoring base prompts and operational prompts
 
-`_bases.yaml` uses a flat format — name and full system prompt:
+`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (Remix, summarize, wildcard preamble, negative contract). Both merge with the published defaults; anything you don't override stays.
 
 ```yaml
+# _bases.yaml
 My Custom Base: |
-  You are a Creative Assistant. Given a user's raw input, expand it into
-  a detailed prompt for...
+  You are a prompt writer. Given a user's raw input, expand it into a
+  detailed scene description...
 ```
+
+#### How a base is assembled
+
+For every non-Custom base, the final system prompt is:
+
+```
+_preamble                  # shared: input handling
+your base body             # per-base: style and content rules
+_format                    # shared: no headings, no line breaks, no commentary
+[detail instruction]       # added when Detail slider > 0
+```
+
+Then during generation these sections are appended in order: `SOURCE PROMPT: ...`, `Apply these styles: ...` for selected modifiers, `wildcard_preamble` plus each wildcard instruction, and (when the `+ Negative` checkbox is on) the `negative` block with its `POSITIVE:`/`NEGATIVE:` contract.
+
+Override `_preamble` or `_format` in `_bases.yaml` to change shared behavior for all bases. Select the `Custom` base to bypass the wrapping entirely and supply a raw system prompt from the UI.
+
+#### The label-mirror trap
+
+LLMs heavily mirror the structure of their system prompt. If you describe the output shape using labeled bullets, the model will often echo those labels as section headers in its response:
+
+```yaml
+# BAD — the model emits "Patched Prompt:" / "Creative Choice:" in the output
+My Base: |
+  Output the patched prompt.
+
+  Instruction blocks below may include:
+  - Instruction: — free-form text...
+  - Creative choice blocks — optional...
+```
+
+```yaml
+# GOOD — prose rules, no template structure, explicit anti-label coda
+My Base: |
+  The text below contains free-form directives, style keywords, and
+  optional wildcard prompts. Apply directives literally, weave style
+  keywords naturally, and treat wildcards as optional.
+
+  Output only the updated prompt as raw text. No section headers, no
+  labels, no prefaces like "Patched:" or "Result:".
+```
+
+Rules of thumb:
+
+- Describe the LLM's *job* in imperative prose, not the *input/output shape* via labeled templates.
+- Avoid echo-bait nouns in your system prompt (words like `patched`, `block`, `section`). If the model is going to invent a header, it picks one it saw in your prompt.
+- When output structure matters, end with an explicit anti-label clause naming the concrete bad prefixes — the model avoids exactly what you tell it to avoid.
+
+#### Writing style for base bodies
+
+- Short imperative sentences beat essays. *"Write short, direct sentences."* is more reliable than a paragraph describing desired voice.
+- Include concrete contrasts, not abstract rules. *`"thin black leather choker with a small metal ring"` not `"elegant necklace"`* teaches the model more than *"be specific"*.
+- Use the same vocabulary you want in the output. If you want `"floorboards creak"`, don't just say *"add ambient sound"* — show the tone.
+- Avoid dramatic or marketing language in the rules themselves — the model picks up tone from your examples.
+
+#### Testing your prompts
+
+- Turn on the **Think** checkbox to see the model's reasoning — useful for diagnosing why it picked a particular structure.
+- Try empty-source + active wildcards, conflicting modifiers, and instruction-style source prompts (*"make it darker"*) as edge cases.
+- Watch for any words or phrases from your system prompt that appear verbatim in output — that's mirroring, and usually means you need to reframe that section as prose instead of labeled structure.
 
 ## How it works
 
