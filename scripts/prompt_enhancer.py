@@ -701,6 +701,11 @@ def _build_style_string(mod_list):
 
 DEFAULT_API_URL = "http://localhost:11434"
 DEFAULT_MODEL = "huihui_ai/qwen3.5-abliterated:9b"
+
+# Placeholder used in the user message when Source Prompt is empty (dice roll).
+# Styles and wildcards still flow through normally; this only replaces the
+# "SOURCE PROMPT: {source}" line so the LLM knows to invent rather than expand.
+_EMPTY_SOURCE_SIGNAL = "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)"
 DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 
 
@@ -1211,18 +1216,18 @@ class PromptEnhancer(scripts.Script):
             # ── Source prompt ──
             source_prompt = gr.Textbox(
                 label="Source Prompt", lines=3,
-                placeholder="Type your prompt here, then click Prose or Tags... Use {name?} for inline wildcards.",
+                placeholder="Type your prompt here, or leave empty to roll the dice. Use {name?} for inline wildcards.",
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
                 enhance_btn = gr.Button(value="\u270d Prose", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
                 hybrid_btn = gr.Button(value="\u2728 Hybrid", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_hybrid_btn")
                 tags_btn = gr.Button(value="\U0001f3f7 Tags", variant="primary", scale=0, min_width=100, elem_id=f"{tab}_pe_tags_btn")
-                refine_btn = gr.Button(value="\U0001f500 Remix", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
+                refine_btn = gr.Button(value="\U0001f500 Remix", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
                 prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=60)
                 prepend_source.do_not_save_to_config = True
-                negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=60)
+                negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=110)
                 negative_prompt_cb.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
@@ -1348,9 +1353,6 @@ class PromptEnhancer(scripts.Script):
                 _cancel_flag.clear()
                 t0 = time.monotonic()
                 source = (source or "").strip()
-                if not source:
-                    yield "", "", "<span style='color:#c66'>Source prompt is empty.</span>"
-                    return
 
                 mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
@@ -1362,7 +1364,7 @@ class PromptEnhancer(scripts.Script):
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 # Build user message with modifiers + wildcards
-                user_msg = f"SOURCE PROMPT: {source}"
+                user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -1370,9 +1372,10 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                yield gr.update(), gr.update(), "<span style='color:#aaa'>Generating prose...</span>"
+                initial_status = "\U0001F3B2 Rolling dice (prose)..." if not source else "Generating prose..."
+                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{initial_status}</span>"
 
-                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}, neg={neg_cb}")
+                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, wc={len(wc or [])}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     raw = None
                     for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
@@ -1430,9 +1433,6 @@ class PromptEnhancer(scripts.Script):
                 t0 = time.monotonic()
 
                 source = (source or "").strip()
-                if not source:
-                    yield "", "", "<span style='color:#c66'>Source prompt is empty.</span>"
-                    return
 
                 mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
@@ -1448,7 +1448,7 @@ class PromptEnhancer(scripts.Script):
                         neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
 
-                user_msg = f"SOURCE PROMPT: {source}"
+                user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -1456,7 +1456,9 @@ class PromptEnhancer(scripts.Script):
                 if wc_text:
                     user_msg = f"{user_msg}\n\n{wc_text}"
 
-                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}")
+                if not source:
+                    yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
+                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     # Pass 1: generate prose (uses base + modifiers + detail level)
                     prose_raw = None
@@ -1741,9 +1743,6 @@ class PromptEnhancer(scripts.Script):
                 t0 = time.monotonic()
 
                 source = (source or "").strip()
-                if not source:
-                    yield "", "", "<span style='color:#c66'>Source prompt is empty.</span>"
-                    return
 
                 fmt_config = _tag_formats.get(tag_fmt, {})
                 sp = fmt_config.get("system_prompt", "")
@@ -1760,7 +1759,7 @@ class PromptEnhancer(scripts.Script):
 
                 # Build user message with everything explicit
                 mods = _collect_modifiers(dd_vals)
-                user_msg = f"SOURCE PROMPT: {source}"
+                user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -1777,7 +1776,9 @@ class PromptEnhancer(scripts.Script):
                 else:
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
-                print(f"[PromptEnhancer] Tags: model={model}, think={th}, seed={int(sd)}, neg={neg_cb}")
+                if not source:
+                    yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags)...</span>"
+                print(f"[PromptEnhancer] Tags: model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     raw = None
                     for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
