@@ -2,6 +2,9 @@
 _label: Camera
 
 perspective:
+  🎲 Random Unexpected Angle:
+    behavioral: "Choose a surprising camera angle that adds visual interest. Be genuinely unusual — not just a standard shot."
+    keywords: ""
   POV (First Person):
     behavioral: "POV first-person shot."
     keywords: "first-person perspective, POV, camera is the viewer's eyes, hands or body in frame, immersive, present-tense spatial language"
@@ -29,9 +32,6 @@ perspective:
   Reflection Shot:
     behavioral: "Shot via a reflection (mirror, puddle, window)."
     keywords: "seen through reflection, mirror or puddle or window glass, indirect view, doubled perspective, compositional depth"
-  🎲 Random Unexpected Angle:
-    behavioral: "Choose a surprising camera angle that adds visual interest. Be genuinely unusual — not just a standard shot."
-    keywords: ""
 
 distance:
   Extreme Close-up:

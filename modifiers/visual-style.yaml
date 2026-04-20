@@ -2,6 +2,9 @@
 _label: Visual Style
 
 color:
+  🎲 Random Color Palette:
+    behavioral: "Commit to a specific color palette of two to four colors (be surprising). Apply them to clothing, lighting, and environment."
+    keywords: ""
   Black and White:
     behavioral: "Black and white."
     keywords: "black and white, monochrome, tonal contrast, no color, luminance, grain, interplay of light and dark"
@@ -17,9 +20,6 @@ color:
   Retro:
     behavioral: "Retro analog film look."
     keywords: "retro, era-specific film stock, analog imperfections, grain, light leaks, color shifts, period-authentic styling"
-  🎲 Random Color Palette:
-    behavioral: "Commit to a specific color palette of two to four colors (be surprising). Apply them to clothing, lighting, and environment."
-    keywords: ""
 
 art style:
   Oil Painting:
@@ -62,6 +62,33 @@ style influence:
     keywords: ""
 
 anime:
+  🎲 Random Anime Artist:
+    behavioral: "Choose a specific anime or manga illustrator (be surprising). Apply their distinctive art style."
+    keywords: ""
+  🎲 Random Anime Franchise:
+    behavioral: "Choose a specific anime, manga, or game franchise (be surprising). Apply its distinctive visual aesthetic."
+    keywords: ""
+  🎲 Random Anime Archetype:
+    behavioral: "Choose a specific anime character archetype (be surprising) and apply it to the character."
+    keywords: ""
+  🎲 Random Anime Color Scheme:
+    behavioral: "Choose a distinctive anime color scheme (be surprising) that matches a specific genre or mood."
+    keywords: ""
+  🎲 Random Anime Era:
+    behavioral: "Choose a specific anime visual era (be surprising) and apply its conventions."
+    keywords: ""
+  🎲 Random Anime Race:
+    behavioral: "Choose a specific anime creature or race type (be surprising) for the character."
+    keywords: ""
+  🎲 Random Anime Weapon:
+    behavioral: "Choose a specific weapon for the character (be surprising) that fits the scene."
+    keywords: ""
+  🎲 Random Anime Season:
+    behavioral: "Choose a specific season (be surprising) and apply its visual conventions."
+    keywords: ""
+  🎲 Random Anime Composition:
+    behavioral: "Choose a specific framing and composition (be surprising) that adds drama or intimacy."
+    keywords: ""
   Anime:
     behavioral: "Anime style."
     keywords: "anime style, drawn not photographic, Japanese animation, stylized features, illustrated"
@@ -137,33 +164,6 @@ anime:
   Anime Flat Design:
     behavioral: "Flat-design anime."
     keywords: "modern flat anime, minimal shading, bold clean colors, geometric simplification, graphic poster quality, Tatami Galaxy or Monogatari aesthetic"
-  🎲 Random Anime Artist:
-    behavioral: "Choose a specific anime or manga illustrator (be surprising). Apply their distinctive art style."
-    keywords: ""
-  🎲 Random Anime Franchise:
-    behavioral: "Choose a specific anime, manga, or game franchise (be surprising). Apply its distinctive visual aesthetic."
-    keywords: ""
-  🎲 Random Anime Archetype:
-    behavioral: "Choose a specific anime character archetype (be surprising) and apply it to the character."
-    keywords: ""
-  🎲 Random Anime Color Scheme:
-    behavioral: "Choose a distinctive anime color scheme (be surprising) that matches a specific genre or mood."
-    keywords: ""
-  🎲 Random Anime Era:
-    behavioral: "Choose a specific anime visual era (be surprising) and apply its conventions."
-    keywords: ""
-  🎲 Random Anime Race:
-    behavioral: "Choose a specific anime creature or race type (be surprising) for the character."
-    keywords: ""
-  🎲 Random Anime Weapon:
-    behavioral: "Choose a specific weapon for the character (be surprising) that fits the scene."
-    keywords: ""
-  🎲 Random Anime Season:
-    behavioral: "Choose a specific season (be surprising) and apply its visual conventions."
-    keywords: ""
-  🎲 Random Anime Composition:
-    behavioral: "Choose a specific framing and composition (be surprising) that adds drama or intimacy."
-    keywords: ""
 
 cinema style:
   Blockbuster:

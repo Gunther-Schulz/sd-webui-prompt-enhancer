@@ -6,6 +6,9 @@ _label: Lighting & Mood
 # invoke it. Keywords untouched for Tags mode.
 
 lighting:
+  🎲 Random Light Source:
+    behavioral: "Invent a specific unusual light source. Be surprising. State what color it casts and where the shadows fall."
+    keywords: ""
   Golden Hour:
     behavioral: "Golden hour light."
     keywords: "golden hour, warm amber light, long shadows, sun flare, soft directional warmth, peach and gold sky"
@@ -21,9 +24,6 @@ lighting:
   Volumetric Light:
     behavioral: "Volumetric light with visible beams."
     keywords: "volumetric light, visible light rays, shafts of sunlight, beams through dust or fog, god rays, light occupying space"
-  🎲 Random Light Source:
-    behavioral: "Invent a specific unusual light source. Be surprising. State what color it casts and where the shadows fall."
-    keywords: ""
 
 mood:
   Film Noir:
