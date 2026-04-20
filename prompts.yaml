@@ -8,42 +8,55 @@ summarize: |
 
 # Remix mode: modify an existing prose prompt
 remix_prose: |
-  You are a prompt editor. You are given an already-complete image/video generation prompt. Do NOT rewrite, expand, or re-enhance it. Your only job is to integrate the requested style changes into the existing text.
+  You are a prompt editor. You receive an existing prose image/video generation prompt plus edit instructions. Apply the instructions as a minimal patch.
 
-  Rules:
-  - If a style adds something new (mood, lighting, color), add it to the existing description.
-  - If a style conflicts with something already present (different location, different time of day, different mood), REPLACE the old element. Do NOT keep both.
-  - If a wildcard asks you to choose something (location, wardrobe, etc.) and one already exists in the prompt, REPLACE it completely. Remove the old choice and insert your new one. Never accumulate multiple locations, outfits, or time periods.
-  - Keep the same approximate length. Do not make the prompt longer.
-  - Use the style keywords naturally in the output.
-  - Output the modified prompt only. No commentary.
+  Edit contract:
+  - Touch only what the instructions require. Every element the instructions do not affect — subject, setting, objects, artist, style, mood, composition — must appear in the output as it did in the input.
+  - For broad instructions ("simplify", "make it darker", "as if at night"), change only what is logically affected. Leave everything else intact.
+  - Output length matches the input. Never summarize or compress unless the instruction asks for it.
+  - You are patching the prompt, not rewriting it from scratch.
+
+  Instruction blocks below may include:
+  - Instruction: — free-form user text. Apply literally.
+  - Apply these styles: — weave these style elements naturally into the description.
+  - Creative choice blocks — treat as optional. Only act on a creative choice when (a) the user's Instruction explicitly requests that kind of choice, or (b) the existing prompt has no corresponding element. Otherwise leave the existing element alone.
+
+  Output the patched prompt only. No commentary.
 
 # Remix mode: modify an existing hybrid prompt (tags + NL)
 remix_hybrid: |
-  You are a prompt editor. You are given a prompt in hybrid format: danbooru-style tags on the first line, then a blank line, then a short natural language description.
+  You are a prompt editor. You receive an existing hybrid prompt (danbooru-style tags, blank line, short NL description) plus edit instructions. Apply the instructions as a minimal patch.
 
-  Modify BOTH the tags AND the NL description to integrate the requested style changes. Keep the same format: tags first, blank line, then updated NL description.
+  Edit contract:
+  - Touch only what the instructions require. Every tag and every NL element the instructions do not affect must appear in the output as it did in the input.
+  - Update BOTH the tag line AND the NL paragraph so they stay consistent with each other.
+  - Output format is preserved: tags on the first line, blank line, NL paragraph after.
+  - Keep roughly the same tag count and NL length. Never summarize or compress unless asked.
+  - You are patching the prompt, not rewriting it.
 
-  Rules:
-  - Add or replace tags as needed for the new style
-  - Update the NL description to reflect the style change
-  - If a style conflicts with existing elements, REPLACE them. Do NOT keep both.
-  - If a wildcard asks you to choose something and one already exists, REPLACE it completely.
-  - Keep approximately the same number of tags and NL length
-  - Output only the modified hybrid prompt. No commentary.
+  Instruction blocks below may include:
+  - Instruction: — free-form user text. Apply literally.
+  - Apply these styles: — add matching tags and reflect the change in the NL.
+  - Creative choice blocks — treat as optional. Only act on a creative choice when (a) the user's Instruction explicitly requests that kind of choice, or (b) the existing prompt has no corresponding element.
+
+  Output the patched hybrid prompt only. No commentary.
 
 # Remix mode: modify an existing tag-only prompt
 remix_tags: |
-  You are a tag editor. You are given an existing set of comma-separated image generation tags. Modify them according to the requested changes.
+  You are a tag editor. You receive a comma-separated tag list plus edit instructions. Apply the instructions as a minimal patch.
 
-  Rules:
-  - Output a comma-separated list of tags, nothing else
-  - Use spaces between words in multi-word tags (long hair, blue eyes). Never concatenate words.
-  - If new styles are requested, add relevant tags
-  - If a wildcard asks you to choose something (location, wardrobe, etc.) and matching tags already exist, REPLACE them. Do not accumulate.
-  - If the user provides updated direction, adjust tags to match. Remove contradicting tags.
-  - Every tag must be consistent with the input and requested changes. Never contradict.
-  - Output only the modified tag list. No commentary.
+  Edit contract:
+  - Touch only what the instructions require. Every tag not affected by the instructions must appear in the output unchanged.
+  - Output is a single comma-separated tag list. Use spaces between words in multi-word tags (long hair, blue eyes). Never concatenate.
+  - Keep roughly the same tag count. Never compress unless asked.
+  - Remove tags that contradict the instruction. Otherwise leave every tag alone.
+
+  Instruction blocks below may include:
+  - Instruction: — free-form user text. Apply literally.
+  - Apply these styles: — add matching tags.
+  - Creative choice blocks — treat as optional. Only act on a creative choice when (a) the user's Instruction explicitly requests that kind of choice, or (b) no matching tag already exists.
+
+  Output the patched tag list only. No commentary.
 
 # Prepended to wildcard instructions sent to the LLM
 wildcard_preamble: |

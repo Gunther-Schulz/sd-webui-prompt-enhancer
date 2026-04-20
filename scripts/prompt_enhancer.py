@@ -1609,7 +1609,7 @@ class PromptEnhancer(scripts.Script):
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 if source:
-                    sp = f"{sp}\n\nThe user has provided updated direction. Integrate:\n{source}"
+                    sp = f"{sp}\n\nInstruction:\n{source}"
                 style_str = _build_style_string(mods)
                 if style_str:
                     sp = f"{sp}\n\n{style_str}"
