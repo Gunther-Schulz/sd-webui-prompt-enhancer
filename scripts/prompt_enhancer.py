@@ -1306,7 +1306,7 @@ class PromptEnhancer(scripts.Script):
                 tag_validation = gr.Radio(
                     label="Tag Validation",
                     choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],
-                    value="Check", scale=2,
+                    value="Fuzzy", scale=2,
                     info="Off=raw | Check=alias | Fuzzy=alias+guess | Strict=alias+drop | Fuzzy Strict=guess+drop",
                 )
                 tag_validation.do_not_save_to_config = True
