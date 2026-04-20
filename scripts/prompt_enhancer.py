@@ -699,7 +699,7 @@ def _base_names():
     # Labels include short target-family hints for at-a-glance fit.
     CURATED = [
         ("Default", "Default (z-image)"),
-        ("Detailed", "Detailed (SDXL + anime fine-tunes: Illustrious/NoobAI/Pony)"),
+        ("Detailed", "Detailed (SDXL, booru fine-tunes)"),
         ("Narrative", "Narrative (Flux, SD3)"),
         ("Cinematic", "Cinematic (image + i2v)"),
         ("Creative", "Creative (any)"),
