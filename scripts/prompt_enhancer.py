@@ -1501,6 +1501,9 @@ class PromptEnhancer(scripts.Script):
                             nl_supplement = chunk
                     nl_supplement = _clean_output(nl_supplement)
 
+                    if validation_mode != "Off":
+                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
+
                     # Post-process negative tags through tag pipeline when applicable
                     if neg_cb and negative:
                         negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
@@ -1647,6 +1650,9 @@ class PromptEnhancer(scripts.Script):
                         yield result, negative, f"<span style='color:#6c6'>OK - remixed to {len(result.split())} words, {elapsed}</span>"
                         return
 
+                    if validation_mode != "Off":
+                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
+
                     if fmt == "hybrid":
                         # Split tags and NL, post-process tags only
                         parts = result.split("\n\n", 1)
@@ -1765,6 +1771,8 @@ class PromptEnhancer(scripts.Script):
                         else:
                             raw = chunk
                     raw = _clean_output(raw, strip_underscores=False)
+                    if validation_mode != "Off":
+                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
                     if neg_cb:
                         tags, negative = _split_positive_negative(raw)
                         negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
