@@ -2,35 +2,91 @@
 _label: Setting
 
 setting:
-  Urban: urban setting, city streets, buildings, traffic, signage, concrete, crowds or empty sidewalks
-  Rural: rural setting, countryside, fields, farmland, dirt roads, open sky, isolation
-  Underwater: underwater, submerged, water distortion, floating hair and fabric, blue-green light, bubbles
-  Aerial: aerial view, bird's-eye perspective, landscape from above, patterns visible only from height
-  Indoor: indoor setting, interior space, walls and ceiling, furniture, artificial and window light
-  Rooftop: rooftop, elevated urban vantage, city skyline backdrop, open sky above, edge of building
-  Underground: underground, tunnel or basement or cave, low ceiling, artificial light, enclosed space
-  Forest: forest setting, trees, undergrowth, dappled light through canopy, bark texture, moss, earth tones
-  Desert: desert setting, sand or cracked earth, harsh sun, minimal vegetation, heat shimmer, vast emptiness
-  Coastal: coastal setting, ocean or sea, waves, sand or rocks, salt air, horizon line, water light
-  Industrial: industrial setting, factories, machinery, pipes, metal surfaces, concrete floors, utilitarian
-  Domestic: domestic setting, home interior, personal objects, lived-in space, comfort or clutter, familiar
+  Urban:
+    behavioral: "The setting is urban — city streets with buildings, traffic, signage, concrete surfaces, either crowds or empty sidewalks. Describe specific urban features visible, not 'urban' as a label."
+    keywords: "urban setting, city streets, buildings, traffic, signage, concrete, crowds or empty sidewalks"
+  Rural:
+    behavioral: "The setting is rural — countryside, fields or farmland, dirt roads, open sky, a sense of isolation from cities. Describe the specific landscape features and their scale."
+    keywords: "rural setting, countryside, fields, farmland, dirt roads, open sky, isolation"
+  Underwater:
+    behavioral: "The setting is underwater — submerged in water, with water-distorted light, floating hair and fabric, blue-green dim illumination, rising bubbles. Describe the specific underwater effects on the subject and surroundings."
+    keywords: "underwater, submerged, water distortion, floating hair and fabric, blue-green light, bubbles"
+  Aerial:
+    behavioral: "The setting is viewed from above — aerial vantage, landscape seen from height, with patterns and layouts visible only from above. Describe what the elevated perspective reveals."
+    keywords: "aerial view, bird's-eye perspective, landscape from above, patterns visible only from height"
+  Indoor:
+    behavioral: "The setting is indoor — an interior space with walls, ceiling, furniture, and a mix of artificial and window light. Describe specific features of the interior."
+    keywords: "indoor setting, interior space, walls and ceiling, furniture, artificial and window light"
+  Rooftop:
+    behavioral: "The setting is a rooftop — elevated urban vantage with a city skyline as backdrop, open sky above, the building's edge visible. Describe what's visible across the rooftop and below."
+    keywords: "rooftop, elevated urban vantage, city skyline backdrop, open sky above, edge of building"
+  Underground:
+    behavioral: "The setting is underground — a tunnel, basement, or cave. Low ceiling, artificial light, enclosed. Describe the specific underground features and how the space feels confined."
+    keywords: "underground, tunnel or basement or cave, low ceiling, artificial light, enclosed space"
+  Forest:
+    behavioral: "The setting is a forest — trees, undergrowth, dappled light through the canopy, bark texture, moss, earth-tone palette. Describe specific forest features visible around the subject."
+    keywords: "forest setting, trees, undergrowth, dappled light through canopy, bark texture, moss, earth tones"
+  Desert:
+    behavioral: "The setting is a desert — sand or cracked earth, harsh overhead sun, minimal vegetation, heat shimmer in the distance, vast emptiness. Describe specific features of the arid landscape."
+    keywords: "desert setting, sand or cracked earth, harsh sun, minimal vegetation, heat shimmer, vast emptiness"
+  Coastal:
+    behavioral: "The setting is coastal — ocean or sea with waves, sand or rocks, salt air, a visible horizon line, the specific quality of light near large water. Describe the coast's specific features."
+    keywords: "coastal setting, ocean or sea, waves, sand or rocks, salt air, horizon line, water light"
+  Industrial:
+    behavioral: "The setting is industrial — factories or workshops, machinery, pipes, metal surfaces, concrete floors, utilitarian fixtures. Describe specific industrial elements."
+    keywords: "industrial setting, factories, machinery, pipes, metal surfaces, concrete floors, utilitarian"
+  Domestic:
+    behavioral: "The setting is a home interior — personal objects, a lived-in quality, comfort or clutter, familiar furniture. Describe specific domestic details that signal it's a real home."
+    keywords: "domestic setting, home interior, personal objects, lived-in space, comfort or clutter, familiar"
 
 time period:
-  Medieval: medieval era, stone and wood, candlelight and torchlight, armor or rough cloth, feudal setting
-  Victorian: victorian era, ornate interiors, gas lamps, corsets and tailcoats, dark wood, lace, formal posture
-  1920s Art Deco: 1920s, art deco, geometric patterns, flapper dress, jazz age, gold and black, opulent
-  1950s Americana: 1950s, americana, chrome and pastel, diners, cars with fins, rockabilly, optimistic suburban
-  1970s: 1970s, warm earth tones, shag carpet, bell-bottoms, wood paneling, soft focus, analog warmth
-  1980s: 1980s, neon colors, big hair, synthwave aesthetic, VHS texture, bold graphic patterns
-  Futuristic: futuristic, advanced technology, clean or dystopian surfaces, LED lighting, minimal or maximal design
-  Ancient: ancient era, stone temples, draped fabric, torchlight, weathered surfaces, mythic scale
+  Medieval:
+    behavioral: "The time period is medieval — stone and wood construction, candlelight and torchlight as primary illumination, armor or rough-woven cloth, feudal-setting details. Describe specific medieval features."
+    keywords: "medieval era, stone and wood, candlelight and torchlight, armor or rough cloth, feudal setting"
+  Victorian:
+    behavioral: "The time period is Victorian — ornate interiors, gas lamps, corsets and tailcoats, dark wood furniture, lace accents, formal posture. Describe specific Victorian-era details."
+    keywords: "victorian era, ornate interiors, gas lamps, corsets and tailcoats, dark wood, lace, formal posture"
+  1920s Art Deco:
+    behavioral: "The time period is the 1920s — art deco geometric patterns, flapper dresses, jazz-age styling, gold and black accents, opulent detailing. Describe specific period details."
+    keywords: "1920s, art deco, geometric patterns, flapper dress, jazz age, gold and black, opulent"
+  1950s Americana:
+    behavioral: "The time period is the 1950s — chrome and pastel colors, diners, cars with fins, rockabilly styling, optimistic suburban mood. Describe specific 1950s Americana details."
+    keywords: "1950s, americana, chrome and pastel, diners, cars with fins, rockabilly, optimistic suburban"
+  1970s:
+    behavioral: "The time period is the 1970s — warm earth tones, shag carpet, bell-bottoms, wood paneling, soft-focus analog warmth. Describe specific 1970s details."
+    keywords: "1970s, warm earth tones, shag carpet, bell-bottoms, wood paneling, soft focus, analog warmth"
+  1980s:
+    behavioral: "The time period is the 1980s — saturated neon colors, big hair, synthwave aesthetic, VHS texture, bold graphic patterns. Describe specific 1980s details."
+    keywords: "1980s, neon colors, big hair, synthwave aesthetic, VHS texture, bold graphic patterns"
+  Futuristic:
+    behavioral: "The time period is the future — advanced technology, clean or dystopian surfaces, LED lighting, minimal or maximal design language. Describe specific futuristic details."
+    keywords: "futuristic, advanced technology, clean or dystopian surfaces, LED lighting, minimal or maximal design"
+  Ancient:
+    behavioral: "The time period is ancient — stone temples, draped fabric, torchlight, weathered surfaces, mythic scale. Describe specific ancient-world details."
+    keywords: "ancient era, stone temples, draped fabric, torchlight, weathered surfaces, mythic scale"
 
 aesthetic:
-  Japanese: japanese aesthetic, wabi-sabi, clean lines, natural materials, paper screens, zen minimalism
-  Nordic: nordic aesthetic, muted earth tones, raw wood, wool textures, minimal, cold light, functional beauty
-  Mediterranean: mediterranean aesthetic, warm stone, terracotta, olive and ochre tones, bright sun, whitewashed walls
-  Tropical: tropical aesthetic, lush green, bright flowers, warm humid light, palm fronds, saturated color
-  Parisian: parisian aesthetic, elegant, iron balconies, cafe tables, muted sophistication, soft overcast light
-  Brutalist: brutalist aesthetic, raw concrete, massive geometric forms, stark shadows, imposing scale, utilitarian
-  Art Nouveau: art nouveau, organic flowing lines, floral motifs, ornamental detail, stained glass, decorative elegance
-  Bohemian: bohemian aesthetic, layered textiles, warm colors, eclectic objects, plants, relaxed imperfection
+  Japanese:
+    behavioral: "The aesthetic is Japanese — wabi-sabi sensibility, clean lines, natural materials, paper screens, zen minimalism. Describe specific Japanese visual elements."
+    keywords: "japanese aesthetic, wabi-sabi, clean lines, natural materials, paper screens, zen minimalism"
+  Nordic:
+    behavioral: "The aesthetic is Nordic — muted earth tones, raw wood, wool textures, minimal design, cold light, functional beauty. Describe specific Nordic design features."
+    keywords: "nordic aesthetic, muted earth tones, raw wood, wool textures, minimal, cold light, functional beauty"
+  Mediterranean:
+    behavioral: "The aesthetic is Mediterranean — warm stone, terracotta, olive and ochre tones, bright sun, whitewashed walls. Describe specific Mediterranean features."
+    keywords: "mediterranean aesthetic, warm stone, terracotta, olive and ochre tones, bright sun, whitewashed walls"
+  Tropical:
+    behavioral: "The aesthetic is tropical — lush greenery, bright flowers, warm humid light, palm fronds, saturated color. Describe specific tropical features."
+    keywords: "tropical aesthetic, lush green, bright flowers, warm humid light, palm fronds, saturated color"
+  Parisian:
+    behavioral: "The aesthetic is Parisian — elegant, iron balconies, cafe tables, muted sophistication, soft overcast light. Describe specific Parisian features."
+    keywords: "parisian aesthetic, elegant, iron balconies, cafe tables, muted sophistication, soft overcast light"
+  Brutalist:
+    behavioral: "The aesthetic is brutalist — raw concrete, massive geometric forms, stark shadows, imposing scale, utilitarian. Describe specific brutalist features."
+    keywords: "brutalist aesthetic, raw concrete, massive geometric forms, stark shadows, imposing scale, utilitarian"
+  Art Nouveau:
+    behavioral: "The aesthetic is art nouveau — organic flowing lines, floral motifs, ornamental detail, stained glass, decorative elegance. Describe specific art nouveau features."
+    keywords: "art nouveau, organic flowing lines, floral motifs, ornamental detail, stained glass, decorative elegance"
+  Bohemian:
+    behavioral: "The aesthetic is bohemian — layered textiles, warm colors, eclectic objects, houseplants, relaxed imperfection. Describe specific bohemian features."
+    keywords: "bohemian aesthetic, layered textiles, warm colors, eclectic objects, plants, relaxed imperfection"
