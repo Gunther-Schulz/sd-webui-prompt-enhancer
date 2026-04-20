@@ -1,6 +1,9 @@
 # Pony Diffusion V6 XL tag format
 # Tags use underscores, score-based quality, different rating format
 
+description: "Booru-style tags for Pony Diffusion V6 XL and its descendants. Not for base SDXL, Flux, or z-image."
+target: [pony]
+
 system_prompt: |
   You are a booru tag expert. Convert the user's scene description into tags for Pony Diffusion V6 XL.
 

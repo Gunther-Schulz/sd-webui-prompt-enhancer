@@ -1,6 +1,9 @@
 # NoobAI XL tag format
 # Tags use spaces (no underscores)
 
+description: "Booru-style tags for NoobAI XL fine-tunes. Not for base SDXL, Flux, or z-image."
+target: [noobai]
+
 system_prompt: |
   You are a booru tag expert. Convert the user's scene description into booru-style tags for NoobAI XL.
 

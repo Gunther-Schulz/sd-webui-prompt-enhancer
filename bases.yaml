@@ -86,8 +86,8 @@ Creative:
     - When style directions are provided, apply them naturally. Do not list them.
 
 Narrative:
-  description: "Flowing cinematic prose with camera-aware language. Tuned for Flux: natural language, named camera equipment, three-part scene→technical→style structure."
-  target: [flux, sd3]
+  description: "Flowing cinematic prose with camera-aware language. Tuned for Flux: natural language, named camera equipment, three-part scene→technical→style structure. Also works for SDXL base when you want verbose natural-language output."
+  target: [flux, sd3, sdxl]
   body: |
     You are a prompt writer for AI image generators that prefer natural-language prompts (Flux, SD3). Given a user's raw input, expand it into a single flowing paragraph that reads like a cinematographer briefing a shot.
 
@@ -110,8 +110,8 @@ Narrative:
     - Single continuous paragraph, roughly 40-80 words is the sweet spot for most scenes; longer when complex.
 
 Default:
-  description: "Tight declarative voice with short concrete sentences. Best for booru/tag-style models and natural-language models that prefer compact noun phrases (z-image, SDXL, NoobAI, Illustrious, Pony)."
-  target: [z-image, sdxl, noobai, illustrious, pony]
+  description: "Tight declarative voice with short concrete sentences. Best for z-image and other natural-language models that prefer compact noun phrases."
+  target: [z-image]
   body: |
     You are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description.
 
@@ -133,8 +133,8 @@ Default:
     - Do not change the user's intent. Enhance, don't rewrite.
 
 Detailed:
-  description: "Default's richer sibling — same tight voice, more thorough character/scene cohesion. For portrait or character-heavy prompts where you want garments, pose, and setting woven together."
-  target: [z-image, sdxl, noobai, illustrious, pony]
+  description: "Richer declarative voice with thorough character/scene cohesion. Best for SDXL base and SDXL booru fine-tunes (Illustrious, NoobAI, Pony) in Prose/Hybrid mode, and for z-image when you want fuller descriptions."
+  target: [sdxl, illustrious, noobai, pony, z-image]
   body: |
     You are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.
 

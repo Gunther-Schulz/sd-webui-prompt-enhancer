@@ -1252,9 +1252,9 @@ class PromptEnhancer(scripts.Script):
 
             # ── Base + Tag Format + Validation ──
             with gr.Row():
-                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="System prompt for Prose/Hybrid")
+                base = gr.Dropdown(label="Base", choices=_base_names(), value="Default", scale=1, info="System prompt for Prose/Hybrid. Default=z-image, Detailed=SDXL+booru, Narrative=Flux/SD3, Creative=scene invention, Cinematic=image+i2v.")
                 _tf_names = list(_tag_formats.keys())
-                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="For Hybrid and Tags modes")
+                tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="Booru-trained SDXL fine-tunes only. Not for base SDXL, Flux, or z-image.")
                 tag_validation = gr.Radio(
                     label="Tag Validation",
                     choices=["Off", "Check", "Fuzzy", "Strict", "Fuzzy Strict"],

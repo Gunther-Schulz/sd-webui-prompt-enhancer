@@ -1,6 +1,9 @@
 # Illustrious XL tag format
 # Tags use underscores (post-processed from LLM output)
 
+description: "Danbooru-style tags for Illustrious XL fine-tunes. Not for base SDXL, Flux, or z-image."
+target: [illustrious]
+
 system_prompt: |
   You are a danbooru tag expert. Convert the user's scene description into danbooru-style tags.
 
