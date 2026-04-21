@@ -136,6 +136,43 @@ def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, see
     return _expander
 
 
+_ANIMA_NSFW_INTENSITY_TO_SAFETY = {
+    "Modest": "safe",
+    "Suggestive": "sensitive",
+    "Sensual": "sensitive",
+    "Erotic": "nsfw",
+    "Explicit": "explicit",
+    "Hardcore": "explicit",
+    "🎲 Random Intensity": "nsfw",
+}
+_ANIMA_NSFW_PRODUCTION_NAMES = {
+    "Professional", "Glamour", "Bedroom", "Shower", "Striptease",
+    "Massage", "Poolside", "Voyeuristic", "Exhibitionist",
+    "Dominant", "Submissive", "Bondage", "Oral", "Seduction",
+    "🎲 Random Production Style",
+}
+
+
+def _anima_safety_from_modifiers(mod_list) -> str:
+    """Map active NSFW modifier selections to an Anima safety tag.
+
+    Takes the list of (name, entry) pairs from _collect_modifiers.
+    When multiple intensity levels are somehow active (shouldn't happen
+    via the UI), the most permissive wins. When only production-style
+    modifiers are active without an intensity, defaults to nsfw.
+    """
+    names = {name for name, _ in mod_list}
+    # Intensity levels — most permissive wins (reflects user intent)
+    for lvl in ("Hardcore", "Explicit", "Erotic", "🎲 Random Intensity",
+                "Sensual", "Suggestive", "Modest"):
+        if lvl in names:
+            return _ANIMA_NSFW_INTENSITY_TO_SAFETY[lvl]
+    # No intensity, but a production-style modifier implies NSFW
+    if names & _ANIMA_NSFW_PRODUCTION_NAMES:
+        return "nsfw"
+    return "safe"
+
+
 def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
                           use_underscores: bool = False,
                           shortlist=None) -> tuple[str, dict]:
@@ -1768,11 +1805,14 @@ class PromptEnhancer(scripts.Script):
                     if validation_mode != "Off":
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
 
+                    # Route safety tag from any active NSFW modifier selection
+                    _anima_safety = _anima_safety_from_modifiers(mods)
+
                     # Post-process negative tags through tag pipeline when applicable
                     if neg_cb and negative:
                         if _anima is not None:
                             negative, _ = _anima_tag_from_draft(
-                                _anima, negative, safety="safe",
+                                _anima, negative, safety=_anima_safety,
                                 shortlist=_anima_shortlist,
                             )
                         else:
@@ -1783,7 +1823,7 @@ class PromptEnhancer(scripts.Script):
                     # + rule layer replace the rapidfuzz path entirely.
                     if _anima is not None:
                         tags_raw, stats = _anima_tag_from_draft(
-                            _anima, tags_raw, safety="safe",
+                            _anima, tags_raw, safety=_anima_safety,
                             shortlist=_anima_shortlist,
                         )
                     else:
@@ -1934,25 +1974,48 @@ class PromptEnhancer(scripts.Script):
                     if validation_mode != "Off":
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
 
+                    # Anima routing for remix. Remix operates on already-
+                    # curated prompts, so we only engage anima_tagger when
+                    # the user is explicitly working in Anima tag format.
+                    # No shortlist here — remix doesn't re-query.
+                    _anima_r = _get_anima_stack() if _use_anima_pipeline(tag_fmt) else None
+                    _anima_r_cm = None
+                    if _anima_r is not None:
+                        try:
+                            _anima_r_cm = _anima_r.models()
+                            _anima_r_cm.__enter__()
+                        except Exception as _e:
+                            logger.warning(f"anima setup failed in remix, falling back: {_e}")
+                            _anima_r_cm = None
+                            _anima_r = None
+                    _anima_r_safety = _anima_safety_from_modifiers(mods)
+
+                    def _validate_tag_str(tag_str: str) -> tuple[str, dict | None]:
+                        if _anima_r is not None:
+                            return _anima_tag_from_draft(
+                                _anima_r, tag_str, safety=_anima_r_safety,
+                            )
+                        return _postprocess_tags(tag_str, tag_fmt, validation_mode)
+
                     if fmt == "hybrid":
                         # Split tags and NL, post-process tags only
                         parts = result.split("\n\n", 1)
                         tag_str = parts[0].strip()
                         nl_supplement = parts[1].strip() if len(parts) > 1 else ""
-                        tag_str, stats = _postprocess_tags(tag_str, tag_fmt, validation_mode)
+                        tag_str, stats = _validate_tag_str(tag_str)
                         tag_count = stats.get("total", 0) if stats else len([t for t in tag_str.split(",") if t.strip()])
                         final = f"{tag_str}\n\n{nl_supplement}" if nl_supplement else tag_str
                         status_parts = [f"remixed {tag_count} tags + NL"]
                     else:
                         # Pure tags
-                        result, stats = _postprocess_tags(result, tag_fmt, validation_mode)
+                        result, stats = _validate_tag_str(result)
                         tag_count = stats.get("total", 0) if stats else len([t for t in result.split(",") if t.strip()])
                         final = result
                         status_parts = [f"remixed {tag_count} tags"]
 
                     # Post-process negative tags
                     if neg_cb and negative:
-                        negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+                        negative, _ = _validate_tag_str(negative)
 
                     if stats:
                         if stats.get("corrected"):
@@ -1974,6 +2037,14 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
                     yield "", "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
+                finally:
+                    # Release Anima models if loaded (remix path)
+                    _r_cm = locals().get("_anima_r_cm")
+                    if _r_cm is not None:
+                        try:
+                            _r_cm.__exit__(None, None, None)
+                        except Exception as _e:
+                            logger.warning(f"anima models unload error (remix): {_e}")
 
             remix_event = refine_btn.click(
                 fn=lambda x, y: (_cancel_flag.clear(), x, y)[1:],
@@ -2087,11 +2158,12 @@ class PromptEnhancer(scripts.Script):
                     raw = _clean_output(raw, strip_underscores=False)
                     if validation_mode != "Off":
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
+                    _anima_t_safety = _anima_safety_from_modifiers(mods)
                     if neg_cb:
                         tags, negative = _split_positive_negative(raw)
                         if _anima_t is not None:
                             negative, _ = _anima_tag_from_draft(
-                                _anima_t, negative, safety="safe",
+                                _anima_t, negative, safety=_anima_t_safety,
                                 shortlist=_anima_t_shortlist,
                             )
                         else:
@@ -2100,7 +2172,7 @@ class PromptEnhancer(scripts.Script):
                         tags, negative = raw, ""
                     if _anima_t is not None:
                         tags, stats = _anima_tag_from_draft(
-                            _anima_t, tags, safety="safe",
+                            _anima_t, tags, safety=_anima_t_safety,
                             shortlist=_anima_t_shortlist,
                         )
                     else:
