@@ -20,7 +20,7 @@ genre:
   Product:
     behavioral: "Product photography."
     keywords: "product photography, isolated subject, clean background, precise lighting, material qualities, commercial composition"
-  Food:
+  Food Photography:
     behavioral: "Food photography."
     keywords: "food photography, overhead or 45-degree angle, soft directional light, texture emphasis, complementary props, appetizing colors"
   Wildlife:
@@ -49,7 +49,7 @@ subject:
   Group:
     behavioral: "Group of people."
     keywords: "group of people, crowd, multiple subjects interacting or coexisting in frame"
-  Animal:
+  Animal Subject:
     behavioral: "Animal as primary subject."
     keywords: "animal subject, creature behavior, fur or feather or scale texture, non-human presence"
   Object:
