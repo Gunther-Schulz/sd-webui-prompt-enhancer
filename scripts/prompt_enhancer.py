@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import socket
+import sys
 import threading
 import time
 import urllib.request
@@ -34,6 +35,88 @@ _TAG_FORMATS_DIR = os.path.join(_EXT_DIR, "tag-formats")
 
 _tag_formats = {}    # format_name -> {system_prompt, use_underscores, tag_db, tag_db_url}
 _tag_databases = {}  # db_filename -> set of valid tags
+
+
+# ── anima_tagger (retrieval-augmented Anima pipeline) ─────────────────────
+# Lazy-loaded on first Anima use. Falls back to the rapidfuzz path when:
+#   - the data artefacts aren't built yet (user hasn't run build_index.py),
+#   - tag_fmt is not "Anima",
+#   - or the "Anima Tagger" Forge setting is disabled.
+_ANIMA_SRC_PATH = os.path.join(_EXT_DIR, "src")
+if _ANIMA_SRC_PATH not in sys.path:
+    sys.path.insert(0, _ANIMA_SRC_PATH)
+
+_anima_stack = None                # cached AnimaStack (db + index open)
+_anima_load_attempted = False      # set True once we've tried to avoid repeat failures
+
+
+def _anima_opt(key: str, default):
+    """Read an anima_tagger_* option from shared.opts, fallback to default."""
+    try:
+        from modules import shared
+        return shared.opts.data.get(key, default)
+    except Exception:
+        return default
+
+
+def _get_anima_stack():
+    """Return a loaded AnimaStack or None if artefacts missing / disabled.
+
+    DB + faiss index open on first call and stay cached. Models (bge-m3
+    + reranker) still load on-demand via `stack.models()`.
+    """
+    global _anima_stack, _anima_load_attempted
+    if _anima_stack is not None:
+        return _anima_stack
+    if _anima_load_attempted:
+        return None
+    _anima_load_attempted = True
+    try:
+        from anima_tagger import load_all
+        _anima_stack = load_all(
+            semantic_threshold=float(_anima_opt("anima_tagger_semantic_threshold", 0.80)),
+            semantic_min_post_count=int(_anima_opt("anima_tagger_semantic_min_post_count", 100)),
+            enable_reranker=bool(_anima_opt("anima_tagger_enable_reranker", True)),
+            enable_cooccurrence=bool(_anima_opt("anima_tagger_enable_cooccurrence", True)),
+        )
+        logger.info("anima_tagger loaded (DB + FAISS ready)")
+        return _anima_stack
+    except FileNotFoundError as e:
+        logger.info(f"anima_tagger unavailable: {e}")
+        return None
+    except Exception as e:
+        logger.warning(f"anima_tagger failed to load: {e}")
+        return None
+
+
+def _use_anima_pipeline(tag_fmt: str) -> bool:
+    """True iff Anima retrieval should replace the rapidfuzz path."""
+    if tag_fmt != "Anima":
+        return False
+    if not bool(_anima_opt("anima_tagger_enabled", True)):
+        return False
+    return _get_anima_stack() is not None
+
+
+def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
+                          use_underscores: bool = False) -> tuple[str, dict]:
+    """Validate + rule-layer an LLM draft via anima_tagger.
+
+    Drop-in replacement for _postprocess_tags when anima_tagger is
+    active. Returns (comma-separated final tags, stats dict).
+    """
+    tags_list = stack.tagger.tag_from_draft(
+        draft_str, safety=safety, use_underscores=use_underscores,
+    )
+    # Rough stats in the same shape the existing path returns
+    draft_token_count = len([t for t in draft_str.split(",") if t.strip()])
+    stats = {
+        "corrected": 0,
+        "dropped": max(0, draft_token_count - len(tags_list)),
+        "kept_invalid": 0,
+        "total": len(tags_list),
+    }
+    return ", ".join(tags_list), stats
 
 def _load_tag_formats():
     """Load tag format definitions from tag-formats/ directory."""
@@ -1536,6 +1619,39 @@ class PromptEnhancer(scripts.Script):
                 if inline_text:
                     user_msg = f"{user_msg}\n\n{inline_text}"
 
+                # Anima retrieval: if the Anima tag-format is selected AND the
+                # artefacts are built, pre-retrieve a shortlist of real
+                # artists/characters/series and inject into the prose system
+                # prompt so the LLM references only real entities. The same
+                # stack's tagger replaces the rapidfuzz validation path below.
+                _anima = None
+                _anima_cm = None
+                if _use_anima_pipeline(tag_fmt):
+                    _s = _get_anima_stack()
+                    if _s is not None:
+                        try:
+                            _anima_cm = _s.models()
+                            _anima_cm.__enter__()
+                            _anima = _s
+                            _sl = _s.build_shortlist(
+                                source_prompt=source,
+                                modifier_keywords=style_str,
+                            )
+                            _sl_frag = _sl.as_system_prompt_fragment()
+                            if _sl_frag:
+                                sp = f"{sp}\n\n{_sl_frag}"
+                            print(f"[PromptEnhancer] Anima shortlist: "
+                                  f"{len(_sl.artists)} artists, "
+                                  f"{len(_sl.characters)} characters, "
+                                  f"{len(_sl.series)} series")
+                        except Exception as e:
+                            logger.warning(f"anima setup failed, falling back: {e}")
+                            if _anima_cm:
+                                try: _anima_cm.__exit__(None, None, None)
+                                except Exception: pass
+                            _anima = None
+                            _anima_cm = None
+
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
                 print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
@@ -1607,10 +1723,18 @@ class PromptEnhancer(scripts.Script):
 
                     # Post-process negative tags through tag pipeline when applicable
                     if neg_cb and negative:
-                        negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+                        if _anima is not None:
+                            negative, _ = _anima_tag_from_draft(_anima, negative, safety="safe")
+                        else:
+                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
 
-                    # Run tags through full post-processing pipeline
-                    tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
+                    # Run tags through full post-processing pipeline.
+                    # When Anima retrieval is active, the bge-m3 validator
+                    # + rule layer replace the rapidfuzz path entirely.
+                    if _anima is not None:
+                        tags_raw, stats = _anima_tag_from_draft(_anima, tags_raw, safety="safe")
+                    else:
+                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags + NL"]
                     if stats:
@@ -1642,6 +1766,13 @@ class PromptEnhancer(scripts.Script):
                     msg = f"{type(e).__name__}: {e}"
                     logger.error(msg)
                     yield "", "", f"<span style='color:#c66'>{msg}</span>"
+                finally:
+                    # Release bge-m3 + reranker VRAM for image gen
+                    if _anima_cm is not None:
+                        try:
+                            _anima_cm.__exit__(None, None, None)
+                        except Exception as _e:
+                            logger.warning(f"anima models unload error: {_e}")
 
             hybrid_event = hybrid_btn.click(
                 fn=_hybrid,
@@ -1851,6 +1982,34 @@ class PromptEnhancer(scripts.Script):
                 else:
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
+                # Anima retrieval: shortlist injection + bge-m3 validator
+                _anima_t = None
+                _anima_t_cm = None
+                if _use_anima_pipeline(tag_fmt):
+                    _s = _get_anima_stack()
+                    if _s is not None:
+                        try:
+                            _anima_t_cm = _s.models()
+                            _anima_t_cm.__enter__()
+                            _anima_t = _s
+                            _sl = _s.build_shortlist(
+                                source_prompt=source, modifier_keywords=style_str,
+                            )
+                            _frag = _sl.as_system_prompt_fragment()
+                            if _frag:
+                                sp = f"{sp}\n\n{_frag}"
+                            print(f"[PromptEnhancer] Anima shortlist: "
+                                  f"{len(_sl.artists)} artists, "
+                                  f"{len(_sl.characters)} characters, "
+                                  f"{len(_sl.series)} series")
+                        except Exception as _e:
+                            logger.warning(f"anima setup failed in tags mode, falling back: {_e}")
+                            if _anima_t_cm:
+                                try: _anima_t_cm.__exit__(None, None, None)
+                                except Exception: pass
+                            _anima_t = None
+                            _anima_t_cm = None
+
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags)...</span>"
                 print(f"[PromptEnhancer] Tags: model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
@@ -1870,10 +2029,16 @@ class PromptEnhancer(scripts.Script):
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
                     if neg_cb:
                         tags, negative = _split_positive_negative(raw)
-                        negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+                        if _anima_t is not None:
+                            negative, _ = _anima_tag_from_draft(_anima_t, negative, safety="safe")
+                        else:
+                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
                     else:
                         tags, negative = raw, ""
-                    tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
+                    if _anima_t is not None:
+                        tags, stats = _anima_tag_from_draft(_anima_t, tags, safety="safe")
+                    else:
+                        tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
                     if stats:
@@ -1898,6 +2063,12 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
                     yield "", "", f"<span style='color:#c66'>{type(e).__name__}: {e}</span>"
+                finally:
+                    if _anima_t_cm is not None:
+                        try:
+                            _anima_t_cm.__exit__(None, None, None)
+                        except Exception as _e:
+                            logger.warning(f"anima models unload error (tags): {_e}")
 
             tags_event = tags_btn.click(
                 fn=_tags,
@@ -2060,3 +2231,88 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Prepend"] = True
         if motion:
             p.extra_generation_params["PE Motion"] = True
+
+
+# ── Settings panel registration ──────────────────────────────────────────
+
+def _on_ui_settings():
+    """Register Anima Tagger options under Settings → Anima Tagger."""
+    try:
+        from modules import shared
+        from modules.shared import OptionInfo
+    except ImportError:
+        return
+
+    section = ("anima_tagger", "Anima Tagger")
+
+    shared.opts.add_option(
+        "anima_tagger_enabled",
+        OptionInfo(
+            True,
+            "Enable Anima retrieval pipeline",
+            section=section,
+        ).info(
+            "When Tag Format = Anima, replaces rapidfuzz validation with "
+            "embedding-based validator + RAG shortlist. Requires one-time "
+            "artefact build (see README)."
+        ),
+    )
+    try:
+        import gradio as _gr
+    except ImportError:
+        _gr = None
+    shared.opts.add_option(
+        "anima_tagger_semantic_threshold",
+        OptionInfo(
+            0.80,
+            "Semantic match threshold",
+            _gr.Slider if _gr else None,
+            {"minimum": 0.50, "maximum": 0.99, "step": 0.01} if _gr else None,
+            section=section,
+        ).info(
+            "Minimum cosine similarity to accept a semantic tag substitution. "
+            "Higher = stricter (more drops, fewer wrong substitutions)."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_semantic_min_post_count",
+        OptionInfo(
+            100,
+            "Minimum post_count for semantic matches",
+            _gr.Slider if _gr else None,
+            {"minimum": 0, "maximum": 10000, "step": 10} if _gr else None,
+            section=section,
+        ).info(
+            "Niche tags below this popularity can't win semantic ties "
+            "(kills noise like cozy_glow matching 'cozy')."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_enable_reranker",
+        OptionInfo(
+            True,
+            "Enable cross-encoder reranker",
+            section=section,
+        ).info(
+            "bge-reranker-v2-m3 re-scores top candidates. Adds ~100 ms "
+            "per call on GPU; improves shortlist quality."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_enable_cooccurrence",
+        OptionInfo(
+            True,
+            "Enable character → series pairing",
+            section=section,
+        ).info(
+            "Auto-adds the originating series tag when a character tag "
+            "fires (e.g. hatsune_miku → vocaloid)."
+        ),
+    )
+
+
+try:
+    from modules import script_callbacks
+    script_callbacks.on_ui_settings(_on_ui_settings)
+except ImportError:
+    pass
