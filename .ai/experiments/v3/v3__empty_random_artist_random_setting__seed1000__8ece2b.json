@@ -1,0 +1,1333 @@
+{
+  "run_id": "v3__empty_random_artist_random_setting__seed1000__8ece2b",
+  "variant": "v3",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 1000
+  },
+  "started_at": 1776780112.5424583,
+  "ended_at": 1776780116.7050538,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.122,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.406,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in a cramped, industrial laundry room filled with steam and hanging white linens. The scene is rendered in the style of Yoshitomo Nara. A young woman with oversized, pale skin and a wide, unsmiling mouth wears a loose, oversized denim jumpsuit. Her hair is a mass of black, slightly unruly strands that frame a round, expressive face. She holds a heavy, wet towel in one hand while leaning against a rusted metal pipe. The lighting is flat and diffused, coming from a single high window that casts soft, elongated shadows against the peeling paint of the walls. The floor is slick with condensation, reflecting the muted colors of the room. Nara's characteristic use of thick, dark outlines defines every curve of her body and the folds of her fabric. The air feels thick with humidity, and the colors are a mix of pastel pinks and deep indigos that contrast with the stark, monochromatic background.",
+        "user_msg": "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "concept_enumerate",
+      "params": {
+        "temperature": 0.6,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 0.889,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "concepts": [
+          "solitary figure",
+          "cramped industrial laundry room",
+          "hanging white linens",
+          "steam",
+          "young woman",
+          "oversized pale skin",
+          "wide unsmiling mouth",
+          "loose oversized denim jumpsuit",
+          "mass of black unruly hair",
+          "round expressive face",
+          "heavy wet towel",
+          "rusted metal pipe",
+          "flat diffused lighting",
+          "single high window",
+          "soft elongated shadows",
+          "peeling paint walls",
+          "slick condensation floor",
+          "muted colors",
+          "thick dark outlines",
+          "pastel pinks",
+          "deep indigos",
+          "stark monochromatic background",
+          "Yoshitomo Nara style",
+          "humidity",
+          "expressive face"
+        ],
+        "concepts_raw": "solitary figure\ncramped industrial laundry room\nhanging white linens\nsteam\nyoung woman\noversized pale skin\nwide unsmiling mouth\nloose oversized denim jumpsuit\nmass of black unruly hair\nround expressive face\nheavy wet towel\nrusted metal pipe\nflat diffused lighting\nsingle high window\nsoft elongated shadows\npeeling paint walls\nslick condensation floor\nmuted colors\nthick dark outlines\npastel pinks\ndeep indigos\nstark monochromatic background\nYoshitomo Nara style\nhumidity\nexpressive face"
+      }
+    },
+    {
+      "step": "canonicalize",
+      "params": {
+        "min_score": 0.35,
+        "min_post_count": 50,
+        "top_k": 5
+      },
+      "elapsed_s": 0.365,
+      "inputs_seen": [
+        "base_name",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "candidates": [
+          {
+            "concept": "solitary figure",
+            "top_k": [
+              {
+                "name": "walk_alone",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.7740368247032166
+              },
+              {
+                "name": "a_mysterious_figure",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.7299925684928894
+              },
+              {
+                "name": "solitary.apple",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.7014550566673279
+              },
+              {
+                "name": "lonesome_street",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.69605553150177
+              },
+              {
+                "name": "solipsist",
+                "category": 1,
+                "post_count": 107,
+                "score": 0.689445972442627
+              }
+            ],
+            "best": {
+              "name": "solipsist",
+              "category": 1,
+              "post_count": 107,
+              "score": 0.689445972442627
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cramped industrial laundry room",
+            "top_k": [
+              {
+                "name": "dimly_lit_room",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6227906942367554
+              },
+              {
+                "name": "laundry_pole",
+                "category": 0,
+                "post_count": 235,
+                "score": 0.6199344992637634
+              },
+              {
+                "name": "laundry",
+                "category": 0,
+                "post_count": 1746,
+                "score": 0.619312047958374
+              },
+              {
+                "name": "cramped",
+                "category": 0,
+                "post_count": 258,
+                "score": 0.6161428689956665
+              },
+              {
+                "name": "training_room",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.6078595519065857
+              }
+            ],
+            "best": {
+              "name": "laundry_pole",
+              "category": 0,
+              "post_count": 235,
+              "score": 0.6199344992637634
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hanging white linens",
+            "top_k": [
+              {
+                "name": "hanging_light",
+                "category": 0,
+                "post_count": 1408,
+                "score": 0.6577677726745605
+              },
+              {
+                "name": "hanging_lantern",
+                "category": 0,
+                "post_count": 539,
+                "score": 0.6562299728393555
+              },
+              {
+                "name": "hanging_tender",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6479220390319824
+              },
+              {
+                "name": "white_light",
+                "category": 1,
+                "post_count": 22,
+                "score": 0.6349645256996155
+              },
+              {
+                "name": "hangleing",
+                "category": 1,
+                "post_count": 173,
+                "score": 0.6320696473121643
+              }
+            ],
+            "best": {
+              "name": "hanging_light",
+              "category": 0,
+              "post_count": 1408,
+              "score": 0.6577677726745605
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "steam",
+            "top_k": [
+              {
+                "name": "steam",
+                "category": 0,
+                "post_count": 62599,
+                "score": 0.7198426723480225
+              },
+              {
+                "name": "steam_(platform)",
+                "category": 3,
+                "post_count": 280,
+                "score": 0.7155675292015076
+              },
+              {
+                "name": "neo_steam",
+                "category": 3,
+                "post_count": 11,
+                "score": 0.6918517351150513
+              },
+              {
+                "name": "steam_heart's",
+                "category": 3,
+                "post_count": 13,
+                "score": 0.6664499044418335
+              },
+              {
+                "name": "steam_erobou",
+                "category": 1,
+                "post_count": 113,
+                "score": 0.6564909219741821
+              }
+            ],
+            "best": {
+              "name": "steam",
+              "category": 0,
+              "post_count": 62599,
+              "score": 0.7198426723480225
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "young woman",
+            "top_k": [
+              {
+                "name": "woman_with_a_parasol",
+                "category": 3,
+                "post_count": 70,
+                "score": 0.6830687522888184
+              },
+              {
+                "name": "tall_female",
+                "category": 0,
+                "post_count": 4555,
+                "score": 0.682159423828125
+              },
+              {
+                "name": "old_woman",
+                "category": 0,
+                "post_count": 2776,
+                "score": 0.6684033274650574
+              },
+              {
+                "name": "painting_woman_(dark_souls)",
+                "category": 4,
+                "post_count": 38,
+                "score": 0.664124608039856
+              },
+              {
+                "name": "oldschool_girl",
+                "category": 1,
+                "post_count": 22,
+                "score": 0.6449782252311707
+              }
+            ],
+            "best": {
+              "name": "woman_with_a_parasol",
+              "category": 3,
+              "post_count": 70,
+              "score": 0.6830687522888184
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "oversized pale skin",
+            "top_k": [
+              {
+                "name": "oversized_object",
+                "category": 0,
+                "post_count": 11799,
+                "score": 0.6487583518028259
+              },
+              {
+                "name": "oversized_backpack",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6390535831451416
+              },
+              {
+                "name": "oversized_eyewear",
+                "category": 0,
+                "post_count": 52,
+                "score": 0.6361141204833984
+              },
+              {
+                "name": "oversized_shirt",
+                "category": 0,
+                "post_count": 4586,
+                "score": 0.6350812315940857
+              },
+              {
+                "name": "oversized_forearms",
+                "category": 0,
+                "post_count": 832,
+                "score": 0.6267366409301758
+              }
+            ],
+            "best": {
+              "name": "oversized_object",
+              "category": 0,
+              "post_count": 11799,
+              "score": 0.6487583518028259
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "wide unsmiling mouth",
+            "top_k": [
+              {
+                "name": "wide_mouth_ink",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6741538643836975
+              },
+              {
+                "name": "too_many_in_mouth",
+                "category": 0,
+                "post_count": 76,
+                "score": 0.65900719165802
+              },
+              {
+                "name": "wide_mouth",
+                "category": 0,
+                "post_count": 116,
+                "score": 0.6525179743766785
+              },
+              {
+                "name": "person_in_mouth",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6506116986274719
+              },
+              {
+                "name": "vending_mouth",
+                "category": 4,
+                "post_count": 21,
+                "score": 0.6471240520477295
+              }
+            ],
+            "best": {
+              "name": "too_many_in_mouth",
+              "category": 0,
+              "post_count": 76,
+              "score": 0.65900719165802
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "loose oversized denim jumpsuit",
+            "top_k": [
+              {
+                "name": "open_jumpsuit",
+                "category": 0,
+                "post_count": 651,
+                "score": 0.6689954996109009
+              },
+              {
+                "name": "loose_clothes",
+                "category": 0,
+                "post_count": 3301,
+                "score": 0.6394895315170288
+              },
+              {
+                "name": "jumpsuit_around_waist",
+                "category": 0,
+                "post_count": 537,
+                "score": 0.6378858089447021
+              },
+              {
+                "name": "loose_skirt",
+                "category": 0,
+                "post_count": 50,
+                "score": 0.632388174533844
+              },
+              {
+                "name": "oversized_jacket",
+                "category": 0,
+                "post_count": 195,
+                "score": 0.6320876479148865
+              }
+            ],
+            "best": {
+              "name": "open_jumpsuit",
+              "category": 0,
+              "post_count": 651,
+              "score": 0.6689954996109009
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "mass of black unruly hair",
+            "top_k": [
+              {
+                "name": "black_facial_hair",
+                "category": 0,
+                "post_count": 226,
+                "score": 0.6691393852233887
+              },
+              {
+                "name": "black_pubic_hair",
+                "category": 0,
+                "post_count": 4198,
+                "score": 0.6605742573738098
+              },
+              {
+                "name": "huge_hair_bun",
+                "category": 0,
+                "post_count": 77,
+                "score": 0.6188955307006836
+              },
+              {
+                "name": "very_hairy",
+                "category": 0,
+                "post_count": 701,
+                "score": 0.6171214580535889
+              },
+              {
+                "name": "impossible_hair",
+                "category": 0,
+                "post_count": 475,
+                "score": 0.6147254705429077
+              }
+            ],
+            "best": {
+              "name": "black_facial_hair",
+              "category": 0,
+              "post_count": 226,
+              "score": 0.6691393852233887
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "round expressive face",
+            "top_k": [
+              {
+                "name": "smiling_face_with_heart_shaped_eyes_emoji",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6549568176269531
+              },
+              {
+                "name": "circle_facial_mark",
+                "category": 0,
+                "post_count": 1195,
+                "score": 0.6465268135070801
+              },
+              {
+                "name": "round_eyebrows",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6456210017204285
+              },
+              {
+                "name": "happy_facial",
+                "category": 0,
+                "post_count": 545,
+                "score": 0.6365050077438354
+              },
+              {
+                "name": "partially_shaded_face",
+                "category": 0,
+                "post_count": 3350,
+                "score": 0.6282354593276978
+              }
+            ],
+            "best": {
+              "name": "circle_facial_mark",
+              "category": 0,
+              "post_count": 1195,
+              "score": 0.6465268135070801
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "heavy wet towel",
+            "top_k": [
+              {
+                "name": "wet_towel",
+                "category": 0,
+                "post_count": 1309,
+                "score": 0.7768609523773193
+              },
+              {
+                "name": "wrap_towel",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6943588256835938
+              },
+              {
+                "name": "towel_around_waist",
+                "category": 0,
+                "post_count": 951,
+                "score": 0.6942229866981506
+              },
+              {
+                "name": "multicolored_towel",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6777694225311279
+              },
+              {
+                "name": "nearly_naked_towel",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.6739635467529297
+              }
+            ],
+            "best": {
+              "name": "wet_towel",
+              "category": 0,
+              "post_count": 1309,
+              "score": 0.7768609523773193
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rusted metal pipe",
+            "top_k": [
+              {
+                "name": "metal_pipe_falling_(meme)",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6464255452156067
+              },
+              {
+                "name": "smoking_pipe",
+                "category": 0,
+                "post_count": 11502,
+                "score": 0.6368909478187561
+              },
+              {
+                "name": "pipe_(decadence)",
+                "category": 4,
+                "post_count": 33,
+                "score": 0.6323624849319458
+              },
+              {
+                "name": "holding_lead_pipe",
+                "category": 0,
+                "post_count": 507,
+                "score": 0.6178695559501648
+              },
+              {
+                "name": "lead_pipe",
+                "category": 0,
+                "post_count": 962,
+                "score": 0.6161400675773621
+              }
+            ],
+            "best": {
+              "name": "smoking_pipe",
+              "category": 0,
+              "post_count": 11502,
+              "score": 0.6368909478187561
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "flat diffused lighting",
+            "top_k": [
+              {
+                "name": "floating_lights",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.6728203296661377
+              },
+              {
+                "name": "dim_lighting",
+                "category": 0,
+                "post_count": 655,
+                "score": 0.6674513220787048
+              },
+              {
+                "name": "dimly_lit_room",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6592519879341125
+              },
+              {
+                "name": "lighting_practice",
+                "category": 0,
+                "post_count": 34,
+                "score": 0.6570216417312622
+              },
+              {
+                "name": "studio_lights",
+                "category": 0,
+                "post_count": 74,
+                "score": 0.6411387324333191
+              }
+            ],
+            "best": {
+              "name": "dim_lighting",
+              "category": 0,
+              "post_count": 655,
+              "score": 0.6674513220787048
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "single high window",
+            "top_k": [
+              {
+                "name": "single_pop_up_headlight",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6740068197250366
+              },
+              {
+                "name": "high_ceiling",
+                "category": 0,
+                "post_count": 46,
+                "score": 0.6554756164550781
+              },
+              {
+                "name": "looking_through_window",
+                "category": 0,
+                "post_count": 142,
+                "score": 0.6441211104393005
+              },
+              {
+                "name": "single_horizontal_stripe",
+                "category": 0,
+                "post_count": 2182,
+                "score": 0.6214174628257751
+              },
+              {
+                "name": "single_vertical_stripe",
+                "category": 0,
+                "post_count": 2965,
+                "score": 0.616014301776886
+              }
+            ],
+            "best": {
+              "name": "looking_through_window",
+              "category": 0,
+              "post_count": 142,
+              "score": 0.6441211104393005
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft elongated shadows",
+            "top_k": [
+              {
+                "name": "long_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6625100374221802
+              },
+              {
+                "name": "fused_shadows",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6616895198822021
+              },
+              {
+                "name": "eyes_in_shadow",
+                "category": 0,
+                "post_count": 1021,
+                "score": 0.6581600904464722
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6545252203941345
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6500808596611023
+              }
+            ],
+            "best": {
+              "name": "long_shadow",
+              "category": 0,
+              "post_count": 89,
+              "score": 0.6625100374221802
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "peeling paint walls",
+            "top_k": [
+              {
+                "name": "paint_stains",
+                "category": 0,
+                "post_count": 423,
+                "score": 0.6406885981559753
+              },
+              {
+                "name": "paint_on_clothes",
+                "category": 0,
+                "post_count": 1342,
+                "score": 0.6238365173339844
+              },
+              {
+                "name": "spray_paint",
+                "category": 0,
+                "post_count": 810,
+                "score": 0.6141535639762878
+              },
+              {
+                "name": "paint_on_body",
+                "category": 0,
+                "post_count": 867,
+                "score": 0.6131882071495056
+              },
+              {
+                "name": "paint_on_fingers",
+                "category": 0,
+                "post_count": 121,
+                "score": 0.6105703115463257
+              }
+            ],
+            "best": {
+              "name": "paint_stains",
+              "category": 0,
+              "post_count": 423,
+              "score": 0.6406885981559753
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "slick condensation floor",
+            "top_k": [
+              {
+                "name": "wet_floor",
+                "category": 0,
+                "post_count": 736,
+                "score": 0.6107480525970459
+              },
+              {
+                "name": "cracked_floor",
+                "category": 0,
+                "post_count": 1305,
+                "score": 0.6081278920173645
+              },
+              {
+                "name": "brick_floor",
+                "category": 0,
+                "post_count": 1931,
+                "score": 0.6010017395019531
+              },
+              {
+                "name": "reflective_floor",
+                "category": 0,
+                "post_count": 4106,
+                "score": 0.5925914645195007
+              },
+              {
+                "name": "glowing_floor",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.584330677986145
+              }
+            ],
+            "best": {
+              "name": "wet_floor",
+              "category": 0,
+              "post_count": 736,
+              "score": 0.6107480525970459
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "muted colors",
+            "top_k": [
+              {
+                "name": "muted_color",
+                "category": 0,
+                "post_count": 7476,
+                "score": 0.7017584443092346
+              },
+              {
+                "name": "mute_d",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.69841468334198
+              },
+              {
+                "name": "mutii",
+                "category": 1,
+                "post_count": 20,
+                "score": 0.695242166519165
+              },
+              {
+                "name": "mute",
+                "category": 0,
+                "post_count": 172,
+                "score": 0.6354511976242065
+              },
+              {
+                "name": "dimly_lit_room",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6294782161712646
+              }
+            ],
+            "best": {
+              "name": "muted_color",
+              "category": 0,
+              "post_count": 7476,
+              "score": 0.7017584443092346
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thick dark outlines",
+            "top_k": [
+              {
+                "name": "thick_outlines",
+                "category": 0,
+                "post_count": 463,
+                "score": 0.8048146367073059
+              },
+              {
+                "name": "black_outline",
+                "category": 0,
+                "post_count": 1854,
+                "score": 0.6851885318756104
+              },
+              {
+                "name": "multicolored_outline",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6673398017883301
+              },
+              {
+                "name": "grey_outline",
+                "category": 0,
+                "post_count": 866,
+                "score": 0.6631746292114258
+              },
+              {
+                "name": "dark_foreground",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6395605802536011
+              }
+            ],
+            "best": {
+              "name": "thick_outlines",
+              "category": 0,
+              "post_count": 463,
+              "score": 0.8048146367073059
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "pastel pinks",
+            "top_k": [
+              {
+                "name": "pastel_pastel",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.747024416923523
+              },
+              {
+                "name": "pastel_wing",
+                "category": 1,
+                "post_count": 12,
+                "score": 0.7045177221298218
+              },
+              {
+                "name": "pink_pajamas",
+                "category": 0,
+                "post_count": 3952,
+                "score": 0.6962804198265076
+              },
+              {
+                "name": "pink_scales",
+                "category": 0,
+                "post_count": 120,
+                "score": 0.6878757476806641
+              },
+              {
+                "name": "pink_overalls",
+                "category": 0,
+                "post_count": 417,
+                "score": 0.6829597353935242
+              }
+            ],
+            "best": {
+              "name": "pink_pajamas",
+              "category": 0,
+              "post_count": 3952,
+              "score": 0.6962804198265076
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "deep indigos",
+            "top_k": [
+              {
+                "name": "deep_dig",
+                "category": 1,
+                "post_count": 26,
+                "score": 0.6967761516571045
+              },
+              {
+                "name": "deep_duck",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6597825884819031
+              },
+              {
+                "name": "deep.au",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.645048975944519
+              },
+              {
+                "name": "deeple",
+                "category": 1,
+                "post_count": 56,
+                "score": 0.6408625245094299
+              },
+              {
+                "name": "deep_skin",
+                "category": 0,
+                "post_count": 13585,
+                "score": 0.6344875693321228
+              }
+            ],
+            "best": {
+              "name": "deeple",
+              "category": 1,
+              "post_count": 56,
+              "score": 0.6408625245094299
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stark monochromatic background",
+            "top_k": [
+              {
+                "name": "static_background",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6727403998374939
+              },
+              {
+                "name": "multicolored_squares_background",
+                "category": 0,
+                "post_count": 67,
+                "score": 0.6620597839355469
+              },
+              {
+                "name": "dark_foreground",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6561579704284668
+              },
+              {
+                "name": "cracked_background",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.650118350982666
+              },
+              {
+                "name": "upside_down_background",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.643193244934082
+              }
+            ],
+            "best": {
+              "name": "multicolored_squares_background",
+              "category": 0,
+              "post_count": 67,
+              "score": 0.6620597839355469
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "Yoshitomo Nara style",
+            "top_k": [
+              {
+                "name": "yoshimaro",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6647096276283264
+              },
+              {
+                "name": "nagata_yoshihiro",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6353188157081604
+              },
+              {
+                "name": "yoshiwa_tomo",
+                "category": 1,
+                "post_count": 324,
+                "score": 0.6245198845863342
+              },
+              {
+                "name": "yoshida_bana",
+                "category": 1,
+                "post_count": 18,
+                "score": 0.6236568093299866
+              },
+              {
+                "name": "narira",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.6234233975410461
+              }
+            ],
+            "best": {
+              "name": "yoshiwa_tomo",
+              "category": 1,
+              "post_count": 324,
+              "score": 0.6245198845863342
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "humidity",
+            "top_k": [
+              {
+                "name": "humidifier",
+                "category": 0,
+                "post_count": 33,
+                "score": 0.7017747163772583
+              },
+              {
+                "name": "humidifier_xd",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.655545711517334
+              },
+              {
+                "name": "humidasi79",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6000796556472778
+              },
+              {
+                "name": "very_sweaty",
+                "category": 0,
+                "post_count": 7428,
+                "score": 0.5976563692092896
+              },
+              {
+                "name": "stay_hydrated",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.5821702480316162
+              }
+            ],
+            "best": {
+              "name": "very_sweaty",
+              "category": 0,
+              "post_count": 7428,
+              "score": 0.5976563692092896
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "expressive face",
+            "top_k": [
+              {
+                "name": "expressive_tail",
+                "category": 0,
+                "post_count": 475,
+                "score": 0.666292130947113
+              },
+              {
+                "name": "angry_face_emoji",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6573517918586731
+              },
+              {
+                "name": "expressive_object",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.655116856098175
+              },
+              {
+                "name": "expressive_clothes",
+                "category": 0,
+                "post_count": 1634,
+                "score": 0.6540765166282654
+              },
+              {
+                "name": "happy_facial",
+                "category": 0,
+                "post_count": 545,
+                "score": 0.6521689295768738
+              }
+            ],
+            "best": {
+              "name": "expressive_tail",
+              "category": 0,
+              "post_count": 475,
+              "score": 0.666292130947113
+            },
+            "dropped_reason": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "curate",
+      "params": {
+        "temperature": 0.5,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 0.769,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "solitary figure, cramped, laundry, steam, young woman, oversized shirt, wide mouth, loose clothes, jumpsuit, mass of black unruly hair, round face, heavy wet towel, wet floor, flat lighting, single high window, soft elongated shadows, peeling paint, reflective floor, muted color, thick outlines, pastel pinks, deep indigos, dark foreground, yoshitomo nara, humid"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.551,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, figure, cramped, laundry, steam, oversized shirt, wide mouth, loose clothes, jumpsuit, wet towel, heavy, wet floor, window, shadow, peeling, paint, reflective floor, muted color, thick outlines, dark foreground",
+        "stats": {
+          "corrected": 0,
+          "dropped": 2,
+          "kept_invalid": 0,
+          "total": 23
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.06,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, figure, cramped, laundry, steam, oversized shirt, wide mouth, loose clothes, jumpsuit, wet towel, heavy, wet floor, window, shadow, peeling, paint, reflective floor, muted color, thick outlines, dark foreground, @nakajima yuka",
+        "slot_fill_trace": {
+          "artist": "nakajima_yuka"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 1000,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, safe, figure, cramped, laundry, steam, oversized shirt, wide mouth, loose clothes, jumpsuit, wet towel, heavy, wet floor, window, shadow, peeling, paint, reflective floor, muted color, thick outlines, dark foreground, @nakajima yuka",
+  "prose": "A solitary figure stands in a cramped, industrial laundry room filled with steam and hanging white linens. The scene is rendered in the style of Yoshitomo Nara. A young woman with oversized, pale skin and a wide, unsmiling mouth wears a loose, oversized denim jumpsuit. Her hair is a mass of black, slightly unruly strands that frame a round, expressive face. She holds a heavy, wet towel in one hand while leaning against a rusted metal pipe. The lighting is flat and diffused, coming from a single high window that casts soft, elongated shadows against the peeling paint of the walls. The floor is slick with condensation, reflecting the muted colors of the room. Nara's characteristic use of thick, dark outlines defines every curve of her body and the folds of her fabric. The air feels thick with humidity, and the colors are a mix of pastel pinks and deep indigos that contrast with the stark, monochromatic background.",
+  "draft": "solitary figure, cramped, laundry, steam, young woman, oversized shirt, wide mouth, loose clothes, jumpsuit, mass of black unruly hair, round face, heavy wet towel, wet floor, flat lighting, single high window, soft elongated shadows, peeling paint, reflective floor, muted color, thick outlines, pastel pinks, deep indigos, dark foreground, yoshitomo nara, humid",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

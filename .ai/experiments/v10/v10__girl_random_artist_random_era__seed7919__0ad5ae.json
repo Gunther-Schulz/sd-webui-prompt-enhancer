@@ -1,0 +1,227 @@
+{
+  "run_id": "v10__girl_random_artist_random_era__seed7919__0ad5ae",
+  "variant": "v10",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 7919
+  },
+  "started_at": 1776784662.6440701,
+  "ended_at": 1776784670.3481643,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.67,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['kunishige keiichi', 'akane souichi', \"sonoda ken'ichi\", 'gotou keiji', 'teramoto kei', 'kawakami shuuichi'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: kunishige keiichi, akane souichi, sonoda ken'ichi, gotou keiji, teramoto kei, kawakami shuuichi\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.943,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in the center of a dimly lit room in the 1970s, her pose relaxed and slightly angled. She wears a loose, high-waisted jumpsuit made of crushed velvet in a deep burnt orange. Her hair is a messy, shoulder-length cut with soft layers framing her face. The lighting is warm and directional, casting long, distinct shadows against a textured wall. The atmosphere feels grainy and analog, as if captured on high-contrast film. In the style of Sonoda Ken'ichi, the composition emphasizes bold, graphic shapes and a flattened sense of depth. The girl's expression is neutral, her gaze fixed on a point just beyond the viewer. A single pendant hangs from her neck, catching the ambient light. The floor beneath her is polished wood, reflecting the warm glow. Her fingers rest casually against her hip, fingers slightly curled. The background features a low, angular sofa upholstered in patterned fabric. The color palette is restricted to earthy tones and muted pastels. The air seems still, heavy with the scent of old paper and tobacco. Her skin tone is pale, contrasting sharply with the dark surroundings. A faint sheen of sweat glistens on her upper lip. The frame is tight, cutting off the top of her head to focus on her form.",
+        "prose_samples": [
+          "A girl stands in a dimly lit 1970s Tokyo alleyway, her skin rendered with the thick, textured impasto of Gotou Keiji. She wears a loose, mustard-yellow tunic made of heavy cotton that catches the warm, slanted glow of a single neon sign above. Her dark hair falls in uneven, choppy layers, framing a face marked by heavy, expressive eyeliner and a slightly parted mouth. The air feels humid and thick with the scent of rain, suggested by the way the light pools on the wet pavement at her feet. Shadows are sharp and deep, contrasting against the soft, creamy background tones typical of the era. A single drop of water hangs from her lower lip, refracting the orange light. The composition feels slightly off-kilter, as if captured mid-motion by a camera struggling with the low light. She looks directly forward, her expression caught between a smirk and a yawn. The scene is grounded in the specific, slightly gritty realism of 1974, where the girl is the only sharp focus in a world of soft, blended brushstrokes.",
+          "A girl stands in a sun-drenched 1924 Parisian apartment. Her hair is a deep, raven black cut in a sharp bob, framing a face with heavy, dark eyebrows and a slightly tilted chin. She wears a high-collared dress of stiff, cream-colored linen that catches the sharp, directional light from a single window. The room features exposed brick walls and a low ceiling, all rendered in the style of Akane Souichi. His technique emphasizes high contrast and a slightly tilted perspective, making the girl appear to loom large in the frame. Dust motes dance in the golden beam cutting across the floorboards. Her pose is casual yet deliberate, one hand resting on her hip, the fabric of her dress pulling taut against the light. Shadows are long and defined, stretching across the floor. The air feels thick and warm, smelling of old paper and tobacco. Every line is crisp and deliberate, avoiding softness in favor of structural clarity.",
+          "A girl stands in the center of a dimly lit room in the 1970s, her pose relaxed and slightly angled. She wears a loose, high-waisted jumpsuit made of crushed velvet in a deep burnt orange. Her hair is a messy, shoulder-length cut with soft layers framing her face. The lighting is warm and directional, casting long, distinct shadows against a textured wall. The atmosphere feels grainy and analog, as if captured on high-contrast film. In the style of Sonoda Ken'ichi, the composition emphasizes bold, graphic shapes and a flattened sense of depth. The girl's expression is neutral, her gaze fixed on a point just beyond the viewer. A single pendant hangs from her neck, catching the ambient light. The floor beneath her is polished wood, reflecting the warm glow. Her fingers rest casually against her hip, fingers slightly curled. The background features a low, angular sofa upholstered in patterned fabric. The color palette is restricted to earthy tones and muted pastels. The air seems still, heavy with the scent of old paper and tobacco. Her skin tone is pale, contrasting sharply with the dark surroundings. A faint sheen of sweat glistens on her upper lip. The frame is tight, cutting off the top of her head to focus on her form."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.195,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best_quality,score_7,sensitive,1girl,1970s,loose_jumpsuit,high_waisted_jumpsuit,crushed_velvet,deep_burnt_orange,shoulder_length_hair,layered_hair,neutral_expression,fixed_gaze,grainy,analog,high_contrast,armored_arms,angular_pose,waist,pendant,necklace,wooden_floor,reflected_light,textured_wall,low_sofa,patterned_clothing,earthy_tones,muted_pastels,pale_skin,shiny_lip,close_up,frame_tight,in_the_style_of_Sonoda_Ken'ichi,bold_shapes,flattened_depth",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {
+        "general_min_post_count": 100,
+        "reject_meta_non_whitelist": true
+      },
+      "elapsed_s": 0.897,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, sensitive, 1girl, @sonoda ken'ichi, open jumpsuit, jumpsuit around waist, crushed, burnt, medium hair, expressionless, film grain, high contrast, arm mounted weapon, pose, hand around waist, pendant, necklace, wooden floor, ring light reflection, wall, couch, patterned clothing, pastels, pale skin, shiny lips, close up, tight clothes, shapes",
+        "stats": {
+          "total": 30
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, sensitive, 1girl, @sonoda ken'ichi, open jumpsuit, jumpsuit around waist, crushed, burnt, medium hair, expressionless, film grain, high contrast, arm mounted weapon, pose, hand around waist, pendant, necklace, wooden floor, ring light reflection, wall, couch, patterned clothing, pastels, pale skin, shiny lips, close up, tight clothes, shapes",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 7919,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, sensitive, 1girl, @sonoda ken'ichi, open jumpsuit, jumpsuit around waist, crushed, burnt, medium hair, expressionless, film grain, high contrast, arm mounted weapon, pose, hand around waist, pendant, necklace, wooden floor, ring light reflection, wall, couch, patterned clothing, pastels, pale skin, shiny lips, close up, tight clothes, shapes",
+  "prose": "A girl stands in the center of a dimly lit room in the 1970s, her pose relaxed and slightly angled. She wears a loose, high-waisted jumpsuit made of crushed velvet in a deep burnt orange. Her hair is a messy, shoulder-length cut with soft layers framing her face. The lighting is warm and directional, casting long, distinct shadows against a textured wall. The atmosphere feels grainy and analog, as if captured on high-contrast film. In the style of Sonoda Ken'ichi, the composition emphasizes bold, graphic shapes and a flattened sense of depth. The girl's expression is neutral, her gaze fixed on a point just beyond the viewer. A single pendant hangs from her neck, catching the ambient light. The floor beneath her is polished wood, reflecting the warm glow. Her fingers rest casually against her hip, fingers slightly curled. The background features a low, angular sofa upholstered in patterned fabric. The color palette is restricted to earthy tones and muted pastels. The air seems still, heavy with the scent of old paper and tobacco. Her skin tone is pale, contrasting sharply with the dark surroundings. A faint sheen of sweat glistens on her upper lip. The frame is tight, cutting off the top of her head to focus on her form.",
+  "draft": "masterpiece,best_quality,score_7,sensitive,1girl,1970s,loose_jumpsuit,high_waisted_jumpsuit,crushed_velvet,deep_burnt_orange,shoulder_length_hair,layered_hair,neutral_expression,fixed_gaze,grainy,analog,high_contrast,armored_arms,angular_pose,waist,pendant,necklace,wooden_floor,reflected_light,textured_wall,low_sofa,patterned_clothing,earthy_tones,muted_pastels,pale_skin,shiny_lip,close_up,frame_tight,in_the_style_of_Sonoda_Ken'ichi,bold_shapes,flattened_depth",
+  "shortlist": {
+    "artists": [
+      "kunishige keiichi",
+      "akane souichi",
+      "sonoda ken'ichi",
+      "gotou keiji",
+      "teramoto kei",
+      "kawakami shuuichi"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

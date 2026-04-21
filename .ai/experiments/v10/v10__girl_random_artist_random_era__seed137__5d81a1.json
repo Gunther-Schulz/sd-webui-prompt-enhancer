@@ -1,0 +1,227 @@
+{
+  "run_id": "v10__girl_random_artist_random_era__seed137__5d81a1",
+  "variant": "v10",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 137
+  },
+  "started_at": 1776784656.9668806,
+  "ended_at": 1776784662.6436493,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.613,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['qp:flapper', 'dramatica', 'the art mage', 'tom (1art.)', 'zanzi', 'flipper'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: qp:flapper, dramatica, the art mage, tom (1art.), zanzi, flipper\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.699,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in a sun-drenched 1920s Parisian café, her posture relaxed with one hand resting on a ceramic cup. She wears a dropped-waist dress made of shimmering silk, the hemline ending mid-calf, paired with a feathered headband. Her hair is cut in a sharp bob, swept to one side, framing a face tilted upward. The light is sharp and directional, casting hard shadows against the checkered floor. The composition is tilted slightly, creating dynamic movement, rendered in the style of qp:flapper.",
+        "prose_samples": [
+          "A girl stands in a sun-drenched 1920s Parisian café, her posture relaxed with one hand resting on a ceramic cup. She wears a dropped-waist dress made of shimmering silk, the hemline ending mid-calf, paired with a feathered headband. Her hair is cut in a sharp bob, swept to one side, framing a face tilted upward. The light is sharp and directional, casting hard shadows against the checkered floor. The composition is tilted slightly, creating dynamic movement, rendered in the style of qp:flapper.",
+          "A girl stands in a sun-drenched 1920s Parisian alleyway, her silhouette sharp and angular. She wears a dropped-waist silk dress in emerald green, the fabric catching the harsh overhead light. Her hair is a chaotic tumble of dark curls pinned back with a single pearl clip. The air feels thick with dust motes dancing in the beams. Shadows are cast deep and long against the brick wall behind her. In the style of zanzi, the scene is rendered with high contrast and a painterly texture that blurs the edges of her skirt. A vintage streetlamp flickers above, casting a warm amber glow that mixes with the cool daylight. Her pose is dynamic, one leg slightly forward as if mid-stride. The era is specific to the Roaring Twenties, evident in the flapper-style fringe adorning her hem. The girl's expression is confident, eyes looking slightly upward. Every element feels grounded in the physical world of the 1920s, filtered through zanzi's distinctive, slightly distorted lens.",
+          "A girl stands in a 1974 Parisian cafe, bathed in the harsh, direct sunlight of mid-summer. She wears a cropped denim jacket over a white tank top and high-waisted bell-bottoms, with a red bandana tied around her messy, sun-bleached hair. Her pose is relaxed, one leg bent as she balances on a wobbly wooden stool. The lighting is sharp and directional, casting deep, crisp shadows under her chin and across the table. A single condensation drop hangs from a glass of iced tea nearby. The background blurs into a wash of warm yellows and deep oranges, typical of the era's vibrant street photography. The entire composition feels candid and slightly grainy, executed in the style of qp:flapper, who favors high contrast and capturing fleeting moments of urban life."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.783,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "best_quality, score_8, 1girl, qp:flapper, 1920s, paris, cafe, sun-drenched, relaxed, hand, ceramic_cup, dropped_waist_dress, shimmering_silk, mid_calf_hem, feathered_headband, bob_hair, swept_hair, tilted_face, upward_glance, sharp_light, hard_shadows, checkered_floor, tilted_composition, dynamic_movement",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {
+        "general_min_post_count": 100,
+        "reject_meta_non_whitelist": true
+      },
+      "elapsed_s": 0.582,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_8, safe, 1girl, @qp:flapper, paris, cafe, sun, relaxing, cup, dress, silk, headband, upswept hair, tilted halo, looking at watch, light, shadow, checkered floor",
+        "stats": {
+          "total": 20
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, @qp:flapper, paris, cafe, sun, relaxing, cup, dress, silk, headband, upswept hair, tilted halo, looking at watch, light, shadow, checkered floor",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 137,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_8, safe, 1girl, @qp:flapper, paris, cafe, sun, relaxing, cup, dress, silk, headband, upswept hair, tilted halo, looking at watch, light, shadow, checkered floor",
+  "prose": "A girl stands in a sun-drenched 1920s Parisian café, her posture relaxed with one hand resting on a ceramic cup. She wears a dropped-waist dress made of shimmering silk, the hemline ending mid-calf, paired with a feathered headband. Her hair is cut in a sharp bob, swept to one side, framing a face tilted upward. The light is sharp and directional, casting hard shadows against the checkered floor. The composition is tilted slightly, creating dynamic movement, rendered in the style of qp:flapper.",
+  "draft": "best_quality, score_8, 1girl, qp:flapper, 1920s, paris, cafe, sun-drenched, relaxed, hand, ceramic_cup, dropped_waist_dress, shimmering_silk, mid_calf_hem, feathered_headband, bob_hair, swept_hair, tilted_face, upward_glance, sharp_light, hard_shadows, checkered_floor, tilted_composition, dynamic_movement",
+  "shortlist": {
+    "artists": [
+      "qp:flapper",
+      "dramatica",
+      "the art mage",
+      "tom (1art.)",
+      "zanzi",
+      "flipper"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

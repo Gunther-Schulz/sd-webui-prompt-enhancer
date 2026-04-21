@@ -1,0 +1,5349 @@
+{
+  "run_id": "v3__miku_cake__seed1001__3ffd8d",
+  "variant": "v3",
+  "pipeline_input": {
+    "source": "hatsune miku holding a cake, chibi",
+    "mods": [],
+    "seed": 1001
+  },
+  "started_at": 1776780059.0721822,
+  "ended_at": 1776780079.1393676,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.527,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['chibi (shimon)', 'chibitan', 'kotomi (happy colors)', 'chiba sadoru', 'chigo', 'chiki (botugo)'], characters=['hatsune miku', 'hatsune miku (nt)', 'hatsune miku (noodle stopper)', 'shaohua hatsune miku', 'miku (lee)', 'brazilian miku'], series=['hatsune miku expo', 'hatsune miku …"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: chibi (shimon), chibitan, kotomi (happy colors), chiba sadoru, chigo, chiki (botugo)\nCharacters: hatsune miku, hatsune miku (nt), hatsune miku (noodle stopper), shaohua hatsune miku, miku (lee), brazilian miku\nSeries: hatsune miku expo, hatsune miku graphy collection, hatsune miku happy 16th birthday  dear creators "
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.532,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "hatsune miku holding a cake, chibi style, small round head, oversized expressive eyes, bobbed teal hair with twin pigtails, wearing a short pastel blue dress with a frilled hem, standing on tiptoes, one hand gripping the side of a round vanilla cake, the other hand raised slightly, cake topped with thick pink frosting and a single green leaf, soft diffused overhead lighting, subtle shadows under the chin and chin, smooth matte skin texture, clean white background, minimal background detail, high contrast, sharp focus on the face, simple geometric shapes, flat color fields, cheerful expression, slight tilt of the head, minimal background clutter, distinct outline separating figure from space, vibrant teal against soft cream tones, crisp edges, delicate pose, compact proportions, rounded limbs, gentle curve of the cake, slight bounce in stance, bright and airy atmosphere, precise lines, defined eyelashes, glossy frosting surface, matte fabric texture, clear separation between hair strands, distinct jawline, small button nose, wide open mouth showing a hint of teeth, direct gaze forward, symmetrical composition, balanced weight distribution, playful energy, crisp definition, smooth gradients, clean silhouette, rounded forms, simplified features, charming proportions, distinct hairline, smooth skin finish, gentle smile, bright teal hue, soft pastel pink, creamy white frosting, crisp white background, clear focal point, balanced negative space, cohesive color palette, unified style, distinct character presence, small stature, elongated arms, delicate fingers, rounded shoulders, compact frame, cheerful demeanor, dynamic stillness, polished finish, detailed pigtails, simple neckline, short hemline, distinct hem edge, smooth fabric drape, soft light source, gentle shadows, clear depth perception, layered composition, distinct foreground subject, clean lines, smooth transitions, vibrant color saturation, balanced exposure, clear subject definition, cohesive visual weight, distinct character silhouette, smooth skin texture, glossy hair sheen, crisp facial features, rounded ears, distinct neck line, smooth jaw contour, clear brow ridge, simple eye shape, distinct eyelash line, soft hair volume, clean parting line, smooth cheekbones, distinct lip line, simple nose bridge, clear chin curve, smooth forehead, distinct hairline edge, smooth temple curve, clear jaw angle, distinct neck shadow, smooth collarbone, distinct shoulder slope, smooth back curve, distinct hip line, smooth thigh curve, distinct knee bend, smooth calf muscle, distinct ankle bone, smooth instep, distinct toe shape, smooth palm texture, distinct finger joint, smooth wrist curve, distinct elbow bend, smooth shoulder joint, distinct hip joint, smooth knee joint, distinct ankle joint, smooth hip joint, distinct waist curve, smooth stomach curve, distinct rib cage, smooth collarbone curve, distinct shoulder blade, smooth back muscle, distinct thigh muscle, smooth calf muscle, distinct hamstring, smooth quad, distinct glute, smooth hamstrings, distinct thigh gap, smooth inner thigh, distinct outer hip, smooth waistline, distinct hip curve, smooth lower back, distinct lumbar curve, smooth upper back, distinct scapula, smooth shoulder line, distinct clavicle, smooth neck line, distinct throat, smooth jawline, distinct chin cleft, smooth forehead curve, distinct brow ridge, smooth temple line, distinct hairline edge, smooth ear lobe, distinct ear shape, smooth cheekbone curve, distinct nose bridge, smooth lip line, distinct cupid's bow, smooth chin cleft, distinct jaw angle, smooth neck curve, distinct collarbone, smooth shoulder slope, distinct hip line, smooth thigh curve, distinct knee bend, smooth calf muscle, distinct ankle bone, smooth instep, distinct toe shape, smooth palm texture, distinct finger joint, smooth wrist curve, distinct elbow bend, smooth shoulder joint, distinct hip joint, smooth knee joint, distinct ankle joint, smooth hip joint, distinct waist curve, smooth stomach curve, distinct rib cage, smooth collarbone curve, distinct shoulder blade, smooth back muscle, distinct thigh muscle, smooth calf muscle, distinct hamstring, smooth quad, distinct glute, smooth hamstrings, distinct thigh gap, smooth inner thigh, distinct outer hip, smooth waistline, distinct hip curve, smooth lower back, distinct lumbar curve, smooth upper back, distinct scapula, smooth shoulder line, distinct clavicle, smooth neck line, distinct throat, smooth jawline, distinct chin cleft, smooth forehead curve, distinct brow ridge, smooth temple line, distinct hairline edge, smooth ear lobe, distinct ear shape, smooth cheekbone curve, distinct nose bridge, smooth lip line, distinct cupid's bow, smooth chin cleft, distinct jaw angle, smooth neck curve, distinct collarbone, smooth shoulder slope, distinct hip line, smooth thigh curve, distinct knee bend, smooth calf muscle, distinct ankle bone, smooth instep, distinct toe shape, smooth palm texture, distinct finger joint, smooth wrist curve, distinct elbow bend, smooth shoulder joint, distinct hip joint, smooth knee joint, distinct ankle joint, smooth hip joint, distinct waist curve, smooth stomach",
+        "user_msg": "SOURCE PROMPT: hatsune miku holding a cake, chibi"
+      }
+    },
+    {
+      "step": "concept_enumerate",
+      "params": {
+        "temperature": 0.6,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 3.441,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "concepts": [
+          "hatsune miku",
+          "chibi style",
+          "small round head",
+          "oversized expressive eyes",
+          "bobbed teal hair",
+          "twin pigtails",
+          "short pastel blue dress",
+          "frilled hem",
+          "standing on tiptoes",
+          "one hand gripping cake",
+          "other hand raised",
+          "round vanilla cake",
+          "thick pink frosting",
+          "single green leaf",
+          "soft diffused overhead lighting",
+          "subtle shadows under chin",
+          "smooth matte skin texture",
+          "clean white background",
+          "minimal background detail",
+          "high contrast",
+          "sharp focus on face",
+          "simple geometric shapes",
+          "flat color fields",
+          "cheerful expression",
+          "slight tilt of head",
+          "minimal background clutter",
+          "distinct outline",
+          "vibrant teal hue",
+          "soft cream tones",
+          "crisp edges",
+          "delicate pose",
+          "compact proportions",
+          "rounded limbs",
+          "gentle curve of cake",
+          "slight bounce in stance",
+          "bright and airy atmosphere",
+          "precise lines",
+          "defined eyelashes",
+          "glossy frosting surface",
+          "matte fabric texture",
+          "clear separation between hair strands",
+          "distinct jawline",
+          "small button nose",
+          "wide open mouth",
+          "hint of teeth",
+          "direct gaze forward",
+          "symmetrical composition",
+          "balanced weight distribution",
+          "playful energy",
+          "crisp definition",
+          "smooth gradients",
+          "clean silhouette",
+          "rounded forms",
+          "simplified features",
+          "charming proportions",
+          "distinct hairline",
+          "smooth skin finish",
+          "gentle smile",
+          "bright teal",
+          "soft pastel pink",
+          "creamy white frosting",
+          "crisp white background",
+          "clear focal point",
+          "balanced negative space",
+          "cohesive color palette",
+          "unified style",
+          "distinct character presence",
+          "small stature",
+          "elongated arms",
+          "delicate fingers",
+          "rounded shoulders",
+          "compact frame",
+          "cheerful demeanor",
+          "dynamic stillness",
+          "polished finish",
+          "detailed pigtails",
+          "simple neckline",
+          "short hemline",
+          "distinct hem edge",
+          "smooth fabric drape",
+          "soft light source",
+          "gentle shadows",
+          "clear depth perception",
+          "layered composition",
+          "distinct foreground subject",
+          "clean lines",
+          "smooth transitions",
+          "vibrant color saturation",
+          "balanced exposure",
+          "clear subject definition",
+          "cohesive visual weight",
+          "distinct character silhouette",
+          "glossy hair sheen",
+          "crisp facial features",
+          "rounded ears",
+          "distinct neck line",
+          "smooth jaw contour",
+          "clear brow ridge",
+          "simple eye shape",
+          "distinct eyelash line",
+          "soft hair volume",
+          "clean parting line",
+          "smooth cheekbones",
+          "distinct lip line",
+          "simple nose bridge",
+          "clear chin curve",
+          "smooth forehead",
+          "distinct hairline edge",
+          "smooth ear lobe",
+          "distinct ear shape",
+          "smooth cheekbone curve",
+          "distinct nose bridge",
+          "smooth lip line",
+          "distinct cupid's bow",
+          "smooth chin cleft",
+          "distinct jaw angle",
+          "smooth neck curve",
+          "distinct collarbone",
+          "smooth shoulder slope"
+        ],
+        "concepts_raw": "hatsune miku\nchibi style\nsmall round head\noversized expressive eyes\nbobbed teal hair\ntwin pigtails\nshort pastel blue dress\nfrilled hem\nstanding on tiptoes\none hand gripping cake\nother hand raised\nround vanilla cake\nthick pink frosting\nsingle green leaf\nsoft diffused overhead lighting\nsubtle shadows under chin\nsmooth matte skin texture\nclean white background\nminimal background detail\nhigh contrast\nsharp focus on face\nsimple geometric shapes\nflat color fields\ncheerful expression\nslight tilt of head\nminimal background clutter\ndistinct outline\nvibrant teal hue\nsoft cream tones\ncrisp edges\ndelicate pose\ncompact proportions\nrounded limbs\ngentle curve of cake\nslight bounce in stance\nbright and airy atmosphere\nprecise lines\ndefined eyelashes\nglossy frosting surface\nmatte fabric texture\nclear separation between hair strands\ndistinct jawline\nsmall button nose\nwide open mouth\nhint of teeth\ndirect gaze forward\nsymmetrical composition\nbalanced weight distribution\nplayful energy\ncrisp definition\nsmooth gradients\nclean silhouette\nrounded forms\nsimplified features\ncharming proportions\ndistinct hairline\nsmooth skin finish\ngentle smile\nbright teal\nsoft pastel pink\ncreamy white frosting\ncrisp white background\nclear focal point\nbalanced negative space\ncohesive color palette\nunified style\ndistinct character presence\nsmall stature\nelongated arms\ndelicate fingers\nrounded shoulders\ncompact frame\ncheerful demeanor\ndynamic stillness\npolished finish\ndetailed pigtails\nsimple neckline\nshort hemline\ndistinct hem edge\nsmooth fabric drape\nsoft light source\ngentle shadows\nclear depth perception\nlayered composition\ndistinct foreground subject\nclean lines\nsmooth transitions\nvibrant color saturation\nbalanced exposure\nclear subject definition\ncohesive visual weight\ndistinct character silhouette\nglossy hair sheen\ncrisp facial features\nrounded ears\ndistinct neck line\nsmooth jaw contour\nclear brow ridge\nsimple eye shape\ndistinct eyelash line\nsoft hair volume\nclean parting line\nsmooth cheekbones\ndistinct lip line\nsimple nose bridge\nclear chin curve\nsmooth forehead\ndistinct hairline edge\nsmooth ear lobe\ndistinct ear shape\nsmooth cheekbone curve\ndistinct nose bridge\nsmooth lip line\ndistinct cupid's bow\nsmooth chin cleft\ndistinct jaw angle\nsmooth neck curve\ndistinct collarbone\nsmooth shoulder slope"
+      }
+    },
+    {
+      "step": "canonicalize",
+      "params": {
+        "min_score": 0.35,
+        "min_post_count": 50,
+        "top_k": 5
+      },
+      "elapsed_s": 1.354,
+      "inputs_seen": [
+        "base_name",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "candidates": [
+          {
+            "concept": "hatsune miku",
+            "top_k": [
+              {
+                "name": "hank_miku",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.690887451171875
+              },
+              {
+                "name": "hatsune_miku_(sp)",
+                "category": 4,
+                "post_count": 18,
+                "score": 0.687742292881012
+              },
+              {
+                "name": "hatsune_miku_(nt)",
+                "category": 4,
+                "post_count": 529,
+                "score": 0.6866092085838318
+              },
+              {
+                "name": "matsuda_miki",
+                "category": 1,
+                "post_count": 27,
+                "score": 0.6789409518241882
+              },
+              {
+                "name": "hatsune_miku_expo",
+                "category": 3,
+                "post_count": 187,
+                "score": 0.6750292778015137
+              }
+            ],
+            "best": {
+              "name": "hatsune_miku_(nt)",
+              "category": 4,
+              "post_count": 529,
+              "score": 0.6866092085838318
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "chibi style",
+            "top_k": [
+              {
+                "name": "chibikki",
+                "category": 1,
+                "post_count": 255,
+                "score": 0.7462501525878906
+              },
+              {
+                "name": "chibiki",
+                "category": 4,
+                "post_count": 29,
+                "score": 0.7071006894111633
+              },
+              {
+                "name": "chibi_vanille",
+                "category": 1,
+                "post_count": 77,
+                "score": 0.7064751982688904
+              },
+              {
+                "name": "chibiibiru",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.705162763595581
+              },
+              {
+                "name": "chibi_robo",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.7024294137954712
+              }
+            ],
+            "best": {
+              "name": "chibikki",
+              "category": 1,
+              "post_count": 255,
+              "score": 0.7462501525878906
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "small round head",
+            "top_k": [
+              {
+                "name": "small_head",
+                "category": 0,
+                "post_count": 224,
+                "score": 0.7475478649139404
+              },
+              {
+                "name": "mini_person_on_head",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.7043949961662292
+              },
+              {
+                "name": "small_face",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.648938775062561
+              },
+              {
+                "name": "shorts_on_head",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6323872804641724
+              },
+              {
+                "name": "mini_person_on_shoulder",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.6255937218666077
+              }
+            ],
+            "best": {
+              "name": "small_head",
+              "category": 0,
+              "post_count": 224,
+              "score": 0.7475478649139404
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "oversized expressive eyes",
+            "top_k": [
+              {
+                "name": "oversized_eyewear",
+                "category": 0,
+                "post_count": 52,
+                "score": 0.7125771045684814
+              },
+              {
+                "name": "very_big_eyes",
+                "category": 0,
+                "post_count": 308,
+                "score": 0.6926114559173584
+              },
+              {
+                "name": "too_many_eyes",
+                "category": 0,
+                "post_count": 366,
+                "score": 0.6865374445915222
+              },
+              {
+                "name": "oversized_object",
+                "category": 0,
+                "post_count": 11799,
+                "score": 0.6724319458007812
+              },
+              {
+                "name": "exed_eyes",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6710829734802246
+              }
+            ],
+            "best": {
+              "name": "oversized_eyewear",
+              "category": 0,
+              "post_count": 52,
+              "score": 0.7125771045684814
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "bobbed teal hair",
+            "top_k": [
+              {
+                "name": "multicolored_hair_bobbles",
+                "category": 0,
+                "post_count": 1362,
+                "score": 0.6510437726974487
+              },
+              {
+                "name": "hair_on_tail",
+                "category": 0,
+                "post_count": 23,
+                "score": 0.6290758848190308
+              },
+              {
+                "name": "teddy_bear_hair_ornament",
+                "category": 0,
+                "post_count": 130,
+                "score": 0.6235295534133911
+              },
+              {
+                "name": "fur_trimmed_veil",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6207082867622375
+              },
+              {
+                "name": "two_tone_pubic_hair",
+                "category": 0,
+                "post_count": 39,
+                "score": 0.6202980279922485
+              }
+            ],
+            "best": {
+              "name": "multicolored_hair_bobbles",
+              "category": 0,
+              "post_count": 1362,
+              "score": 0.6510437726974487
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "twin pigtails",
+            "top_k": [
+              {
+                "name": "twintails_with_hair_base",
+                "category": 0,
+                "post_count": 739,
+                "score": 0.655014157295227
+              },
+              {
+                "name": "two_strongtiger",
+                "category": 1,
+                "post_count": 50,
+                "score": 0.653654932975769
+              },
+              {
+                "name": "grabbing_another's_twintails",
+                "category": 0,
+                "post_count": 629,
+                "score": 0.6468749046325684
+              },
+              {
+                "name": "twintails_day",
+                "category": 0,
+                "post_count": 835,
+                "score": 0.6393011212348938
+              },
+              {
+                "name": "twintails_(mantids)",
+                "category": 1,
+                "post_count": 39,
+                "score": 0.6346952319145203
+              }
+            ],
+            "best": {
+              "name": "twintails_with_hair_base",
+              "category": 0,
+              "post_count": 739,
+              "score": 0.655014157295227
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "short pastel blue dress",
+            "top_k": [
+              {
+                "name": "low_cut_dress",
+                "category": 0,
+                "post_count": 14,
+                "score": 0.677832841873169
+              },
+              {
+                "name": "light_blue_hair",
+                "category": 0,
+                "post_count": 26970,
+                "score": 0.6451327204704285
+              },
+              {
+                "name": "shorts_under_dress",
+                "category": 0,
+                "post_count": 2492,
+                "score": 0.6375305652618408
+              },
+              {
+                "name": "floral_print_shorts",
+                "category": 0,
+                "post_count": 38,
+                "score": 0.6337007284164429
+              },
+              {
+                "name": "blue_bike_shorts",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6304402947425842
+              }
+            ],
+            "best": {
+              "name": "light_blue_hair",
+              "category": 0,
+              "post_count": 26970,
+              "score": 0.6451327204704285
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "frilled hem",
+            "top_k": [
+              {
+                "name": "frilled_hoodie",
+                "category": 0,
+                "post_count": 44,
+                "score": 0.6972742080688477
+              },
+              {
+                "name": "frilled_hood",
+                "category": 0,
+                "post_count": 105,
+                "score": 0.6794453859329224
+              },
+              {
+                "name": "frilled_pajamas",
+                "category": 0,
+                "post_count": 263,
+                "score": 0.6674420237541199
+              },
+              {
+                "name": "frilled_bib",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6599999666213989
+              },
+              {
+                "name": "frilled_jacket",
+                "category": 0,
+                "post_count": 1866,
+                "score": 0.6580435037612915
+              }
+            ],
+            "best": {
+              "name": "frilled_hood",
+              "category": 0,
+              "post_count": 105,
+              "score": 0.6794453859329224
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "standing on tiptoes",
+            "top_k": [
+              {
+                "name": "standing_on_three_legs",
+                "category": 0,
+                "post_count": 242,
+                "score": 0.6920313835144043
+              },
+              {
+                "name": "man_at_legs",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.6914523243904114
+              },
+              {
+                "name": "standing_on_another's_feet",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6862685084342957
+              },
+              {
+                "name": "standing_on_own_tail",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6685896515846252
+              },
+              {
+                "name": "standing_on_person",
+                "category": 0,
+                "post_count": 494,
+                "score": 0.6676535606384277
+              }
+            ],
+            "best": {
+              "name": "standing_on_three_legs",
+              "category": 0,
+              "post_count": 242,
+              "score": 0.6920313835144043
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "one hand gripping cake",
+            "top_k": [
+              {
+                "name": "holding_cake",
+                "category": 0,
+                "post_count": 1742,
+                "score": 0.7474658489227295
+              },
+              {
+                "name": "holding_chocolate",
+                "category": 0,
+                "post_count": 2359,
+                "score": 0.6857007145881653
+              },
+              {
+                "name": "the_hand_(stand)",
+                "category": 4,
+                "post_count": 100,
+                "score": 0.6770485639572144
+              },
+              {
+                "name": "ai_drawing_person_in_cake_(meme)",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.667731523513794
+              },
+              {
+                "name": "cake_hound",
+                "category": 4,
+                "post_count": 55,
+                "score": 0.6645961999893188
+              }
+            ],
+            "best": {
+              "name": "holding_cake",
+              "category": 0,
+              "post_count": 1742,
+              "score": 0.7474658489227295
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "other hand raised",
+            "top_k": [
+              {
+                "name": "hand_up",
+                "category": 0,
+                "post_count": 428052,
+                "score": 0.741666316986084
+              },
+              {
+                "name": "hands_up",
+                "category": 0,
+                "post_count": 215792,
+                "score": 0.7344346046447754
+              },
+              {
+                "name": "the_hand_(stand)",
+                "category": 4,
+                "post_count": 100,
+                "score": 0.7306313514709473
+              },
+              {
+                "name": "index_fingers_raised",
+                "category": 0,
+                "post_count": 1492,
+                "score": 0.7226325869560242
+              },
+              {
+                "name": "holding_another's_finger",
+                "category": 0,
+                "post_count": 130,
+                "score": 0.7222769856452942
+              }
+            ],
+            "best": {
+              "name": "hand_up",
+              "category": 0,
+              "post_count": 428052,
+              "score": 0.741666316986084
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "round vanilla cake",
+            "top_k": [
+              {
+                "name": "heart_shaped_cake",
+                "category": 0,
+                "post_count": 177,
+                "score": 0.6541300415992737
+              },
+              {
+                "name": "christmas_cake",
+                "category": 0,
+                "post_count": 213,
+                "score": 0.6176778674125671
+              },
+              {
+                "name": "chocolate_cake",
+                "category": 0,
+                "post_count": 1434,
+                "score": 0.607213020324707
+              },
+              {
+                "name": "wedding_cake",
+                "category": 0,
+                "post_count": 135,
+                "score": 0.6058276891708374
+              },
+              {
+                "name": "birthday_cake",
+                "category": 0,
+                "post_count": 5064,
+                "score": 0.6054840683937073
+              }
+            ],
+            "best": {
+              "name": "heart_shaped_cake",
+              "category": 0,
+              "post_count": 177,
+              "score": 0.6541300415992737
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thick pink frosting",
+            "top_k": [
+              {
+                "name": "fancy_pink",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6638171672821045
+              },
+              {
+                "name": "pink_facial_hair",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6142507195472717
+              },
+              {
+                "name": "pink_pubic_hair",
+                "category": 0,
+                "post_count": 682,
+                "score": 0.6127294898033142
+              },
+              {
+                "name": "pink_border",
+                "category": 0,
+                "post_count": 3302,
+                "score": 0.6123062968254089
+              },
+              {
+                "name": "sweet_pink",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.6101043224334717
+              }
+            ],
+            "best": {
+              "name": "pink_pubic_hair",
+              "category": 0,
+              "post_count": 682,
+              "score": 0.6127294898033142
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "single green leaf",
+            "top_k": [
+              {
+                "name": "single_feather",
+                "category": 0,
+                "post_count": 78,
+                "score": 0.6840361952781677
+              },
+              {
+                "name": "green_leaf",
+                "category": 0,
+                "post_count": 49,
+                "score": 0.6657867431640625
+              },
+              {
+                "name": "single_greave",
+                "category": 0,
+                "post_count": 111,
+                "score": 0.6560981273651123
+              },
+              {
+                "name": "single_stripe",
+                "category": 0,
+                "post_count": 2512,
+                "score": 0.6448971033096313
+              },
+              {
+                "name": "single_bare_leg",
+                "category": 0,
+                "post_count": 1427,
+                "score": 0.64030921459198
+              }
+            ],
+            "best": {
+              "name": "single_feather",
+              "category": 0,
+              "post_count": 78,
+              "score": 0.6840361952781677
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft diffused overhead lighting",
+            "top_k": [
+              {
+                "name": "overhead_lights",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.7140287756919861
+              },
+              {
+                "name": "light_bulb_above_head",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.643401563167572
+              },
+              {
+                "name": "studio_lights",
+                "category": 0,
+                "post_count": 74,
+                "score": 0.6335961222648621
+              },
+              {
+                "name": "horizontal_spotlight",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6314187049865723
+              },
+              {
+                "name": "floating_lights",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.6286539435386658
+              }
+            ],
+            "best": {
+              "name": "overhead_lights",
+              "category": 0,
+              "post_count": 59,
+              "score": 0.7140287756919861
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "subtle shadows under chin",
+            "top_k": [
+              {
+                "name": "one_eye_in_shadow",
+                "category": 0,
+                "post_count": 172,
+                "score": 0.6677713394165039
+              },
+              {
+                "name": "hands_under_chin",
+                "category": 0,
+                "post_count": 14,
+                "score": 0.663289487361908
+              },
+              {
+                "name": "eyes_in_shadow",
+                "category": 0,
+                "post_count": 1021,
+                "score": 0.6617048978805542
+              },
+              {
+                "name": "face_in_shadow",
+                "category": 0,
+                "post_count": 374,
+                "score": 0.6510539054870605
+              },
+              {
+                "name": "sitting_in_shadow",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6474409699440002
+              }
+            ],
+            "best": {
+              "name": "one_eye_in_shadow",
+              "category": 0,
+              "post_count": 172,
+              "score": 0.6677713394165039
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth matte skin texture",
+            "top_k": [
+              {
+                "name": "two_tone_skin",
+                "category": 0,
+                "post_count": 14891,
+                "score": 0.6162446737289429
+              },
+              {
+                "name": "glowing_skin",
+                "category": 0,
+                "post_count": 321,
+                "score": 0.5999607443809509
+              },
+              {
+                "name": "light_skinned_soles",
+                "category": 0,
+                "post_count": 260,
+                "score": 0.5907790064811707
+              },
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.5876621007919312
+              },
+              {
+                "name": "smooth_criminal",
+                "category": 3,
+                "post_count": 51,
+                "score": 0.5847771763801575
+              }
+            ],
+            "best": {
+              "name": "two_tone_skin",
+              "category": 0,
+              "post_count": 14891,
+              "score": 0.6162446737289429
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clean white background",
+            "top_k": [
+              {
+                "name": "wavy_background",
+                "category": 0,
+                "post_count": 112,
+                "score": 0.6781424283981323
+              },
+              {
+                "name": "static_background",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6774382591247559
+              },
+              {
+                "name": "cream_background",
+                "category": 0,
+                "post_count": 72,
+                "score": 0.6766228675842285
+              },
+              {
+                "name": "upside_down_background",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6680831909179688
+              },
+              {
+                "name": "map_background",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6677859425544739
+              }
+            ],
+            "best": {
+              "name": "wavy_background",
+              "category": 0,
+              "post_count": 112,
+              "score": 0.6781424283981323
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "minimal background detail",
+            "top_k": [
+              {
+                "name": "low_detail",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.7457941174507141
+              },
+              {
+                "name": "pixelated_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6847215294837952
+              },
+              {
+                "name": "blurry_foreground",
+                "category": 0,
+                "post_count": 34846,
+                "score": 0.6580286622047424
+              },
+              {
+                "name": "mini_person_in_clothes",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6525332927703857
+              },
+              {
+                "name": "upside_down_background",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6522500514984131
+              }
+            ],
+            "best": {
+              "name": "blurry_foreground",
+              "category": 0,
+              "post_count": 34846,
+              "score": 0.6580286622047424
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "high contrast",
+            "top_k": [
+              {
+                "name": "contrast",
+                "category": 0,
+                "post_count": 1045,
+                "score": 0.7182652950286865
+              },
+              {
+                "name": "high_detail",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6908586621284485
+              },
+              {
+                "name": "high_contrast",
+                "category": 0,
+                "post_count": 3796,
+                "score": 0.6842432022094727
+              },
+              {
+                "name": "contrast_collar",
+                "category": 0,
+                "post_count": 3419,
+                "score": 0.641049861907959
+              },
+              {
+                "name": "high_re",
+                "category": 1,
+                "post_count": 20,
+                "score": 0.6402524709701538
+              }
+            ],
+            "best": {
+              "name": "contrast",
+              "category": 0,
+              "post_count": 1045,
+              "score": 0.7182652950286865
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sharp focus on face",
+            "top_k": [
+              {
+                "name": "mouth_focus",
+                "category": 0,
+                "post_count": 289,
+                "score": 0.6696139574050903
+              },
+              {
+                "name": "pushing_face",
+                "category": 0,
+                "post_count": 243,
+                "score": 0.6584712266921997
+              },
+              {
+                "name": "hair_focus",
+                "category": 0,
+                "post_count": 744,
+                "score": 0.657825231552124
+              },
+              {
+                "name": "pointing_at_forehead",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6569389700889587
+              },
+              {
+                "name": "shading_face",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6555365920066833
+              }
+            ],
+            "best": {
+              "name": "mouth_focus",
+              "category": 0,
+              "post_count": 289,
+              "score": 0.6696139574050903
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "simple geometric shapes",
+            "top_k": [
+              {
+                "name": "simple_fish",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.6882294416427612
+              },
+              {
+                "name": "shapes",
+                "category": 0,
+                "post_count": 178,
+                "score": 0.6768741607666016
+              },
+              {
+                "name": "simple_butterfly",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.6686999797821045
+              },
+              {
+                "name": "simple_bird",
+                "category": 0,
+                "post_count": 2300,
+                "score": 0.6624074578285217
+              },
+              {
+                "name": "simple_series",
+                "category": 3,
+                "post_count": 11,
+                "score": 0.6592249274253845
+              }
+            ],
+            "best": {
+              "name": "simple_fish",
+              "category": 0,
+              "post_count": 150,
+              "score": 0.6882294416427612
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "flat color fields",
+            "top_k": [
+              {
+                "name": "flat_color",
+                "category": 0,
+                "post_count": 10496,
+                "score": 0.673815906047821
+              },
+              {
+                "name": "flatfield",
+                "category": 1,
+                "post_count": 53,
+                "score": 0.6439562439918518
+              },
+              {
+                "name": "multicolored_squares_background",
+                "category": 0,
+                "post_count": 67,
+                "score": 0.603590190410614
+              },
+              {
+                "name": "flatculture",
+                "category": 1,
+                "post_count": 180,
+                "score": 0.597017765045166
+              },
+              {
+                "name": "static_background",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.5944098830223083
+              }
+            ],
+            "best": {
+              "name": "flat_color",
+              "category": 0,
+              "post_count": 10496,
+              "score": 0.673815906047821
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cheerful expression",
+            "top_k": [
+              {
+                "name": "happy_facial",
+                "category": 0,
+                "post_count": 545,
+                "score": 0.6943117380142212
+              },
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6931660175323486
+              },
+              {
+                "name": "hands_clasped_in_delight",
+                "category": 0,
+                "post_count": 230,
+                "score": 0.6901525259017944
+              },
+              {
+                "name": "cheerfull!",
+                "category": 3,
+                "post_count": 12,
+                "score": 0.6858571171760559
+              },
+              {
+                "name": "joy_emoji",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.6733682155609131
+              }
+            ],
+            "best": {
+              "name": "happy_facial",
+              "category": 0,
+              "post_count": 545,
+              "score": 0.6943117380142212
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "slight tilt of head",
+            "top_k": [
+              {
+                "name": "mini_person_on_head",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6867914199829102
+              },
+              {
+                "name": "180_head_tilt",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6710805296897888
+              },
+              {
+                "name": "lifts_her_tail",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.6690741181373596
+              },
+              {
+                "name": "head_tilt",
+                "category": 0,
+                "post_count": 152005,
+                "score": 0.661486029624939
+              },
+              {
+                "name": "half_up_hair_twist",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6551438570022583
+              }
+            ],
+            "best": {
+              "name": "head_tilt",
+              "category": 0,
+              "post_count": 152005,
+              "score": 0.661486029624939
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "minimal background clutter",
+            "top_k": [
+              {
+                "name": "pixelated_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6424866914749146
+              },
+              {
+                "name": "low_detail",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6212682723999023
+              },
+              {
+                "name": "static_background",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6205432415008545
+              },
+              {
+                "name": "blurry_foreground",
+                "category": 0,
+                "post_count": 34846,
+                "score": 0.617010235786438
+              },
+              {
+                "name": "moving_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6169044971466064
+              }
+            ],
+            "best": {
+              "name": "blurry_foreground",
+              "category": 0,
+              "post_count": 34846,
+              "score": 0.617010235786438
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct outline",
+            "top_k": [
+              {
+                "name": "multicolored_outline",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6505748629570007
+              },
+              {
+                "name": "white_outline",
+                "category": 0,
+                "post_count": 39151,
+                "score": 0.6426552534103394
+              },
+              {
+                "name": "thick_outlines",
+                "category": 0,
+                "post_count": 463,
+                "score": 0.6374102830886841
+              },
+              {
+                "name": "red_outline",
+                "category": 0,
+                "post_count": 1812,
+                "score": 0.6356836557388306
+              },
+              {
+                "name": "yellow_outline",
+                "category": 0,
+                "post_count": 1508,
+                "score": 0.6340009570121765
+              }
+            ],
+            "best": {
+              "name": "white_outline",
+              "category": 0,
+              "post_count": 39151,
+              "score": 0.6426552534103394
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "vibrant teal hue",
+            "top_k": [
+              {
+                "name": "colorful_palette",
+                "category": 1,
+                "post_count": 1306,
+                "score": 0.5982341766357422
+              },
+              {
+                "name": "tealo",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.5928141474723816
+              },
+              {
+                "name": "teal_(osisio)",
+                "category": 4,
+                "post_count": 14,
+                "score": 0.574094831943512
+              },
+              {
+                "name": "multiple_theme_colors",
+                "category": 0,
+                "post_count": 469,
+                "score": 0.5606060028076172
+              },
+              {
+                "name": "colorfulness_(love_live!)",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.5552290678024292
+              }
+            ],
+            "best": {
+              "name": "colorful_palette",
+              "category": 1,
+              "post_count": 1306,
+              "score": 0.5982341766357422
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft cream tones",
+            "top_k": [
+              {
+                "name": "cream_background",
+                "category": 0,
+                "post_count": 72,
+                "score": 0.6527348756790161
+              },
+              {
+                "name": "happy_cream",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6508013606071472
+              },
+              {
+                "name": "two_tone_skin",
+                "category": 0,
+                "post_count": 14891,
+                "score": 0.6456776857376099
+              },
+              {
+                "name": "softcharm",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6224836111068726
+              },
+              {
+                "name": "two_tone_pajamas",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6210007667541504
+              }
+            ],
+            "best": {
+              "name": "cream_background",
+              "category": 0,
+              "post_count": 72,
+              "score": 0.6527348756790161
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "crisp edges",
+            "top_k": [
+              {
+                "name": "blurry_edges",
+                "category": 0,
+                "post_count": 460,
+                "score": 0.68995201587677
+              },
+              {
+                "name": "hair_edges",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6678450107574463
+              },
+              {
+                "name": "cross_edge",
+                "category": 3,
+                "post_count": 192,
+                "score": 0.6423418521881104
+              },
+              {
+                "name": "edge_edge",
+                "category": 1,
+                "post_count": 36,
+                "score": 0.6269999742507935
+              },
+              {
+                "name": "weasel_(close_to_the_edge)",
+                "category": 1,
+                "post_count": 132,
+                "score": 0.6052443385124207
+              }
+            ],
+            "best": {
+              "name": "blurry_edges",
+              "category": 0,
+              "post_count": 460,
+              "score": 0.68995201587677
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "delicate pose",
+            "top_k": [
+              {
+                "name": "girly_pose",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6572746634483337
+              },
+              {
+                "name": "the_pose",
+                "category": 0,
+                "post_count": 10088,
+                "score": 0.6438944935798645
+              },
+              {
+                "name": "dynamic_pose",
+                "category": 0,
+                "post_count": 1852,
+                "score": 0.6422538161277771
+              },
+              {
+                "name": "holding_portrait",
+                "category": 0,
+                "post_count": 58,
+                "score": 0.6363611221313477
+              },
+              {
+                "name": "with_handala_pose",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6277408003807068
+              }
+            ],
+            "best": {
+              "name": "the_pose",
+              "category": 0,
+              "post_count": 10088,
+              "score": 0.6438944935798645
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "compact proportions",
+            "top_k": [
+              {
+                "name": "compact_(cosmetics)",
+                "category": 0,
+                "post_count": 596,
+                "score": 0.6380842924118042
+              },
+              {
+                "name": "holding_compact",
+                "category": 0,
+                "post_count": 162,
+                "score": 0.6380175352096558
+              },
+              {
+                "name": "asymmetrical_pasties",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.5736089944839478
+              },
+              {
+                "name": "cosmic_heart_compact",
+                "category": 0,
+                "post_count": 243,
+                "score": 0.5722358226776123
+              },
+              {
+                "name": "proportion_obake",
+                "category": 1,
+                "post_count": 24,
+                "score": 0.5714234709739685
+              }
+            ],
+            "best": {
+              "name": "compact_(cosmetics)",
+              "category": 0,
+              "post_count": 596,
+              "score": 0.6380842924118042
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rounded limbs",
+            "top_k": [
+              {
+                "name": "mixed_limbs",
+                "category": 0,
+                "post_count": 135,
+                "score": 0.6883640289306641
+              },
+              {
+                "name": "asymmetrical_limbs",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6785932779312134
+              },
+              {
+                "name": "oversized_limbs",
+                "category": 0,
+                "post_count": 1233,
+                "score": 0.6758634448051453
+              },
+              {
+                "name": "limbs",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.6640157699584961
+              },
+              {
+                "name": "arm_around_leg",
+                "category": 0,
+                "post_count": 198,
+                "score": 0.636461079120636
+              }
+            ],
+            "best": {
+              "name": "mixed_limbs",
+              "category": 0,
+              "post_count": 135,
+              "score": 0.6883640289306641
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "gentle curve of cake",
+            "top_k": [
+              {
+                "name": "heart_shaped_cake",
+                "category": 0,
+                "post_count": 177,
+                "score": 0.6686549782752991
+              },
+              {
+                "name": "ai_drawing_person_in_cake_(meme)",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6671908497810364
+              },
+              {
+                "name": "master_cake",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6379719972610474
+              },
+              {
+                "name": "future_cake",
+                "category": 1,
+                "post_count": 32,
+                "score": 0.6349141597747803
+              },
+              {
+                "name": "cake_hair_ornament",
+                "category": 0,
+                "post_count": 310,
+                "score": 0.6343144178390503
+              }
+            ],
+            "best": {
+              "name": "heart_shaped_cake",
+              "category": 0,
+              "post_count": 177,
+              "score": 0.6686549782752991
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "slight bounce in stance",
+            "top_k": [
+              {
+                "name": "little_feat_(stand)",
+                "category": 4,
+                "post_count": 19,
+                "score": 0.6365954875946045
+              },
+              {
+                "name": "imminent_pounce",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6364930272102356
+              },
+              {
+                "name": "lifts_her_tail",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.6286614537239075
+              },
+              {
+                "name": "man_at_legs",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.6217929124832153
+              },
+              {
+                "name": "mini_person_on_shoulder",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.6113142967224121
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "bright and airy atmosphere",
+            "top_k": [
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6584620475769043
+              },
+              {
+                "name": "clear_sky",
+                "category": 0,
+                "post_count": 1842,
+                "score": 0.6240537166595459
+              },
+              {
+                "name": "the_personification_of_atmosphere",
+                "category": 3,
+                "post_count": 95,
+                "score": 0.6171938180923462
+              },
+              {
+                "name": "visible_air",
+                "category": 0,
+                "post_count": 2580,
+                "score": 0.6074720621109009
+              },
+              {
+                "name": "full_of_energy",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6060578227043152
+              }
+            ],
+            "best": {
+              "name": "clear_sky",
+              "category": 0,
+              "post_count": 1842,
+              "score": 0.6240537166595459
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "precise lines",
+            "top_k": [
+              {
+                "name": "thick_outlines",
+                "category": 0,
+                "post_count": 463,
+                "score": 0.6009180545806885
+              },
+              {
+                "name": "clearline",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.5907545685768127
+              },
+              {
+                "name": "a_line",
+                "category": 1,
+                "post_count": 35,
+                "score": 0.5677260160446167
+              },
+              {
+                "name": "vertical_eye_lines",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.567498505115509
+              },
+              {
+                "name": "glowing_lines",
+                "category": 0,
+                "post_count": 552,
+                "score": 0.5649511814117432
+              }
+            ],
+            "best": {
+              "name": "thick_outlines",
+              "category": 0,
+              "post_count": 463,
+              "score": 0.6009180545806885
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "defined eyelashes",
+            "top_k": [
+              {
+                "name": "eyelashes_nun_(diva)",
+                "category": 4,
+                "post_count": 24,
+                "score": 0.6674001812934875
+              },
+              {
+                "name": "long_eyelashes",
+                "category": 0,
+                "post_count": 10421,
+                "score": 0.6655372381210327
+              },
+              {
+                "name": "thick_eyelashes",
+                "category": 0,
+                "post_count": 5261,
+                "score": 0.6647486686706543
+              },
+              {
+                "name": "eyelashes",
+                "category": 0,
+                "post_count": 211606,
+                "score": 0.6608442068099976
+              },
+              {
+                "name": "gradient_eyelashes",
+                "category": 0,
+                "post_count": 23,
+                "score": 0.6475061774253845
+              }
+            ],
+            "best": {
+              "name": "long_eyelashes",
+              "category": 0,
+              "post_count": 10421,
+              "score": 0.6655372381210327
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "glossy frosting surface",
+            "top_k": [
+              {
+                "name": "frosted_glass",
+                "category": 0,
+                "post_count": 87,
+                "score": 0.6813274025917053
+              },
+              {
+                "name": "glowing_floor",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6531438827514648
+              },
+              {
+                "name": "gloss_(hotglossed)",
+                "category": 1,
+                "post_count": 139,
+                "score": 0.6259311437606812
+              },
+              {
+                "name": "glowing_skin",
+                "category": 0,
+                "post_count": 321,
+                "score": 0.6240411996841431
+              },
+              {
+                "name": "cream_background",
+                "category": 0,
+                "post_count": 72,
+                "score": 0.6167598962783813
+              }
+            ],
+            "best": {
+              "name": "frosted_glass",
+              "category": 0,
+              "post_count": 87,
+              "score": 0.6813274025917053
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "matte fabric texture",
+            "top_k": [
+              {
+                "name": "paper_texture",
+                "category": 0,
+                "post_count": 857,
+                "score": 0.6385923624038696
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6305252909660339
+              },
+              {
+                "name": "mated",
+                "category": 1,
+                "post_count": 25,
+                "score": 0.6246165633201599
+              },
+              {
+                "name": "canvas_texture",
+                "category": 0,
+                "post_count": 252,
+                "score": 0.6166966557502747
+              },
+              {
+                "name": "mattsu",
+                "category": 1,
+                "post_count": 49,
+                "score": 0.6051210165023804
+              }
+            ],
+            "best": {
+              "name": "paper_texture",
+              "category": 0,
+              "post_count": 857,
+              "score": 0.6385923624038696
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clear separation between hair strands",
+            "top_k": [
+              {
+                "name": "hair_strand",
+                "category": 0,
+                "post_count": 2379,
+                "score": 0.6524562835693359
+              },
+              {
+                "name": "long_hair_between_eyes",
+                "category": 0,
+                "post_count": 8789,
+                "score": 0.6522312760353088
+              },
+              {
+                "name": "hair_between_ass",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.646360456943512
+              },
+              {
+                "name": "hair_visible_through_wig",
+                "category": 0,
+                "post_count": 216,
+                "score": 0.6433875560760498
+              },
+              {
+                "name": "ears_visible_through_hair",
+                "category": 0,
+                "post_count": 1387,
+                "score": 0.6420838236808777
+              }
+            ],
+            "best": {
+              "name": "hair_strand",
+              "category": 0,
+              "post_count": 2379,
+              "score": 0.6524562835693359
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct jawline",
+            "top_k": [
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.5687813758850098
+              },
+              {
+                "name": "jawli",
+                "category": 1,
+                "post_count": 41,
+                "score": 0.5669060945510864
+              },
+              {
+                "name": "different_reflection",
+                "category": 0,
+                "post_count": 4009,
+                "score": 0.5585111379623413
+              },
+              {
+                "name": "worlds_apart_lifeline",
+                "category": 4,
+                "post_count": 13,
+                "score": 0.5538588166236877
+              },
+              {
+                "name": "javelin_(a_different_dance)_(azur_lane)",
+                "category": 4,
+                "post_count": 15,
+                "score": 0.5501182675361633
+              }
+            ],
+            "best": {
+              "name": "different_shadow",
+              "category": 0,
+              "post_count": 1033,
+              "score": 0.5687813758850098
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "small button nose",
+            "top_k": [
+              {
+                "name": "button_nose",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.7425855398178101
+              },
+              {
+                "name": "button_knot",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.6047136783599854
+              },
+              {
+                "name": "nose_plug",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.5995844602584839
+              },
+              {
+                "name": "nose_pinch",
+                "category": 0,
+                "post_count": 171,
+                "score": 0.5981042981147766
+              },
+              {
+                "name": "insect_on_nose",
+                "category": 0,
+                "post_count": 24,
+                "score": 0.5973553657531738
+              }
+            ],
+            "best": {
+              "name": "nose_pinch",
+              "category": 0,
+              "post_count": 171,
+              "score": 0.5981042981147766
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "wide open mouth",
+            "top_k": [
+              {
+                "name": "wide_mouth",
+                "category": 0,
+                "post_count": 116,
+                "score": 0.7407299280166626
+              },
+              {
+                "name": "wide_mouth_ink",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.708561360836029
+              },
+              {
+                "name": "big_mouth",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6819127798080444
+              },
+              {
+                "name": "closed_mouth",
+                "category": 0,
+                "post_count": 1470608,
+                "score": 0.6662728190422058
+              },
+              {
+                "name": "person_in_mouth",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6630922555923462
+              }
+            ],
+            "best": {
+              "name": "wide_mouth",
+              "category": 0,
+              "post_count": 116,
+              "score": 0.7407299280166626
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hint of teeth",
+            "top_k": [
+              {
+                "name": "chattering_teeth_(toy)",
+                "category": 0,
+                "post_count": 19,
+                "score": 0.6602454781532288
+              },
+              {
+                "name": "holding_tooth",
+                "category": 0,
+                "post_count": 24,
+                "score": 0.6358256340026855
+              },
+              {
+                "name": "a_motorcycle_with_teeth",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.635015606880188
+              },
+              {
+                "name": "mouth_visible_through_hair",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.632414698600769
+              },
+              {
+                "name": "saliva_trail_between_teeth",
+                "category": 0,
+                "post_count": 179,
+                "score": 0.630739688873291
+              }
+            ],
+            "best": {
+              "name": "saliva_trail_between_teeth",
+              "category": 0,
+              "post_count": 179,
+              "score": 0.630739688873291
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "direct gaze forward",
+            "top_k": [
+              {
+                "name": "looking_ahead",
+                "category": 0,
+                "post_count": 41407,
+                "score": 0.7112501859664917
+              },
+              {
+                "name": "facing_ahead",
+                "category": 0,
+                "post_count": 1238,
+                "score": 0.6845657825469971
+              },
+              {
+                "name": "looking_past_viewer",
+                "category": 0,
+                "post_count": 280,
+                "score": 0.6753954887390137
+              },
+              {
+                "name": "walking_towards_viewer",
+                "category": 0,
+                "post_count": 130,
+                "score": 0.6456847786903381
+              },
+              {
+                "name": "facing_object",
+                "category": 0,
+                "post_count": 55,
+                "score": 0.6400634050369263
+              }
+            ],
+            "best": {
+              "name": "looking_ahead",
+              "category": 0,
+              "post_count": 41407,
+              "score": 0.7112501859664917
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "symmetrical composition",
+            "top_k": [
+              {
+                "name": "symmetrical_pose",
+                "category": 0,
+                "post_count": 769,
+                "score": 0.6885958909988403
+              },
+              {
+                "name": "symmetricturd",
+                "category": 1,
+                "post_count": 47,
+                "score": 0.675507128238678
+              },
+              {
+                "name": "asymmetrical_pasties",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6252598762512207
+              },
+              {
+                "name": "symmetrical_hand_pose",
+                "category": 0,
+                "post_count": 498,
+                "score": 0.6156314611434937
+              },
+              {
+                "name": "asymmetrical_one_piece_swimsuit",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.594053328037262
+              }
+            ],
+            "best": {
+              "name": "symmetrical_pose",
+              "category": 0,
+              "post_count": 769,
+              "score": 0.6885958909988403
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "balanced weight distribution",
+            "top_k": [
+              {
+                "name": "balance_beam",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.6253094673156738
+              },
+              {
+                "name": "balance_badge",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6165638566017151
+              },
+              {
+                "name": "balance_scale_print",
+                "category": 0,
+                "post_count": 111,
+                "score": 0.6061806082725525
+              },
+              {
+                "name": "new_balance",
+                "category": 0,
+                "post_count": 133,
+                "score": 0.6056581735610962
+              },
+              {
+                "name": "wii_balance_board",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.5964269042015076
+              }
+            ],
+            "best": {
+              "name": "balance_scale_print",
+              "category": 0,
+              "post_count": 111,
+              "score": 0.6061806082725525
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "playful energy",
+            "top_k": [
+              {
+                "name": "full_of_energy",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6924411654472351
+              },
+              {
+                "name": "temperature_play",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6272138953208923
+              },
+              {
+                "name": "playcenter",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6222637295722961
+              },
+              {
+                "name": "play_r",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.6111903190612793
+              },
+              {
+                "name": "play!_play!_play!",
+                "category": 3,
+                "post_count": 27,
+                "score": 0.6055420637130737
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "crisp definition",
+            "top_k": [
+              {
+                "name": "crispin_(pokemon)",
+                "category": 4,
+                "post_count": 309,
+                "score": 0.5513091683387756
+              },
+              {
+                "name": "clasp",
+                "category": 0,
+                "post_count": 126,
+                "score": 0.5324561595916748
+              },
+              {
+                "name": "crim",
+                "category": 4,
+                "post_count": 15,
+                "score": 0.531217634677887
+              },
+              {
+                "name": "criin",
+                "category": 1,
+                "post_count": 405,
+                "score": 0.5304914712905884
+              },
+              {
+                "name": "cris_art",
+                "category": 1,
+                "post_count": 328,
+                "score": 0.5265138149261475
+              }
+            ],
+            "best": {
+              "name": "crispin_(pokemon)",
+              "category": 4,
+              "post_count": 309,
+              "score": 0.5513091683387756
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth gradients",
+            "top_k": [
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.679429292678833
+              },
+              {
+                "name": "gradient_skin",
+                "category": 0,
+                "post_count": 3077,
+                "score": 0.6484994888305664
+              },
+              {
+                "name": "gradient_sash",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6399036049842834
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.638751745223999
+              },
+              {
+                "name": "gradient_shoes",
+                "category": 0,
+                "post_count": 43,
+                "score": 0.6384249329566956
+              }
+            ],
+            "best": {
+              "name": "gradient_skin",
+              "category": 0,
+              "post_count": 3077,
+              "score": 0.6484994888305664
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clean silhouette",
+            "top_k": [
+              {
+                "name": "clean_x",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6835392713546753
+              },
+              {
+                "name": "see_through_silhouette",
+                "category": 0,
+                "post_count": 6473,
+                "score": 0.6671262979507446
+              },
+              {
+                "name": "clean",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6624427437782288
+              },
+              {
+                "name": "silhouette_target",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.6576371788978577
+              },
+              {
+                "name": "sauber",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.6446977257728577
+              }
+            ],
+            "best": {
+              "name": "see_through_silhouette",
+              "category": 0,
+              "post_count": 6473,
+              "score": 0.6671262979507446
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rounded forms",
+            "top_k": [
+              {
+                "name": "c._round",
+                "category": 4,
+                "post_count": 21,
+                "score": 0.6565761566162109
+              },
+              {
+                "name": "rounded_collar",
+                "category": 0,
+                "post_count": 430,
+                "score": 0.6520628929138184
+              },
+              {
+                "name": "round_table",
+                "category": 0,
+                "post_count": 1811,
+                "score": 0.646937370300293
+              },
+              {
+                "name": "round_teeth",
+                "category": 0,
+                "post_count": 18944,
+                "score": 0.6416626572608948
+              },
+              {
+                "name": "shapes",
+                "category": 0,
+                "post_count": 178,
+                "score": 0.6346085071563721
+              }
+            ],
+            "best": {
+              "name": "rounded_collar",
+              "category": 0,
+              "post_count": 430,
+              "score": 0.6520628929138184
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "simplified features",
+            "top_k": [
+              {
+                "name": "low_detail",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6158666610717773
+              },
+              {
+                "name": "simple_fish",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.6130167841911316
+              },
+              {
+                "name": "simple_flower",
+                "category": 0,
+                "post_count": 77,
+                "score": 0.611388623714447
+              },
+              {
+                "name": "simple_butterfly",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.6094300150871277
+              },
+              {
+                "name": "simple_series",
+                "category": 3,
+                "post_count": 11,
+                "score": 0.607746422290802
+              }
+            ],
+            "best": {
+              "name": "simple_fish",
+              "category": 0,
+              "post_count": 150,
+              "score": 0.6130167841911316
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "charming proportions",
+            "top_k": [
+              {
+                "name": "charming_man",
+                "category": 4,
+                "post_count": 21,
+                "score": 0.716644823551178
+              },
+              {
+                "name": "magical_charming!",
+                "category": 3,
+                "post_count": 36,
+                "score": 0.620607852935791
+              },
+              {
+                "name": "food_charm",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6102622747421265
+              },
+              {
+                "name": "charmcaster",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.5891299247741699
+              },
+              {
+                "name": "prince_charming_(disney)",
+                "category": 4,
+                "post_count": 33,
+                "score": 0.5881544351577759
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "distinct hairline",
+            "top_k": [
+              {
+                "name": "hairline",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6692578792572021
+              },
+              {
+                "name": "temporal_hairline",
+                "category": 0,
+                "post_count": 362,
+                "score": 0.63008052110672
+              },
+              {
+                "name": "single_hair_streak",
+                "category": 0,
+                "post_count": 1130,
+                "score": 0.6242434978485107
+              },
+              {
+                "name": "scanline_hair",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6057469248771667
+              },
+              {
+                "name": "receding_hairline",
+                "category": 0,
+                "post_count": 307,
+                "score": 0.6004379987716675
+              }
+            ],
+            "best": {
+              "name": "temporal_hairline",
+              "category": 0,
+              "post_count": 362,
+              "score": 0.63008052110672
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth skin finish",
+            "top_k": [
+              {
+                "name": "glowing_skin",
+                "category": 0,
+                "post_count": 321,
+                "score": 0.637326180934906
+              },
+              {
+                "name": "two_tone_skin",
+                "category": 0,
+                "post_count": 14891,
+                "score": 0.6281711459159851
+              },
+              {
+                "name": "lightened_skin",
+                "category": 0,
+                "post_count": 275,
+                "score": 0.5981806516647339
+              },
+              {
+                "name": "light_skinned_soles",
+                "category": 0,
+                "post_count": 260,
+                "score": 0.5931888222694397
+              },
+              {
+                "name": "split_color_skin",
+                "category": 0,
+                "post_count": 239,
+                "score": 0.5924035906791687
+              }
+            ],
+            "best": {
+              "name": "glowing_skin",
+              "category": 0,
+              "post_count": 321,
+              "score": 0.637326180934906
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "gentle smile",
+            "top_k": [
+              {
+                "name": "smile_(e.g.o)",
+                "category": 0,
+                "post_count": 118,
+                "score": 0.6807815432548523
+              },
+              {
+                "name": "spoken_smile",
+                "category": 0,
+                "post_count": 73,
+                "score": 0.6747047901153564
+              },
+              {
+                "name": "smile_(mm_l)",
+                "category": 1,
+                "post_count": 126,
+                "score": 0.6679690480232239
+              },
+              {
+                "name": "smile_emoji",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.6619335412979126
+              },
+              {
+                "name": "drawn_smile",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6614395976066589
+              }
+            ],
+            "best": {
+              "name": "smile_(e.g.o)",
+              "category": 0,
+              "post_count": 118,
+              "score": 0.6807815432548523
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "bright teal",
+            "top_k": [
+              {
+                "name": "mr._bright",
+                "category": 4,
+                "post_count": 44,
+                "score": 0.617946207523346
+              },
+              {
+                "name": "bright_goat",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.6160352826118469
+              },
+              {
+                "name": "bright_(long_ago)",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6124919652938843
+              },
+              {
+                "name": "bright_pupils",
+                "category": 0,
+                "post_count": 107675,
+                "score": 0.6029923558235168
+              },
+              {
+                "name": "tealo",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.5962254405021667
+              }
+            ],
+            "best": {
+              "name": "bright_pupils",
+              "category": 0,
+              "post_count": 107675,
+              "score": 0.6029923558235168
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft pastel pink",
+            "top_k": [
+              {
+                "name": "pastel_pastel",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.6969038248062134
+              },
+              {
+                "name": "sweet_pink",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.6813654899597168
+              },
+              {
+                "name": "pink_pajamas",
+                "category": 0,
+                "post_count": 3952,
+                "score": 0.6638596653938293
+              },
+              {
+                "name": "pastel_(medium)",
+                "category": 5,
+                "post_count": 698,
+                "score": 0.6589201092720032
+              },
+              {
+                "name": "pastel_wing",
+                "category": 1,
+                "post_count": 12,
+                "score": 0.6534846425056458
+              }
+            ],
+            "best": {
+              "name": "pink_pajamas",
+              "category": 0,
+              "post_count": 3952,
+              "score": 0.6638596653938293
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "creamy white frosting",
+            "top_k": [
+              {
+                "name": "cream_background",
+                "category": 0,
+                "post_count": 72,
+                "score": 0.6684786081314087
+              },
+              {
+                "name": "frosted_flakes",
+                "category": 3,
+                "post_count": 14,
+                "score": 0.6107710003852844
+              },
+              {
+                "name": "pudding_cream",
+                "category": 1,
+                "post_count": 47,
+                "score": 0.6045753955841064
+              },
+              {
+                "name": "white_taste",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6023874282836914
+              },
+              {
+                "name": "happy_cream",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6021448373794556
+              }
+            ],
+            "best": {
+              "name": "cream_background",
+              "category": 0,
+              "post_count": 72,
+              "score": 0.6684786081314087
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "crisp white background",
+            "top_k": [
+              {
+                "name": "cream_background",
+                "category": 0,
+                "post_count": 72,
+                "score": 0.6651121973991394
+              },
+              {
+                "name": "scribble_background",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.663155734539032
+              },
+              {
+                "name": "vertical_striped_background",
+                "category": 0,
+                "post_count": 1031,
+                "score": 0.6561882495880127
+              },
+              {
+                "name": "ice_background",
+                "category": 0,
+                "post_count": 24,
+                "score": 0.6494449377059937
+              },
+              {
+                "name": "wavy_background",
+                "category": 0,
+                "post_count": 112,
+                "score": 0.6490671634674072
+              }
+            ],
+            "best": {
+              "name": "cream_background",
+              "category": 0,
+              "post_count": 72,
+              "score": 0.6651121973991394
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clear focal point",
+            "top_k": [
+              {
+                "name": "creature_focus",
+                "category": 0,
+                "post_count": 1170,
+                "score": 0.6162437200546265
+              },
+              {
+                "name": "null_focus",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.6151080131530762
+              },
+              {
+                "name": "flower_focus",
+                "category": 0,
+                "post_count": 774,
+                "score": 0.614773154258728
+              },
+              {
+                "name": "hair_focus",
+                "category": 0,
+                "post_count": 744,
+                "score": 0.609961211681366
+              },
+              {
+                "name": "focus_mitts",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6031205654144287
+              }
+            ],
+            "best": {
+              "name": "creature_focus",
+              "category": 0,
+              "post_count": 1170,
+              "score": 0.6162437200546265
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "balanced negative space",
+            "top_k": [
+              {
+                "name": "balance_beam",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.607420027256012
+              },
+              {
+                "name": "balance_scale_print",
+                "category": 0,
+                "post_count": 111,
+                "score": 0.6008059978485107
+              },
+              {
+                "name": "new_balance",
+                "category": 0,
+                "post_count": 133,
+                "score": 0.5878432989120483
+              },
+              {
+                "name": "wii_balance_board",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.5873801708221436
+              },
+              {
+                "name": "balancetheball",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.5871713161468506
+              }
+            ],
+            "best": {
+              "name": "balance_scale_print",
+              "category": 0,
+              "post_count": 111,
+              "score": 0.6008059978485107
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cohesive color palette",
+            "top_k": [
+              {
+                "name": "colorful_palette",
+                "category": 1,
+                "post_count": 1306,
+                "score": 0.7255105972290039
+              },
+              {
+                "name": "multiple_theme_colors",
+                "category": 0,
+                "post_count": 469,
+                "score": 0.6632631421089172
+              },
+              {
+                "name": "neon_palette",
+                "category": 0,
+                "post_count": 869,
+                "score": 0.6050294041633606
+              },
+              {
+                "name": "color_issue",
+                "category": 5,
+                "post_count": 96,
+                "score": 0.6025283336639404
+              },
+              {
+                "name": "color_creation",
+                "category": 1,
+                "post_count": 29,
+                "score": 0.5939109325408936
+              }
+            ],
+            "best": {
+              "name": "colorful_palette",
+              "category": 1,
+              "post_count": 1306,
+              "score": 0.7255105972290039
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "unified style",
+            "top_k": [
+              {
+                "name": "stile_uniform",
+                "category": 0,
+                "post_count": 817,
+                "score": 0.6702730655670166
+              },
+              {
+                "name": "official_style",
+                "category": 0,
+                "post_count": 12508,
+                "score": 0.6678581237792969
+              },
+              {
+                "name": "matching_hairstyle",
+                "category": 0,
+                "post_count": 390,
+                "score": 0.6238017678260803
+              },
+              {
+                "name": "i_style_project",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6066957712173462
+              },
+              {
+                "name": "split_color_clothes",
+                "category": 0,
+                "post_count": 255,
+                "score": 0.6054986119270325
+              }
+            ],
+            "best": {
+              "name": "stile_uniform",
+              "category": 0,
+              "post_count": 817,
+              "score": 0.6702730655670166
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct character presence",
+            "top_k": [
+              {
+                "name": "a_mysterious_figure",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.628351628780365
+              },
+              {
+                "name": "unusually_visible",
+                "category": 0,
+                "post_count": 514,
+                "score": 0.6153349876403809
+              },
+              {
+                "name": "ciri",
+                "category": 4,
+                "post_count": 331,
+                "score": 0.6146041750907898
+              },
+              {
+                "name": "persona_kun",
+                "category": 4,
+                "post_count": 11,
+                "score": 0.6013455390930176
+              },
+              {
+                "name": "birth's_character",
+                "category": 4,
+                "post_count": 28,
+                "score": 0.5902490019798279
+              }
+            ],
+            "best": {
+              "name": "unusually_visible",
+              "category": 0,
+              "post_count": 514,
+              "score": 0.6153349876403809
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "small stature",
+            "top_k": [
+              {
+                "name": "mini_person_in_clothes",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6977195739746094
+              },
+              {
+                "name": "little_feat_(stand)",
+                "category": 4,
+                "post_count": 19,
+                "score": 0.6972089409828186
+              },
+              {
+                "name": "mini_person_on_shoulder",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.6884288787841797
+              },
+              {
+                "name": "little_my",
+                "category": 4,
+                "post_count": 39,
+                "score": 0.6627994775772095
+              },
+              {
+                "name": "small_face",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6615966558456421
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "elongated arms",
+            "top_k": [
+              {
+                "name": "outstretched_crossed_arms",
+                "category": 0,
+                "post_count": 188,
+                "score": 0.7414435744285583
+              },
+              {
+                "name": "wrists_extended",
+                "category": 0,
+                "post_count": 310,
+                "score": 0.7335695028305054
+              },
+              {
+                "name": "crossed_hands",
+                "category": 0,
+                "post_count": 43,
+                "score": 0.7140469551086426
+              },
+              {
+                "name": "hands_on_another's_arms",
+                "category": 0,
+                "post_count": 486,
+                "score": 0.7129318714141846
+              },
+              {
+                "name": "arms_tied_above_head",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.7104435563087463
+              }
+            ],
+            "best": {
+              "name": "outstretched_crossed_arms",
+              "category": 0,
+              "post_count": 188,
+              "score": 0.7414435744285583
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "delicate fingers",
+            "top_k": [
+              {
+                "name": "twiddling_fingers",
+                "category": 0,
+                "post_count": 145,
+                "score": 0.6438568830490112
+              },
+              {
+                "name": "looking_through_fingers",
+                "category": 0,
+                "post_count": 172,
+                "score": 0.6411093473434448
+              },
+              {
+                "name": "long_fingers",
+                "category": 0,
+                "post_count": 723,
+                "score": 0.626495897769928
+              },
+              {
+                "name": "snapping_fingers",
+                "category": 0,
+                "post_count": 596,
+                "score": 0.6251901984214783
+              },
+              {
+                "name": "peeking_through_fingers",
+                "category": 0,
+                "post_count": 582,
+                "score": 0.6247205138206482
+              }
+            ],
+            "best": {
+              "name": "twiddling_fingers",
+              "category": 0,
+              "post_count": 145,
+              "score": 0.6438568830490112
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rounded shoulders",
+            "top_k": [
+              {
+                "name": "padded_shoulders",
+                "category": 0,
+                "post_count": 23,
+                "score": 0.7260890603065491
+              },
+              {
+                "name": "clothes_on_shoulders",
+                "category": 0,
+                "post_count": 103,
+                "score": 0.7144327163696289
+              },
+              {
+                "name": "person_on_shoulder",
+                "category": 0,
+                "post_count": 170,
+                "score": 0.707655668258667
+              },
+              {
+                "name": "shoulder_hair",
+                "category": 0,
+                "post_count": 35,
+                "score": 0.7033448815345764
+              },
+              {
+                "name": "hair_half_over_shoulder",
+                "category": 0,
+                "post_count": 131,
+                "score": 0.6932241916656494
+              }
+            ],
+            "best": {
+              "name": "clothes_on_shoulders",
+              "category": 0,
+              "post_count": 103,
+              "score": 0.7144327163696289
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "compact frame",
+            "top_k": [
+              {
+                "name": "empty_picture_frame",
+                "category": 0,
+                "post_count": 657,
+                "score": 0.625794529914856
+              },
+              {
+                "name": "art_program_in_frame",
+                "category": 0,
+                "post_count": 4314,
+                "score": 0.6197978258132935
+              },
+              {
+                "name": "art_tools_in_frame",
+                "category": 0,
+                "post_count": 2567,
+                "score": 0.6172266602516174
+              },
+              {
+                "name": "broken_picture_frame",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6148366332054138
+              },
+              {
+                "name": "holding_picture_frame",
+                "category": 0,
+                "post_count": 342,
+                "score": 0.6082181930541992
+              }
+            ],
+            "best": {
+              "name": "empty_picture_frame",
+              "category": 0,
+              "post_count": 657,
+              "score": 0.625794529914856
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cheerful demeanor",
+            "top_k": [
+              {
+                "name": "charming_man",
+                "category": 4,
+                "post_count": 21,
+                "score": 0.6853833198547363
+              },
+              {
+                "name": "jovial_merryment",
+                "category": 4,
+                "post_count": 101,
+                "score": 0.6825963854789734
+              },
+              {
+                "name": "cheer_bear",
+                "category": 4,
+                "post_count": 14,
+                "score": 0.6793723702430725
+              },
+              {
+                "name": "happy_teddy_bear",
+                "category": 4,
+                "post_count": 36,
+                "score": 0.6765801310539246
+              },
+              {
+                "name": "happy_facial",
+                "category": 0,
+                "post_count": 545,
+                "score": 0.6756883859634399
+              }
+            ],
+            "best": {
+              "name": "jovial_merryment",
+              "category": 4,
+              "post_count": 101,
+              "score": 0.6825963854789734
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "dynamic stillness",
+            "top_k": [
+              {
+                "name": "slow_d",
+                "category": 1,
+                "post_count": 306,
+                "score": 0.6280602216720581
+              },
+              {
+                "name": "dynamic_pose",
+                "category": 0,
+                "post_count": 1852,
+                "score": 0.6165181398391724
+              },
+              {
+                "name": "stable_diffusion",
+                "category": 5,
+                "post_count": 253,
+                "score": 0.6040584444999695
+              },
+              {
+                "name": "calm_(artist)",
+                "category": 1,
+                "post_count": 85,
+                "score": 0.5869059562683105
+              },
+              {
+                "name": "slowinfinity",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5798432230949402
+              }
+            ],
+            "best": {
+              "name": "slow_d",
+              "category": 1,
+              "post_count": 306,
+              "score": 0.6280602216720581
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "polished finish",
+            "top_k": [
+              {
+                "name": "polished_shoes",
+                "category": 0,
+                "post_count": 354,
+                "score": 0.6620121598243713
+              },
+              {
+                "name": "finish_line",
+                "category": 0,
+                "post_count": 131,
+                "score": 0.6058013439178467
+              },
+              {
+                "name": "polishing",
+                "category": 0,
+                "post_count": 160,
+                "score": 0.6027206778526306
+              },
+              {
+                "name": "finishing_move",
+                "category": 0,
+                "post_count": 190,
+                "score": 0.5999341011047363
+              },
+              {
+                "name": "monochrome_finale",
+                "category": 3,
+                "post_count": 16,
+                "score": 0.5849870443344116
+              }
+            ],
+            "best": {
+              "name": "polished_shoes",
+              "category": 0,
+              "post_count": 354,
+              "score": 0.6620121598243713
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "detailed pigtails",
+            "top_k": [
+              {
+                "name": "pig_tail",
+                "category": 0,
+                "post_count": 466,
+                "score": 0.6016464829444885
+              },
+              {
+                "name": "pangolin_tail",
+                "category": 0,
+                "post_count": 76,
+                "score": 0.597909688949585
+              },
+              {
+                "name": "twintails_with_hair_base",
+                "category": 0,
+                "post_count": 739,
+                "score": 0.5900291204452515
+              },
+              {
+                "name": "bird_tail",
+                "category": 0,
+                "post_count": 8213,
+                "score": 0.5898538827896118
+              },
+              {
+                "name": "ponytail_day",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.5896044969558716
+              }
+            ],
+            "best": {
+              "name": "pig_tail",
+              "category": 0,
+              "post_count": 466,
+              "score": 0.6016464829444885
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "simple neckline",
+            "top_k": [
+              {
+                "name": "low_neckline",
+                "category": 0,
+                "post_count": 2844,
+                "score": 0.7013025879859924
+              },
+              {
+                "name": "square_neckline",
+                "category": 0,
+                "post_count": 2173,
+                "score": 0.684168815612793
+              },
+              {
+                "name": "notched_neckline",
+                "category": 0,
+                "post_count": 86,
+                "score": 0.6594609022140503
+              },
+              {
+                "name": "naked_necktie",
+                "category": 0,
+                "post_count": 555,
+                "score": 0.6566389799118042
+              },
+              {
+                "name": "single_bare_shoulder",
+                "category": 0,
+                "post_count": 25297,
+                "score": 0.6551221013069153
+              }
+            ],
+            "best": {
+              "name": "low_neckline",
+              "category": 0,
+              "post_count": 2844,
+              "score": 0.7013025879859924
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "short hemline",
+            "top_k": [
+              {
+                "name": "low_neckline",
+                "category": 0,
+                "post_count": 2844,
+                "score": 0.6321406364440918
+              },
+              {
+                "name": "receding_hairline",
+                "category": 0,
+                "post_count": 307,
+                "score": 0.5988528728485107
+              },
+              {
+                "name": "hairline",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.597381591796875
+              },
+              {
+                "name": "shorts_on_head",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.5875076055526733
+              },
+              {
+                "name": "short_kimono",
+                "category": 0,
+                "post_count": 15623,
+                "score": 0.5862168073654175
+              }
+            ],
+            "best": {
+              "name": "low_neckline",
+              "category": 0,
+              "post_count": 2844,
+              "score": 0.6321406364440918
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct hem edge",
+            "top_k": [
+              {
+                "name": "hem_peeking_out",
+                "category": 0,
+                "post_count": 128,
+                "score": 0.5987297296524048
+              },
+              {
+                "name": "hair_edges",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.5934125185012817
+              },
+              {
+                "name": "lace_trimmed_hood",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.5732758045196533
+              },
+              {
+                "name": "blurry_edges",
+                "category": 0,
+                "post_count": 460,
+                "score": 0.5671997666358948
+              },
+              {
+                "name": "edge_edge",
+                "category": 1,
+                "post_count": 36,
+                "score": 0.5603660941123962
+              }
+            ],
+            "best": {
+              "name": "hem_peeking_out",
+              "category": 0,
+              "post_count": 128,
+              "score": 0.5987297296524048
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth fabric drape",
+            "top_k": [
+              {
+                "name": "floating_drapes",
+                "category": 0,
+                "post_count": 64,
+                "score": 0.655293881893158
+              },
+              {
+                "name": "nimble_fabric",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6118419170379639
+              },
+              {
+                "name": "fine_fabric_emphasis",
+                "category": 0,
+                "post_count": 3315,
+                "score": 0.5944936871528625
+              },
+              {
+                "name": "smoothpen",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5940147042274475
+              },
+              {
+                "name": "fabric",
+                "category": 0,
+                "post_count": 365,
+                "score": 0.5889100432395935
+              }
+            ],
+            "best": {
+              "name": "floating_drapes",
+              "category": 0,
+              "post_count": 64,
+              "score": 0.655293881893158
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft light source",
+            "top_k": [
+              {
+                "name": "may_be_soft",
+                "category": 3,
+                "post_count": 20,
+                "score": 0.6498131155967712
+              },
+              {
+                "name": "illusion_soft",
+                "category": 3,
+                "post_count": 29,
+                "score": 0.6488397121429443
+              },
+              {
+                "name": "soft_mizu",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.639398992061615
+              },
+              {
+                "name": "heat_soft",
+                "category": 3,
+                "post_count": 47,
+                "score": 0.6363358497619629
+              },
+              {
+                "name": "soft_men",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6270444393157959
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "gentle shadows",
+            "top_k": [
+              {
+                "name": "sitting_in_shadow",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6466474533081055
+              },
+              {
+                "name": "eyes_in_shadow",
+                "category": 0,
+                "post_count": 1021,
+                "score": 0.6433505415916443
+              },
+              {
+                "name": "cozy_glow",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.640091598033905
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6355296969413757
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6309406757354736
+              }
+            ],
+            "best": {
+              "name": "eyes_in_shadow",
+              "category": 0,
+              "post_count": 1021,
+              "score": 0.6433505415916443
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clear depth perception",
+            "top_k": [
+              {
+                "name": "clear_sky",
+                "category": 0,
+                "post_count": 1842,
+                "score": 0.6277915239334106
+              },
+              {
+                "name": "clear_insertion",
+                "category": 0,
+                "post_count": 106,
+                "score": 0.624687671661377
+              },
+              {
+                "name": "see_through_skirt_layer",
+                "category": 0,
+                "post_count": 379,
+                "score": 0.6201910972595215
+              },
+              {
+                "name": "high_detail",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6106753945350647
+              },
+              {
+                "name": "clear_water",
+                "category": 1,
+                "post_count": 33,
+                "score": 0.6095061302185059
+              }
+            ],
+            "best": {
+              "name": "clear_sky",
+              "category": 0,
+              "post_count": 1842,
+              "score": 0.6277915239334106
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "layered composition",
+            "top_k": [
+              {
+                "name": "layered",
+                "category": 0,
+                "post_count": 37,
+                "score": 0.6996094584465027
+              },
+              {
+                "name": "layered_bikini",
+                "category": 0,
+                "post_count": 5303,
+                "score": 0.6483320593833923
+              },
+              {
+                "name": "layered_capelet",
+                "category": 0,
+                "post_count": 131,
+                "score": 0.64396733045578
+              },
+              {
+                "name": "layered_swimsuit",
+                "category": 0,
+                "post_count": 153,
+                "score": 0.639954686164856
+              },
+              {
+                "name": "layered_collar",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6320827007293701
+              }
+            ],
+            "best": {
+              "name": "layered_bikini",
+              "category": 0,
+              "post_count": 5303,
+              "score": 0.6483320593833923
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct foreground subject",
+            "top_k": [
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.65318763256073
+              },
+              {
+                "name": "dark_foreground",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.636182963848114
+              },
+              {
+                "name": "blurry_foreground",
+                "category": 0,
+                "post_count": 34846,
+                "score": 0.628680944442749
+              },
+              {
+                "name": "different_reflection",
+                "category": 0,
+                "post_count": 4009,
+                "score": 0.6238002181053162
+              },
+              {
+                "name": "moving_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6192687749862671
+              }
+            ],
+            "best": {
+              "name": "different_shadow",
+              "category": 0,
+              "post_count": 1033,
+              "score": 0.65318763256073
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clean lines",
+            "top_k": [
+              {
+                "name": "clean",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6666308641433716
+              },
+              {
+                "name": "clean_x",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6649239659309387
+              },
+              {
+                "name": "clearline",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6590353846549988
+              },
+              {
+                "name": "green_lines",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6188470721244812
+              },
+              {
+                "name": "glowing_lines",
+                "category": 0,
+                "post_count": 552,
+                "score": 0.6019734144210815
+              }
+            ],
+            "best": {
+              "name": "clean",
+              "category": 0,
+              "post_count": 57,
+              "score": 0.6666308641433716
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth transitions",
+            "top_k": [
+              {
+                "name": "transition",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.6621140837669373
+              },
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.6518816947937012
+              },
+              {
+                "name": "smooth_criminal",
+                "category": 3,
+                "post_count": 51,
+                "score": 0.5951074957847595
+              },
+              {
+                "name": "transparent_border",
+                "category": 0,
+                "post_count": 835,
+                "score": 0.5946753621101379
+              },
+              {
+                "name": "moving_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.5919761061668396
+              }
+            ],
+            "best": {
+              "name": "smooth_criminal",
+              "category": 3,
+              "post_count": 51,
+              "score": 0.5951074957847595
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "vibrant color saturation",
+            "top_k": [
+              {
+                "name": "colorful_palette",
+                "category": 1,
+                "post_count": 1306,
+                "score": 0.6083860993385315
+              },
+              {
+                "name": "color_creation",
+                "category": 1,
+                "post_count": 29,
+                "score": 0.6038168668746948
+              },
+              {
+                "name": "color_variation",
+                "category": 0,
+                "post_count": 166,
+                "score": 0.600407063961029
+              },
+              {
+                "name": "multiple_theme_colors",
+                "category": 0,
+                "post_count": 469,
+                "score": 0.5942164063453674
+              },
+              {
+                "name": "color_issue",
+                "category": 5,
+                "post_count": 96,
+                "score": 0.5849525928497314
+              }
+            ],
+            "best": {
+              "name": "colorful_palette",
+              "category": 1,
+              "post_count": 1306,
+              "score": 0.6083860993385315
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "balanced exposure",
+            "top_k": [
+              {
+                "name": "balance_beam",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.6567560434341431
+              },
+              {
+                "name": "gan_balance",
+                "category": 1,
+                "post_count": 67,
+                "score": 0.6106505393981934
+              },
+              {
+                "name": "sequential_exposures",
+                "category": 0,
+                "post_count": 33,
+                "score": 0.5981001853942871
+              },
+              {
+                "name": "balancing_on_nose",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.5974822640419006
+              },
+              {
+                "name": "balancetheball",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.5971433520317078
+              }
+            ],
+            "best": {
+              "name": "gan_balance",
+              "category": 1,
+              "post_count": 67,
+              "score": 0.6106505393981934
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clear subject definition",
+            "top_k": [
+              {
+                "name": "clear_file_(object)",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.5961511135101318
+              },
+              {
+                "name": "clear_(dramatical_murder)",
+                "category": 4,
+                "post_count": 116,
+                "score": 0.5927545428276062
+              },
+              {
+                "name": "clear_sky",
+                "category": 0,
+                "post_count": 1842,
+                "score": 0.5867593288421631
+              },
+              {
+                "name": "clear_regulus",
+                "category": 1,
+                "post_count": 61,
+                "score": 0.5796436071395874
+              },
+              {
+                "name": "sauber",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.5685433149337769
+              }
+            ],
+            "best": {
+              "name": "clear_(dramatical_murder)",
+              "category": 4,
+              "post_count": 116,
+              "score": 0.5927545428276062
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cohesive visual weight",
+            "top_k": [
+              {
+                "name": "weight",
+                "category": 0,
+                "post_count": 430,
+                "score": 0.5959304571151733
+              },
+              {
+                "name": "ornamental_weight",
+                "category": 0,
+                "post_count": 103,
+                "score": 0.5955172777175903
+              },
+              {
+                "name": "weight_conscious",
+                "category": 0,
+                "post_count": 2050,
+                "score": 0.5921373963356018
+              },
+              {
+                "name": "weighted_clothes",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.5904496908187866
+              },
+              {
+                "name": "visual_prison",
+                "category": 3,
+                "post_count": 41,
+                "score": 0.5878314971923828
+              }
+            ],
+            "best": {
+              "name": "weight",
+              "category": 0,
+              "post_count": 430,
+              "score": 0.5959304571151733
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct character silhouette",
+            "top_k": [
+              {
+                "name": "ciri",
+                "category": 4,
+                "post_count": 331,
+                "score": 0.5993412733078003
+              },
+              {
+                "name": "mugen_silhouette",
+                "category": 4,
+                "post_count": 34,
+                "score": 0.588959813117981
+              },
+              {
+                "name": "re_gz_custom",
+                "category": 4,
+                "post_count": 11,
+                "score": 0.5858988165855408
+              },
+              {
+                "name": "palette_(character)",
+                "category": 4,
+                "post_count": 11,
+                "score": 0.5813510417938232
+              },
+              {
+                "name": "character_cutout",
+                "category": 0,
+                "post_count": 432,
+                "score": 0.5804985761642456
+              }
+            ],
+            "best": {
+              "name": "ciri",
+              "category": 4,
+              "post_count": 331,
+              "score": 0.5993412733078003
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "glossy hair sheen",
+            "top_k": [
+              {
+                "name": "glitter_in_hair",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6609784364700317
+              },
+              {
+                "name": "rainbow_hair_shine",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.6395871639251709
+              },
+              {
+                "name": "wood_gradient_hair",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6254422664642334
+              },
+              {
+                "name": "smiley_hair_ornament",
+                "category": 0,
+                "post_count": 85,
+                "score": 0.6208369135856628
+              },
+              {
+                "name": "blush_visible_through_hair",
+                "category": 0,
+                "post_count": 434,
+                "score": 0.6197593808174133
+              }
+            ],
+            "best": {
+              "name": "smiley_hair_ornament",
+              "category": 0,
+              "post_count": 85,
+              "score": 0.6208369135856628
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "crisp facial features",
+            "top_k": [
+              {
+                "name": "pink_facial_hair",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.5966933965682983
+              },
+              {
+                "name": "cupil",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.5961936712265015
+              },
+              {
+                "name": "full_frontal",
+                "category": 4,
+                "post_count": 67,
+                "score": 0.594226598739624
+              },
+              {
+                "name": "white_facial_hair",
+                "category": 0,
+                "post_count": 212,
+                "score": 0.5912410020828247
+              },
+              {
+                "name": "happy_facial",
+                "category": 0,
+                "post_count": 545,
+                "score": 0.588829517364502
+              }
+            ],
+            "best": {
+              "name": "full_frontal",
+              "category": 4,
+              "post_count": 67,
+              "score": 0.594226598739624
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rounded ears",
+            "top_k": [
+              {
+                "name": "hair_around_ear",
+                "category": 0,
+                "post_count": 514,
+                "score": 0.7205935716629028
+              },
+              {
+                "name": "drawn_ears",
+                "category": 0,
+                "post_count": 1681,
+                "score": 0.7015599608421326
+              },
+              {
+                "name": "multicolored_ears",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.7007955312728882
+              },
+              {
+                "name": "ears_visible_through_hair",
+                "category": 0,
+                "post_count": 1387,
+                "score": 0.6876248717308044
+              },
+              {
+                "name": "mask_around_one_ear",
+                "category": 0,
+                "post_count": 92,
+                "score": 0.6848534345626831
+              }
+            ],
+            "best": {
+              "name": "hair_around_ear",
+              "category": 0,
+              "post_count": 514,
+              "score": 0.7205935716629028
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct neck line",
+            "top_k": [
+              {
+                "name": "notched_neckline",
+                "category": 0,
+                "post_count": 86,
+                "score": 0.5982601642608643
+              },
+              {
+                "name": "square_neckline",
+                "category": 0,
+                "post_count": 2173,
+                "score": 0.5925159454345703
+              },
+              {
+                "name": "neck_o",
+                "category": 1,
+                "post_count": 54,
+                "score": 0.5757538080215454
+              },
+              {
+                "name": "sign_around_neck",
+                "category": 0,
+                "post_count": 555,
+                "score": 0.5708584189414978
+              },
+              {
+                "name": "chain_around_neck",
+                "category": 0,
+                "post_count": 160,
+                "score": 0.5698659420013428
+              }
+            ],
+            "best": {
+              "name": "notched_neckline",
+              "category": 0,
+              "post_count": 86,
+              "score": 0.5982601642608643
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth jaw contour",
+            "top_k": [
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.5743146538734436
+              },
+              {
+                "name": "jaw",
+                "category": 0,
+                "post_count": 199,
+                "score": 0.5613047480583191
+              },
+              {
+                "name": "conical_teeth",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.542566180229187
+              },
+              {
+                "name": "smooth_criminal",
+                "category": 3,
+                "post_count": 51,
+                "score": 0.5413038730621338
+              },
+              {
+                "name": "spiral_cheeks",
+                "category": 0,
+                "post_count": 53,
+                "score": 0.5243117213249207
+              }
+            ],
+            "best": {
+              "name": "jaw",
+              "category": 0,
+              "post_count": 199,
+              "score": 0.5613047480583191
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clear brow ridge",
+            "top_k": [
+              {
+                "name": "clear_regulus",
+                "category": 1,
+                "post_count": 61,
+                "score": 0.6085799336433411
+              },
+              {
+                "name": "clear_sky",
+                "category": 0,
+                "post_count": 1842,
+                "score": 0.6047442555427551
+              },
+              {
+                "name": "clear_wing_synchro_dragon",
+                "category": 4,
+                "post_count": 17,
+                "score": 0.5631609559059143
+              },
+              {
+                "name": "clear_echoes",
+                "category": 1,
+                "post_count": 51,
+                "score": 0.557914674282074
+              },
+              {
+                "name": "single_eyebrow",
+                "category": 0,
+                "post_count": 155,
+                "score": 0.5555164217948914
+              }
+            ],
+            "best": {
+              "name": "clear_regulus",
+              "category": 1,
+              "post_count": 61,
+              "score": 0.6085799336433411
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "simple eye shape",
+            "top_k": [
+              {
+                "name": "single_empty_eye",
+                "category": 0,
+                "post_count": 120,
+                "score": 0.7072000503540039
+              },
+              {
+                "name": "single_eyebrow",
+                "category": 0,
+                "post_count": 155,
+                "score": 0.705291211605072
+              },
+              {
+                "name": "simple_bird",
+                "category": 0,
+                "post_count": 2300,
+                "score": 0.6646563410758972
+              },
+              {
+                "name": "simple_flower",
+                "category": 0,
+                "post_count": 77,
+                "score": 0.6632346510887146
+              },
+              {
+                "name": "simple_fish",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.6624494194984436
+              }
+            ],
+            "best": {
+              "name": "single_empty_eye",
+              "category": 0,
+              "post_count": 120,
+              "score": 0.7072000503540039
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct eyelash line",
+            "top_k": [
+              {
+                "name": "mismatched_eyelashes",
+                "category": 0,
+                "post_count": 635,
+                "score": 0.611314058303833
+              },
+              {
+                "name": "long_eyelashes",
+                "category": 0,
+                "post_count": 10421,
+                "score": 0.6078494191169739
+              },
+              {
+                "name": "thick_eyelashes",
+                "category": 0,
+                "post_count": 5261,
+                "score": 0.5979644656181335
+              },
+              {
+                "name": "eyelashes_nun_(diva)",
+                "category": 4,
+                "post_count": 24,
+                "score": 0.5945924520492554
+              },
+              {
+                "name": "vertical_eye_lines",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.5938265323638916
+              }
+            ],
+            "best": {
+              "name": "mismatched_eyelashes",
+              "category": 0,
+              "post_count": 635,
+              "score": 0.611314058303833
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft hair volume",
+            "top_k": [
+              {
+                "name": "three_tone_hair",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6178644895553589
+              },
+              {
+                "name": "light_blue_hair",
+                "category": 0,
+                "post_count": 26970,
+                "score": 0.6135126948356628
+              },
+              {
+                "name": "two_tone_pubic_hair",
+                "category": 0,
+                "post_count": 39,
+                "score": 0.6126348972320557
+              },
+              {
+                "name": "feeling_body_hair",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6113097667694092
+              },
+              {
+                "name": "wood_gradient_hair",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6096656918525696
+              }
+            ],
+            "best": {
+              "name": "light_blue_hair",
+              "category": 0,
+              "post_count": 26970,
+              "score": 0.6135126948356628
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clean parting line",
+            "top_k": [
+              {
+                "name": "clean",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6279795169830322
+              },
+              {
+                "name": "clean_x",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6086605787277222
+              },
+              {
+                "name": "finish_line",
+                "category": 0,
+                "post_count": 131,
+                "score": 0.5974757075309753
+              },
+              {
+                "name": "parting_water",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.5866756439208984
+              },
+              {
+                "name": "clear_file_(medium)",
+                "category": 0,
+                "post_count": 102,
+                "score": 0.581835150718689
+              }
+            ],
+            "best": {
+              "name": "clean",
+              "category": 0,
+              "post_count": 57,
+              "score": 0.6279795169830322
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth cheekbones",
+            "top_k": [
+              {
+                "name": "cheekbones",
+                "category": 0,
+                "post_count": 1667,
+                "score": 0.6897008419036865
+              },
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.6391781568527222
+              },
+              {
+                "name": "stretching_cheeks",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.6208437085151672
+              },
+              {
+                "name": "squeezing_cheeks",
+                "category": 0,
+                "post_count": 219,
+                "score": 0.6064808368682861
+              },
+              {
+                "name": "cheek_covers",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.6028105616569519
+              }
+            ],
+            "best": {
+              "name": "cheekbones",
+              "category": 0,
+              "post_count": 1667,
+              "score": 0.6897008419036865
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct lip line",
+            "top_k": [
+              {
+                "name": "a_line",
+                "category": 1,
+                "post_count": 35,
+                "score": 0.5957300066947937
+              },
+              {
+                "name": "pheromone_lip",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.5892849564552307
+              },
+              {
+                "name": "lip_(lih8)",
+                "category": 1,
+                "post_count": 41,
+                "score": 0.5888957381248474
+              },
+              {
+                "name": "lower_lip_only",
+                "category": 0,
+                "post_count": 65,
+                "score": 0.5884289145469666
+              },
+              {
+                "name": "lip_(coco)",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.5807719230651855
+              }
+            ],
+            "best": {
+              "name": "lower_lip_only",
+              "category": 0,
+              "post_count": 65,
+              "score": 0.5884289145469666
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "simple nose bridge",
+            "top_k": [
+              {
+                "name": "bridge_piercing",
+                "category": 0,
+                "post_count": 290,
+                "score": 0.6459972858428955
+              },
+              {
+                "name": "balancing_on_nose",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.633084237575531
+              },
+              {
+                "name": "wiping_nose",
+                "category": 0,
+                "post_count": 165,
+                "score": 0.6124958992004395
+              },
+              {
+                "name": "finger_to_another's_nose",
+                "category": 0,
+                "post_count": 121,
+                "score": 0.6110406517982483
+              },
+              {
+                "name": "pince_nez",
+                "category": 0,
+                "post_count": 6287,
+                "score": 0.606702446937561
+              }
+            ],
+            "best": {
+              "name": "bridge_piercing",
+              "category": 0,
+              "post_count": 290,
+              "score": 0.6459972858428955
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "clear chin curve",
+            "top_k": [
+              {
+                "name": "chen_clear",
+                "category": 1,
+                "post_count": 24,
+                "score": 0.6481597423553467
+              },
+              {
+                "name": "clear_sky",
+                "category": 0,
+                "post_count": 1842,
+                "score": 0.6047978401184082
+              },
+              {
+                "name": "clear_echoes",
+                "category": 1,
+                "post_count": 51,
+                "score": 0.5991478562355042
+              },
+              {
+                "name": "clear_regulus",
+                "category": 1,
+                "post_count": 61,
+                "score": 0.5979984998703003
+              },
+              {
+                "name": "clear_water",
+                "category": 1,
+                "post_count": 33,
+                "score": 0.5953552722930908
+              }
+            ],
+            "best": {
+              "name": "clear_sky",
+              "category": 0,
+              "post_count": 1842,
+              "score": 0.6047978401184082
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth forehead",
+            "top_k": [
+              {
+                "name": "shiny_forehead",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.6879711151123047
+              },
+              {
+                "name": "showing_forehead",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6683687567710876
+              },
+              {
+                "name": "covering_forehead",
+                "category": 0,
+                "post_count": 93,
+                "score": 0.6619362831115723
+              },
+              {
+                "name": "wiping_forehead",
+                "category": 0,
+                "post_count": 377,
+                "score": 0.6534129977226257
+              },
+              {
+                "name": "forehead_writing",
+                "category": 0,
+                "post_count": 153,
+                "score": 0.6401751041412354
+              }
+            ],
+            "best": {
+              "name": "shiny_forehead",
+              "category": 0,
+              "post_count": 84,
+              "score": 0.6879711151123047
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct hairline edge",
+            "top_k": [
+              {
+                "name": "hair_edges",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6665138006210327
+              },
+              {
+                "name": "hairline",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6650686860084534
+              },
+              {
+                "name": "temporal_hairline",
+                "category": 0,
+                "post_count": 362,
+                "score": 0.6179149746894836
+              },
+              {
+                "name": "scanline_hair",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6141733527183533
+              },
+              {
+                "name": "single_hair_streak",
+                "category": 0,
+                "post_count": 1130,
+                "score": 0.6141132116317749
+              }
+            ],
+            "best": {
+              "name": "temporal_hairline",
+              "category": 0,
+              "post_count": 362,
+              "score": 0.6179149746894836
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth ear lobe",
+            "top_k": [
+              {
+                "name": "earlobe_stretcher",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6162605881690979
+              },
+              {
+                "name": "hair_around_ear",
+                "category": 0,
+                "post_count": 514,
+                "score": 0.5933576822280884
+              },
+              {
+                "name": "lop_ear_(erubo)",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.5916292667388916
+              },
+              {
+                "name": "mole_on_ear",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.5877842307090759
+              },
+              {
+                "name": "sleeping_ear",
+                "category": 1,
+                "post_count": 23,
+                "score": 0.5868046283721924
+              }
+            ],
+            "best": {
+              "name": "hair_around_ear",
+              "category": 0,
+              "post_count": 514,
+              "score": 0.5933576822280884
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct ear shape",
+            "top_k": [
+              {
+                "name": "mismatched_animal_ear_colors",
+                "category": 0,
+                "post_count": 557,
+                "score": 0.6170483827590942
+              },
+              {
+                "name": "cat_ear_shaped_hair",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6120083928108215
+              },
+              {
+                "name": "character_ear_piercing",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.609255313873291
+              },
+              {
+                "name": "single_animal_ear",
+                "category": 0,
+                "post_count": 42,
+                "score": 0.6091257333755493
+              },
+              {
+                "name": "alternate_animal_ears",
+                "category": 0,
+                "post_count": 208,
+                "score": 0.6085839867591858
+              }
+            ],
+            "best": {
+              "name": "mismatched_animal_ear_colors",
+              "category": 0,
+              "post_count": 557,
+              "score": 0.6170483827590942
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth cheekbone curve",
+            "top_k": [
+              {
+                "name": "cheekbones",
+                "category": 0,
+                "post_count": 1667,
+                "score": 0.6229113340377808
+              },
+              {
+                "name": "spiral_cheeks",
+                "category": 0,
+                "post_count": 53,
+                "score": 0.5779683589935303
+              },
+              {
+                "name": "stretching_cheeks",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.5732638239860535
+              },
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.5704637169837952
+              },
+              {
+                "name": "cheek_covers",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.5691303610801697
+              }
+            ],
+            "best": {
+              "name": "cheekbones",
+              "category": 0,
+              "post_count": 1667,
+              "score": 0.6229113340377808
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct nose bridge",
+            "top_k": [
+              {
+                "name": "extra_noses",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.5740587711334229
+              },
+              {
+                "name": "balancing_on_nose",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.5693843364715576
+              },
+              {
+                "name": "bridge_piercing",
+                "category": 0,
+                "post_count": 290,
+                "score": 0.5656255483627319
+              },
+              {
+                "name": "double_bridge_glasses",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.5521742105484009
+              },
+              {
+                "name": "jet_bridge",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.5494752526283264
+              }
+            ],
+            "best": {
+              "name": "bridge_piercing",
+              "category": 0,
+              "post_count": 290,
+              "score": 0.5656255483627319
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth lip line",
+            "top_k": [
+              {
+                "name": "shiny_lips",
+                "category": 0,
+                "post_count": 476,
+                "score": 0.6123728156089783
+              },
+              {
+                "name": "lip_sync",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.5934044718742371
+              },
+              {
+                "name": "smoothpen",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5911562442779541
+              },
+              {
+                "name": "spread_lips",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.5904227495193481
+              },
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.5887210369110107
+              }
+            ],
+            "best": {
+              "name": "shiny_lips",
+              "category": 0,
+              "post_count": 476,
+              "score": 0.6123728156089783
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct cupid's bow",
+            "top_k": [
+              {
+                "name": "multicolored_bow",
+                "category": 0,
+                "post_count": 3027,
+                "score": 0.5913954973220825
+              },
+              {
+                "name": "compound_bow",
+                "category": 0,
+                "post_count": 387,
+                "score": 0.5822511911392212
+              },
+              {
+                "name": "two_sided_bow",
+                "category": 0,
+                "post_count": 97,
+                "score": 0.5797880291938782
+              },
+              {
+                "name": "cupid",
+                "category": 0,
+                "post_count": 273,
+                "score": 0.5754979848861694
+              },
+              {
+                "name": "wing_shaped_bow",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.5706728100776672
+              }
+            ],
+            "best": {
+              "name": "multicolored_bow",
+              "category": 0,
+              "post_count": 3027,
+              "score": 0.5913954973220825
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth chin cleft",
+            "top_k": [
+              {
+                "name": "cleft_chin",
+                "category": 0,
+                "post_count": 748,
+                "score": 0.6274318099021912
+              },
+              {
+                "name": "smooth_criminal",
+                "category": 3,
+                "post_count": 51,
+                "score": 0.5984898209571838
+              },
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.5863595604896545
+              },
+              {
+                "name": "smoothpen",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5778384804725647
+              },
+              {
+                "name": "scar_on_chin",
+                "category": 0,
+                "post_count": 281,
+                "score": 0.5660150051116943
+              }
+            ],
+            "best": {
+              "name": "cleft_chin",
+              "category": 0,
+              "post_count": 748,
+              "score": 0.6274318099021912
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct jaw angle",
+            "top_k": [
+              {
+                "name": "jaw",
+                "category": 0,
+                "post_count": 199,
+                "score": 0.5854161977767944
+              },
+              {
+                "name": "bifurcated_jaw",
+                "category": 0,
+                "post_count": 110,
+                "score": 0.5759602785110474
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.5733055472373962
+              },
+              {
+                "name": "different_reflection",
+                "category": 0,
+                "post_count": 4009,
+                "score": 0.559484601020813
+              },
+              {
+                "name": "alternate_eyebrows",
+                "category": 0,
+                "post_count": 107,
+                "score": 0.5485872626304626
+              }
+            ],
+            "best": {
+              "name": "jaw",
+              "category": 0,
+              "post_count": 199,
+              "score": 0.5854161977767944
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth neck curve",
+            "top_k": [
+              {
+                "name": "hair_around_neck",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6063277125358582
+              },
+              {
+                "name": "square_neckline",
+                "category": 0,
+                "post_count": 2173,
+                "score": 0.6059380173683167
+              },
+              {
+                "name": "sweater_around_neck",
+                "category": 0,
+                "post_count": 490,
+                "score": 0.6054835319519043
+              },
+              {
+                "name": "stethoscope_around_neck",
+                "category": 0,
+                "post_count": 235,
+                "score": 0.5883479118347168
+              },
+              {
+                "name": "string_around_neck",
+                "category": 0,
+                "post_count": 103,
+                "score": 0.5796205997467041
+              }
+            ],
+            "best": {
+              "name": "square_neckline",
+              "category": 0,
+              "post_count": 2173,
+              "score": 0.6059380173683167
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct collarbone",
+            "top_k": [
+              {
+                "name": "covered_collarbone",
+                "category": 0,
+                "post_count": 9530,
+                "score": 0.6197659969329834
+              },
+              {
+                "name": "mole_on_collarbone",
+                "category": 0,
+                "post_count": 1342,
+                "score": 0.6056533455848694
+              },
+              {
+                "name": "collarbone_peek",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.6040606498718262
+              },
+              {
+                "name": "collarbone_tattoo",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.5866637229919434
+              },
+              {
+                "name": "different_reflection",
+                "category": 0,
+                "post_count": 4009,
+                "score": 0.5618478059768677
+              }
+            ],
+            "best": {
+              "name": "covered_collarbone",
+              "category": 0,
+              "post_count": 9530,
+              "score": 0.6197659969329834
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "smooth shoulder slope",
+            "top_k": [
+              {
+                "name": "smooth_operators",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.6020101308822632
+              },
+              {
+                "name": "shoulder_hair",
+                "category": 0,
+                "post_count": 35,
+                "score": 0.596551239490509
+              },
+              {
+                "name": "sweater_around_waist",
+                "category": 0,
+                "post_count": 3228,
+                "score": 0.5933896899223328
+              },
+              {
+                "name": "shoulder_support",
+                "category": 0,
+                "post_count": 56,
+                "score": 0.590438961982727
+              },
+              {
+                "name": "shoulder_rest",
+                "category": 0,
+                "post_count": 39,
+                "score": 0.5873150825500488
+              }
+            ],
+            "best": {
+              "name": "sweater_around_waist",
+              "category": 0,
+              "post_count": 3228,
+              "score": 0.5933896899223328
+            },
+            "dropped_reason": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "curate",
+      "params": {
+        "temperature": 0.5,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 3.279,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "hatsune miku, chibikki, small head, very big eyes, twintails with hair base, low cut dress, frilled bib, standing on own tail, holding cake, hand up, birthday cake, sweet pink, green leaf, overhead lights, smooth operators, cream background, high contrast, sharp focus on face, simple fish, flat color, happy facial, head tilt, minimal background detail, low detail, white outline, tealo, soft pastel pink, crisp edges, delicate pose, compact (cosmetics), oversized limbs, gentle curve of cake, slight bounce in stance, bright and airy atmosphere, precise lines, defined eyelashes, glossy frosting surface, matte fabric texture, clear separation between hair strands, distinct jawline, button nose, wide mouth, hint of teeth, direct gaze forward, symmetrical pose, balanced weight distribution, playful energy, crisp definition, smooth gradients, clean silhouette, rounded forms, simplified features, charming proportions, distinct hairline, smooth skin finish, gentle smile, bright teal, clear focal point, balanced negative space, cohesive color palette, unified style, distinct character presence, small stature, elongated arms, delicate fingers, rounded shoulders, cheerful demeanor, dynamic stillness, polished finish, detailed pigtails, simple neckline, short hemline, distinct hem edge, smooth fabric drape, soft light source, gentle shadows, clear depth perception, layered composition, distinct foreground subject, clean lines, smooth transitions, vibrant color saturation, balanced exposure, clear subject definition, cohesive visual weight, distinct character silhouette, glossy hair sheen, crisp facial features, rounded ears, distinct neck line, smooth jaw contour, clear brow ridge, simple eye shape, distinct eyelash line, soft hair volume, clean parting line, smooth cheekbones, distinct lip line, simple nose bridge, clear chin curve, smooth forehead, distinct hairline edge, smooth ear lobe, distinct ear shape, smooth cheekbone curve, distinct nose bridge, smooth lip line, distinct cupid's bow, smooth chin cleft, distinct jaw angle, smooth neck curve, distinct collarbone, smooth shoulder slope"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 4.933,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, hatsune miku, vocaloid, small head, very big eyes, twintails with hair base, low cut dress, frilled bib, standing on own tail, holding cake, hand up, birthday cake, green leaf, overhead lights, cream background, high contrast, simple fish, flat color, happy facial, head tilt, low detail, white outline, pose, compact (cosmetics), oversized limbs, bouncing",
+        "stats": {
+          "corrected": 0,
+          "dropped": 84,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, hatsune miku, vocaloid, small head, very big eyes, twintails with hair base, low cut dress, frilled bib, standing on own tail, holding cake, hand up, birthday cake, green leaf, overhead lights, cream background, high contrast, simple fish, flat color, happy facial, head tilt, low detail, white outline, pose, compact (cosmetics), oversized limbs, bouncing",
+        "slot_fill_trace": {}
+      }
+    }
+  ],
+  "prompt_id": "miku_cake",
+  "seed": 1001,
+  "modifiers": [],
+  "prompt_source": "hatsune miku holding a cake, chibi",
+  "final_tags": "masterpiece, best quality, score_7, safe, hatsune miku, vocaloid, small head, very big eyes, twintails with hair base, low cut dress, frilled bib, standing on own tail, holding cake, hand up, birthday cake, green leaf, overhead lights, cream background, high contrast, simple fish, flat color, happy facial, head tilt, low detail, white outline, pose, compact (cosmetics), oversized limbs, bouncing",
+  "prose": "hatsune miku holding a cake, chibi style, small round head, oversized expressive eyes, bobbed teal hair with twin pigtails, wearing a short pastel blue dress with a frilled hem, standing on tiptoes, one hand gripping the side of a round vanilla cake, the other hand raised slightly, cake topped with thick pink frosting and a single green leaf, soft diffused overhead lighting, subtle shadows under the chin and chin, smooth matte skin texture, clean white background, minimal background detail, high contrast, sharp focus on the face, simple geometric shapes, flat color fields, cheerful expression, slight tilt of the head, minimal background clutter, distinct outline separating figure from space, vibrant teal against soft cream tones, crisp edges, delicate pose, compact proportions, rounded limbs, gentle curve of the cake, slight bounce in stance, bright and airy atmosphere, precise lines, defined eyelashes, glossy frosting surface, matte fabric texture, clear separation between hair strands, distinct jawline, small button nose, wide open mouth showing a hint of teeth, direct gaze forward, symmetrical composition, balanced weight distribution, playful energy, crisp definition, smooth gradients, clean silhouette, rounded forms, simplified features, charming proportions, distinct hairline, smooth skin finish, gentle smile, bright teal hue, soft pastel pink, creamy white frosting, crisp white background, clear focal point, balanced negative space, cohesive color palette, unified style, distinct character presence, small stature, elongated arms, delicate fingers, rounded shoulders, compact frame, cheerful demeanor, dynamic stillness, polished finish, detailed pigtails, simple neckline, short hemline, distinct hem edge, smooth fabric drape, soft light source, gentle shadows, clear depth perception, layered composition, distinct foreground subject, clean lines, smooth transitions, vibrant color saturation, balanced exposure, clear subject definition, cohesive visual weight, distinct character silhouette, smooth skin texture, glossy hair sheen, crisp facial features, rounded ears, distinct neck line, smooth jaw contour, clear brow ridge, simple eye shape, distinct eyelash line, soft hair volume, clean parting line, smooth cheekbones, distinct lip line, simple nose bridge, clear chin curve, smooth forehead, distinct hairline edge, smooth temple curve, clear jaw angle, distinct neck shadow, smooth collarbone, distinct shoulder slope, smooth back curve, distinct hip line, smooth thigh curve, distinct knee bend, smooth calf muscle, distinct ankle bone, smooth instep, distinct toe shape, smooth palm texture, distinct finger joint, smooth wrist curve, distinct elbow bend, smooth shoulder joint, distinct hip joint, smooth knee joint, distinct ankle joint, smooth hip joint, distinct waist curve, smooth stomach curve, distinct rib cage, smooth collarbone curve, distinct shoulder blade, smooth back muscle, distinct thigh muscle, smooth calf muscle, distinct hamstring, smooth quad, distinct glute, smooth hamstrings, distinct thigh gap, smooth inner thigh, distinct outer hip, smooth waistline, distinct hip curve, smooth lower back, distinct lumbar curve, smooth upper back, distinct scapula, smooth shoulder line, distinct clavicle, smooth neck line, distinct throat, smooth jawline, distinct chin cleft, smooth forehead curve, distinct brow ridge, smooth temple line, distinct hairline edge, smooth ear lobe, distinct ear shape, smooth cheekbone curve, distinct nose bridge, smooth lip line, distinct cupid's bow, smooth chin cleft, distinct jaw angle, smooth neck curve, distinct collarbone, smooth shoulder slope, distinct hip line, smooth thigh curve, distinct knee bend, smooth calf muscle, distinct ankle bone, smooth instep, distinct toe shape, smooth palm texture, distinct finger joint, smooth wrist curve, distinct elbow bend, smooth shoulder joint, distinct hip joint, smooth knee joint, distinct ankle joint, smooth hip joint, distinct waist curve, smooth stomach curve, distinct rib cage, smooth collarbone curve, distinct shoulder blade, smooth back muscle, distinct thigh muscle, smooth calf muscle, distinct hamstring, smooth quad, distinct glute, smooth hamstrings, distinct thigh gap, smooth inner thigh, distinct outer hip, smooth waistline, distinct hip curve, smooth lower back, distinct lumbar curve, smooth upper back, distinct scapula, smooth shoulder line, distinct clavicle, smooth neck line, distinct throat, smooth jawline, distinct chin cleft, smooth forehead curve, distinct brow ridge, smooth temple line, distinct hairline edge, smooth ear lobe, distinct ear shape, smooth cheekbone curve, distinct nose bridge, smooth lip line, distinct cupid's bow, smooth chin cleft, distinct jaw angle, smooth neck curve, distinct collarbone, smooth shoulder slope, distinct hip line, smooth thigh curve, distinct knee bend, smooth calf muscle, distinct ankle bone, smooth instep, distinct toe shape, smooth palm texture, distinct finger joint, smooth wrist curve, distinct elbow bend, smooth shoulder joint, distinct hip joint, smooth knee joint, distinct ankle joint, smooth hip joint, distinct waist curve, smooth stomach",
+  "draft": "hatsune miku, chibikki, small head, very big eyes, twintails with hair base, low cut dress, frilled bib, standing on own tail, holding cake, hand up, birthday cake, sweet pink, green leaf, overhead lights, smooth operators, cream background, high contrast, sharp focus on face, simple fish, flat color, happy facial, head tilt, minimal background detail, low detail, white outline, tealo, soft pastel pink, crisp edges, delicate pose, compact (cosmetics), oversized limbs, gentle curve of cake, slight bounce in stance, bright and airy atmosphere, precise lines, defined eyelashes, glossy frosting surface, matte fabric texture, clear separation between hair strands, distinct jawline, button nose, wide mouth, hint of teeth, direct gaze forward, symmetrical pose, balanced weight distribution, playful energy, crisp definition, smooth gradients, clean silhouette, rounded forms, simplified features, charming proportions, distinct hairline, smooth skin finish, gentle smile, bright teal, clear focal point, balanced negative space, cohesive color palette, unified style, distinct character presence, small stature, elongated arms, delicate fingers, rounded shoulders, cheerful demeanor, dynamic stillness, polished finish, detailed pigtails, simple neckline, short hemline, distinct hem edge, smooth fabric drape, soft light source, gentle shadows, clear depth perception, layered composition, distinct foreground subject, clean lines, smooth transitions, vibrant color saturation, balanced exposure, clear subject definition, cohesive visual weight, distinct character silhouette, glossy hair sheen, crisp facial features, rounded ears, distinct neck line, smooth jaw contour, clear brow ridge, simple eye shape, distinct eyelash line, soft hair volume, clean parting line, smooth cheekbones, distinct lip line, simple nose bridge, clear chin curve, smooth forehead, distinct hairline edge, smooth ear lobe, distinct ear shape, smooth cheekbone curve, distinct nose bridge, smooth lip line, distinct cupid's bow, smooth chin cleft, distinct jaw angle, smooth neck curve, distinct collarbone, smooth shoulder slope",
+  "shortlist": {
+    "artists": [
+      "chibi (shimon)",
+      "chibitan",
+      "kotomi (happy colors)",
+      "chiba sadoru",
+      "chigo",
+      "chiki (botugo)"
+    ],
+    "characters": [
+      "hatsune miku",
+      "hatsune miku (nt)",
+      "hatsune miku (noodle stopper)",
+      "shaohua hatsune miku",
+      "miku (lee)",
+      "brazilian miku"
+    ],
+    "series": [
+      "hatsune miku expo",
+      "hatsune miku graphy collection",
+      "hatsune miku happy 16th birthday  dear creators "
+    ]
+  }
+}

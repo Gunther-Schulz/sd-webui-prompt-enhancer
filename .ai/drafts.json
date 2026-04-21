@@ -1,0 +1,219 @@
+{
+  "model": "huihui_ai/qwen3.5-abliterated:9b",
+  "entries": [
+    {
+      "prompt": "hatsune miku holding a cake, chibi",
+      "modifier": null,
+      "shortlist": {
+        "artists": [
+          "chibikki",
+          "chibi vanille",
+          "mikaku",
+          "mirai (sugar)",
+          "eat some cookie",
+          "shrimp cake"
+        ],
+        "characters": [
+          "hatsune miku",
+          "hatsune miku (nt)",
+          "hatsune miku (noodle stopper)",
+          "shaohua hatsune miku",
+          "miku (lee)",
+          "brazilian miku"
+        ],
+        "series": [
+          "hatsune miku expo",
+          "hatsune miku graphy collection",
+          "hatsune miku happy 16th birthday  dear creators "
+        ]
+      },
+      "prose": "Hatsune Miku stands in a bright room holding a round cake. She wears her signature teal and pink outfit. Her hair is long and tied in twin tails. The cake has smooth white frosting and sits on a simple plate. Her pose is relaxed with one hand lifting the dessert. Her expression is cheerful and focused on the treat. Soft overhead light casts gentle shadows on her face. The background is slightly blurred to keep attention on her. Her skin is pale and smooth under the illumination. The cake looks moist and dense. Her eyes are large and dark. The scene feels playful and cute.",
+      "draft": "best quality, score_7, 1girl, Hatsune Miku, teal and pink outfit, long hair, twin tails, holding, round cake, white frosting, simple plate, relaxed pose, cheerful expression, soft overhead light, gentle shadows, blurred background, pale skin, moist cake, large dark eyes, playful, cute, bright room"
+    },
+    {
+      "prompt": "a girl reading in a cafe",
+      "modifier": null,
+      "shortlist": {
+        "artists": [
+          "ireading",
+          "cafe (chuu no ouchi)",
+          "tf cafe",
+          "coffee break",
+          "cafelittle",
+          "cafe au lait (kafeore)"
+        ],
+        "characters": [
+          "rococo (girl cafe gun)",
+          "cafe cuties soraka",
+          "octoling girl",
+          "girl dm",
+          "girl (mokufuu)",
+          "inkling girl"
+        ],
+        "series": [
+          "girl cafe gun",
+          "book of the cafe",
+          "girls book maker",
+          "girl with a pearl earring",
+          "woman with a parasol"
+        ]
+      },
+      "prose": "A girl sits at a wooden table in a sunlit cafe. She wears a simple white blouse and dark trousers. Her brown hair falls loosely around her shoulders. She holds an open book with both hands near her chest. Warm overhead light casts a soft shadow on the table surface. Dust motes float in the golden beams above. The background blurs slightly with hints of other patrons and hanging plants. Her expression is calm and focused on the pages. A ceramic cup of coffee sits untouched beside her elbow. The air feels still and quiet. Natural light streams through a large window to her left. Her posture is relaxed, leaning slightly forward. Fabric textures show gentle folds from her movement. The scene captures a moment of quiet concentration.",
+      "draft": "masterpiece, best quality, 1girl, brown hair, white blouse, dark trousers, open book, holding book, ceramic cup, coffee, sunlit, cafe, wooden table, overhead light, soft shadow, dust motes, golden light, large window, relaxed posture, fabric folds, calm expression, focused, natural light, background blur, hanging plants, safe"
+    },
+    {
+      "prompt": "girl",
+      "modifier": "random_artist",
+      "shortlist": {
+        "artists": [],
+        "characters": [
+          "girl (mokufuu)",
+          "girl dm",
+          "gotcha! girl (pokemon)",
+          "acfun girl",
+          "lofi girl",
+          "vault girl"
+        ],
+        "series": [
+          "girl arms",
+          "high score girl",
+          "girl with a pearl earring"
+        ]
+      },
+      "prose": "A girl stands center frame with a confident, direct gaze. Her hair is long and dark, falling past her shoulders. She wears a fitted bodysuit that hugs her curves, made of smooth, matte fabric in a deep midnight blue. One hand rests casually on her hip while the other holds a glowing, translucent orb of energy. The lighting is dramatic and high-contrast, casting sharp shadows against a dark, void-like background. A single rim of cool white light outlines her silhouette, separating her form from the darkness. Her expression is calm but intense, lips slightly parted. The composition is tight, focusing entirely on her upper body and the orb. Rendered in the distinct, vector-sharp style of a digital illustrator, emphasizing clean lines and saturated colors. The texture of her skin is flawless, contrasting with the slightly grainy digital texture of the background. She appears ready for action, frozen in a moment of quiet power.",
+      "draft": "masterpiece, best quality, score_9, 1girl, long dark hair, bodysuit, deep blue, glowing orb, hand on hip, cool white rim light, dark background, direct gaze, intense expression, calm expression, vector sharp, clean lines, saturated colors, flawless skin, digital texture, high contrast, sharp shadows, tight composition, upper body, confident"
+    },
+    {
+      "prompt": "a lone samurai at dusk with a sword",
+      "modifier": "random_artist",
+      "shortlist": {
+        "artists": [
+          "samuraisamurai",
+          "samusara",
+          "sgt lonely",
+          "alonemistrist",
+          "alone belm",
+          "samaru (seiga)"
+        ],
+        "characters": [
+          "sonata dusk (human)",
+          "samurai calibur",
+          "silent swordsman",
+          "sonata dusk",
+          "darkness (konosuba)",
+          "stranger (omori)"
+        ],
+        "series": [
+          "yomawari"
+        ]
+      },
+      "prose": "A lone samurai stands at dusk with a long katana held low. The figure wears weathered dark blue armor with a single gold stripe on the shoulder. His black hair flows back from a sharp jawline. A wide-brimmed straw hat casts a heavy shadow over his face. The sword blade reflects the fading orange sky. Warm overhead light glows from the setting sun, creating long, stretched shadows on the grass. The air feels thick and humid. The background blurs into deep purples and indigos. The artist style of samuraisamurai defines the composition with bold, slightly rough brushstrokes. The scene balances sharp details on the armor against a softer, dreamlike horizon. Dust motes float in the golden beams cutting through the twilight. The samurai looks forward with a calm, steady gaze. The ground beneath him is uneven and textured with small stones. The overall mood is quiet and solitary.",
+      "draft": "best quality, score_7, 1girl, samurai, dark blue armor, gold stripe, black hair, straw hat, wide brim, low katana, long sword, sharp jawline, setting sun, warm lighting, long shadows, grass, humid air, purple background, indigo, deep background, bold brushstrokes, sharp details, soft horizon, dust motes, golden beams, twilight, calm gaze, uneven ground, small stones, solitary, rough texture, samuraisamurai"
+    },
+    {
+      "prompt": "a dragon perched on a tower at sunset",
+      "modifier": null,
+      "shortlist": {
+        "artists": [
+          "drenched in sunlight",
+          "dragoncastle",
+          "dragoner",
+          "dragon@harry",
+          "uchio kazumasa"
+        ],
+        "characters": [
+          "dragoon (selen tatsuki)",
+          "dragoon (sekaiju)",
+          "dragoon (dokibird)",
+          "sunset shimmer",
+          "monkey d. dragon",
+          "dragon (any)"
+        ],
+        "series": [
+          "dragon's crown",
+          "the legend of dragoon",
+          "dragon's shadow",
+          "guilty dragon",
+          "woman with a parasol"
+        ]
+      },
+      "prose": "A dragon perched on a stone tower at sunset. The creature has scaly green skin and a long, spiked tail curling over its back. Its wings are folded tight against its sides, casting a shadow on the tower wall. The sun hangs low in the sky, bathing the scene in warm, golden light. A single ray of sunlight hits the dragon's snout, highlighting the texture of its scales. The tower is made of rough gray stone with a weathered crenellated top. The dragon's eyes are narrow and focused downward. Dust motes float in the air around its head. The horizon glows orange behind the silhouette of the spire. The air feels still and heavy with heat. One claw grips the edge of the parapet firmly. The wind ruffles the tips of its ears. A small, circular emblem is visible on its chest. The background fades into a soft, hazy purple sky.",
+      "draft": "best quality, score_7, 1other, dragon, green skin, long tail, spiked tail, folded wings, stone tower, sunset, golden hour, sun halo, narrow eyes, focused gaze, dust motes, orange horizon, purple sky, crenellated, rough texture, chest emblem, claw, parapet, ruffled ears, weathered, shadow, silhouette, warm light, hazy, still, heat haze, scaly, gray stone, snout, spire"
+    },
+    {
+      "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+      "modifier": null,
+      "shortlist": {
+        "artists": [
+          "silver meteor",
+          "jane mere",
+          "silver bell",
+          "sinsora",
+          "pos (shiratama ya)",
+          "jana schirmer"
+        ],
+        "characters": [
+          "mof's silver haired twintailed girl",
+          "lady labrynth of the silver castle",
+          "miss valentine",
+          "elena (grandia)",
+          "filia ul copt",
+          "rosette christopher"
+        ],
+        "series": [
+          "girl with a pearl earring",
+          "woman with a parasol"
+        ]
+      },
+      "prose": "Portrait of a young woman with long silver hair cascading over her shoulders and golden eyes reflecting the light. She wears ornate jewelry featuring a heavy gold necklace with a large gemstone pendant. Her skin is pale against the metallic tones of her attire. Soft, warm light from the upper left casts gentle shadows on her cheek. The background remains slightly blurred to emphasize her features. Her pose is direct and confident, facing forward. Fabric textures are smooth and slightly shimmering under the illumination. One hand rests gently near her collarbone, drawing attention to the intricate metalwork of her cuffs. The composition balances the cool silver of her hair with the warm gold of her gaze and accessories.",
+      "draft": "best quality, score_7, 1girl, long silver hair, golden eyes, pale skin, heavy gold necklace, large gemstone pendant, ornate jewelry, direct gaze, confident pose, one hand near collarbone, intricate metalwork, smooth fabric, shimmering texture, soft warm light, upper left lighting, gentle shadows, blurred background, cool silver hair, warm gold accessories"
+    },
+    {
+      "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+      "modifier": null,
+      "shortlist": {
+        "artists": [
+          "kinosaki",
+          "sasaki mutsumi",
+          "minakami kaori",
+          "kishiyo",
+          "shiomiya iruka",
+          "chirigami san"
+        ],
+        "characters": [
+          "saginomiya isumi",
+          "kurame",
+          "saigyouji yuyuko (living)"
+        ],
+        "series": []
+      },
+      "prose": "1girl with long hair cascading down her back. She wears a kimono made of silk in a soft pink hue. Cherry blossoms drift around her, some resting on her shoulders. The fabric of her garment shows a subtle sheen under the light. Her pose is relaxed, one hand lightly touching a falling petal. Spring air feels cool and crisp in the scene. Natural daylight filters through the canopy above, casting dappled shadows on her face. The background blurs slightly to emphasize her sharp features. Her expression is calm, eyes fixed on the ground. Petals catch the light, appearing almost translucent against her skin. The composition balances the delicate flowers with the structured lines of her collar. Every element suggests a quiet moment in a bustling garden.",
+      "draft": "best quality, 1girl, long hair, pink kimono, silk, cherry blossoms, petals, on shoulders, sheen, relaxed pose, hand, spring, natural daylight, dappled shadows, calm expression, looking down, translucent petals, structured collar, garden, soft focus"
+    },
+    {
+      "prompt": "anime girl with glasses, sweater, library",
+      "modifier": "random_artist",
+      "shortlist": {
+        "artists": [
+          "sakura akami",
+          "akai toshifumi",
+          "wakatsuki sana",
+          "akari maki",
+          "akane souichi",
+          "hirama hirokazu"
+        ],
+        "characters": [
+          "glasses girl (nameo)",
+          "sweater girl (dr graevling)",
+          "glasses nun (diva)",
+          "inkling girl",
+          "glasses kappa",
+          "octoling girl"
+        ],
+        "series": []
+      },
+      "prose": "Anime girl with glasses stands inside a library. She wears a thick knit sweater in a deep navy blue. Her hair falls loosely around her shoulders. She holds a leather-bound book open in both hands. Warm overhead light casts soft shadows on the wooden floor. Dust motes float in the air near the ceiling. The background features tall shelves packed with leather spines. One specific shelf holds a row of identical red books. Her expression is focused and slightly tilted. The illustration style mimics the clean lines of Akami Sakura. Ink defines her sharp jawline and the rim of her wire frames. A single page of text is visible on the open book. The room feels quiet and still. Textured fabric clings to her frame. Natural light filters through a high window on the left.",
+      "draft": "masterpiece, best quality, 1girl, glasses, library, thick knit sweater, navy blue sweater, loose hair, holding book, leather bound book, open book, warm lighting, soft shadows, wooden floor, dust motes, tall shelves, leather spines, red books, focused expression, tilted head, ink lines, sharp jawline, wire frames, page of text, quiet atmosphere, textured fabric, natural light, high window, Akami Sakura, @akami sakura"
+    }
+  ]
+}

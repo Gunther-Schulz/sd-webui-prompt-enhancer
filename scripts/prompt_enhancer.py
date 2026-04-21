@@ -299,7 +299,38 @@ def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
         "total": len(tags_list),
     }
     print(f"[PromptEnhancer]   → {len(tags_list)} kept, raw dropped={stats['dropped']}")
-    return ", ".join(tags_list), stats
+    # Belt-and-suspenders: final filter that guarantees every emitted
+    # tag is either in the DB (by normalized name) or on the tag-format
+    # whitelist (score_N, masterpiece, safe, etc.). Catches any bug
+    # upstream (bad rule-layer, validator bypass, etc.) that lets a
+    # non-DB prose phrase reach this point. Logs drops loudly — if this
+    # filter ever fires, there's a real bug to investigate.
+    from anima_tagger.validator import ANIMA_WHITELIST
+    clean_tags = []
+    dropped_by_final = []
+    for t in tags_list:
+        norm = t.strip().lstrip("@").lower().replace(" ", "_").replace("-", "_")
+        if not norm:
+            continue
+        # Whitelist check (score_N, masterpiece, safe, etc.)
+        if norm in ANIMA_WHITELIST:
+            clean_tags.append(t)
+            continue
+        # Safety tags are whitelisted by category — explicit, nsfw, safe, sensitive
+        if norm in ("safe", "sensitive", "nsfw", "explicit"):
+            clean_tags.append(t)
+            continue
+        # DB check — every real tag has a DB entry
+        if stack.db.get_by_name(norm) is not None:
+            clean_tags.append(t)
+            continue
+        # Nothing matched — this is a non-DB, non-whitelist phrase that
+        # must not be in the final output. Drop + log.
+        dropped_by_final.append(t)
+    if dropped_by_final:
+        print(f"[PromptEnhancer] FINAL FILTER dropped {len(dropped_by_final)} "
+              f"non-DB tokens that slipped through validator: {dropped_by_final}")
+    return ", ".join(clean_tags), stats
 
 
 # Map of target_slot → (category_code, min_post_count, prefer_popularity).
@@ -1336,12 +1367,42 @@ _MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "180"))
 def _detect_repetition(text):
     """Detect repetitive output by tracking unique content ratio.
 
-    Splits text into comma/period-separated segments. If the last 20 segments
-    contain fewer than 30% unique values (compared to what appeared earlier),
-    the output is looping. Returns trimmed text if detected, None otherwise.
+    Splits text into comma/period-separated segments. Triggers on either:
+      (a) Any single segment appears 4+ times — catches short degenerate
+          loops the 30-segment window misses (e.g. "the girl's hair is a
+          deep chestnut" appearing 10x in a 19-segment paragraph).
+      (b) Of the last 20 segments, 70%+ are duplicates of earlier ones
+          (requires ≥ 30 total segments — original longer-text detector).
+
+    Returns trimmed text if loop detected, None otherwise.
     """
-    # Split on commas and periods to get segments
     segments = [s.strip().lower() for s in re.split(r"[,.\n]+", text) if s.strip()]
+    if len(segments) < 6:
+        return None
+    # Signal (a): any segment verbatim 4+ times → unambiguous loop
+    from collections import Counter as _C
+    counts = _C(segments)
+    worst_seg, worst_n = counts.most_common(1)[0]
+    if worst_n >= 4 and len(worst_seg) >= 10:
+        # Trim back to before the second-to-last occurrence of the repeated segment
+        # so we keep the first full use + some context.
+        positions = [i for i, s in enumerate(segments) if s == worst_seg]
+        trim_before_idx = positions[1] if len(positions) >= 2 else positions[0]
+        # Reconstruct text up to that segment
+        parts = re.split(r"([,.\n]+)", text)
+        seg_count = 0
+        char_pos = 0
+        for part in parts:
+            if part.strip() and not re.match(r"^[,.\n]+$", part):
+                if seg_count >= trim_before_idx:
+                    break
+                seg_count += 1
+            char_pos += len(part)
+        trimmed = text[:char_pos].rstrip(" ,.\n")
+        print(f"[PromptEnhancer] Aborting: repetition detected "
+              f"(segment {worst_seg!r} appeared {worst_n}x)")
+        return trimmed
+    # Signal (b): original longer-window detector
     if len(segments) < 30:
         return None
     # Check: of the last 20 segments, how many are duplicates of earlier segments?
@@ -1456,9 +1517,22 @@ def _multi_sample_prose(user_msg, sp, api_url, model, temperature,
         )
         samples.append(content)
 
-    # Picker call: build user message with numbered samples
+    # Quality pre-filter: detect degenerate (looped) samples. Picker
+    # sees only clean options, so it can't accidentally pick a loop.
+    # If ALL samples looped, fall through to picker on the full set so
+    # we still produce output — caller can retry at their level.
+    clean_indices = []
+    for i, s in enumerate(samples):
+        if _detect_repetition(s) is None:
+            clean_indices.append(i)
+    if 0 < len(clean_indices) < n_samples:
+        print(f"[PromptEnhancer] Multi-sample: {n_samples - len(clean_indices)}/{n_samples} "
+              f"samples rejected as looping; picker sees {len(clean_indices)}.")
+    picker_options = [samples[i] for i in clean_indices] if clean_indices else samples
+
+    # Picker call: build user message with numbered samples (clean only)
     picker_parts = [f"SOURCE: {user_msg!r}"]
-    for i, s in enumerate(samples, 1):
+    for i, s in enumerate(picker_options, 1):
         s_trim = s if len(s) < 800 else s[:800] + "…"
         picker_parts.append(f"\n--- Prose {i} ---\n{s_trim}")
     picker_parts.append("\nWhich is best? Respond with only the number.")
@@ -1468,19 +1542,27 @@ def _multi_sample_prose(user_msg, sp, api_url, model, temperature,
         picker_msg, api_url, model, _PICKER_SP, 0.1,
         think=False, seed=seed, num_predict=10,
     )
-    # Parse first digit in 1..n_samples
-    choice = None
+    # Parse first digit in 1..len(picker_options)
+    n_options = len(picker_options)
+    local_choice = None
     for ch in pick_raw:
-        if ch.isdigit() and 1 <= int(ch) <= n_samples:
-            choice = int(ch)
+        if ch.isdigit() and 1 <= int(ch) <= n_options:
+            local_choice = int(ch)
             break
-    if choice is None:
+    if local_choice is None:
         raise ValueError(
             f"multi-sample picker returned no valid choice. "
-            f"raw={pick_raw!r} n_samples={n_samples}"
+            f"raw={pick_raw!r} n_options={n_options}"
         )
-    print(f"[PromptEnhancer] Multi-sample prose: picker chose {choice}/{n_samples}")
-    return samples[choice - 1], samples, choice
+    # Map local choice back to the original samples index (if we filtered)
+    if clean_indices:
+        original_idx = clean_indices[local_choice - 1]
+    else:
+        original_idx = local_choice - 1
+    choice_reported = original_idx + 1  # 1-based for display
+    print(f"[PromptEnhancer] Multi-sample prose: picker chose {choice_reported}/{n_samples} "
+          f"(clean_options={len(picker_options)})")
+    return samples[original_idx], samples, choice_reported
 
 
 def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None, seed=-1, _progress=None, num_predict=1024):

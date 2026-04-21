@@ -1,0 +1,1253 @@
+{
+  "run_id": "v3__girl_random_artist_random_era__seed1000__6b75d0",
+  "variant": "v3",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 1000
+  },
+  "started_at": 1776780079.143459,
+  "ended_at": 1776780083.763811,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.698,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['yoshiharu', 'yoshito', 'nakahira guy', 'yukirar', 'yoshida inuhito', 'yoshikawa tatsuya'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: yoshiharu, yoshito, nakahira guy, yukirar, yoshida inuhito, yoshikawa tatsuya\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.178,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in a 1924 Parisian atelier, rendered in the style of yoshida inuhito. She wears a tailored navy wool coat with a single wide lapel and a silk scarf tied loosely at her throat. Her hair is cut in a sharp bob, dark and straight, falling just past her jawline. One hand rests on her hip while the other holds a charcoal sketchbook. The light is harsh and directional, coming from a large studio window to her left, casting deep, crisp shadows across her face. The background features exposed brick walls and hanging canvases, all painted with the precise, slightly grainy texture characteristic of the artist. Her expression is neutral, focused on the work ahead. The air feels cool and still, captured in a moment of quiet concentration.",
+        "user_msg": "SOURCE PROMPT: girl\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "concept_enumerate",
+      "params": {
+        "temperature": 0.6,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 0.787,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "concepts": [
+          "girl",
+          "Parisian atelier",
+          "yoshida inuhito style",
+          "tailored navy wool coat",
+          "wide lapel",
+          "silk scarf",
+          "loosely tied throat",
+          "sharp bob",
+          "dark straight hair",
+          "jawline length",
+          "hand on hip",
+          "charcoal sketchbook",
+          "harsh directional light",
+          "large studio window",
+          "left side lighting",
+          "deep crisp shadows",
+          "neutral expression",
+          "focused expression",
+          "exposed brick walls",
+          "hanging canvases",
+          "precise grainy texture",
+          "cool still air",
+          "quiet concentration"
+        ],
+        "concepts_raw": "girl\n1924 Parisian atelier\nyoshida inuhito style\ntailored navy wool coat\nwide lapel\nsilk scarf\nloosely tied throat\nsharp bob\ndark straight hair\njawline length\nhand on hip\ncharcoal sketchbook\nharsh directional light\nlarge studio window\nleft side lighting\ndeep crisp shadows\nneutral expression\nfocused expression\nexposed brick walls\nhanging canvases\nprecise grainy texture\ncool still air\nquiet concentration"
+      }
+    },
+    {
+      "step": "canonicalize",
+      "params": {
+        "min_score": 0.35,
+        "min_post_count": 50,
+        "top_k": 5
+      },
+      "elapsed_s": 0.365,
+      "inputs_seen": [
+        "base_name",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "candidates": [
+          {
+            "concept": "girl",
+            "top_k": [
+              {
+                "name": "the_girl_(gnr)",
+                "category": 4,
+                "post_count": 18,
+                "score": 0.7569632530212402
+              },
+              {
+                "name": "girl_dm",
+                "category": 4,
+                "post_count": 54,
+                "score": 0.751233696937561
+              },
+              {
+                "name": "hit_girl",
+                "category": 4,
+                "post_count": 83,
+                "score": 0.7507027387619019
+              },
+              {
+                "name": "td_girl",
+                "category": 4,
+                "post_count": 30,
+                "score": 0.7479828596115112
+              },
+              {
+                "name": "silly_girl",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.7314884066581726
+              }
+            ],
+            "best": {
+              "name": "girl_dm",
+              "category": 4,
+              "post_count": 54,
+              "score": 0.751233696937561
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "Parisian atelier",
+            "top_k": [
+              {
+                "name": "monacan_atelier",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.7279636859893799
+              },
+              {
+                "name": "atelier_ainel",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.6999814510345459
+              },
+              {
+                "name": "atelier_pocket",
+                "category": 1,
+                "post_count": 27,
+                "score": 0.6933549046516418
+              },
+              {
+                "name": "atelier_umiyury",
+                "category": 1,
+                "post_count": 40,
+                "score": 0.6752851605415344
+              },
+              {
+                "name": "shii_atelier",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6660908460617065
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "yoshida inuhito style",
+            "top_k": [
+              {
+                "name": "yunohito",
+                "category": 1,
+                "post_count": 67,
+                "score": 0.6882055401802063
+              },
+              {
+                "name": "koide_yoshito",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.6522811055183411
+              },
+              {
+                "name": "yoshifuto",
+                "category": 1,
+                "post_count": 25,
+                "score": 0.6480538845062256
+              },
+              {
+                "name": "yamada_yukihito",
+                "category": 1,
+                "post_count": 22,
+                "score": 0.6411523818969727
+              },
+              {
+                "name": "yoshida_project",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6367148160934448
+              }
+            ],
+            "best": {
+              "name": "yunohito",
+              "category": 1,
+              "post_count": 67,
+              "score": 0.6882055401802063
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "tailored navy wool coat",
+            "top_k": [
+              {
+                "name": "lace_trimmed_coat",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6371728181838989
+              },
+              {
+                "name": "military_coat",
+                "category": 0,
+                "post_count": 435,
+                "score": 0.6215468049049377
+              },
+              {
+                "name": "lace_trimmed_sailor_collar",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6194429993629456
+              },
+              {
+                "name": "coat_around_waist",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.617674708366394
+              },
+              {
+                "name": "feather_trimmed_coat",
+                "category": 0,
+                "post_count": 140,
+                "score": 0.6160274744033813
+              }
+            ],
+            "best": {
+              "name": "military_coat",
+              "category": 0,
+              "post_count": 435,
+              "score": 0.6215468049049377
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "wide lapel",
+            "top_k": [
+              {
+                "name": "colored_lapels",
+                "category": 0,
+                "post_count": 245,
+                "score": 0.6358408331871033
+              },
+              {
+                "name": "plaid_lapels",
+                "category": 0,
+                "post_count": 922,
+                "score": 0.6315410137176514
+              },
+              {
+                "name": "peaked_lapels",
+                "category": 0,
+                "post_count": 428,
+                "score": 0.6167536377906799
+              },
+              {
+                "name": "lapel_chain",
+                "category": 0,
+                "post_count": 124,
+                "score": 0.6142182350158691
+              },
+              {
+                "name": "wide_belt",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6109144687652588
+              }
+            ],
+            "best": {
+              "name": "colored_lapels",
+              "category": 0,
+              "post_count": 245,
+              "score": 0.6358408331871033
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "silk scarf",
+            "top_k": [
+              {
+                "name": "knit_scarf",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.6876242756843567
+              },
+              {
+                "name": "two_sided_scarf",
+                "category": 0,
+                "post_count": 69,
+                "score": 0.6759445071220398
+              },
+              {
+                "name": "choice_scarf",
+                "category": 0,
+                "post_count": 58,
+                "score": 0.6692712306976318
+              },
+              {
+                "name": "print_scarf",
+                "category": 0,
+                "post_count": 868,
+                "score": 0.6554825305938721
+              },
+              {
+                "name": "arm_scarf",
+                "category": 0,
+                "post_count": 474,
+                "score": 0.6496585607528687
+              }
+            ],
+            "best": {
+              "name": "two_sided_scarf",
+              "category": 0,
+              "post_count": 69,
+              "score": 0.6759445071220398
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "loosely tied throat",
+            "top_k": [
+              {
+                "name": "sleeve_tied_shut",
+                "category": 0,
+                "post_count": 208,
+                "score": 0.6834733486175537
+              },
+              {
+                "name": "sleeves_tied_together",
+                "category": 0,
+                "post_count": 98,
+                "score": 0.6699938774108887
+              },
+              {
+                "name": "arms_tied_above_head",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6575130820274353
+              },
+              {
+                "name": "your_tie_is_crooked",
+                "category": 0,
+                "post_count": 43,
+                "score": 0.6573697924613953
+              },
+              {
+                "name": "pulling_tongue",
+                "category": 0,
+                "post_count": 56,
+                "score": 0.6550357937812805
+              }
+            ],
+            "best": {
+              "name": "sleeve_tied_shut",
+              "category": 0,
+              "post_count": 208,
+              "score": 0.6834733486175537
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sharp bob",
+            "top_k": [
+              {
+                "name": "sharp_to_sharp",
+                "category": 1,
+                "post_count": 94,
+                "score": 0.6411335468292236
+              },
+              {
+                "name": "holy_b._bob",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.6305219531059265
+              },
+              {
+                "name": "c_sharp",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.6242318153381348
+              },
+              {
+                "name": "sharp_(arknights)",
+                "category": 4,
+                "post_count": 31,
+                "score": 0.6236477494239807
+              },
+              {
+                "name": "sharp_tail",
+                "category": 0,
+                "post_count": 567,
+                "score": 0.6235525608062744
+              }
+            ],
+            "best": {
+              "name": "sharp_to_sharp",
+              "category": 1,
+              "post_count": 94,
+              "score": 0.6411335468292236
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "dark straight hair",
+            "top_k": [
+              {
+                "name": "dark_blue_hair",
+                "category": 0,
+                "post_count": 13325,
+                "score": 0.6715421080589294
+              },
+              {
+                "name": "holding_hair_straightener",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.6350706815719604
+              },
+              {
+                "name": "black_facial_hair",
+                "category": 0,
+                "post_count": 226,
+                "score": 0.6317201852798462
+              },
+              {
+                "name": "straight_black_hair_maid_(mdf_an)",
+                "category": 4,
+                "post_count": 11,
+                "score": 0.6263224482536316
+              },
+              {
+                "name": "drying_hair",
+                "category": 0,
+                "post_count": 1955,
+                "score": 0.6239320039749146
+              }
+            ],
+            "best": {
+              "name": "dark_blue_hair",
+              "category": 0,
+              "post_count": 13325,
+              "score": 0.6715421080589294
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "jawline length",
+            "top_k": [
+              {
+                "name": "jawli",
+                "category": 1,
+                "post_count": 41,
+                "score": 0.5757768750190735
+              },
+              {
+                "name": "jawbone",
+                "category": 0,
+                "post_count": 33,
+                "score": 0.5643616318702698
+              },
+              {
+                "name": "jaw",
+                "category": 0,
+                "post_count": 199,
+                "score": 0.5529874563217163
+              },
+              {
+                "name": "hairline",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.5521934032440186
+              },
+              {
+                "name": "absurdly_long_fingernails",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.5453577637672424
+              }
+            ],
+            "best": {
+              "name": "jaw",
+              "category": 0,
+              "post_count": 199,
+              "score": 0.5529874563217163
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hand on hip",
+            "top_k": [
+              {
+                "name": "hand_on_own_opposite_hip",
+                "category": 0,
+                "post_count": 81,
+                "score": 0.7887413501739502
+              },
+              {
+                "name": "hips_in_air",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.7333765029907227
+              },
+              {
+                "name": "hand_on_handle",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.7237106561660767
+              },
+              {
+                "name": "hand_on_lap",
+                "category": 0,
+                "post_count": 2164,
+                "score": 0.7201321721076965
+              },
+              {
+                "name": "hand_on_another's_lap",
+                "category": 0,
+                "post_count": 23,
+                "score": 0.7184059023857117
+              }
+            ],
+            "best": {
+              "name": "hand_on_own_opposite_hip",
+              "category": 0,
+              "post_count": 81,
+              "score": 0.7887413501739502
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "charcoal sketchbook",
+            "top_k": [
+              {
+                "name": "charcoalo",
+                "category": 1,
+                "post_count": 36,
+                "score": 0.7073233127593994
+              },
+              {
+                "name": "oki_charcoal",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6736566424369812
+              },
+              {
+                "name": "sketchbook_full_colors",
+                "category": 3,
+                "post_count": 255,
+                "score": 0.6615166664123535
+              },
+              {
+                "name": "charcoal",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.6450342535972595
+              },
+              {
+                "name": "charcoa72170283",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6161513924598694
+              }
+            ],
+            "best": {
+              "name": "sketchbook_full_colors",
+              "category": 3,
+              "post_count": 255,
+              "score": 0.6615166664123535
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "harsh directional light",
+            "top_k": [
+              {
+                "name": "hanging_light",
+                "category": 0,
+                "post_count": 1408,
+                "score": 0.6030948162078857
+              },
+              {
+                "name": "pedestrian_lights",
+                "category": 0,
+                "post_count": 249,
+                "score": 0.6021541357040405
+              },
+              {
+                "name": "night_light",
+                "category": 0,
+                "post_count": 42,
+                "score": 0.601039469242096
+              },
+              {
+                "name": "blinding_light",
+                "category": 0,
+                "post_count": 24,
+                "score": 0.6001437306404114
+              },
+              {
+                "name": "dark_foreground",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.5975438356399536
+              }
+            ],
+            "best": {
+              "name": "hanging_light",
+              "category": 0,
+              "post_count": 1408,
+              "score": 0.6030948162078857
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "large studio window",
+            "top_k": [
+              {
+                "name": "big_shine",
+                "category": 1,
+                "post_count": 147,
+                "score": 0.6500862240791321
+              },
+              {
+                "name": "a_big_brother",
+                "category": 1,
+                "post_count": 40,
+                "score": 0.647140383720398
+              },
+              {
+                "name": "looking_through_window",
+                "category": 0,
+                "post_count": 142,
+                "score": 0.6458575129508972
+              },
+              {
+                "name": "big_ddos",
+                "category": 1,
+                "post_count": 40,
+                "score": 0.6351828575134277
+              },
+              {
+                "name": "studio_lights",
+                "category": 0,
+                "post_count": 74,
+                "score": 0.6342135071754456
+              }
+            ],
+            "best": {
+              "name": "big_shine",
+              "category": 1,
+              "post_count": 147,
+              "score": 0.6500862240791321
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "left side lighting",
+            "top_k": [
+              {
+                "name": "turn_left_sign",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6466243863105774
+              },
+              {
+                "name": "left_mouse",
+                "category": 1,
+                "post_count": 18,
+                "score": 0.638904869556427
+              },
+              {
+                "name": "left_hand_drive",
+                "category": 0,
+                "post_count": 281,
+                "score": 0.6367649435997009
+              },
+              {
+                "name": "lighting_practice",
+                "category": 0,
+                "post_count": 34,
+                "score": 0.6337133646011353
+              },
+              {
+                "name": "left_handed",
+                "category": 0,
+                "post_count": 4889,
+                "score": 0.6298194527626038
+              }
+            ],
+            "best": {
+              "name": "left_hand_drive",
+              "category": 0,
+              "post_count": 281,
+              "score": 0.6367649435997009
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "deep crisp shadows",
+            "top_k": [
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6330262422561646
+              },
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.6323769092559814
+              },
+              {
+                "name": "long_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6239198446273804
+              },
+              {
+                "name": "eyes_in_shadow",
+                "category": 0,
+                "post_count": 1021,
+                "score": 0.6214474439620972
+              },
+              {
+                "name": "banished_shadow",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6164728403091431
+              }
+            ],
+            "best": {
+              "name": "dark_shadow",
+              "category": 4,
+              "post_count": 96,
+              "score": 0.6323769092559814
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "neutral expression",
+            "top_k": [
+              {
+                "name": "mak_neutral",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.6531837582588196
+              },
+              {
+                "name": "neutral_chao",
+                "category": 4,
+                "post_count": 488,
+                "score": 0.6514540314674377
+              },
+              {
+                "name": "loooooneutral",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6062537431716919
+              },
+              {
+                "name": "relaxed_entity",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.563952624797821
+              },
+              {
+                "name": "null_focus",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.5585869550704956
+              }
+            ],
+            "best": {
+              "name": "neutral_chao",
+              "category": 4,
+              "post_count": 488,
+              "score": 0.6514540314674377
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "focused expression",
+            "top_k": [
+              {
+                "name": "reflection_focus",
+                "category": 0,
+                "post_count": 4516,
+                "score": 0.6558221578598022
+              },
+              {
+                "name": "mouth_focus",
+                "category": 0,
+                "post_count": 289,
+                "score": 0.6487704515457153
+              },
+              {
+                "name": "kanji_focus",
+                "category": 0,
+                "post_count": 123,
+                "score": 0.6259784698486328
+              },
+              {
+                "name": "hair_focus",
+                "category": 0,
+                "post_count": 744,
+                "score": 0.619303822517395
+              },
+              {
+                "name": "throat_focus",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6173001527786255
+              }
+            ],
+            "best": {
+              "name": "reflection_focus",
+              "category": 0,
+              "post_count": 4516,
+              "score": 0.6558221578598022
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "exposed brick walls",
+            "top_k": [
+              {
+                "name": "brick_wall",
+                "category": 0,
+                "post_count": 13252,
+                "score": 0.6634086966514587
+              },
+              {
+                "name": "clothes_on_wall",
+                "category": 0,
+                "post_count": 29,
+                "score": 0.6532160043716431
+              },
+              {
+                "name": "padded_walls",
+                "category": 0,
+                "post_count": 104,
+                "score": 0.6420348882675171
+              },
+              {
+                "name": "broken_wall",
+                "category": 0,
+                "post_count": 602,
+                "score": 0.6384645700454712
+              },
+              {
+                "name": "partially_open_shirt",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.627930760383606
+              }
+            ],
+            "best": {
+              "name": "brick_wall",
+              "category": 0,
+              "post_count": 13252,
+              "score": 0.6634086966514587
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hanging canvases",
+            "top_k": [
+              {
+                "name": "hanging_tender",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.7288954854011536
+              },
+              {
+                "name": "hangleing",
+                "category": 1,
+                "post_count": 173,
+                "score": 0.7232034206390381
+              },
+              {
+                "name": "hanged_man",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.6714513301849365
+              },
+              {
+                "name": "canvas_sensei",
+                "category": 1,
+                "post_count": 37,
+                "score": 0.6660060882568359
+              },
+              {
+                "name": "hanging_props",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6642261743545532
+              }
+            ],
+            "best": {
+              "name": "hangleing",
+              "category": 1,
+              "post_count": 173,
+              "score": 0.7232034206390381
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "precise grainy texture",
+            "top_k": [
+              {
+                "name": "grain",
+                "category": 1,
+                "post_count": 100,
+                "score": 0.5776016712188721
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.5756487846374512
+              },
+              {
+                "name": "paper_texture",
+                "category": 0,
+                "post_count": 857,
+                "score": 0.5671489834785461
+              },
+              {
+                "name": "film_grain",
+                "category": 0,
+                "post_count": 19320,
+                "score": 0.5568724870681763
+              },
+              {
+                "name": "high_detail",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.5522117018699646
+              }
+            ],
+            "best": {
+              "name": "grain",
+              "category": 1,
+              "post_count": 100,
+              "score": 0.5776016712188721
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cool still air",
+            "top_k": [
+              {
+                "name": "cool_your_head",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.6279674768447876
+              },
+              {
+                "name": "cool_guy",
+                "category": 1,
+                "post_count": 12,
+                "score": 0.6217039227485657
+              },
+              {
+                "name": "cool_est",
+                "category": 1,
+                "post_count": 42,
+                "score": 0.6204397678375244
+              },
+              {
+                "name": "ice_calm",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.5970303416252136
+              },
+              {
+                "name": "chill_tiamo",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.5957602262496948
+              }
+            ],
+            "best": {
+              "name": "cool_your_head",
+              "category": 0,
+              "post_count": 61,
+              "score": 0.6279674768447876
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "quiet concentration",
+            "top_k": [
+              {
+                "name": "silent_reading",
+                "category": 3,
+                "post_count": 14,
+                "score": 0.6910956501960754
+              },
+              {
+                "name": "quiet_victories",
+                "category": 1,
+                "post_count": 22,
+                "score": 0.6583423614501953
+              },
+              {
+                "name": "quietmrcat",
+                "category": 1,
+                "post_count": 29,
+                "score": 0.6355882287025452
+              },
+              {
+                "name": "silent_witch",
+                "category": 3,
+                "post_count": 83,
+                "score": 0.6311212778091431
+              },
+              {
+                "name": "quiet_(metal_gear)",
+                "category": 4,
+                "post_count": 301,
+                "score": 0.6275404691696167
+              }
+            ],
+            "best": {
+              "name": "silent_witch",
+              "category": 3,
+              "post_count": 83,
+              "score": 0.6311212778091431
+            },
+            "dropped_reason": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "curate",
+      "params": {
+        "temperature": 0.5,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 0.749,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "girl, yoshida inuhito style, monacan atelier, tailored navy wool coat, wide lapel, silk scarf, loosely tied throat, sharp bob, dark straight hair, jawline length, hand on hip, charcoal sketchbook, harsh directional light, large studio window, left side lighting, deep crisp shadows, neutral expression, exposed brick walls, hanging canvases, precise grainy texture, cool still air, quiet concentration"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.843,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, @yoshida inuhito, wool, coat, lapels, silk, scarf, throat, straight hair, dark, hand on own hip, charcoal, sketchbook, light, studio, window, from side, shadow, expressionless, brick, hanging, film grain, texture",
+        "stats": {
+          "corrected": 0,
+          "dropped": 0,
+          "kept_invalid": 0,
+          "total": 26
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, @yoshida inuhito, wool, coat, lapels, silk, scarf, throat, straight hair, dark, hand on own hip, charcoal, sketchbook, light, studio, window, from side, shadow, expressionless, brick, hanging, film grain, texture",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 1000,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, @yoshida inuhito, wool, coat, lapels, silk, scarf, throat, straight hair, dark, hand on own hip, charcoal, sketchbook, light, studio, window, from side, shadow, expressionless, brick, hanging, film grain, texture",
+  "prose": "A girl stands in a 1924 Parisian atelier, rendered in the style of yoshida inuhito. She wears a tailored navy wool coat with a single wide lapel and a silk scarf tied loosely at her throat. Her hair is cut in a sharp bob, dark and straight, falling just past her jawline. One hand rests on her hip while the other holds a charcoal sketchbook. The light is harsh and directional, coming from a large studio window to her left, casting deep, crisp shadows across her face. The background features exposed brick walls and hanging canvases, all painted with the precise, slightly grainy texture characteristic of the artist. Her expression is neutral, focused on the work ahead. The air feels cool and still, captured in a moment of quiet concentration.",
+  "draft": "girl, yoshida inuhito style, monacan atelier, tailored navy wool coat, wide lapel, silk scarf, loosely tied throat, sharp bob, dark straight hair, jawline length, hand on hip, charcoal sketchbook, harsh directional light, large studio window, left side lighting, deep crisp shadows, neutral expression, exposed brick walls, hanging canvases, precise grainy texture, cool still air, quiet concentration",
+  "shortlist": {
+    "artists": [
+      "yoshiharu",
+      "yoshito",
+      "nakahira guy",
+      "yukirar",
+      "yoshida inuhito",
+      "yoshikawa tatsuya"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

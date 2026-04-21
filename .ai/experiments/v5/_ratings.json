@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "rubric_version": 0,
+    "rated_by": "claude-opus-4-7",
+    "seeds_used": [42, 137, 1729, 7919, 10001, 65537, 99991, 524287, 1000003, 2147483000],
+    "variant_delta_from_v4": "Directive gated on source being non-empty. For empty-source, falls back to V1 (no directive). For non-empty source, behaves exactly like V4."
+  },
+
+  "empirical_equivalence_check": {
+    "non_empty_source_matches_v4": true,
+    "empty_source_matches_v1": true,
+    "note": "Verified by comparing prose text across V4/V5/V1: V5 girl_sex seed=42 prose == V4 girl_sex seed=42 prose exactly. V5 empty_ra_rs seed=42 tags == V1 empty_ra_rs seed=42 tags exactly. The gating works as designed."
+  },
+
+  "by_prompt_mean": {
+    "girl_sex":                      {"v1": 3.3, "v5": 3.7, "delta": 0.4,  "source": "V4 (non-empty source)"},
+    "miku_cake":                     {"v1": 3.2, "v5": 3.2, "delta": 0.0,  "source": "V4 (non-empty source)"},
+    "girl_random_artist_random_era": {"v1": 4.2, "v5": 3.8, "delta": -0.4, "source": "V4 (non-empty source)"},
+    "empty_random_artist_random_setting": {"v1": 4.0, "v5": 4.1, "delta": 0.1, "source": "V1 (empty source — directive skipped)"}
+  },
+  "overall_mean": {"v1": 3.675, "v5": 3.7, "delta": 0.025},
+
+  "girl_sex_variance_comparison": {
+    "v1": {"mean": 3.3, "std": 1.49, "full_sanitize_rate": 0.2, "success_rate": 0.4},
+    "v5": {"mean": 3.7, "std": 0.9,  "full_sanitize_rate": 0.0, "success_rate": 0.6},
+    "interpretation": "V5 keeps V4's variance improvement on the hot failure case (stdev halved, no full sanitizations, success up 50%)."
+  },
+
+  "_summary": {
+    "verdict": "V5 ACCEPTED as new baseline. Marginally better overall (+0.025), big improvement on target failure case (girl_sex), but small regression (-0.4) on girl_random_artist_random_era where the source is 'girl' and modifiers carry the real intent — the adherence directive fires but has thin source content to anchor to, narrowing LLM focus unhelpfully.",
+    "remaining_regression": "girl_ra_re: V5 3.8 vs V1 4.2. The directive fires for any non-empty source, but its effect on 'source with thin content + modifiers carrying intent' is mildly negative.",
+    "next_hypothesis_v6": "Softer directive text — current V4 directive says 'every concrete source element must appear'. For short/thin source, that's a constraint that narrows focus. Try: conditional within the directive itself ('IF the source contains mature content, preserve literally; otherwise follow normal creative expansion'). Let the LLM decide whether the strict-adherence rules apply per its judgment of source content."
+  }
+}

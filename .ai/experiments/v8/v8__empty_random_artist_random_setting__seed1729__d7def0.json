@@ -1,0 +1,216 @@
+{
+  "run_id": "v8__empty_random_artist_random_setting__seed1729__d7def0",
+  "variant": "v8",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 1729
+  },
+  "started_at": 1776782279.4010127,
+  "ended_at": 1776782285.8891635,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.114,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.228,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in a cramped, sun-drenched workshop filled with scattered charcoal sketches and half-empty ink bottles, captured in the style of Winslow Homer. The man wears a heavy, oilskin coat stained with dark pigment and a wide-brimmed hat pulled low, casting a deep shadow over his eyes. His skin is weathered and sun-browned, matching the golden, diffused light that filters through a single high window. The room is painted with thick, visible brushstrokes that give the walls a rough, textured appearance. Dust motes hang suspended in the warm air, catching the directional sunlight and creating sharp, defined shadows on the wooden floor. A large canvas leans against the far wall, showing a rough sea scene in progress. The composition balances the interior clutter with the expansive view of the garden beyond the glass.",
+        "prose_samples": [
+          "A solitary figure stands in the center of a bustling, narrow Parisian alleyway, captured in the style of Egon Schiele. The scene is defined by jagged, angular lines that cut through the air, twisting the perspective of the cobblestones beneath the subject's feet. The figure wears a long, tattered coat of rough wool in a deep, earthy ochre, pulled tight against the wind. Their hair is a wild, spiky mass of dark brown that seems to defy gravity, framing a face with a sharp, melancholic expression and prominent, elongated cheekbones. The lighting is harsh and directional, casting deep, distorted shadows that stretch unnaturally across the wet stone. A single, pale window glows in the background, its light filtering through the angular composition to highlight the texture of the figure's skin. The air feels thick and immediate, rendered with the raw, expressive energy of a painter who saw the world not as it was, but as a network of intersecting tensions.",
+          "A solitary figure stands in a cramped, industrial boiler room filled with steam and soot. The scene is rendered in the style of Egon Schiele, utilizing his signature elongated limbs and angular, sketchy lines. The character wears a tattered, oversized wool coat in deep charcoal grey with one sleeve hanging loose. Their skin is pale and stretched tight over sharp bone structures, highlighted by harsh, directional light coming from a single high window. Thick black ink outlines define the edges of the room, where a rusted iron pipe runs diagonally across the floor. The floor itself is a mix of wet concrete and scattered coal dust, reflecting the warm, amber glow of a hanging gas lamp. Shadows are sharp and deep, cutting across the figure's torso at a severe angle. A heavy, textured scarf wraps around the neck, adding a rough fabric contrast to the smooth skin. The background features a row of tall, narrow steam vents releasing white vapor that catches the light. Every surface feels rough and tangible, from the grime on the walls to the frayed hem of the trousers.",
+          "A solitary figure stands in a cramped, sun-drenched workshop filled with scattered charcoal sketches and half-empty ink bottles, captured in the style of Winslow Homer. The man wears a heavy, oilskin coat stained with dark pigment and a wide-brimmed hat pulled low, casting a deep shadow over his eyes. His skin is weathered and sun-browned, matching the golden, diffused light that filters through a single high window. The room is painted with thick, visible brushstrokes that give the walls a rough, textured appearance. Dust motes hang suspended in the warm air, catching the directional sunlight and creating sharp, defined shadows on the wooden floor. A large canvas leans against the far wall, showing a rough sea scene in progress. The composition balances the interior clutter with the expansive view of the garden beyond the glass."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.025,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, safe, 1other, man, workshop, sun-drenched, charcoal_sketches, ink_bottles, style_of_winslow_homer, oilskin_coat, stained, dark_pigment, wide_brimmed_hat, deep_shadow, weathered_skin, sun_browned, golden_light, diffused_light, high_window, thick_brushstrokes, rough_textured, dust_motes, directional_sunlight, sharp_shadows, wooden_floor, large_canvas, sea_scene, in_progress, garden_view, glass, interior, clutter, expansive_view, sunlit, painter, solitary",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.071,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1other, male focus, workshop, sun, charcoal, ink, bottle, coat, dark, hat, shadow, light, window, sketch, dust, sunlight, wooden floor, ocean, artist progress, garden, glass, clutter",
+        "stats": {
+          "corrected": 0,
+          "dropped": 12,
+          "kept_invalid": 0,
+          "total": 26
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.05,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1other, male focus, workshop, sun, charcoal, ink, bottle, coat, dark, hat, shadow, light, window, sketch, dust, sunlight, wooden floor, ocean, artist progress, garden, glass, clutter, @lack",
+        "slot_fill_trace": {
+          "artist": "lack"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 1729,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1other, male focus, workshop, sun, charcoal, ink, bottle, coat, dark, hat, shadow, light, window, sketch, dust, sunlight, wooden floor, ocean, artist progress, garden, glass, clutter, @lack",
+  "prose": "A solitary figure stands in a cramped, sun-drenched workshop filled with scattered charcoal sketches and half-empty ink bottles, captured in the style of Winslow Homer. The man wears a heavy, oilskin coat stained with dark pigment and a wide-brimmed hat pulled low, casting a deep shadow over his eyes. His skin is weathered and sun-browned, matching the golden, diffused light that filters through a single high window. The room is painted with thick, visible brushstrokes that give the walls a rough, textured appearance. Dust motes hang suspended in the warm air, catching the directional sunlight and creating sharp, defined shadows on the wooden floor. A large canvas leans against the far wall, showing a rough sea scene in progress. The composition balances the interior clutter with the expansive view of the garden beyond the glass.",
+  "draft": "masterpiece, best quality, score_7, safe, 1other, man, workshop, sun-drenched, charcoal_sketches, ink_bottles, style_of_winslow_homer, oilskin_coat, stained, dark_pigment, wide_brimmed_hat, deep_shadow, weathered_skin, sun_browned, golden_light, diffused_light, high_window, thick_brushstrokes, rough_textured, dust_motes, directional_sunlight, sharp_shadows, wooden_floor, large_canvas, sea_scene, in_progress, garden_view, glass, interior, clutter, expansive_view, sunlit, painter, solitary",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "run_id": "v4__empty_random_artist_random_setting__seed7919__3c8ff4",
+  "variant": "v4",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 7919
+  },
+  "started_at": 1776780648.6451635,
+  "ended_at": 1776780666.7126951,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.112,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.716,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in the center of a bustling Tokyo marketplace, captured in the style of Yoshitomo Nara. The subject is a young person with oversized, round glasses and a face that is disproportionately large compared to their slender body. They wear a simple white t-shirt and loose denim shorts, with messy black hair falling into their eyes. Their expression is a blank, slightly vacant stare that ignores the chaotic energy around them. The setting is a narrow alleyway paved with wet cobblestones, reflecting the vibrant colors of hanging fruit and fabric. Behind the figure, a bright red paper lantern swings gently, casting a sharp, saturated shadow against a weathered brick wall. Nara's signature technique flattens the perspective, making the background figures appear as simplified, almost cartoonish silhouettes while the main subject retains a textured, slightly grainy skin tone. The lighting is harsh midday sun that creates high contrast, turning deep shadows into pools of inky black. The air feels thick and humid, suggested by the way steam rises from a street food cart in the background. Every element is rendered with a playful yet precise edge, blending the mundane reality of the market with a dreamlike, slightly distorted sense of scale.",
+        "user_msg": "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.463,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best_quality,score_7,1boy,explicit,yoshitomo_nara,man,oversized_glasses,round_glasses,large_head,slender_body,white_t_shirt,denim_shorts,black_hair,disheveled_hair,blank_stare,vacant_stare,wide_eyes,denim,shorts,t_shirt,white_shirt,loose_clothing,street_market,alleyway,urban,wide_cobblestone,reflective_ground,fruit_stand,red_paper_lantern,swinging_lantern,saturated_shadow,weathered_brick_wall,midday_sun,harsh_lighting,high_contrast,inky_shadows,grainy_skin,flattened_perspective,background_silhouettes,playful_style,precise_edges,dreamlike,slightly_distorted_scale,thick_air,humid,steam_rising,street_food_cart,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,distorted_scale,sharp_contrast,deep_shadows,monochrome_silhouettes,accented_colors,blending_mundane,dreamlike_quality,slightly_grainy,playful_perspective,precise_edge,blending_reality,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 9.713,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, explicit, 1boy, male focus, glasses, round eyewear, skinny, t shirt, denim shorts, black hair, disheveled, blank stare, staring, wide eyed, white shirt, loose clothes, street, market, urban, cobblestone, reflective ground, fruit stand, paper lantern",
+        "stats": {
+          "corrected": 0,
+          "dropped": 218,
+          "kept_invalid": 0,
+          "total": 25
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.064,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, explicit, 1boy, male focus, glasses, round eyewear, skinny, t shirt, denim shorts, black hair, disheveled, blank stare, staring, wide eyed, white shirt, loose clothes, street, market, urban, cobblestone, reflective ground, fruit stand, paper lantern, @meimaru inuchiyo",
+        "slot_fill_trace": {
+          "artist": "meimaru_inuchiyo"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 7919,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, explicit, 1boy, male focus, glasses, round eyewear, skinny, t shirt, denim shorts, black hair, disheveled, blank stare, staring, wide eyed, white shirt, loose clothes, street, market, urban, cobblestone, reflective ground, fruit stand, paper lantern, @meimaru inuchiyo",
+  "prose": "A solitary figure stands in the center of a bustling Tokyo marketplace, captured in the style of Yoshitomo Nara. The subject is a young person with oversized, round glasses and a face that is disproportionately large compared to their slender body. They wear a simple white t-shirt and loose denim shorts, with messy black hair falling into their eyes. Their expression is a blank, slightly vacant stare that ignores the chaotic energy around them. The setting is a narrow alleyway paved with wet cobblestones, reflecting the vibrant colors of hanging fruit and fabric. Behind the figure, a bright red paper lantern swings gently, casting a sharp, saturated shadow against a weathered brick wall. Nara's signature technique flattens the perspective, making the background figures appear as simplified, almost cartoonish silhouettes while the main subject retains a textured, slightly grainy skin tone. The lighting is harsh midday sun that creates high contrast, turning deep shadows into pools of inky black. The air feels thick and humid, suggested by the way steam rises from a street food cart in the background. Every element is rendered with a playful yet precise edge, blending the mundane reality of the market with a dreamlike, slightly distorted sense of scale.",
+  "draft": "masterpiece,best_quality,score_7,1boy,explicit,yoshitomo_nara,man,oversized_glasses,round_glasses,large_head,slender_body,white_t_shirt,denim_shorts,black_hair,disheveled_hair,blank_stare,vacant_stare,wide_eyes,denim,shorts,t_shirt,white_shirt,loose_clothing,street_market,alleyway,urban,wide_cobblestone,reflective_ground,fruit_stand,red_paper_lantern,swinging_lantern,saturated_shadow,weathered_brick_wall,midday_sun,harsh_lighting,high_contrast,inky_shadows,grainy_skin,flattened_perspective,background_silhouettes,playful_style,precise_edges,dreamlike,slightly_distorted_scale,thick_air,humid,steam_rising,street_food_cart,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,distorted_scale,sharp_contrast,deep_shadows,monochrome_silhouettes,accented_colors,blending_mundane,dreamlike_quality,slightly_grainy,playful_perspective,precise_edge,blending_reality,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle,sharp_focus,deep_colors,monochromatic_background,accent_colors,blending_reality,chaotic_energy,simple_clothing,disproportionate_features,texture_details,playful_edge,blending_mundane,distorted_scale,concrete_era,wide_angle",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

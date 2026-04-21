@@ -1,0 +1,213 @@
+{
+  "run_id": "v1__girl_random_artist_random_era__seed10001__3abe29",
+  "variant": "v1",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 10001
+  },
+  "started_at": 1776780284.8877363,
+  "ended_at": 1776780288.6028416,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.588,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['nakagami takashi', 'murakami hisashi', 'tsukamoto takashi', 'konno takashi', 'takami ryou', 'mikage takashi'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: nakagami takashi, murakami hisashi, tsukamoto takashi, konno takashi, takami ryou, mikage takashi\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.238,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in a 1974 Tokyo alleyway where rain slicks the pavement. She wears a oversized wool coat in slate grey with a single gold button. Her hair is a messy bob cut dyed a deep violet. In the style of Nakagami Takashi, sharp shadows slice across her face from an overhead streetlamp. The air feels damp and heavy. Her boots are worn leather with thick treads. Behind her, a neon sign flickers with a buzzing hum. The light is cool and blue-tinted. She holds a cigarette between her fingers, smoke curling upward in thin ribbons. The composition is slightly off-center. Her expression is distant and unfocused. The background blurs into wet brick and dark wood. A paper bag dangles from her shoulder. The scene captures a quiet moment of urban solitude.",
+        "user_msg": "SOURCE PROMPT: girl\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.916,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_9,safe,1girl,1974,tokyo,alleyway,slate grey,oversized wool coat,gold button,deep violet,messy bob cut,worn leather boots,thick treads,neon sign,buzzing hum,cool light,blue tint,cigarette,smoke ribbon,distant expression,off center composition,blur,wet brick,dark wood,paper bag,urban solitude,in the style of nakagami takashi,sharp shadows,overhead streetlamp,damp air",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.973,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, @nakagami takashi, wool, coat, gold, bob cut, messy, cuts, leather boots, neon sign, light, cigarette, smoke, ribbon, distant, wet, brick, dark, wood, paper bag, urban, shadow, lamppost",
+        "stats": {
+          "corrected": 0,
+          "dropped": 5,
+          "kept_invalid": 0,
+          "total": 27
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @nakagami takashi, wool, coat, gold, bob cut, messy, cuts, leather boots, neon sign, light, cigarette, smoke, ribbon, distant, wet, brick, dark, wood, paper bag, urban, shadow, lamppost",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 10001,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @nakagami takashi, wool, coat, gold, bob cut, messy, cuts, leather boots, neon sign, light, cigarette, smoke, ribbon, distant, wet, brick, dark, wood, paper bag, urban, shadow, lamppost",
+  "prose": "A girl stands in a 1974 Tokyo alleyway where rain slicks the pavement. She wears a oversized wool coat in slate grey with a single gold button. Her hair is a messy bob cut dyed a deep violet. In the style of Nakagami Takashi, sharp shadows slice across her face from an overhead streetlamp. The air feels damp and heavy. Her boots are worn leather with thick treads. Behind her, a neon sign flickers with a buzzing hum. The light is cool and blue-tinted. She holds a cigarette between her fingers, smoke curling upward in thin ribbons. The composition is slightly off-center. Her expression is distant and unfocused. The background blurs into wet brick and dark wood. A paper bag dangles from her shoulder. The scene captures a quiet moment of urban solitude.",
+  "draft": "masterpiece,best quality,score_9,safe,1girl,1974,tokyo,alleyway,slate grey,oversized wool coat,gold button,deep violet,messy bob cut,worn leather boots,thick treads,neon sign,buzzing hum,cool light,blue tint,cigarette,smoke ribbon,distant expression,off center composition,blur,wet brick,dark wood,paper bag,urban solitude,in the style of nakagami takashi,sharp shadows,overhead streetlamp,damp air",
+  "shortlist": {
+    "artists": [
+      "nakagami takashi",
+      "murakami hisashi",
+      "tsukamoto takashi",
+      "konno takashi",
+      "takami ryou",
+      "mikage takashi"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

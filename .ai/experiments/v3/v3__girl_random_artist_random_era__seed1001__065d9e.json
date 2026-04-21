@@ -1,0 +1,1554 @@
+{
+  "run_id": "v3__girl_random_artist_random_era__seed1001__065d9e",
+  "variant": "v3",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 1001
+  },
+  "started_at": 1776780083.7651238,
+  "ended_at": 1776780089.9094343,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.664,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['charin', '01 0219', 'sch', 'cong1991', 'sayu030b', 'aono3'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: charin, 01 0219, sch, cong1991, sayu030b, aono3\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.437,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl standing in a 1924 Parisian café, rendered in the style of sch. Her dress is a deep navy wool with a single white pearl button at the neckline. She wears a wide-brimmed felt hat tilted slightly forward. Warm tungsten light spills from a single hanging bulb, casting sharp, high-contrast shadows against the dark wood of the counter. Her expression is neutral and direct. The background features a tiled wall with cracked grout and a copper pitcher reflecting the overhead glow. A glass of amber liquid sits on the table before her, condensation beading on the surface. Her hair is a soft brown bob cut with a side parting. The air feels thick with cigarette smoke and the scent of roasted beans. Her pose is relaxed, one hand resting on the table edge. The floor is polished terrazzo catching the light. She wears thin black patent leather shoes. The composition feels cropped and intimate, focusing on the texture of her fabric and the grain of the wood.",
+        "user_msg": "SOURCE PROMPT: girl\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "concept_enumerate",
+      "params": {
+        "temperature": 0.6,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 0.994,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "concepts": [
+          "girl",
+          "Parisian café",
+          "sch. style",
+          "deep navy wool dress",
+          "white pearl button",
+          "wide-brimmed felt hat",
+          "tilted hat",
+          "warm tungsten light",
+          "hanging bulb",
+          "sharp high-contrast shadows",
+          "dark wood counter",
+          "neutral expression",
+          "direct gaze",
+          "tiled wall",
+          "cracked grout",
+          "copper pitcher",
+          "glass of amber liquid",
+          "condensation beading",
+          "soft brown bob cut",
+          "side parting",
+          "thick cigarette smoke",
+          "roasted beans scent",
+          "relaxed pose",
+          "one hand on table edge",
+          "polished terrazzo floor",
+          "thin black patent leather shoes",
+          "cropped composition",
+          "intimate composition",
+          "fabric texture",
+          "wood grain"
+        ],
+        "concepts_raw": "girl\n1924 Parisian café\nsch. style\ndeep navy wool dress\nwhite pearl button\nwide-brimmed felt hat\ntilted hat\nwarm tungsten light\nhanging bulb\nsharp high-contrast shadows\ndark wood counter\nneutral expression\ndirect gaze\ntiled wall\ncracked grout\ncopper pitcher\nglass of amber liquid\ncondensation beading\nsoft brown bob cut\nside parting\nthick cigarette smoke\nroasted beans scent\nrelaxed pose\none hand on table edge\npolished terrazzo floor\nthin black patent leather shoes\ncropped composition\nintimate composition\nfabric texture\nwood grain"
+      }
+    },
+    {
+      "step": "canonicalize",
+      "params": {
+        "min_score": 0.35,
+        "min_post_count": 50,
+        "top_k": 5
+      },
+      "elapsed_s": 1.079,
+      "inputs_seen": [
+        "base_name",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "candidates": [
+          {
+            "concept": "girl",
+            "top_k": [
+              {
+                "name": "the_girl_(gnr)",
+                "category": 4,
+                "post_count": 18,
+                "score": 0.7570894956588745
+              },
+              {
+                "name": "girl_dm",
+                "category": 4,
+                "post_count": 54,
+                "score": 0.7512639760971069
+              },
+              {
+                "name": "hit_girl",
+                "category": 4,
+                "post_count": 83,
+                "score": 0.7507827281951904
+              },
+              {
+                "name": "td_girl",
+                "category": 4,
+                "post_count": 30,
+                "score": 0.7480132579803467
+              },
+              {
+                "name": "silly_girl",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.7315771579742432
+              }
+            ],
+            "best": {
+              "name": "girl_dm",
+              "category": 4,
+              "post_count": 54,
+              "score": 0.7512639760971069
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "Parisian café",
+            "top_k": [
+              {
+                "name": "cafe_au_lait",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6354247331619263
+              },
+              {
+                "name": "tf_cafe",
+                "category": 1,
+                "post_count": 1323,
+                "score": 0.6323631405830383
+              },
+              {
+                "name": "cocoan_cafe",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6312786340713501
+              },
+              {
+                "name": "pako_(pousse_cafe)",
+                "category": 1,
+                "post_count": 453,
+                "score": 0.6278830766677856
+              },
+              {
+                "name": "cafe_choco",
+                "category": 1,
+                "post_count": 24,
+                "score": 0.6271385550498962
+              }
+            ],
+            "best": {
+              "name": "tf_cafe",
+              "category": 1,
+              "post_count": 1323,
+              "score": 0.6323631405830383
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sch. style",
+            "top_k": [
+              {
+                "name": "k_sk_style",
+                "category": 1,
+                "post_count": 32,
+                "score": 0.638658881187439
+              },
+              {
+                "name": "shnva_(style)",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6337432265281677
+              },
+              {
+                "name": "khyle._(style)",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6254118084907532
+              },
+              {
+                "name": "szh___",
+                "category": 1,
+                "post_count": 23,
+                "score": 0.608496367931366
+              },
+              {
+                "name": "szk",
+                "category": 1,
+                "post_count": 95,
+                "score": 0.6053778529167175
+              }
+            ],
+            "best": {
+              "name": "szk",
+              "category": 1,
+              "post_count": 95,
+              "score": 0.6053778529167175
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "deep navy wool dress",
+            "top_k": [
+              {
+                "name": "wool_dress",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6406065225601196
+              },
+              {
+                "name": "navigator_dress",
+                "category": 4,
+                "post_count": 14,
+                "score": 0.6245194673538208
+              },
+              {
+                "name": "tight_dress",
+                "category": 0,
+                "post_count": 2172,
+                "score": 0.6234393119812012
+              },
+              {
+                "name": "high_waist_dress",
+                "category": 0,
+                "post_count": 126,
+                "score": 0.6115738153457642
+              },
+              {
+                "name": "deep_duck",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6079145669937134
+              }
+            ],
+            "best": {
+              "name": "tight_dress",
+              "category": 0,
+              "post_count": 2172,
+              "score": 0.6234393119812012
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "white pearl button",
+            "top_k": [
+              {
+                "name": "gold_buttons",
+                "category": 0,
+                "post_count": 832,
+                "score": 0.6067686676979065
+              },
+              {
+                "name": "flower_button",
+                "category": 0,
+                "post_count": 145,
+                "score": 0.5880147218704224
+              },
+              {
+                "name": "multicolored_buttons",
+                "category": 0,
+                "post_count": 696,
+                "score": 0.5879292488098145
+              },
+              {
+                "name": "pedestrian_push_button",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.5830988883972168
+              },
+              {
+                "name": "pressing_button",
+                "category": 0,
+                "post_count": 170,
+                "score": 0.5736169219017029
+              }
+            ],
+            "best": {
+              "name": "gold_buttons",
+              "category": 0,
+              "post_count": 832,
+              "score": 0.6067686676979065
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "wide-brimmed felt hat",
+            "top_k": [
+              {
+                "name": "multicolored_hat",
+                "category": 0,
+                "post_count": 2037,
+                "score": 0.6528378129005432
+              },
+              {
+                "name": "oversized_hat",
+                "category": 0,
+                "post_count": 210,
+                "score": 0.6417940258979797
+              },
+              {
+                "name": "food_themed_hat",
+                "category": 0,
+                "post_count": 349,
+                "score": 0.6417739391326904
+              },
+              {
+                "name": "heart_shaped_hat",
+                "category": 0,
+                "post_count": 19,
+                "score": 0.6366606950759888
+              },
+              {
+                "name": "wide_brim",
+                "category": 0,
+                "post_count": 1017,
+                "score": 0.6336140632629395
+              }
+            ],
+            "best": {
+              "name": "multicolored_hat",
+              "category": 0,
+              "post_count": 2037,
+              "score": 0.6528378129005432
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "tilted hat",
+            "top_k": [
+              {
+                "name": "tilted_halo",
+                "category": 0,
+                "post_count": 175,
+                "score": 0.7634923458099365
+              },
+              {
+                "name": "tilted_headwear",
+                "category": 0,
+                "post_count": 15702,
+                "score": 0.6961551308631897
+              },
+              {
+                "name": "twirling_hat",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6709720492362976
+              },
+              {
+                "name": "hat_on_tail",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6688083410263062
+              },
+              {
+                "name": "stacked_hats",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.666113555431366
+              }
+            ],
+            "best": {
+              "name": "tilted_halo",
+              "category": 0,
+              "post_count": 175,
+              "score": 0.7634923458099365
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "warm tungsten light",
+            "top_k": [
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6001933217048645
+              },
+              {
+                "name": "lambent_light",
+                "category": 0,
+                "post_count": 315,
+                "score": 0.5992685556411743
+              },
+              {
+                "name": "calstone_light_o_(umamusume)",
+                "category": 4,
+                "post_count": 481,
+                "score": 0.5860381722450256
+              },
+              {
+                "name": "ring_light",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.5850148797035217
+              },
+              {
+                "name": "light",
+                "category": 0,
+                "post_count": 15010,
+                "score": 0.5838719606399536
+              }
+            ],
+            "best": {
+              "name": "lambent_light",
+              "category": 0,
+              "post_count": 315,
+              "score": 0.5992685556411743
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hanging bulb",
+            "top_k": [
+              {
+                "name": "hanging_light",
+                "category": 0,
+                "post_count": 1408,
+                "score": 0.7244423031806946
+              },
+              {
+                "name": "holding_bulb",
+                "category": 0,
+                "post_count": 37,
+                "score": 0.715574324131012
+              },
+              {
+                "name": "hanging_lantern",
+                "category": 0,
+                "post_count": 539,
+                "score": 0.7031444907188416
+              },
+              {
+                "name": "light_bulb_above_head",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.7002253532409668
+              },
+              {
+                "name": "hanging_tender",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6894017457962036
+              }
+            ],
+            "best": {
+              "name": "hanging_light",
+              "category": 0,
+              "post_count": 1408,
+              "score": 0.7244423031806946
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sharp high-contrast shadows",
+            "top_k": [
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6681093573570251
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6556796431541443
+              },
+              {
+                "name": "long_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6487912535667419
+              },
+              {
+                "name": "high_detail",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6428859829902649
+              },
+              {
+                "name": "eyes_in_shadow",
+                "category": 0,
+                "post_count": 1021,
+                "score": 0.6404895782470703
+              }
+            ],
+            "best": {
+              "name": "different_shadow",
+              "category": 0,
+              "post_count": 1033,
+              "score": 0.6556796431541443
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "dark wood counter",
+            "top_k": [
+              {
+                "name": "wooden_desk",
+                "category": 0,
+                "post_count": 163,
+                "score": 0.6388037204742432
+              },
+              {
+                "name": "bar_counter",
+                "category": 0,
+                "post_count": 74,
+                "score": 0.624026894569397
+              },
+              {
+                "name": "wooden_table",
+                "category": 0,
+                "post_count": 3819,
+                "score": 0.614962100982666
+              },
+              {
+                "name": "dark_talker",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.6029648780822754
+              },
+              {
+                "name": "dark_crafter",
+                "category": 4,
+                "post_count": 23,
+                "score": 0.595714807510376
+              }
+            ],
+            "best": {
+              "name": "wooden_desk",
+              "category": 0,
+              "post_count": 163,
+              "score": 0.6388037204742432
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "neutral expression",
+            "top_k": [
+              {
+                "name": "mak_neutral",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.6530645489692688
+              },
+              {
+                "name": "neutral_chao",
+                "category": 4,
+                "post_count": 488,
+                "score": 0.6513766646385193
+              },
+              {
+                "name": "loooooneutral",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6062138080596924
+              },
+              {
+                "name": "relaxed_entity",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.5638055205345154
+              },
+              {
+                "name": "null_focus",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.5585740804672241
+              }
+            ],
+            "best": {
+              "name": "neutral_chao",
+              "category": 4,
+              "post_count": 488,
+              "score": 0.6513766646385193
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "direct gaze",
+            "top_k": [
+              {
+                "name": "gaze_(e.g.o)",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6232949495315552
+              },
+              {
+                "name": "gazing_eye",
+                "category": 1,
+                "post_count": 729,
+                "score": 0.5933478474617004
+              },
+              {
+                "name": "imminent_grope",
+                "category": 0,
+                "post_count": 86,
+                "score": 0.5871545672416687
+              },
+              {
+                "name": "gaze_(thompon)",
+                "category": 1,
+                "post_count": 100,
+                "score": 0.5846418738365173
+              },
+              {
+                "name": "indirect_kiss",
+                "category": 0,
+                "post_count": 388,
+                "score": 0.5818914771080017
+              }
+            ],
+            "best": {
+              "name": "gazing_eye",
+              "category": 1,
+              "post_count": 729,
+              "score": 0.5933478474617004
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "tiled wall",
+            "top_k": [
+              {
+                "name": "tile_wall",
+                "category": 0,
+                "post_count": 10234,
+                "score": 0.7401136755943298
+              },
+              {
+                "name": "striped_wall",
+                "category": 0,
+                "post_count": 126,
+                "score": 0.6527233123779297
+              },
+              {
+                "name": "tile_ceiling",
+                "category": 0,
+                "post_count": 1089,
+                "score": 0.6350725293159485
+              },
+              {
+                "name": "triangular_tiling_background",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6273640990257263
+              },
+              {
+                "name": "padded_walls",
+                "category": 0,
+                "post_count": 104,
+                "score": 0.6177389025688171
+              }
+            ],
+            "best": {
+              "name": "tile_wall",
+              "category": 0,
+              "post_count": 10234,
+              "score": 0.7401136755943298
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cracked grout",
+            "top_k": [
+              {
+                "name": "cracked_road",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6854130029678345
+              },
+              {
+                "name": "cracked_floor",
+                "category": 0,
+                "post_count": 1305,
+                "score": 0.6843928098678589
+              },
+              {
+                "name": "cracked_background",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.6825723648071289
+              },
+              {
+                "name": "cracked_wall",
+                "category": 0,
+                "post_count": 1777,
+                "score": 0.6622718572616577
+              },
+              {
+                "name": "cracked_shell",
+                "category": 0,
+                "post_count": 46,
+                "score": 0.6587727069854736
+              }
+            ],
+            "best": {
+              "name": "cracked_floor",
+              "category": 0,
+              "post_count": 1305,
+              "score": 0.6843928098678589
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "copper pitcher",
+            "top_k": [
+              {
+                "name": "pitcher_(container)",
+                "category": 0,
+                "post_count": 1053,
+                "score": 0.6336381435394287
+              },
+              {
+                "name": "holding_pitcher",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6115614175796509
+              },
+              {
+                "name": "pitcher_plant",
+                "category": 0,
+                "post_count": 121,
+                "score": 0.5997788310050964
+              },
+              {
+                "name": "pitch_(kirby)",
+                "category": 4,
+                "post_count": 131,
+                "score": 0.5846469402313232
+              },
+              {
+                "name": "pitcher_(rhythm_tengoku)",
+                "category": 4,
+                "post_count": 27,
+                "score": 0.5812907814979553
+              }
+            ],
+            "best": {
+              "name": "pitcher_(container)",
+              "category": 0,
+              "post_count": 1053,
+              "score": 0.6336381435394287
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "glass of amber liquid",
+            "top_k": [
+              {
+                "name": "drinking_glass",
+                "category": 0,
+                "post_count": 47514,
+                "score": 0.6339582204818726
+              },
+              {
+                "name": "liquid_from_eyes",
+                "category": 0,
+                "post_count": 117,
+                "score": 0.6220856308937073
+              },
+              {
+                "name": "water_on_glass",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.6208027005195618
+              },
+              {
+                "name": "lantern_on_liquid",
+                "category": 0,
+                "post_count": 285,
+                "score": 0.6142054796218872
+              },
+              {
+                "name": "glowing_liquid",
+                "category": 0,
+                "post_count": 132,
+                "score": 0.6098988056182861
+              }
+            ],
+            "best": {
+              "name": "drinking_glass",
+              "category": 0,
+              "post_count": 47514,
+              "score": 0.6339582204818726
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "condensation beading",
+            "top_k": [
+              {
+                "name": "condensation",
+                "category": 0,
+                "post_count": 1097,
+                "score": 0.6441460847854614
+              },
+              {
+                "name": "cobalt_beam",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.5807304978370667
+              },
+              {
+                "name": "scanning",
+                "category": 1,
+                "post_count": 41,
+                "score": 0.5757377743721008
+              },
+              {
+                "name": "shading_mismatch",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.5745731592178345
+              },
+              {
+                "name": "coloring_practice",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.5733008980751038
+              }
+            ],
+            "best": {
+              "name": "condensation",
+              "category": 0,
+              "post_count": 1097,
+              "score": 0.6441460847854614
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft brown bob cut",
+            "top_k": [
+              {
+                "name": "light_brown_hair",
+                "category": 0,
+                "post_count": 849,
+                "score": 0.6262348890304565
+              },
+              {
+                "name": "bob_cut_girl_(memekko)",
+                "category": 4,
+                "post_count": 45,
+                "score": 0.6146374344825745
+              },
+              {
+                "name": "bob_cut_twin_(diva)",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.6094943881034851
+              },
+              {
+                "name": "softrabbit",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.6071375608444214
+              },
+              {
+                "name": "holy_b._bob",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.5978145003318787
+              }
+            ],
+            "best": {
+              "name": "light_brown_hair",
+              "category": 0,
+              "post_count": 849,
+              "score": 0.6262348890304565
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "side parting",
+            "top_k": [
+              {
+                "name": "side_sitting_split",
+                "category": 0,
+                "post_count": 248,
+                "score": 0.7379409670829773
+              },
+              {
+                "name": "side_part",
+                "category": 0,
+                "post_count": 2712,
+                "score": 0.73054039478302
+              },
+              {
+                "name": "side_by_side",
+                "category": 0,
+                "post_count": 12579,
+                "score": 0.6908443570137024
+              },
+              {
+                "name": "parting_water",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6845518946647644
+              },
+              {
+                "name": "side_cut",
+                "category": 0,
+                "post_count": 71,
+                "score": 0.6704748272895813
+              }
+            ],
+            "best": {
+              "name": "side_sitting_split",
+              "category": 0,
+              "post_count": 248,
+              "score": 0.7379409670829773
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thick cigarette smoke",
+            "top_k": [
+              {
+                "name": "too_many_cigarettes",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.6676164865493774
+              },
+              {
+                "name": "long_cigarette",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6615502238273621
+              },
+              {
+                "name": "breathing_smoke",
+                "category": 0,
+                "post_count": 37,
+                "score": 0.6564298272132874
+              },
+              {
+                "name": "incoming_cigarette",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6524866223335266
+              },
+              {
+                "name": "glowing_smoke",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6465196013450623
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "roasted beans scent",
+            "top_k": [
+              {
+                "name": "smelling_pussy",
+                "category": 0,
+                "post_count": 125,
+                "score": 0.6144586801528931
+              },
+              {
+                "name": "smelly_pussy",
+                "category": 0,
+                "post_count": 78,
+                "score": 0.5794740915298462
+              },
+              {
+                "name": "smelling_penis",
+                "category": 0,
+                "post_count": 853,
+                "score": 0.5772396326065063
+              },
+              {
+                "name": "noi_(smell)",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.5717637538909912
+              },
+              {
+                "name": "smelling_shoe",
+                "category": 0,
+                "post_count": 38,
+                "score": 0.5704327821731567
+              }
+            ],
+            "best": {
+              "name": "smelling_pussy",
+              "category": 0,
+              "post_count": 125,
+              "score": 0.6144586801528931
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "relaxed pose",
+            "top_k": [
+              {
+                "name": "relaxed_entity",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.7463738918304443
+              },
+              {
+                "name": "relax_lion",
+                "category": 1,
+                "post_count": 32,
+                "score": 0.7146338224411011
+              },
+              {
+                "name": "the_pose",
+                "category": 0,
+                "post_count": 10088,
+                "score": 0.6933904886245728
+              },
+              {
+                "name": "group_pose",
+                "category": 0,
+                "post_count": 273,
+                "score": 0.692929744720459
+              },
+              {
+                "name": "relaxing",
+                "category": 0,
+                "post_count": 760,
+                "score": 0.6925585269927979
+              }
+            ],
+            "best": {
+              "name": "the_pose",
+              "category": 0,
+              "post_count": 10088,
+              "score": 0.6933904886245728
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "one hand on table edge",
+            "top_k": [
+              {
+                "name": "hand_on_table",
+                "category": 0,
+                "post_count": 1576,
+                "score": 0.7918623089790344
+              },
+              {
+                "name": "hands_on_table",
+                "category": 0,
+                "post_count": 458,
+                "score": 0.767268180847168
+              },
+              {
+                "name": "the_hand_(stand)",
+                "category": 4,
+                "post_count": 100,
+                "score": 0.7091143131256104
+              },
+              {
+                "name": "elbows_on_table",
+                "category": 0,
+                "post_count": 1884,
+                "score": 0.7065695524215698
+              },
+              {
+                "name": "leaning_on_table",
+                "category": 0,
+                "post_count": 1041,
+                "score": 0.7021009922027588
+              }
+            ],
+            "best": {
+              "name": "hand_on_table",
+              "category": 0,
+              "post_count": 1576,
+              "score": 0.7918623089790344
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "polished terrazzo floor",
+            "top_k": [
+              {
+                "name": "glowing_floor",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6205780506134033
+              },
+              {
+                "name": "tile_floor",
+                "category": 0,
+                "post_count": 19521,
+                "score": 0.5933478474617004
+              },
+              {
+                "name": "parquet_floor",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.5904866456985474
+              },
+              {
+                "name": "polished_shoes",
+                "category": 0,
+                "post_count": 354,
+                "score": 0.5843930244445801
+              },
+              {
+                "name": "marble_floor",
+                "category": 0,
+                "post_count": 74,
+                "score": 0.5820831060409546
+              }
+            ],
+            "best": {
+              "name": "tile_floor",
+              "category": 0,
+              "post_count": 19521,
+              "score": 0.5933478474617004
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thin black patent leather shoes",
+            "top_k": [
+              {
+                "name": "light_skinned_soles",
+                "category": 0,
+                "post_count": 260,
+                "score": 0.6297207474708557
+              },
+              {
+                "name": "colored_shoe_interior",
+                "category": 0,
+                "post_count": 141,
+                "score": 0.5946606397628784
+              },
+              {
+                "name": "leather_shorts",
+                "category": 0,
+                "post_count": 275,
+                "score": 0.5922724008560181
+              },
+              {
+                "name": "black_shoes",
+                "category": 0,
+                "post_count": 206175,
+                "score": 0.5906459093093872
+              },
+              {
+                "name": "little_goody_two_shoes",
+                "category": 3,
+                "post_count": 151,
+                "score": 0.5830531120300293
+              }
+            ],
+            "best": {
+              "name": "light_skinned_soles",
+              "category": 0,
+              "post_count": 260,
+              "score": 0.6297207474708557
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "cropped composition",
+            "top_k": [
+              {
+                "name": "cropped_cardigan",
+                "category": 0,
+                "post_count": 102,
+                "score": 0.6378540992736816
+              },
+              {
+                "name": "cropped_kimono",
+                "category": 0,
+                "post_count": 76,
+                "score": 0.6336323618888855
+              },
+              {
+                "name": "cropped_coat",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6315940022468567
+              },
+              {
+                "name": "cropped_arm",
+                "category": 0,
+                "post_count": 177,
+                "score": 0.6280288100242615
+              },
+              {
+                "name": "cropped_vest",
+                "category": 0,
+                "post_count": 3647,
+                "score": 0.6254660487174988
+              }
+            ],
+            "best": {
+              "name": "cropped_cardigan",
+              "category": 0,
+              "post_count": 102,
+              "score": 0.6378540992736816
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "intimate composition",
+            "top_k": [
+              {
+                "name": "intrinsical",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.6191118359565735
+              },
+              {
+                "name": "absurdly_detailed_composition",
+                "category": 0,
+                "post_count": 2747,
+                "score": 0.6030625700950623
+              },
+              {
+                "name": "audible_internal_cumshot",
+                "category": 5,
+                "post_count": 403,
+                "score": 0.5642154216766357
+              },
+              {
+                "name": "personal_ami",
+                "category": 1,
+                "post_count": 1555,
+                "score": 0.5626612305641174
+              },
+              {
+                "name": "insertsomthinawesome",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.5546123385429382
+              }
+            ],
+            "best": {
+              "name": "absurdly_detailed_composition",
+              "category": 0,
+              "post_count": 2747,
+              "score": 0.6030625700950623
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "fabric texture",
+            "top_k": [
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6960852146148682
+              },
+              {
+                "name": "paper_texture",
+                "category": 0,
+                "post_count": 857,
+                "score": 0.6940943002700806
+              },
+              {
+                "name": "fabric",
+                "category": 0,
+                "post_count": 365,
+                "score": 0.6773216128349304
+              },
+              {
+                "name": "canvas_texture",
+                "category": 0,
+                "post_count": 252,
+                "score": 0.6567939519882202
+              },
+              {
+                "name": "nimble_fabric",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6465109586715698
+              }
+            ],
+            "best": {
+              "name": "texture",
+              "category": 0,
+              "post_count": 948,
+              "score": 0.6960852146148682
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "wood grain",
+            "top_k": [
+              {
+                "name": "grain",
+                "category": 1,
+                "post_count": 100,
+                "score": 0.709099531173706
+              },
+              {
+                "name": "wood_gradient_hair",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6600518226623535
+              },
+              {
+                "name": "wood",
+                "category": 0,
+                "post_count": 1264,
+                "score": 0.6327384114265442
+              },
+              {
+                "name": "gu_liang_dun_grain",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.6149631142616272
+              },
+              {
+                "name": "morning_wood",
+                "category": 0,
+                "post_count": 123,
+                "score": 0.599648118019104
+              }
+            ],
+            "best": {
+              "name": "grain",
+              "category": 1,
+              "post_count": 100,
+              "score": 0.709099531173706
+            },
+            "dropped_reason": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "curate",
+      "params": {
+        "temperature": 0.5,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 0.87,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "girl, sch., wool dress, white pearl button, wide brim, tilted hat, warm tungsten light, hanging bulb, sharp high-contrast shadows, dark wood counter, neutral expression, direct gaze, tiled wall, cracked wall, copper pitcher, glass of amber liquid, condensation, soft brown bob cut, side parting, thick cigarette smoke, relaxed pose, one hand on table edge, polished terrazzo floor, thin black patent leather shoes, cropped composition, fabric texture, wood grain"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.043,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, wool dress, wide brim, tilted headwear, light, hanging, high contrast, shadow, dark, wood, counter, expressionless, cracked wall, glass, liquid, condensation, bob cut, cuts, from side, cigarette, smoke, relaxing, pose, hand on table",
+        "stats": {
+          "corrected": 0,
+          "dropped": 0,
+          "kept_invalid": 0,
+          "total": 27
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.058,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, wool dress, wide brim, tilted headwear, light, hanging, high contrast, shadow, dark, wood, counter, expressionless, cracked wall, glass, liquid, condensation, bob cut, cuts, from side, cigarette, smoke, relaxing, pose, hand on table, @tf cafe",
+        "slot_fill_trace": {
+          "artist": "tf_cafe"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 1001,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, wool dress, wide brim, tilted headwear, light, hanging, high contrast, shadow, dark, wood, counter, expressionless, cracked wall, glass, liquid, condensation, bob cut, cuts, from side, cigarette, smoke, relaxing, pose, hand on table, @tf cafe",
+  "prose": "A girl standing in a 1924 Parisian café, rendered in the style of sch. Her dress is a deep navy wool with a single white pearl button at the neckline. She wears a wide-brimmed felt hat tilted slightly forward. Warm tungsten light spills from a single hanging bulb, casting sharp, high-contrast shadows against the dark wood of the counter. Her expression is neutral and direct. The background features a tiled wall with cracked grout and a copper pitcher reflecting the overhead glow. A glass of amber liquid sits on the table before her, condensation beading on the surface. Her hair is a soft brown bob cut with a side parting. The air feels thick with cigarette smoke and the scent of roasted beans. Her pose is relaxed, one hand resting on the table edge. The floor is polished terrazzo catching the light. She wears thin black patent leather shoes. The composition feels cropped and intimate, focusing on the texture of her fabric and the grain of the wood.",
+  "draft": "girl, sch., wool dress, white pearl button, wide brim, tilted hat, warm tungsten light, hanging bulb, sharp high-contrast shadows, dark wood counter, neutral expression, direct gaze, tiled wall, cracked wall, copper pitcher, glass of amber liquid, condensation, soft brown bob cut, side parting, thick cigarette smoke, relaxed pose, one hand on table edge, polished terrazzo floor, thin black patent leather shoes, cropped composition, fabric texture, wood grain",
+  "shortlist": {
+    "artists": [
+      "charin",
+      "01 0219",
+      "sch",
+      "cong1991",
+      "sayu030b",
+      "aono3"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

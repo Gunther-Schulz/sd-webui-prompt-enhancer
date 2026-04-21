@@ -1,0 +1,21 @@
+{
+  "_meta": {
+    "rubric_version": 1,
+    "rated_by": "claude-opus-4-7",
+    "seeds_used": [42, 137, 1729, 7919, 10001, 65537, 99991, 524287, 1000003, 2147483000],
+    "variant_delta_from_v8": "Two factors bundled: (a) validator general_min_post_count=100 for CAT_GENERAL exact matches, (b) reject_meta_non_whitelist=True for CAT_META tags. Otherwise identical to V8."
+  },
+  "by_prompt_mean": {
+    "girl_sex":                      {"v1": 3.3, "v8": 4.2, "v10": 4.1, "delta_v10_v8": -0.1},
+    "miku_cake":                     {"v1": 3.2, "v8": 3.2, "v10": 3.1, "delta_v10_v8": -0.1},
+    "girl_random_artist_random_era": {"v1": 4.2, "v8": 3.8, "v10": 3.5, "delta_v10_v8": -0.3},
+    "empty_random_artist_random_setting": {"v1": 4.0, "v8": 4.3, "v10": 4.1, "delta_v10_v8": -0.2}
+  },
+  "overall_mean": {"v1": 3.675, "v8": 3.875, "v10": 3.7, "delta_v10_v8": -0.175},
+  "verdict": "V10 REJECTED. Floor=100 + meta filter marginally regresses on every prompt. The niche-tag pollution the user flagged was at 500-3000 post counts, not under 100 — our floor didn't catch the real culprits. Meta filter barely activated because most odd tags were CAT_GENERAL variants, not CAT_META.",
+  "lessons": [
+    "Popularity floor needs to be calibrated against the actual post_count of observed bad tags, not guessed. User's flagged tags (sparse_leg_hair=716, heavy=787, partially_shaded_face=3350) would survive floor=100 and even floor=500. A meaningful floor would be 1000+, but that risks dropping legitimate descriptive tags.",
+    "Two-factor bundle made attribution impossible. Should have tested meta filter alone vs popularity floor alone. If we pursue this axis again, separate.",
+    "The 'niche-tag pollution' axis may not be the highest-impact one remaining — V8 was +0.2 over baseline with no regression, V10 is -0.175 from V8. Time to assess whether remaining issues are worth variant iteration or whether V8 is the ship candidate."
+  ]
+}

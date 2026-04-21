@@ -1,0 +1,165 @@
+{
+  "llm": "huihui_ai/qwen3.5-abliterated:9b",
+  "temperature": 0.7,
+  "runs": [
+    {
+      "spec_id": "user_exact_girl",
+      "source": "girl",
+      "modifiers": [
+        "\ud83c\udfb2 Random Artist",
+        "\ud83c\udfb2 Random Era"
+      ],
+      "seed": 1000,
+      "assembled_sp_preview": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default \u2014 useful for character-heav",
+      "shortlist": {
+        "artists": [
+          "yoshiharu",
+          "yoshito",
+          "nakahira guy",
+          "yukirar",
+          "yoshida inuhito",
+          "yoshikawa tatsuya"
+        ],
+        "characters": [
+          "leysritt (fate)"
+        ],
+        "series": []
+      },
+      "prose": "A girl stands in a 1924 Parisian street bathed in the sharp, angular shadows of Art Deco architecture. She wears a straight-cut wool trench coat in a deep charcoal gray with a wide belt cinched at the waist. Her hair is a severe, finger-waved bob cut precisely at the jawline. The lighting is high-contrast and cool, casting long, geometric shadows across her face. In the background, a tall clock tower features a sunburst pattern and a clock face with Roman numerals. The air feels crisp and industrial, smelling of coal smoke and fresh pavement. She holds a folded newspaper against her chest with one hand while the other rests on her hip. Her expression is serious and direct, looking straight into the camera. The scene is rendered with the specific, slightly flattened perspective of an illustrator named yukirar, emphasizing clean lines and a muted color palette.",
+      "draft": "masterpiece, best quality, score_7, 1girl, 1920s, paris, art deco, trench coat, charcoal gray, wide belt, finger-waved bob, jawline, high-contrast, cool lighting, geometric shadows, clock tower, sunburst pattern, roman numerals, industrial, crisp air, folded newspaper, hand on hip, serious expression, direct gaze, clean lines, muted colors, @yukirar",
+      "tags_pre_slotfill": "masterpiece, best quality, score_7, safe, 1girl, @yukirar, paris, art deco, trench coat, charcoal, wide belt, high contrast, shadow, clock tower, sunburst, patterned, roman numeral, industrial, folded, newspaper, hand on own hip, serious, clean, muted color",
+      "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @yukirar, paris, art deco, trench coat, charcoal, wide belt, high contrast, shadow, clock tower, sunburst, patterned, roman numeral, industrial, folded, newspaper, hand on own hip, serious, clean, muted color",
+      "slot_fill": {
+        "artist": "already-present"
+      },
+      "score": {
+        "comp_count": 20,
+        "total_count": 24,
+        "has_character": false,
+        "has_series": false,
+        "has_artist": true,
+        "artist_picks": [
+          "@yukirar"
+        ],
+        "has_subject_count": true,
+        "has_pose": true,
+        "has_lighting": false,
+        "has_setting": false,
+        "coverage_score": 2,
+        "violations": [],
+        "slot_fill": {
+          "artist": "already-present"
+        },
+        "elapsed": 4.8,
+        "prose_words": 146,
+        "draft_tokens": 27
+      }
+    },
+    {
+      "spec_id": "user_exact_girl",
+      "source": "girl",
+      "modifiers": [
+        "\ud83c\udfb2 Random Artist",
+        "\ud83c\udfb2 Random Era"
+      ],
+      "seed": 1001,
+      "assembled_sp_preview": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default \u2014 useful for character-heav",
+      "shortlist": {
+        "artists": [
+          "charin",
+          "01 0219",
+          "sch",
+          "cong1991",
+          "sayu030b",
+          "aono3"
+        ],
+        "characters": [
+          "leysritt (fate)"
+        ],
+        "series": []
+      },
+      "prose": "A girl standing in a 1924 Parisian caf\u00e9, rendered in the style of sch. Her face is sharp and angular with heavy, dark eyebrows and a small, slightly upturned nose. She wears a tailored wool coat in deep navy blue with wide lapels that frame her collarbone. Her hair is a dark brown bob cut just above the jawline, parted strictly in the middle. She holds a ceramic coffee cup with a saucer, her fingers wrapped around the warm porcelain. The light comes from a single overhead bulb, casting a warm yellow glow that creates a sharp shadow behind her on the checkered tablecloth. The background is slightly blurred with hints of velvet upholstery and hanging crystal glassware. Her expression is neutral and direct, looking straight into the lens. The air feels still and dry, smelling faintly of roasted beans. The composition is balanced with a slight tilt to the horizon line. The color palette is muted, relying on sepia tones and rich browns. She wears a simple pearl necklace that catches the overhead light. The scene captures a quiet moment of solitude in a bustling era.",
+      "draft": "masterpiece,best quality,score_7,safe,1girl,standing,1920s,paris,caf\u00e9,sharp face,angular face,heavy eyebrows,dark eyebrows,small nose,upturned nose,navy blue coat,wool coat,wide lapels,framed collarbone,medium length hair,dark brown hair,bob cut,jawline hair,middle part,hair part,ceramic coffee cup,saucer,holding cup,warm porcelain,overhead light,single bulb,glow,yellow light,sharp shadow,checkered tablecloth,blurred background,velvet upholstery,crystal glassware,neutral expression,direct gaze,still air,roasted beans,slight tilt,horizon line,muted colors,sepia tones,rich browns,pearl necklace,simple necklace,overhead lighting,quiet,solitude,bustling era",
+      "tags_pre_slotfill": "masterpiece, best quality, score_7, safe, 1girl, standing, paris, heavy, eyebrows, dark, nose, upturned nose, blue coat, coat, wool, lapels, framed, collarbone, brown hair, bob cut, middle part, coffee, cup, saucer, holding cup, porcelain, light, glowing, yellow light, shadow",
+      "final_tags": "masterpiece, best quality, score_7, safe, 1girl, standing, paris, heavy, eyebrows, dark, nose, upturned nose, blue coat, coat, wool, lapels, framed, collarbone, brown hair, bob cut, middle part, coffee, cup, saucer, holding cup, porcelain, light, glowing, yellow light, shadow, @tf cafe",
+      "slot_fill": {
+        "artist": "tf_cafe"
+      },
+      "score": {
+        "comp_count": 27,
+        "total_count": 31,
+        "has_character": false,
+        "has_series": false,
+        "has_artist": true,
+        "artist_picks": [
+          "@tf cafe"
+        ],
+        "has_subject_count": true,
+        "has_pose": true,
+        "has_lighting": false,
+        "has_setting": false,
+        "coverage_score": 2,
+        "violations": [],
+        "slot_fill": {
+          "artist": "tf_cafe"
+        },
+        "elapsed": 5.9,
+        "prose_words": 187,
+        "draft_tokens": 53
+      }
+    },
+    {
+      "spec_id": "user_exact_girl",
+      "source": "girl",
+      "modifiers": [
+        "\ud83c\udfb2 Random Artist",
+        "\ud83c\udfb2 Random Era"
+      ],
+      "seed": 1002,
+      "assembled_sp_preview": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default \u2014 useful for character-heav",
+      "shortlist": {
+        "artists": [
+          "yui 7",
+          "yae (mono110)",
+          "yu 65026",
+          "chin (motio7201)",
+          "mike156",
+          "yuuka (o.t.kingdom)"
+        ],
+        "characters": [
+          "leysritt (fate)"
+        ],
+        "series": []
+      },
+      "prose": "A girl stands in a sun-drenched 1920s kitchen, her posture relaxed and hips swaying. She wears a dropped-waist dress made of shimmering silk with a fringed hemline. Her hair is a deep raven bob, cut straight across the jawline. The light is harsh and direct, coming from a single high window and casting sharp, geometric shadows across the linoleum floor. In the background, a chrome toaster gleams under the warm afternoon sun. The scene captures the essence of the Roaring Twenties with a focus on texture and movement. In the style of Yui 7, the composition emphasizes bold, graphic lines and a flattened perspective that makes the room feel both intimate and expansive. Her expression is confident, mouth slightly open as if mid-laugh. A single strand of hair sticks to her cheek from the humidity. The air feels thick and still, preserving a moment of quiet energy.",
+      "draft": "masterpiece, best quality, score_9, 1girl, sun-drenched, 1920s, kitchen, relaxed posture, swaying hips, dropped-waist dress, shimmering silk, fringed hemline, raven bob, straight hair, jawline, harsh light, direct light, high window, sharp shadows, geometric shadows, linoleum floor, chrome toaster, gleaming, warm afternoon sun, Roaring Twenties, texture, movement, Yui 7, bold lines, graphic lines, flattened perspective, intimate, expansive, confident expression, mouth slightly open, mid-laugh, single strand of hair, cheek, humidity, thick air, still, quiet energy, @Yui 7",
+      "tags_pre_slotfill": "masterpiece, best quality, score_7, score_9, safe, 1girl, @yui 7, sun, kitchen, relaxing, swaying hip, dress, silk, straight hair, light, window, shadow, floor, toaster, roaring, texture, flattened, perspective, confident, laughing, energy",
+      "final_tags": "masterpiece, best quality, score_7, score_9, safe, 1girl, @yui 7, sun, kitchen, relaxing, swaying hip, dress, silk, straight hair, light, window, shadow, floor, toaster, roaring, texture, flattened, perspective, confident, laughing, energy",
+      "slot_fill": {
+        "artist": "already-present"
+      },
+      "score": {
+        "comp_count": 21,
+        "total_count": 26,
+        "has_character": false,
+        "has_series": false,
+        "has_artist": true,
+        "artist_picks": [
+          "@yui 7"
+        ],
+        "has_subject_count": true,
+        "has_pose": false,
+        "has_lighting": false,
+        "has_setting": false,
+        "coverage_score": 1,
+        "violations": [],
+        "slot_fill": {
+          "artist": "already-present"
+        },
+        "elapsed": 4.5,
+        "prose_words": 147,
+        "draft_tokens": 43
+      }
+    }
+  ]
+}

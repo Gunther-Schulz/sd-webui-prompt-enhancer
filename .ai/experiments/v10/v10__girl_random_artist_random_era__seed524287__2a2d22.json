@@ -1,0 +1,227 @@
+{
+  "run_id": "v10__girl_random_artist_random_era__seed524287__2a2d22",
+  "variant": "v10",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 524287
+  },
+  "started_at": 1776784698.446041,
+  "ended_at": 1776784713.0604856,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 1.371,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['flipper', 'e20', '01 0219', 'sch', 'the art mage', 'eku'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: flipper, e20, 01 0219, sch, the art mage, eku\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 11.83,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in a sun-drenched 1920s garden, her pose relaxed with one hip cocked. She wears a flapper dress of sequined silk that catches the light, the hemline hitting mid-thigh. Her hair is a dark bob, bobbing slightly as she looks toward the camera. The light is sharp and directional, casting hard shadows against her skin. In the style of flipper, the background features geometric patterns and a flattened perspective. A vintage convertible car sits parked on the lawn, its chrome gleaming. The air feels thick with dust motes dancing in the golden hour. Her expression is confident, lips slightly parted. The scene balances organic forms with the angular geometry of the era.",
+        "prose_samples": [
+          "A girl stands in a sun-drenched 1920s garden, her pose relaxed with one hip cocked. She wears a flapper dress of sequined silk that catches the light, the hemline hitting mid-thigh. Her hair is a dark bob, bobbing slightly as she looks toward the camera. The light is sharp and directional, casting hard shadows against her skin. In the style of flipper, the background features geometric patterns and a flattened perspective. A vintage convertible car sits parked on the lawn, its chrome gleaming. The air feels thick with dust motes dancing in the golden hour. Her expression is confident, lips slightly parted. The scene balances organic forms with the angular geometry of the era.",
+          "A girl stands in a 1920s speakeasy, wearing a dropped-waist dress of silk that catches the dim light. Her bobbed hair is cut sharp at the nape, framing a face with heavy eyeliner and a knowing smirk. She holds a glass tumbler, the condensation slick against her skin. The air is thick with smoke, diffusing the overhead bulbs into hazy pools. In the style of flipper, the composition balances a loose, sketchy line quality with rich, saturated color. Shadows are soft and painterly, not harsh or defined. Her pose is casual, one leg crossed over the other, suggesting a moment of idle conversation. The background features a velvet curtain and a brass lamp, rendered with the same textural depth as her skin. The scene feels intimate and slightly chaotic, capturing the energy of the Jazz Age through the lens of a single, distinctive artistic voice.",
+          "A girl stands in the center of a 1920s speakeasy. Her hair is cut in a sharp bob and dyed a deep, unnatural crimson. She wears a fringed silk dress that falls just above the knee, cut with a diagonal hemline. A single, large pearl rests on her left earlobe. The lighting is harsh and directional, coming from a single chandelier above that casts sharp, defined shadows against the walls. The air feels thick with smoke and the scent of spilled gin. The composition is slightly tilted, creating a sense of dynamic movement. The texture of the scene is grainy and high-contrast, emphasizing the interplay of deep blacks and bright whites. In the style of e20, the girl's face is rendered with heavy, graphic eyeliner and a mouth that is slightly parted. The background is a blur of dark wood paneling and brass fixtures. She looks directly at the viewer with an expression of bored anticipation. The fabric of her dress clings to her shoulders before flaring out. A single button on her waistcoat is undone, revealing a hint of skin. The light hits her cheekbone at a steep angle, carving out her features with precision."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.958,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_7,safe,1girl,flapper,1920s,dark hair,short hair,bob,half up,sequins,silk,flapper dress,mid_thigh,hip cocked,looking at viewer,confident expression,lips parted,sharp lighting,hard shadows,golden hour,dust motes,vintage convertible,chrome,geometric pattern,flattened perspective,angular,organic,confident,lips,sparkling,garden,grass,lawn,concrete,1920s,style of flipper",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {
+        "general_min_post_count": 100,
+        "reject_meta_non_whitelist": true
+      },
+      "elapsed_s": 0.455,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, @flipper, flapper shirt, dark blue hair, short hair, sequins, silk, thighs, looking at viewer, confident, lips, shadow, golden hour, dust, convertible, geometric pattern, flattened, sparkle, garden, grass, concrete",
+        "stats": {
+          "total": 25
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @flipper, flapper shirt, dark blue hair, short hair, sequins, silk, thighs, looking at viewer, confident, lips, shadow, golden hour, dust, convertible, geometric pattern, flattened, sparkle, garden, grass, concrete",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 524287,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @flipper, flapper shirt, dark blue hair, short hair, sequins, silk, thighs, looking at viewer, confident, lips, shadow, golden hour, dust, convertible, geometric pattern, flattened, sparkle, garden, grass, concrete",
+  "prose": "A girl stands in a sun-drenched 1920s garden, her pose relaxed with one hip cocked. She wears a flapper dress of sequined silk that catches the light, the hemline hitting mid-thigh. Her hair is a dark bob, bobbing slightly as she looks toward the camera. The light is sharp and directional, casting hard shadows against her skin. In the style of flipper, the background features geometric patterns and a flattened perspective. A vintage convertible car sits parked on the lawn, its chrome gleaming. The air feels thick with dust motes dancing in the golden hour. Her expression is confident, lips slightly parted. The scene balances organic forms with the angular geometry of the era.",
+  "draft": "masterpiece,best quality,score_7,safe,1girl,flapper,1920s,dark hair,short hair,bob,half up,sequins,silk,flapper dress,mid_thigh,hip cocked,looking at viewer,confident expression,lips parted,sharp lighting,hard shadows,golden hour,dust motes,vintage convertible,chrome,geometric pattern,flattened perspective,angular,organic,confident,lips,sparkling,garden,grass,lawn,concrete,1920s,style of flipper",
+  "shortlist": {
+    "artists": [
+      "flipper",
+      "e20",
+      "01 0219",
+      "sch",
+      "the art mage",
+      "eku"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

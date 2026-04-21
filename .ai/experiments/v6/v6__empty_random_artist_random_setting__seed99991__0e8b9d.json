@@ -1,0 +1,203 @@
+{
+  "run_id": "v6__empty_random_artist_random_setting__seed99991__0e8b9d",
+  "variant": "v6",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 99991
+  },
+  "started_at": 1776781355.4656043,
+  "ended_at": 1776781359.35265,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "SOURCE FIDELITY: if the user's source prompt contains specific subjects, actions, objects, states, or explicit/mature content, your prose preserves those elements as described — do not sanitize, euphemize, or substitute. You may add concrete detail around what the source provides, but do not replace or drop its specifics. If the source is sparse (just a subject word, or a vague cue), expand it creatively in whatever direction the modifiers and context suggest."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.116,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.651,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A lone figure stands on a weathered cobblestone street in Prague at dusk, rendered in the style of Egon Schiele. The man wears a loose, charcoal-grey linen tunic with jagged, uneven hemlines that expose pale skin. His hair is a messy shock of unruly chestnut, cut short and framing a gaunt, angular face. He holds a sketchbook open in one hand, the paper stiff and cream-colored against the dark background. Behind him, a crooked wooden fence leans precariously, its planks warped and stained with deep, dripping shadows. The lighting comes from a single hanging lantern, casting long, distorted silhouettes that stretch across the wet pavement. The air feels cool and crisp, suggested by the way the fabric clings to the figure's frame. In the distance, a spire pierces the hazy sky, its lines sharp and tilted. The ground is uneven, with puddles reflecting the warm, amber glow of the lantern. Every edge is defined with a bold, dark contour line, giving the scene a raw, vibrating energy. The background blurs slightly, pushing the foreground subject into sharp, immediate focus.",
+        "user_msg": "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.127,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best_quality,1boy,score_7,sensitive,Egon Schiele,prague,street,cobblestone,dusk,loose_tunic,charcoal-grey,linen,jagged_hemline,pale_skin,unruly_chestnut,short_hair,gaunt,angular_face,sketchbook,open,cream_paper,dark_background,crooked_wooden_fence,warped_planks,deep_shadows,hanging_lantern,long_silhouette,wet_pavement,cool_air,clinging_fabric,spire,hazy_sky,tilted_lines,uneven_ground,puddle,amber_glow,bold_contour,raw_energy,sharp_focus,blurred_background",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.94,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, sensitive, 1boy, street, cobblestone, dusk, tunic, charcoal, pale skin, chestnut, short hair, sketchbook, cream, paper, dark background, wooden fence, warped, shadow, hanging lantern, silhouette, wet pavement, clinging, fabric, spire, sky, puddle, glowing",
+        "stats": {
+          "corrected": 0,
+          "dropped": 12,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.053,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, sensitive, 1boy, street, cobblestone, dusk, tunic, charcoal, pale skin, chestnut, short hair, sketchbook, cream, paper, dark background, wooden fence, warped, shadow, hanging lantern, silhouette, wet pavement, clinging, fabric, spire, sky, puddle, glowing, @matsuda (matsukichi)",
+        "slot_fill_trace": {
+          "artist": "matsuda_(matsukichi)"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 99991,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, sensitive, 1boy, street, cobblestone, dusk, tunic, charcoal, pale skin, chestnut, short hair, sketchbook, cream, paper, dark background, wooden fence, warped, shadow, hanging lantern, silhouette, wet pavement, clinging, fabric, spire, sky, puddle, glowing, @matsuda (matsukichi)",
+  "prose": "A lone figure stands on a weathered cobblestone street in Prague at dusk, rendered in the style of Egon Schiele. The man wears a loose, charcoal-grey linen tunic with jagged, uneven hemlines that expose pale skin. His hair is a messy shock of unruly chestnut, cut short and framing a gaunt, angular face. He holds a sketchbook open in one hand, the paper stiff and cream-colored against the dark background. Behind him, a crooked wooden fence leans precariously, its planks warped and stained with deep, dripping shadows. The lighting comes from a single hanging lantern, casting long, distorted silhouettes that stretch across the wet pavement. The air feels cool and crisp, suggested by the way the fabric clings to the figure's frame. In the distance, a spire pierces the hazy sky, its lines sharp and tilted. The ground is uneven, with puddles reflecting the warm, amber glow of the lantern. Every edge is defined with a bold, dark contour line, giving the scene a raw, vibrating energy. The background blurs slightly, pushing the foreground subject into sharp, immediate focus.",
+  "draft": "masterpiece,best_quality,1boy,score_7,sensitive,Egon Schiele,prague,street,cobblestone,dusk,loose_tunic,charcoal-grey,linen,jagged_hemline,pale_skin,unruly_chestnut,short_hair,gaunt,angular_face,sketchbook,open,cream_paper,dark_background,crooked_wooden_fence,warped_planks,deep_shadows,hanging_lantern,long_silhouette,wet_pavement,cool_air,clinging_fabric,spire,hazy_sky,tilted_lines,uneven_ground,puddle,amber_glow,bold_contour,raw_energy,sharp_focus,blurred_background",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

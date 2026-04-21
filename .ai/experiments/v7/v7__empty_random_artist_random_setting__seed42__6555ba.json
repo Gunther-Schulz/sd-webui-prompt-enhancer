@@ -1,0 +1,203 @@
+{
+  "run_id": "v7__empty_random_artist_random_setting__seed42__6555ba",
+  "variant": "v7",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 42
+  },
+  "started_at": 1776781726.2590709,
+  "ended_at": 1776781730.7602696,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.113,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.3,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.628,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in a cramped, industrial workshop filled with the scent of oil and sawdust, rendered in the style of Egon Schiele. The artist's signature angular lines define the subject's elongated limbs and twisted torso, while a thin, jagged outline separates the body from the background. The figure wears a loose, heavy wool coat in a deep charcoal grey that drapes unevenly over the shoulders. One arm extends forward, fingers splayed and slightly curled, while the other rests against a rough-hewn wooden beam. The face is gaunt with high cheekbones and a sharp, tilted nose, framed by a mane of wild, reddish-brown hair that falls in uneven strands. A single, intense eye stares directly at the viewer, the other half-closed in shadow. The lighting is harsh and directional, coming from a high, narrow window that casts deep, sharp shadows across the floorboards. The walls are lined with exposed brick and hanging tools, all rendered with the same expressive, almost nervous energy. The color palette is restricted to earthy ochres, burnt siennas, and stark blacks, creating a sense of contained tension within the narrow space.",
+        "user_msg": "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.162,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_9, 1girl, Egon Schiele, workshop, industrial, oil and sawdust, angular lines, elongated limbs, twisted torso, thin jagged outline, loose heavy wool coat, deep charcoal grey, uneven drape, extended arm, splayed fingers, curled, rough-hewn wooden beam, gaunt face, high cheekbones, sharp tilted nose, wild reddish-brown hair, uneven strands, intense eye, half-closed shadow, harsh directional lighting, high narrow window, deep sharp shadows, exposed brick, hanging tools, expressive nervous energy, earthy ochres, burnt siennas, stark blacks, contained tension, narrow space, @Egon Schiele, sensitive, score_9",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.543,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, sensitive, 1girl, workshop, industrial, oil, limbs, twisted torso, skinny, outline, heavy, wool, coat, charcoal, wooden beam, sketch, cheekbones, nose, brown hair, shadow, window, brick, hanging, tools, nervous, energy, burnt",
+        "stats": {
+          "corrected": 0,
+          "dropped": 11,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.056,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, sensitive, 1girl, workshop, industrial, oil, limbs, twisted torso, skinny, outline, heavy, wool, coat, charcoal, wooden beam, sketch, cheekbones, nose, brown hair, shadow, window, brick, hanging, tools, nervous, energy, burnt, @satou atsuki",
+        "slot_fill_trace": {
+          "artist": "satou_atsuki"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 42,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_9, sensitive, 1girl, workshop, industrial, oil, limbs, twisted torso, skinny, outline, heavy, wool, coat, charcoal, wooden beam, sketch, cheekbones, nose, brown hair, shadow, window, brick, hanging, tools, nervous, energy, burnt, @satou atsuki",
+  "prose": "A solitary figure stands in a cramped, industrial workshop filled with the scent of oil and sawdust, rendered in the style of Egon Schiele. The artist's signature angular lines define the subject's elongated limbs and twisted torso, while a thin, jagged outline separates the body from the background. The figure wears a loose, heavy wool coat in a deep charcoal grey that drapes unevenly over the shoulders. One arm extends forward, fingers splayed and slightly curled, while the other rests against a rough-hewn wooden beam. The face is gaunt with high cheekbones and a sharp, tilted nose, framed by a mane of wild, reddish-brown hair that falls in uneven strands. A single, intense eye stares directly at the viewer, the other half-closed in shadow. The lighting is harsh and directional, coming from a high, narrow window that casts deep, sharp shadows across the floorboards. The walls are lined with exposed brick and hanging tools, all rendered with the same expressive, almost nervous energy. The color palette is restricted to earthy ochres, burnt siennas, and stark blacks, creating a sense of contained tension within the narrow space.",
+  "draft": "masterpiece, best quality, score_9, 1girl, Egon Schiele, workshop, industrial, oil and sawdust, angular lines, elongated limbs, twisted torso, thin jagged outline, loose heavy wool coat, deep charcoal grey, uneven drape, extended arm, splayed fingers, curled, rough-hewn wooden beam, gaunt face, high cheekbones, sharp tilted nose, wild reddish-brown hair, uneven strands, intense eye, half-closed shadow, harsh directional lighting, high narrow window, deep sharp shadows, exposed brick, hanging tools, expressive nervous energy, earthy ochres, burnt siennas, stark blacks, contained tension, narrow space, @Egon Schiele, sensitive, score_9",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

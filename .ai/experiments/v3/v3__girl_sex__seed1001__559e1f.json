@@ -1,0 +1,5660 @@
+{
+  "run_id": "v3__girl_sex__seed1001__559e1f",
+  "variant": "v3",
+  "pipeline_input": {
+    "source": "girl, sex",
+    "mods": [],
+    "seed": 1001
+  },
+  "started_at": 1776780092.5466964,
+  "ended_at": 1776780112.53809,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.517,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['0123456789', 'sch', 'r ex', 'sol fa soft', 'e10', 'cl 55'], characters=['girl (mokufuu)', \"girlfriend (friday night funkin')\", 'girl dm', 'acfun girl', 'female titan', 'hit girl'], series=['high score girl', 'boy meets girl', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: 0123456789, sch, r ex, sol fa soft, e10, cl 55\nCharacters: girl (mokufuu), girlfriend (friday night funkin'), girl dm, acfun girl, female titan, hit girl\nSeries: high score girl, boy meets girl, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.555,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl, sex, intimate pose on a soft surface, one leg bent and raised, hand gripping fabric, sweat glistening on skin, warm overhead light casting deep shadows, detailed texture of skin and hair, focused expression, natural breathing rhythm, slight chest rise and fall, fabric stretching across the body, specific material like silk or cotton, close framing on the torso, physical connection emphasized, subtle muscle tension, realistic skin tones, defined jawline, slightly parted lips, environment blurred in background, single light source creating a halo effect, organic movement captured mid-action, distinct hair strands falling across the face, visible pulse in the neck, weight shifting to one hip, relaxed shoulders, hands resting near the waist or holding a partner, skin catching the light at sharp angles, intimate atmosphere grounded in physical reality, fabric clinging to curves, damp skin texture, specific room temperature suggested by a light breeze or stillness, precise angle of view from slightly above, clear definition of the navel and collarbone, hair pulled back or loose and voluminous, a single drop of moisture on the lip, body language communicating desire and effort, grounded stance or floating weight, seamless blend of form and shadow, high contrast between light and dark areas, sharp focus on the central figure, minimal background distraction, every detail serving the central action of connection, tangible sense of heat and movement, fabric wrinkling at the joints, specific color palette of warm neutrals or deep tones, skin texture showing pores and fine lines, hair catching the light with a specific sheen, a moment of suspended time, body language telling a story of mutual engagement, light defining the silhouette, shadow stretching across the room, texture of the surface beneath them, fingers interlaced or tracing skin, breath visible in the air, a sense of fullness and vitality, specific weight distribution, hair moving with momentum, light hitting the spine and hip, skin glowing with internal heat, fabric draping naturally, a specific curve of the back, light hitting the knee and thigh, shadow pooling under the chin, skin meeting skin with friction, hair framing the face, light defining the shoulder blade, a specific rhythm of motion, light catching the wet hair, skin stretching over the bone, shadow elongating the limbs, fabric shifting with every movement, light creating a rim effect, skin reflecting the ambient warmth, hair falling into the eye, shadow softening the edges, light piercing the center of the frame, skin texture highlighted by a directional beam, hair creating depth with layers, light defining the hip line, shadow grounding the figure, skin glowing against the darker fabric, hair catching a stray ray, light carving out the form, shadow adding dimension, skin showing the sheen of oil or sweat, hair with a specific wave pattern, light defining the breast and sternum, shadow pooling at the base of the neck, skin meeting the fabric with a crisp line, hair framing the jaw, light hitting the shoulder and neck, shadow stretching across the chest, skin showing the dip of the waist, hair with a specific flyaway strand, light defining the curve of the spine, shadow softening the background, skin glowing with a warm tint, hair creating a specific volume, light carving the collarbone, shadow defining the thigh, skin showing the texture of muscle, hair with a specific gloss, light hitting the ear and neck, shadow pooling under the chin, skin meeting the fabric with a soft fold, hair framing the cheek, light defining the hip and glute, shadow stretching across the back, skin showing the sheen of movement, hair with a specific bounce, light hitting the knee and shin, shadow defining the ankle, skin showing the texture of a thigh, hair with a specific sweep, light defining the breast and ribcage, shadow pooling at the waist, skin showing the dip of the navel, hair with a specific curl, light hitting the shoulder and clavicle, shadow defining the arm, skin showing the texture of a back, hair with a specific tangle, light hitting the hip and thigh, shadow defining the calf, skin showing the texture of a leg, hair with a specific wave, light hitting the breast and sternum, shadow defining the neck, skin showing the texture of a chest, hair with a specific fringe, light hitting the shoulder and blade, shadow defining the back, skin showing the texture of a spine, hair with a specific part, light hitting the hip and waist, shadow defining the thigh, skin showing the texture of a hip, hair with a specific volume, light hitting the breast and rib, shadow defining the stomach, skin showing the texture of an abs, hair with a specific length, light hitting the shoulder and arm, shadow defining the elbow, skin showing the texture of a forearm, hair with a specific thickness, light hitting the breast and nipple, shadow defining the waist, skin showing the texture of a waist, hair with a specific weight, light hitting the shoulder and neck, shadow defining the collarbone, skin showing the texture of a neck, hair with a specific shine, light hitting the hip and glute, shadow defining",
+        "user_msg": "SOURCE PROMPT: girl, sex"
+      }
+    },
+    {
+      "step": "concept_enumerate",
+      "params": {
+        "temperature": 0.6,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 3.462,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "concepts": [
+          "girl",
+          "sex",
+          "intimate pose",
+          "soft surface",
+          "one leg bent",
+          "leg raised",
+          "hand gripping fabric",
+          "sweat glistening",
+          "warm overhead light",
+          "deep shadows",
+          "detailed skin texture",
+          "detailed hair texture",
+          "focused expression",
+          "natural breathing",
+          "chest rise",
+          "chest fall",
+          "stretching fabric",
+          "silk or cotton",
+          "close framing",
+          "physical connection",
+          "subtle muscle tension",
+          "realistic skin tones",
+          "defined jawline",
+          "slightly parted lips",
+          "blurred background",
+          "single light source",
+          "halo effect",
+          "organic movement",
+          "distinct hair strands",
+          "visible neck pulse",
+          "weight shifting",
+          "relaxed shoulders",
+          "hands near waist",
+          "holding partner",
+          "skin catching light",
+          "sharp angles",
+          "intimate atmosphere",
+          "physical reality",
+          "fabric clinging",
+          "damp skin texture",
+          "light breeze",
+          "stillness",
+          "slightly above angle",
+          "central figure focus",
+          "tangible heat",
+          "movement momentum",
+          "suspended time",
+          "mutual engagement",
+          "silhouette definition",
+          "stretching shadow",
+          "surface texture",
+          "interlaced fingers",
+          "tracing skin",
+          "visible breath",
+          "fullness of body",
+          "vitality",
+          "grounded stance",
+          "floating weight",
+          "seamless form blend",
+          "high contrast",
+          "warm neutral palette",
+          "deep tones",
+          "pores and fine lines",
+          "specific hair sheen",
+          "sweat sheen",
+          "curved back",
+          "voluminous hair",
+          "loose hair",
+          "single moisture drop",
+          "body language",
+          "desire",
+          "effort",
+          "floating weight",
+          "form and shadow",
+          "hip line definition",
+          "ribcage definition",
+          "breast definition",
+          "sternum definition",
+          "navel definition",
+          "collarbone definition",
+          "waist dip",
+          "thigh texture",
+          "knee definition",
+          "thigh curve",
+          "spine curve",
+          "breast and ribcage",
+          "stomach definition",
+          "abs definition",
+          "hip and glute",
+          "shoulder blade",
+          "ear and neck",
+          "shoulder and clavicle",
+          "shoulder and arm",
+          "elbow definition",
+          "forearm texture",
+          "breast and nipple",
+          "waist definition",
+          "neck texture",
+          "collarbone shadow",
+          "thigh shadow",
+          "calf definition",
+          "ankle definition",
+          "breast and sternum",
+          "breast and hip",
+          "breast and rib",
+          "breast and nipple",
+          "shoulder and neck",
+          "hip and waist",
+          "hip and thigh",
+          "hip and glute",
+          "breast and sternum",
+          "shoulder and blade",
+          "back shadow",
+          "thigh shadow",
+          "stomach shadow",
+          "abs texture",
+          "waist texture",
+          "neck texture",
+          "chest texture",
+          "back texture",
+          "spine texture",
+          "breast and sternum",
+          "breast and rib",
+          "breast and nipple",
+          "shoulder and arm",
+          "should"
+        ],
+        "concepts_raw": "girl\nsex\nintimate pose\nsoft surface\none leg bent\nleg raised\nhand gripping fabric\nsweat glistening\nwarm overhead light\ndeep shadows\ndetailed skin texture\ndetailed hair texture\nfocused expression\nnatural breathing\nchest rise\nchest fall\nstretching fabric\nsilk or cotton\nclose framing\nphysical connection\nsubtle muscle tension\nrealistic skin tones\ndefined jawline\nslightly parted lips\nblurred background\nsingle light source\nhalo effect\norganic movement\ndistinct hair strands\nvisible neck pulse\nweight shifting\nrelaxed shoulders\nhands near waist\nholding partner\nskin catching light\nsharp angles\nintimate atmosphere\nphysical reality\nfabric clinging\ndamp skin texture\nlight breeze\nstillness\nslightly above angle\ncentral figure focus\ntangible heat\nmovement momentum\nsuspended time\nmutual engagement\nsilhouette definition\nstretching shadow\nsurface texture\ninterlaced fingers\ntracing skin\nvisible breath\nfullness of body\nvitality\ngrounded stance\nfloating weight\nseamless form blend\nhigh contrast\nwarm neutral palette\ndeep tones\npores and fine lines\nspecific hair sheen\nsweat sheen\ncurved back\nvoluminous hair\nloose hair\nsingle moisture drop\nbody language\ndesire\neffort\nfloating weight\nform and shadow\nhip line definition\nribcage definition\nbreast definition\nsternum definition\nnavel definition\ncollarbone definition\nwaist dip\nthigh texture\nknee definition\nthigh curve\nspine curve\nbreast and ribcage\nstomach definition\nabs definition\nhip and glute\nshoulder blade\near and neck\nshoulder and clavicle\nshoulder and arm\nelbow definition\nforearm texture\nbreast and nipple\nwaist definition\nneck texture\ncollarbone shadow\nthigh shadow\ncalf definition\nankle definition\nbreast and sternum\nbreast and hip\nbreast and rib\nbreast and nipple\nshoulder and neck\nhip and waist\nhip and thigh\nhip and glute\nbreast and sternum\nshoulder and blade\nback shadow\nthigh shadow\nstomach shadow\nabs texture\nwaist texture\nneck texture\nchest texture\nback texture\nspine texture\nbreast and sternum\nbreast and rib\nbreast and nipple\nshoulder and arm\nshould"
+      }
+    },
+    {
+      "step": "canonicalize",
+      "params": {
+        "min_score": 0.35,
+        "min_post_count": 50,
+        "top_k": 5
+      },
+      "elapsed_s": 1.395,
+      "inputs_seen": [
+        "base_name",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "candidates": [
+          {
+            "concept": "girl",
+            "top_k": [
+              {
+                "name": "the_girl_(gnr)",
+                "category": 4,
+                "post_count": 18,
+                "score": 0.7569928169250488
+              },
+              {
+                "name": "girl_dm",
+                "category": 4,
+                "post_count": 54,
+                "score": 0.7512239217758179
+              },
+              {
+                "name": "hit_girl",
+                "category": 4,
+                "post_count": 83,
+                "score": 0.7506816983222961
+              },
+              {
+                "name": "td_girl",
+                "category": 4,
+                "post_count": 30,
+                "score": 0.747937798500061
+              },
+              {
+                "name": "silly_girl",
+                "category": 4,
+                "post_count": 20,
+                "score": 0.7315201759338379
+              }
+            ],
+            "best": {
+              "name": "girl_dm",
+              "category": 4,
+              "post_count": 54,
+              "score": 0.7512239217758179
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sex",
+            "top_k": [
+              {
+                "name": "food_sex",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.7080487012863159
+              },
+              {
+                "name": "phone_sex",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6795875430107117
+              },
+              {
+                "name": "sex_ed",
+                "category": 0,
+                "post_count": 364,
+                "score": 0.6763471961021423
+              },
+              {
+                "name": "sexting",
+                "category": 0,
+                "post_count": 249,
+                "score": 0.6748164296150208
+              },
+              {
+                "name": "sex_life",
+                "category": 3,
+                "post_count": 29,
+                "score": 0.6623212695121765
+              }
+            ],
+            "best": {
+              "name": "sex_ed",
+              "category": 0,
+              "post_count": 364,
+              "score": 0.6763471961021423
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "intimate pose",
+            "top_k": [
+              {
+                "name": "the_pose",
+                "category": 0,
+                "post_count": 10088,
+                "score": 0.6640774607658386
+              },
+              {
+                "name": "group_pose",
+                "category": 0,
+                "post_count": 273,
+                "score": 0.6632046699523926
+              },
+              {
+                "name": "with_handala_pose",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6371625661849976
+              },
+              {
+                "name": "girly_pose",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6291459798812866
+              },
+              {
+                "name": "incoming_kiss",
+                "category": 0,
+                "post_count": 900,
+                "score": 0.628254771232605
+              }
+            ],
+            "best": {
+              "name": "the_pose",
+              "category": 0,
+              "post_count": 10088,
+              "score": 0.6640774607658386
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft surface",
+            "top_k": [
+              {
+                "name": "soft_serve",
+                "category": 0,
+                "post_count": 1175,
+                "score": 0.6835164427757263
+              },
+              {
+                "name": "soft_mizu",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.6796839833259583
+              },
+              {
+                "name": "soft_&_wet",
+                "category": 4,
+                "post_count": 109,
+                "score": 0.6563352942466736
+              },
+              {
+                "name": "may_be_soft",
+                "category": 3,
+                "post_count": 20,
+                "score": 0.6562333106994629
+              },
+              {
+                "name": "soft_men",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6546450853347778
+              }
+            ],
+            "best": {
+              "name": "soft_serve",
+              "category": 0,
+              "post_count": 1175,
+              "score": 0.6835164427757263
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "one leg bent",
+            "top_k": [
+              {
+                "name": "man_at_legs",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.6991471648216248
+              },
+              {
+                "name": "single_bare_leg",
+                "category": 0,
+                "post_count": 1427,
+                "score": 0.6864192485809326
+              },
+              {
+                "name": "leg_on_another's_leg",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.6857756972312927
+              },
+              {
+                "name": "buruma_around_one_leg",
+                "category": 0,
+                "post_count": 345,
+                "score": 0.6847914457321167
+              },
+              {
+                "name": "legs_together",
+                "category": 0,
+                "post_count": 32829,
+                "score": 0.6834782361984253
+              }
+            ],
+            "best": {
+              "name": "single_bare_leg",
+              "category": 0,
+              "post_count": 1427,
+              "score": 0.6864192485809326
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "leg raised",
+            "top_k": [
+              {
+                "name": "legs_together",
+                "category": 0,
+                "post_count": 32829,
+                "score": 0.7126238942146301
+              },
+              {
+                "name": "leg_lift",
+                "category": 0,
+                "post_count": 18953,
+                "score": 0.7104611992835999
+              },
+              {
+                "name": "man_at_legs",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.7094525694847107
+              },
+              {
+                "name": "holding_leg",
+                "category": 0,
+                "post_count": 532,
+                "score": 0.707252025604248
+              },
+              {
+                "name": "putting_on_legwear",
+                "category": 0,
+                "post_count": 255,
+                "score": 0.7004375457763672
+              }
+            ],
+            "best": {
+              "name": "legs_together",
+              "category": 0,
+              "post_count": 32829,
+              "score": 0.7126238942146301
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hand gripping fabric",
+            "top_k": [
+              {
+                "name": "gripping_clothes",
+                "category": 0,
+                "post_count": 120,
+                "score": 0.7534151077270508
+              },
+              {
+                "name": "holding_hand_grip",
+                "category": 0,
+                "post_count": 665,
+                "score": 0.7059144973754883
+              },
+              {
+                "name": "helping_hand",
+                "category": 1,
+                "post_count": 20,
+                "score": 0.6864981055259705
+              },
+              {
+                "name": "hand_grip",
+                "category": 0,
+                "post_count": 1189,
+                "score": 0.6824437975883484
+              },
+              {
+                "name": "clutching_clothes",
+                "category": 0,
+                "post_count": 97,
+                "score": 0.6823883056640625
+              }
+            ],
+            "best": {
+              "name": "gripping_clothes",
+              "category": 0,
+              "post_count": 120,
+              "score": 0.7534151077270508
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sweat glistening",
+            "top_k": [
+              {
+                "name": "sparkling_sweat",
+                "category": 0,
+                "post_count": 217,
+                "score": 0.6814295649528503
+              },
+              {
+                "name": "wiping_sweat",
+                "category": 0,
+                "post_count": 2316,
+                "score": 0.669961154460907
+              },
+              {
+                "name": "dripping_sweat",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.6572079658508301
+              },
+              {
+                "name": "sweat_stain",
+                "category": 0,
+                "post_count": 332,
+                "score": 0.6455138325691223
+              },
+              {
+                "name": "glowing_body_fluid",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.6250287294387817
+              }
+            ],
+            "best": {
+              "name": "sparkling_sweat",
+              "category": 0,
+              "post_count": 217,
+              "score": 0.6814295649528503
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "warm overhead light",
+            "top_k": [
+              {
+                "name": "overhead_lights",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.719463586807251
+              },
+              {
+                "name": "light_bulb_above_head",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.6758344173431396
+              },
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6658690571784973
+              },
+              {
+                "name": "pop_up_headlights",
+                "category": 0,
+                "post_count": 295,
+                "score": 0.6260339617729187
+              },
+              {
+                "name": "window_light",
+                "category": 0,
+                "post_count": 330,
+                "score": 0.6209617853164673
+              }
+            ],
+            "best": {
+              "name": "overhead_lights",
+              "category": 0,
+              "post_count": 59,
+              "score": 0.719463586807251
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "deep shadows",
+            "top_k": [
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.7363123297691345
+              },
+              {
+                "name": "long_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6979250311851501
+              },
+              {
+                "name": "deeple",
+                "category": 1,
+                "post_count": 56,
+                "score": 0.6835528016090393
+              },
+              {
+                "name": "deep_dig",
+                "category": 1,
+                "post_count": 26,
+                "score": 0.681065022945404
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6721416115760803
+              }
+            ],
+            "best": {
+              "name": "dark_shadow",
+              "category": 4,
+              "post_count": 96,
+              "score": 0.7363123297691345
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "detailed skin texture",
+            "top_k": [
+              {
+                "name": "deep_skin",
+                "category": 0,
+                "post_count": 13585,
+                "score": 0.6535996794700623
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6403366327285767
+              },
+              {
+                "name": "two_tone_skin",
+                "category": 0,
+                "post_count": 14891,
+                "score": 0.6275157928466797
+              },
+              {
+                "name": "gradient_skin",
+                "category": 0,
+                "post_count": 3077,
+                "score": 0.6236958503723145
+              },
+              {
+                "name": "cyborg_skin",
+                "category": 0,
+                "post_count": 44,
+                "score": 0.6188184022903442
+              }
+            ],
+            "best": {
+              "name": "deep_skin",
+              "category": 0,
+              "post_count": 13585,
+              "score": 0.6535996794700623
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "detailed hair texture",
+            "top_k": [
+              {
+                "name": "feeling_body_hair",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6358583569526672
+              },
+              {
+                "name": "holographic_hair",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6288262009620667
+              },
+              {
+                "name": "wood_gradient_hair",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6280547380447388
+              },
+              {
+                "name": "hair_chart",
+                "category": 0,
+                "post_count": 83,
+                "score": 0.6228829622268677
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6159679889678955
+              }
+            ],
+            "best": {
+              "name": "hair_chart",
+              "category": 0,
+              "post_count": 83,
+              "score": 0.6228829622268677
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "focused expression",
+            "top_k": [
+              {
+                "name": "reflection_focus",
+                "category": 0,
+                "post_count": 4516,
+                "score": 0.6558631658554077
+              },
+              {
+                "name": "mouth_focus",
+                "category": 0,
+                "post_count": 289,
+                "score": 0.6488975882530212
+              },
+              {
+                "name": "kanji_focus",
+                "category": 0,
+                "post_count": 123,
+                "score": 0.6260979175567627
+              },
+              {
+                "name": "hair_focus",
+                "category": 0,
+                "post_count": 744,
+                "score": 0.619426429271698
+              },
+              {
+                "name": "throat_focus",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6173946857452393
+              }
+            ],
+            "best": {
+              "name": "reflection_focus",
+              "category": 0,
+              "post_count": 4516,
+              "score": 0.6558631658554077
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "natural breathing",
+            "top_k": [
+              {
+                "name": "holding_breath",
+                "category": 0,
+                "post_count": 1152,
+                "score": 0.6725143194198608
+              },
+              {
+                "name": "breath",
+                "category": 0,
+                "post_count": 55365,
+                "score": 0.6722593903541565
+              },
+              {
+                "name": "breath_(artist)",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.6674419641494751
+              },
+              {
+                "name": "breathing_on_hands",
+                "category": 0,
+                "post_count": 393,
+                "score": 0.6651551127433777
+              },
+              {
+                "name": "breathing_lightning",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.6507293581962585
+              }
+            ],
+            "best": {
+              "name": "holding_breath",
+              "category": 0,
+              "post_count": 1152,
+              "score": 0.6725143194198608
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "chest rise",
+            "top_k": [
+              {
+                "name": "a_rise",
+                "category": 0,
+                "post_count": 80,
+                "score": 0.680863082408905
+              },
+              {
+                "name": "skirt_rise",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.6744033098220825
+              },
+              {
+                "name": "raised_chin",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6599168181419373
+              },
+              {
+                "name": "chest_spike",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6582503318786621
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.650042712688446
+              }
+            ],
+            "best": {
+              "name": "a_rise",
+              "category": 0,
+              "post_count": 80,
+              "score": 0.680863082408905
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "chest fall",
+            "top_k": [
+              {
+                "name": "falling_food",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.626318097114563
+              },
+              {
+                "name": "fall_guy",
+                "category": 4,
+                "post_count": 308,
+                "score": 0.6254485845565796
+              },
+              {
+                "name": "grabbing_own_flat_chest",
+                "category": 0,
+                "post_count": 134,
+                "score": 0.6174851655960083
+              },
+              {
+                "name": "flat_chest_joke",
+                "category": 0,
+                "post_count": 373,
+                "score": 0.6088773012161255
+              },
+              {
+                "name": "scratching_chest",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.6021069884300232
+              }
+            ],
+            "best": {
+              "name": "fall_guy",
+              "category": 4,
+              "post_count": 308,
+              "score": 0.6254485845565796
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stretching fabric",
+            "top_k": [
+              {
+                "name": "clothes_spread_out",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6781766414642334
+              },
+              {
+                "name": "stretch_action",
+                "category": 0,
+                "post_count": 44,
+                "score": 0.6751422882080078
+              },
+              {
+                "name": "stretching_cheeks",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.6543052196502686
+              },
+              {
+                "name": "stretch_marks",
+                "category": 0,
+                "post_count": 134,
+                "score": 0.6506906151771545
+              },
+              {
+                "name": "stretched_neck",
+                "category": 0,
+                "post_count": 46,
+                "score": 0.641570508480072
+              }
+            ],
+            "best": {
+              "name": "stretching_cheeks",
+              "category": 0,
+              "post_count": 61,
+              "score": 0.6543052196502686
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "silk or cotton",
+            "top_k": [
+              {
+                "name": "silk_(cotton)",
+                "category": 4,
+                "post_count": 44,
+                "score": 0.6768704056739807
+              },
+              {
+                "name": "silk",
+                "category": 0,
+                "post_count": 6637,
+                "score": 0.6158793568611145
+              },
+              {
+                "name": "silk_(marvel)",
+                "category": 4,
+                "post_count": 152,
+                "score": 0.5746568441390991
+              },
+              {
+                "name": "cotton_(p&d)",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.5742809772491455
+              },
+              {
+                "name": "cotton_(game)",
+                "category": 3,
+                "post_count": 73,
+                "score": 0.5736997127532959
+              }
+            ],
+            "best": {
+              "name": "silk",
+              "category": 0,
+              "post_count": 6637,
+              "score": 0.6158793568611145
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "close framing",
+            "top_k": [
+              {
+                "name": "halo_framing",
+                "category": 0,
+                "post_count": 19,
+                "score": 0.6779879927635193
+              },
+              {
+                "name": "holding_picture_frame",
+                "category": 0,
+                "post_count": 342,
+                "score": 0.6594571471214294
+              },
+              {
+                "name": "art_tools_in_frame",
+                "category": 0,
+                "post_count": 2567,
+                "score": 0.6584721803665161
+              },
+              {
+                "name": "negative_frames",
+                "category": 3,
+                "post_count": 73,
+                "score": 0.6584309935569763
+              },
+              {
+                "name": "framed",
+                "category": 0,
+                "post_count": 4110,
+                "score": 0.6463904976844788
+              }
+            ],
+            "best": {
+              "name": "holding_picture_frame",
+              "category": 0,
+              "post_count": 342,
+              "score": 0.6594571471214294
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "physical connection",
+            "top_k": [
+              {
+                "name": "accessory_connection",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.654468297958374
+              },
+              {
+                "name": "height_connection",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6436023712158203
+              },
+              {
+                "name": "school_connection",
+                "category": 0,
+                "post_count": 50,
+                "score": 0.633985161781311
+              },
+              {
+                "name": "broadcaster_connection",
+                "category": 0,
+                "post_count": 22,
+                "score": 0.6310523748397827
+              },
+              {
+                "name": "connexion",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.6164069771766663
+              }
+            ],
+            "best": {
+              "name": "school_connection",
+              "category": 0,
+              "post_count": 50,
+              "score": 0.633985161781311
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "subtle muscle tension",
+            "top_k": [
+              {
+                "name": "feeling_muscles",
+                "category": 0,
+                "post_count": 67,
+                "score": 0.6733266711235046
+              },
+              {
+                "name": "muscle_conscious",
+                "category": 0,
+                "post_count": 23,
+                "score": 0.6083247065544128
+              },
+              {
+                "name": "subten",
+                "category": 1,
+                "post_count": 29,
+                "score": 0.6036155223846436
+              },
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.5887275338172913
+              },
+              {
+                "name": "twiddling_fingers",
+                "category": 0,
+                "post_count": 145,
+                "score": 0.5791966915130615
+              }
+            ],
+            "best": {
+              "name": "feeling_muscles",
+              "category": 0,
+              "post_count": 67,
+              "score": 0.6733266711235046
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "realistic skin tones",
+            "top_k": [
+              {
+                "name": "two_tone_skin",
+                "category": 0,
+                "post_count": 14891,
+                "score": 0.6998838186264038
+              },
+              {
+                "name": "realistic_teeth",
+                "category": 0,
+                "post_count": 176,
+                "score": 0.6440833806991577
+              },
+              {
+                "name": "humanized_skin_color",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6164163947105408
+              },
+              {
+                "name": "multicolored_skin",
+                "category": 0,
+                "post_count": 19557,
+                "score": 0.599237859249115
+              },
+              {
+                "name": "glowing_skin",
+                "category": 0,
+                "post_count": 321,
+                "score": 0.5976623296737671
+              }
+            ],
+            "best": {
+              "name": "two_tone_skin",
+              "category": 0,
+              "post_count": 14891,
+              "score": 0.6998838186264038
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "defined jawline",
+            "top_k": [
+              {
+                "name": "jawli",
+                "category": 1,
+                "post_count": 41,
+                "score": 0.5856885313987732
+              },
+              {
+                "name": "jp_(redline)",
+                "category": 4,
+                "post_count": 18,
+                "score": 0.5524777770042419
+              },
+              {
+                "name": "yellow_outline",
+                "category": 0,
+                "post_count": 1508,
+                "score": 0.5364028811454773
+              },
+              {
+                "name": "badeline",
+                "category": 4,
+                "post_count": 67,
+                "score": 0.5271776914596558
+              },
+              {
+                "name": "outline",
+                "category": 0,
+                "post_count": 62535,
+                "score": 0.5246299505233765
+              }
+            ],
+            "best": {
+              "name": "yellow_outline",
+              "category": 0,
+              "post_count": 1508,
+              "score": 0.5364028811454773
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "slightly parted lips",
+            "top_k": [
+              {
+                "name": "parted_lips",
+                "category": 0,
+                "post_count": 588940,
+                "score": 0.6943995952606201
+              },
+              {
+                "name": "lower_lip_only",
+                "category": 0,
+                "post_count": 65,
+                "score": 0.6716398000717163
+              },
+              {
+                "name": "slightly_naughty_expressions_practice",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6624510884284973
+              },
+              {
+                "name": "licking_another's_lips",
+                "category": 0,
+                "post_count": 153,
+                "score": 0.662086009979248
+              },
+              {
+                "name": "pursed_lips",
+                "category": 0,
+                "post_count": 1629,
+                "score": 0.659168541431427
+              }
+            ],
+            "best": {
+              "name": "parted_lips",
+              "category": 0,
+              "post_count": 588940,
+              "score": 0.6943995952606201
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "blurred background",
+            "top_k": [
+              {
+                "name": "blurry_foreground",
+                "category": 0,
+                "post_count": 34846,
+                "score": 0.8388392925262451
+              },
+              {
+                "name": "blurry_border",
+                "category": 0,
+                "post_count": 113,
+                "score": 0.7869892120361328
+              },
+              {
+                "name": "blurry_edges",
+                "category": 0,
+                "post_count": 460,
+                "score": 0.7767153978347778
+              },
+              {
+                "name": "blurry_text",
+                "category": 0,
+                "post_count": 55,
+                "score": 0.7724204659461975
+              },
+              {
+                "name": "pixelated_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.7540395259857178
+              }
+            ],
+            "best": {
+              "name": "blurry_foreground",
+              "category": 0,
+              "post_count": 34846,
+              "score": 0.8388392925262451
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "single light source",
+            "top_k": [
+              {
+                "name": "single_pop_up_headlight",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6955891847610474
+              },
+              {
+                "name": "dimly_lit_room",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6616594791412354
+              },
+              {
+                "name": "single_empty_eye",
+                "category": 0,
+                "post_count": 120,
+                "score": 0.6381422877311707
+              },
+              {
+                "name": "single_blank_eye",
+                "category": 0,
+                "post_count": 73,
+                "score": 0.6320505738258362
+              },
+              {
+                "name": "single_eyebrow",
+                "category": 0,
+                "post_count": 155,
+                "score": 0.6313548684120178
+              }
+            ],
+            "best": {
+              "name": "single_empty_eye",
+              "category": 0,
+              "post_count": 120,
+              "score": 0.6381422877311707
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "halo effect",
+            "top_k": [
+              {
+                "name": "hallot",
+                "category": 1,
+                "post_count": 37,
+                "score": 0.6551225781440735
+              },
+              {
+                "name": "adjusting_halo",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6438456773757935
+              },
+              {
+                "name": "halo",
+                "category": 0,
+                "post_count": 349633,
+                "score": 0.6418415904045105
+              },
+              {
+                "name": "hellos",
+                "category": 1,
+                "post_count": 25,
+                "score": 0.6415019035339355
+              },
+              {
+                "name": "halo_ornament",
+                "category": 0,
+                "post_count": 91,
+                "score": 0.6398410201072693
+              }
+            ],
+            "best": {
+              "name": "halo",
+              "category": 0,
+              "post_count": 349633,
+              "score": 0.6418415904045105
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "organic movement",
+            "top_k": [
+              {
+                "name": "organic",
+                "category": 0,
+                "post_count": 97,
+                "score": 0.6586933732032776
+              },
+              {
+                "name": "moving_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.5606138110160828
+              },
+              {
+                "name": "chicken_movement",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.5398908853530884
+              },
+              {
+                "name": "operation_market_garden",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.5320268869400024
+              },
+              {
+                "name": "circulated",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5319080352783203
+              }
+            ],
+            "best": {
+              "name": "organic",
+              "category": 0,
+              "post_count": 97,
+              "score": 0.6586933732032776
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "distinct hair strands",
+            "top_k": [
+              {
+                "name": "hair_strand",
+                "category": 0,
+                "post_count": 2379,
+                "score": 0.695655107498169
+              },
+              {
+                "name": "single_hair_streak",
+                "category": 0,
+                "post_count": 1130,
+                "score": 0.6696802377700806
+              },
+              {
+                "name": "loose_hair_strand",
+                "category": 0,
+                "post_count": 7118,
+                "score": 0.6484487056732178
+              },
+              {
+                "name": "hair_edges",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6363045573234558
+              },
+              {
+                "name": "multiple_hair_clips",
+                "category": 0,
+                "post_count": 98,
+                "score": 0.6338418126106262
+              }
+            ],
+            "best": {
+              "name": "hair_strand",
+              "category": 0,
+              "post_count": 2379,
+              "score": 0.695655107498169
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "visible neck pulse",
+            "top_k": [
+              {
+                "name": "stethoscope_around_neck",
+                "category": 0,
+                "post_count": 235,
+                "score": 0.6336395740509033
+              },
+              {
+                "name": "see_through_necktie",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.6230531334877014
+              },
+              {
+                "name": "navel_hair_peek",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.6214857697486877
+              },
+              {
+                "name": "sign_around_neck",
+                "category": 0,
+                "post_count": 555,
+                "score": 0.610726535320282
+              },
+              {
+                "name": "transparent_necktie",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6090373992919922
+              }
+            ],
+            "best": {
+              "name": "stethoscope_around_neck",
+              "category": 0,
+              "post_count": 235,
+              "score": 0.6336395740509033
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "weight shifting",
+            "top_k": [
+              {
+                "name": "shift_(waage)",
+                "category": 1,
+                "post_count": 492,
+                "score": 0.7151700258255005
+              },
+              {
+                "name": "adjusting_shirt",
+                "category": 0,
+                "post_count": 95,
+                "score": 0.6548654437065125
+              },
+              {
+                "name": "flipping_food",
+                "category": 0,
+                "post_count": 297,
+                "score": 0.6546159982681274
+              },
+              {
+                "name": "shift_jis_art",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6526961922645569
+              },
+              {
+                "name": "gear_shift",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.6524105668067932
+              }
+            ],
+            "best": {
+              "name": "shift_(waage)",
+              "category": 1,
+              "post_count": 492,
+              "score": 0.7151700258255005
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "relaxed shoulders",
+            "top_k": [
+              {
+                "name": "shoulder_rest",
+                "category": 0,
+                "post_count": 39,
+                "score": 0.7454619407653809
+              },
+              {
+                "name": "tapping_shoulder",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.7045186161994934
+              },
+              {
+                "name": "relaxed_entity",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.6785997152328491
+              },
+              {
+                "name": "licking_shoulder",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.6783816814422607
+              },
+              {
+                "name": "legs_on_another's_shoulders",
+                "category": 0,
+                "post_count": 85,
+                "score": 0.6764373779296875
+              }
+            ],
+            "best": {
+              "name": "tapping_shoulder",
+              "category": 0,
+              "post_count": 84,
+              "score": 0.7045186161994934
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hands near waist",
+            "top_k": [
+              {
+                "name": "hand_around_waist",
+                "category": 0,
+                "post_count": 360,
+                "score": 0.8329119086265564
+              },
+              {
+                "name": "arms_around_waist",
+                "category": 0,
+                "post_count": 2331,
+                "score": 0.7692782878875732
+              },
+              {
+                "name": "hand_around_wrist",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.7584895491600037
+              },
+              {
+                "name": "hands_on_another's_wrists",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.736829400062561
+              },
+              {
+                "name": "arm_around_waist",
+                "category": 0,
+                "post_count": 6077,
+                "score": 0.7365773916244507
+              }
+            ],
+            "best": {
+              "name": "hand_around_waist",
+              "category": 0,
+              "post_count": 360,
+              "score": 0.8329119086265564
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "holding partner",
+            "top_k": [
+              {
+                "name": "partner",
+                "category": 3,
+                "post_count": 29,
+                "score": 0.7414999604225159
+              },
+              {
+                "name": "holding_mate",
+                "category": 0,
+                "post_count": 14,
+                "score": 0.6527073979377747
+              },
+              {
+                "name": "holding_person",
+                "category": 0,
+                "post_count": 2043,
+                "score": 0.6491944193840027
+              },
+              {
+                "name": "holding_together",
+                "category": 0,
+                "post_count": 48,
+                "score": 0.6478168368339539
+              },
+              {
+                "name": "partner_(kprtnr)",
+                "category": 1,
+                "post_count": 238,
+                "score": 0.6448974013328552
+              }
+            ],
+            "best": {
+              "name": "holding_person",
+              "category": 0,
+              "post_count": 2043,
+              "score": 0.6491944193840027
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "skin catching light",
+            "top_k": [
+              {
+                "name": "drenched_in_sunlight",
+                "category": 1,
+                "post_count": 88,
+                "score": 0.6509610414505005
+              },
+              {
+                "name": "glowing_skin",
+                "category": 0,
+                "post_count": 321,
+                "score": 0.633640706539154
+              },
+              {
+                "name": "light_up",
+                "category": 3,
+                "post_count": 29,
+                "score": 0.6254822015762329
+              },
+              {
+                "name": "applying_sunscreen",
+                "category": 0,
+                "post_count": 417,
+                "score": 0.6113101840019226
+              },
+              {
+                "name": "holding_sunscreen",
+                "category": 0,
+                "post_count": 29,
+                "score": 0.6075965166091919
+              }
+            ],
+            "best": {
+              "name": "drenched_in_sunlight",
+              "category": 1,
+              "post_count": 88,
+              "score": 0.6509610414505005
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sharp angles",
+            "top_k": [
+              {
+                "name": "sharp_to_sharp",
+                "category": 1,
+                "post_count": 94,
+                "score": 0.6944544315338135
+              },
+              {
+                "name": "sharpening",
+                "category": 0,
+                "post_count": 62,
+                "score": 0.6583394408226013
+              },
+              {
+                "name": "sharp_tongue",
+                "category": 0,
+                "post_count": 38,
+                "score": 0.6395937204360962
+              },
+              {
+                "name": "sharpffffff",
+                "category": 1,
+                "post_count": 147,
+                "score": 0.6378154754638672
+              },
+              {
+                "name": "sharp911",
+                "category": 1,
+                "post_count": 32,
+                "score": 0.6363426446914673
+              }
+            ],
+            "best": {
+              "name": "sharp_to_sharp",
+              "category": 1,
+              "post_count": 94,
+              "score": 0.6944544315338135
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "intimate atmosphere",
+            "top_k": [
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6219234466552734
+              },
+              {
+                "name": "dimly_lit_room",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6134138107299805
+              },
+              {
+                "name": "incoming_hug",
+                "category": 0,
+                "post_count": 1246,
+                "score": 0.5907017588615417
+              },
+              {
+                "name": "the_personification_of_atmosphere",
+                "category": 3,
+                "post_count": 95,
+                "score": 0.5782424211502075
+              },
+              {
+                "name": "incoming_kiss",
+                "category": 0,
+                "post_count": 900,
+                "score": 0.5692147016525269
+              }
+            ],
+            "best": {
+              "name": "incoming_hug",
+              "category": 0,
+              "post_count": 1246,
+              "score": 0.5907017588615417
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "physical reality",
+            "top_k": [
+              {
+                "name": "reality_xian",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6531670689582825
+              },
+              {
+                "name": "augmented_reality",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.6356465816497803
+              },
+              {
+                "name": "virtual_reality",
+                "category": 0,
+                "post_count": 693,
+                "score": 0.628009021282196
+              },
+              {
+                "name": "real_life",
+                "category": 3,
+                "post_count": 14855,
+                "score": 0.5938323140144348
+              },
+              {
+                "name": "real_drive",
+                "category": 3,
+                "post_count": 241,
+                "score": 0.578898549079895
+              }
+            ],
+            "best": {
+              "name": "virtual_reality",
+              "category": 0,
+              "post_count": 693,
+              "score": 0.628009021282196
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "fabric clinging",
+            "top_k": [
+              {
+                "name": "clinging",
+                "category": 0,
+                "post_count": 764,
+                "score": 0.6988400816917419
+              },
+              {
+                "name": "clutching_clothes",
+                "category": 0,
+                "post_count": 97,
+                "score": 0.6873844861984253
+              },
+              {
+                "name": "gripping_clothes",
+                "category": 0,
+                "post_count": 120,
+                "score": 0.6598911881446838
+              },
+              {
+                "name": "tying_ribbon",
+                "category": 0,
+                "post_count": 19,
+                "score": 0.6369810700416565
+              },
+              {
+                "name": "nimble_fabric",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6365727782249451
+              }
+            ],
+            "best": {
+              "name": "clinging",
+              "category": 0,
+              "post_count": 764,
+              "score": 0.6988400816917419
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "damp skin texture",
+            "top_k": [
+              {
+                "name": "sand_on_skin",
+                "category": 0,
+                "post_count": 104,
+                "score": 0.6136281490325928
+              },
+              {
+                "name": "stained_swimsuit",
+                "category": 0,
+                "post_count": 23,
+                "score": 0.5941011309623718
+              },
+              {
+                "name": "deep_skin",
+                "category": 0,
+                "post_count": 13585,
+                "score": 0.5928540825843811
+              },
+              {
+                "name": "split_color_skin",
+                "category": 0,
+                "post_count": 239,
+                "score": 0.5900896787643433
+              },
+              {
+                "name": "damaged_skin",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.588129997253418
+              }
+            ],
+            "best": {
+              "name": "sand_on_skin",
+              "category": 0,
+              "post_count": 104,
+              "score": 0.6136281490325928
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "light breeze",
+            "top_k": [
+              {
+                "name": "breeze_(wcf)",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.6455039381980896
+              },
+              {
+                "name": "easy_breezy",
+                "category": 0,
+                "post_count": 95,
+                "score": 0.6278225779533386
+              },
+              {
+                "name": "light_leo",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.6237747669219971
+              },
+              {
+                "name": "springbreeze",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6113036274909973
+              },
+              {
+                "name": "light_y",
+                "category": 1,
+                "post_count": 22,
+                "score": 0.5999913811683655
+              }
+            ],
+            "best": {
+              "name": "easy_breezy",
+              "category": 0,
+              "post_count": 95,
+              "score": 0.6278225779533386
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stillness",
+            "top_k": [
+              {
+                "name": "tranquility_of_nature",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.6394468545913696
+              },
+              {
+                "name": "calm_(artist)",
+                "category": 1,
+                "post_count": 85,
+                "score": 0.6382710337638855
+              },
+              {
+                "name": "silentcity",
+                "category": 1,
+                "post_count": 30,
+                "score": 0.631816029548645
+              },
+              {
+                "name": "silent_reading",
+                "category": 3,
+                "post_count": 14,
+                "score": 0.6271896958351135
+              },
+              {
+                "name": "silent_siren",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6228380799293518
+              }
+            ],
+            "best": {
+              "name": "calm_(artist)",
+              "category": 1,
+              "post_count": 85,
+              "score": 0.6382710337638855
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "slightly above angle",
+            "top_k": [
+              {
+                "name": "hair_half_over_shoulder",
+                "category": 0,
+                "post_count": 131,
+                "score": 0.6458240747451782
+              },
+              {
+                "name": "partially_open_shirt",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6381478309631348
+              },
+              {
+                "name": "object_floating_above_hand",
+                "category": 0,
+                "post_count": 1125,
+                "score": 0.6372047662734985
+              },
+              {
+                "name": "cutout_above_navel",
+                "category": 0,
+                "post_count": 3199,
+                "score": 0.6226608157157898
+              },
+              {
+                "name": "half_up_hair_twist",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.6168017983436584
+              }
+            ],
+            "best": {
+              "name": "hair_half_over_shoulder",
+              "category": 0,
+              "post_count": 131,
+              "score": 0.6458240747451782
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "central figure focus",
+            "top_k": [
+              {
+                "name": "creature_focus",
+                "category": 0,
+                "post_count": 1170,
+                "score": 0.7002886533737183
+              },
+              {
+                "name": "focus_mitts",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6784640550613403
+              },
+              {
+                "name": "flower_focus",
+                "category": 0,
+                "post_count": 774,
+                "score": 0.6644141674041748
+              },
+              {
+                "name": "hair_focus",
+                "category": 0,
+                "post_count": 744,
+                "score": 0.6574668288230896
+              },
+              {
+                "name": "reflection_focus",
+                "category": 0,
+                "post_count": 4516,
+                "score": 0.6566370725631714
+              }
+            ],
+            "best": {
+              "name": "creature_focus",
+              "category": 0,
+              "post_count": 1170,
+              "score": 0.7002886533737183
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "tangible heat",
+            "top_k": [
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6245404481887817
+              },
+              {
+                "name": "temperature_play",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.6080962419509888
+              },
+              {
+                "name": "heat_(one_piece)",
+                "category": 4,
+                "post_count": 15,
+                "score": 0.6052426695823669
+              },
+              {
+                "name": "heatmap",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.5998643636703491
+              },
+              {
+                "name": "archaic_sealed_heat",
+                "category": 3,
+                "post_count": 30,
+                "score": 0.5963374972343445
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "movement momentum",
+            "top_k": [
+              {
+                "name": "moving_background",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.616391658782959
+              },
+              {
+                "name": "hair_move",
+                "category": 0,
+                "post_count": 29,
+                "score": 0.5733756422996521
+              },
+              {
+                "name": "z_move",
+                "category": 0,
+                "post_count": 80,
+                "score": 0.5726300477981567
+              },
+              {
+                "name": "finishing_move",
+                "category": 0,
+                "post_count": 190,
+                "score": 0.5668941736221313
+              },
+              {
+                "name": "motion_interpolation",
+                "category": 5,
+                "post_count": 16,
+                "score": 0.5629527568817139
+              }
+            ],
+            "best": {
+              "name": "z_move",
+              "category": 0,
+              "post_count": 80,
+              "score": 0.5726300477981567
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "suspended time",
+            "top_k": [
+              {
+                "name": "time_stop",
+                "category": 0,
+                "post_count": 797,
+                "score": 0.6773622035980225
+              },
+              {
+                "name": "interrupted",
+                "category": 0,
+                "post_count": 185,
+                "score": 0.6624835729598999
+              },
+              {
+                "name": "suspenders_removed",
+                "category": 0,
+                "post_count": 43,
+                "score": 0.6218478083610535
+              },
+              {
+                "name": "interruption_(echo_023)",
+                "category": 1,
+                "post_count": 28,
+                "score": 0.6184157729148865
+              },
+              {
+                "name": "suspenders_gap",
+                "category": 0,
+                "post_count": 457,
+                "score": 0.61729896068573
+              }
+            ],
+            "best": {
+              "name": "time_stop",
+              "category": 0,
+              "post_count": 797,
+              "score": 0.6773622035980225
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "mutual engagement",
+            "top_k": [
+              {
+                "name": "mutual_fingering",
+                "category": 0,
+                "post_count": 278,
+                "score": 0.674768328666687
+              },
+              {
+                "name": "mutual_footjob",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.6677180528640747
+              },
+              {
+                "name": "mutual_handjob",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.660388171672821
+              },
+              {
+                "name": "mutual_grabbing",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6602415442466736
+              },
+              {
+                "name": "mutual_foot_licking",
+                "category": 0,
+                "post_count": 68,
+                "score": 0.6566821932792664
+              }
+            ],
+            "best": {
+              "name": "mutual_fingering",
+              "category": 0,
+              "post_count": 278,
+              "score": 0.674768328666687
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "silhouette definition",
+            "top_k": [
+              {
+                "name": "silhouette",
+                "category": 0,
+                "post_count": 19762,
+                "score": 0.6856987476348877
+              },
+              {
+                "name": "zilhouette",
+                "category": 1,
+                "post_count": 12,
+                "score": 0.6598984003067017
+              },
+              {
+                "name": "see_through_silhouette",
+                "category": 0,
+                "post_count": 6473,
+                "score": 0.6307885646820068
+              },
+              {
+                "name": "eyed_silhouette",
+                "category": 0,
+                "post_count": 178,
+                "score": 0.6151436567306519
+              },
+              {
+                "name": "silhouette_target",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.6145502924919128
+              }
+            ],
+            "best": {
+              "name": "silhouette",
+              "category": 0,
+              "post_count": 19762,
+              "score": 0.6856987476348877
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stretching shadow",
+            "top_k": [
+              {
+                "name": "long_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.676301121711731
+              },
+              {
+                "name": "sitting_in_shadow",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6737756133079529
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6714722514152527
+              },
+              {
+                "name": "living_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6612043380737305
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6594765782356262
+              }
+            ],
+            "best": {
+              "name": "long_shadow",
+              "category": 0,
+              "post_count": 89,
+              "score": 0.676301121711731
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "surface texture",
+            "top_k": [
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.7478048801422119
+              },
+              {
+                "name": "paper_texture",
+                "category": 0,
+                "post_count": 857,
+                "score": 0.7092286348342896
+              },
+              {
+                "name": "canvas_texture",
+                "category": 0,
+                "post_count": 252,
+                "score": 0.7055543661117554
+              },
+              {
+                "name": "missing_texture_(source)",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.659980058670044
+              },
+              {
+                "name": "surfacedxxc",
+                "category": 1,
+                "post_count": 51,
+                "score": 0.645460844039917
+              }
+            ],
+            "best": {
+              "name": "texture",
+              "category": 0,
+              "post_count": 948,
+              "score": 0.7478048801422119
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "interlaced fingers",
+            "top_k": [
+              {
+                "name": "index_fingers_together",
+                "category": 0,
+                "post_count": 3153,
+                "score": 0.7671819925308228
+              },
+              {
+                "name": "too_many_fingers",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.7163981795310974
+              },
+              {
+                "name": "interlocked_fingers",
+                "category": 0,
+                "post_count": 55825,
+                "score": 0.7155400514602661
+              },
+              {
+                "name": "interlocked_toes",
+                "category": 0,
+                "post_count": 49,
+                "score": 0.7123205065727234
+              },
+              {
+                "name": "fingers_between_toes",
+                "category": 0,
+                "post_count": 122,
+                "score": 0.7104220986366272
+              }
+            ],
+            "best": {
+              "name": "index_fingers_together",
+              "category": 0,
+              "post_count": 3153,
+              "score": 0.7671819925308228
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "tracing skin",
+            "top_k": [
+              {
+                "name": "color_trace",
+                "category": 0,
+                "post_count": 952,
+                "score": 0.6281255483627319
+              },
+              {
+                "name": "patterned_skin",
+                "category": 0,
+                "post_count": 35,
+                "score": 0.6191518306732178
+              },
+              {
+                "name": "skin_color_connection",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.6093512177467346
+              },
+              {
+                "name": "deep_skin",
+                "category": 0,
+                "post_count": 13585,
+                "score": 0.6077989935874939
+              },
+              {
+                "name": "gradient_skin",
+                "category": 0,
+                "post_count": 3077,
+                "score": 0.6076504588127136
+              }
+            ],
+            "best": {
+              "name": "color_trace",
+              "category": 0,
+              "post_count": 952,
+              "score": 0.6281255483627319
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "visible breath",
+            "top_k": [
+              {
+                "name": "visible_air",
+                "category": 0,
+                "post_count": 2580,
+                "score": 0.7483617067337036
+              },
+              {
+                "name": "eyes_visible_through_eyewear",
+                "category": 0,
+                "post_count": 385,
+                "score": 0.6747273802757263
+              },
+              {
+                "name": "eyes_visible_through_headwear",
+                "category": 0,
+                "post_count": 76,
+                "score": 0.6699240207672119
+              },
+              {
+                "name": "blush_visible_through_hands",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.6650497317314148
+              },
+              {
+                "name": "blush_visible_through_clothes",
+                "category": 0,
+                "post_count": 73,
+                "score": 0.6642486453056335
+              }
+            ],
+            "best": {
+              "name": "visible_air",
+              "category": 0,
+              "post_count": 2580,
+              "score": 0.7483617067337036
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "fullness of body",
+            "top_k": [
+              {
+                "name": "full_of_energy",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6729639768600464
+              },
+              {
+                "name": "full_body_tattoo",
+                "category": 0,
+                "post_count": 2307,
+                "score": 0.6458256244659424
+              },
+              {
+                "name": "full_mouth",
+                "category": 0,
+                "post_count": 661,
+                "score": 0.6375487446784973
+              },
+              {
+                "name": "full_dancer_pose",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6332604289054871
+              },
+              {
+                "name": "full_body_blush",
+                "category": 0,
+                "post_count": 159,
+                "score": 0.6305413842201233
+              }
+            ],
+            "best": {
+              "name": "full_body_tattoo",
+              "category": 0,
+              "post_count": 2307,
+              "score": 0.6458256244659424
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "vitality",
+            "top_k": [
+              {
+                "name": "verity",
+                "category": 4,
+                "post_count": 18,
+                "score": 0.5615600943565369
+              },
+              {
+                "name": "vanity",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.5589500665664673
+              },
+              {
+                "name": "vividly_vivi",
+                "category": 4,
+                "post_count": 43,
+                "score": 0.5537768602371216
+              },
+              {
+                "name": "livly",
+                "category": 4,
+                "post_count": 30,
+                "score": 0.5463685989379883
+              },
+              {
+                "name": "living",
+                "category": 1,
+                "post_count": 18,
+                "score": 0.5453068614006042
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          },
+          {
+            "concept": "grounded stance",
+            "top_k": [
+              {
+                "name": "stance",
+                "category": 0,
+                "post_count": 501,
+                "score": 0.686911940574646
+              },
+              {
+                "name": "horse_stance",
+                "category": 0,
+                "post_count": 29,
+                "score": 0.6752895712852478
+              },
+              {
+                "name": "standing_doggy_style",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6706590056419373
+              },
+              {
+                "name": "batting_stance",
+                "category": 0,
+                "post_count": 544,
+                "score": 0.660297691822052
+              },
+              {
+                "name": "hands_on_ground",
+                "category": 0,
+                "post_count": 1723,
+                "score": 0.6572221517562866
+              }
+            ],
+            "best": {
+              "name": "stance",
+              "category": 0,
+              "post_count": 501,
+              "score": 0.686911940574646
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "floating weight",
+            "top_k": [
+              {
+                "name": "floating_food",
+                "category": 0,
+                "post_count": 48,
+                "score": 0.7242643237113953
+              },
+              {
+                "name": "floating_torso",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.7053438425064087
+              },
+              {
+                "name": "floating_object",
+                "category": 0,
+                "post_count": 10920,
+                "score": 0.7043361663818359
+              },
+              {
+                "name": "floating_book",
+                "category": 0,
+                "post_count": 1296,
+                "score": 0.6933110356330872
+              },
+              {
+                "name": "floating_building",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.686884343624115
+              }
+            ],
+            "best": {
+              "name": "floating_object",
+              "category": 0,
+              "post_count": 10920,
+              "score": 0.7043361663818359
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "seamless form blend",
+            "top_k": [
+              {
+                "name": "blend_s",
+                "category": 3,
+                "post_count": 1284,
+                "score": 0.6043434143066406
+              },
+              {
+                "name": "formless_god",
+                "category": 1,
+                "post_count": 18,
+                "score": 0.5725119113922119
+              },
+              {
+                "name": "needless",
+                "category": 3,
+                "post_count": 169,
+                "score": 0.5437159538269043
+              },
+              {
+                "name": "beatless",
+                "category": 3,
+                "post_count": 104,
+                "score": 0.5390024185180664
+              },
+              {
+                "name": "sbd_dauntless",
+                "category": 0,
+                "post_count": 85,
+                "score": 0.5381777882575989
+              }
+            ],
+            "best": {
+              "name": "blend_s",
+              "category": 3,
+              "post_count": 1284,
+              "score": 0.6043434143066406
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "high contrast",
+            "top_k": [
+              {
+                "name": "contrast",
+                "category": 0,
+                "post_count": 1045,
+                "score": 0.7182652950286865
+              },
+              {
+                "name": "high_detail",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6908586621284485
+              },
+              {
+                "name": "high_contrast",
+                "category": 0,
+                "post_count": 3796,
+                "score": 0.6842432022094727
+              },
+              {
+                "name": "contrast_collar",
+                "category": 0,
+                "post_count": 3419,
+                "score": 0.641049861907959
+              },
+              {
+                "name": "high_re",
+                "category": 1,
+                "post_count": 20,
+                "score": 0.6402524709701538
+              }
+            ],
+            "best": {
+              "name": "contrast",
+              "category": 0,
+              "post_count": 1045,
+              "score": 0.7182652950286865
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "warm neutral palette",
+            "top_k": [
+              {
+                "name": "colorful_palette",
+                "category": 1,
+                "post_count": 1306,
+                "score": 0.7214545607566833
+              },
+              {
+                "name": "loooooneutral",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6520463228225708
+              },
+              {
+                "name": "mak_neutral",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.6459975838661194
+              },
+              {
+                "name": "free_palet",
+                "category": 1,
+                "post_count": 44,
+                "score": 0.6451563835144043
+              },
+              {
+                "name": "mono_palette.",
+                "category": 3,
+                "post_count": 14,
+                "score": 0.6229226589202881
+              }
+            ],
+            "best": {
+              "name": "colorful_palette",
+              "category": 1,
+              "post_count": 1306,
+              "score": 0.7214545607566833
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "deep tones",
+            "top_k": [
+              {
+                "name": "deep_dig",
+                "category": 1,
+                "post_count": 26,
+                "score": 0.6870152950286865
+              },
+              {
+                "name": "deeple",
+                "category": 1,
+                "post_count": 56,
+                "score": 0.6783660054206848
+              },
+              {
+                "name": "deep.au",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.6635095477104187
+              },
+              {
+                "name": "deep_skin",
+                "category": 0,
+                "post_count": 13585,
+                "score": 0.6571740508079529
+              },
+              {
+                "name": "deep_duck",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6498059034347534
+              }
+            ],
+            "best": {
+              "name": "deeple",
+              "category": 1,
+              "post_count": 56,
+              "score": 0.6783660054206848
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "pores and fine lines",
+            "top_k": [
+              {
+                "name": "thick_outlines",
+                "category": 0,
+                "post_count": 463,
+                "score": 0.5907874703407288
+              },
+              {
+                "name": "fine_fabric_emphasis",
+                "category": 0,
+                "post_count": 3315,
+                "score": 0.5889829993247986
+              },
+              {
+                "name": "fine_(artist)",
+                "category": 1,
+                "post_count": 12,
+                "score": 0.5864650011062622
+              },
+              {
+                "name": "vertical_eye_lines",
+                "category": 0,
+                "post_count": 31,
+                "score": 0.5823802947998047
+              },
+              {
+                "name": "eyelashes_through_hair",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.5756200551986694
+              }
+            ],
+            "best": {
+              "name": "thick_outlines",
+              "category": 0,
+              "post_count": 463,
+              "score": 0.5907874703407288
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "specific hair sheen",
+            "top_k": [
+              {
+                "name": "wood_gradient_hair",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6172177195549011
+              },
+              {
+                "name": "rainbow_hair_shine",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.6084977388381958
+              },
+              {
+                "name": "thick_chest_hair",
+                "category": 0,
+                "post_count": 1120,
+                "score": 0.6074550747871399
+              },
+              {
+                "name": "lightning_hair",
+                "category": 0,
+                "post_count": 35,
+                "score": 0.6038259267807007
+              },
+              {
+                "name": "single_hair_streak",
+                "category": 0,
+                "post_count": 1130,
+                "score": 0.6014819145202637
+              }
+            ],
+            "best": {
+              "name": "thick_chest_hair",
+              "category": 0,
+              "post_count": 1120,
+              "score": 0.6074550747871399
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sweat sheen",
+            "top_k": [
+              {
+                "name": "shein",
+                "category": 1,
+                "post_count": 25,
+                "score": 0.6264570951461792
+              },
+              {
+                "name": "sweat_stain",
+                "category": 0,
+                "post_count": 332,
+                "score": 0.6142081618309021
+              },
+              {
+                "name": "sparkling_sweat",
+                "category": 0,
+                "post_count": 217,
+                "score": 0.6110376715660095
+              },
+              {
+                "name": "sweaty_clothes",
+                "category": 0,
+                "post_count": 2331,
+                "score": 0.6106410026550293
+              },
+              {
+                "name": "shen_(snakeping)",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.6069292426109314
+              }
+            ],
+            "best": {
+              "name": "sweat_stain",
+              "category": 0,
+              "post_count": 332,
+              "score": 0.6142081618309021
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "curved back",
+            "top_k": [
+              {
+                "name": "person_on_back",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6852526068687439
+              },
+              {
+                "name": "facing_back",
+                "category": 0,
+                "post_count": 640,
+                "score": 0.6794220209121704
+              },
+              {
+                "name": "folded_back",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6705546379089355
+              },
+              {
+                "name": "legs_back",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6619440317153931
+              },
+              {
+                "name": "thick_back_hair",
+                "category": 0,
+                "post_count": 65,
+                "score": 0.6609756350517273
+              }
+            ],
+            "best": {
+              "name": "person_on_back",
+              "category": 0,
+              "post_count": 57,
+              "score": 0.6852526068687439
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "voluminous hair",
+            "top_k": [
+              {
+                "name": "very_hairy",
+                "category": 0,
+                "post_count": 701,
+                "score": 0.6941304802894592
+              },
+              {
+                "name": "huge_antenna_hair",
+                "category": 0,
+                "post_count": 68,
+                "score": 0.677998423576355
+              },
+              {
+                "name": "tall_hair",
+                "category": 0,
+                "post_count": 754,
+                "score": 0.6774691939353943
+              },
+              {
+                "name": "excessive_armpit_hair",
+                "category": 0,
+                "post_count": 178,
+                "score": 0.6704040169715881
+              },
+              {
+                "name": "hair_floating_upwards",
+                "category": 0,
+                "post_count": 736,
+                "score": 0.6697266697883606
+              }
+            ],
+            "best": {
+              "name": "very_hairy",
+              "category": 0,
+              "post_count": 701,
+              "score": 0.6941304802894592
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "loose hair",
+            "top_k": [
+              {
+                "name": "sparse_leg_hair",
+                "category": 0,
+                "post_count": 716,
+                "score": 0.7142609357833862
+              },
+              {
+                "name": "loose_clothes",
+                "category": 0,
+                "post_count": 3301,
+                "score": 0.7090883255004883
+              },
+              {
+                "name": "sparse_ass_hair",
+                "category": 0,
+                "post_count": 123,
+                "score": 0.6928084492683411
+              },
+              {
+                "name": "sparse_chest_hair",
+                "category": 0,
+                "post_count": 1835,
+                "score": 0.6878609657287598
+              },
+              {
+                "name": "loose_hair_strand",
+                "category": 0,
+                "post_count": 7118,
+                "score": 0.6865964531898499
+              }
+            ],
+            "best": {
+              "name": "sparse_leg_hair",
+              "category": 0,
+              "post_count": 716,
+              "score": 0.7142609357833862
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "single moisture drop",
+            "top_k": [
+              {
+                "name": "small_sweatdrop",
+                "category": 0,
+                "post_count": 6670,
+                "score": 0.6410348415374756
+              },
+              {
+                "name": "single_tear",
+                "category": 0,
+                "post_count": 1369,
+                "score": 0.6348615884780884
+              },
+              {
+                "name": "single_hair_streak",
+                "category": 0,
+                "post_count": 1130,
+                "score": 0.6186099052429199
+              },
+              {
+                "name": "single_strap",
+                "category": 0,
+                "post_count": 2546,
+                "score": 0.6143658757209778
+              },
+              {
+                "name": "single_slipper",
+                "category": 0,
+                "post_count": 128,
+                "score": 0.6116054654121399
+              }
+            ],
+            "best": {
+              "name": "small_sweatdrop",
+              "category": 0,
+              "post_count": 6670,
+              "score": 0.6410348415374756
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "body language",
+            "top_k": [
+              {
+                "name": "waving_hands",
+                "category": 0,
+                "post_count": 222,
+                "score": 0.6364864110946655
+              },
+              {
+                "name": "hands_on_another's_legs",
+                "category": 0,
+                "post_count": 36,
+                "score": 0.6341817378997803
+              },
+              {
+                "name": "hands_on_another's_chest",
+                "category": 0,
+                "post_count": 1232,
+                "score": 0.6308152675628662
+              },
+              {
+                "name": "hands_on_another's_cheeks",
+                "category": 0,
+                "post_count": 2991,
+                "score": 0.6301282048225403
+              },
+              {
+                "name": "hands_on_another's_thigh",
+                "category": 0,
+                "post_count": 95,
+                "score": 0.6227577328681946
+              }
+            ],
+            "best": {
+              "name": "waving_hands",
+              "category": 0,
+              "post_count": 222,
+              "score": 0.6364864110946655
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "desire",
+            "top_k": [
+              {
+                "name": "desireeu",
+                "category": 1,
+                "post_count": 14,
+                "score": 0.6849515438079834
+              },
+              {
+                "name": "desire_driver",
+                "category": 0,
+                "post_count": 251,
+                "score": 0.6657160520553589
+              },
+              {
+                "name": "desirelump",
+                "category": 1,
+                "post_count": 12,
+                "score": 0.6512870192527771
+              },
+              {
+                "name": "sanguine_desire_(e.g.o)",
+                "category": 0,
+                "post_count": 52,
+                "score": 0.6491156220436096
+              },
+              {
+                "name": "desire_(c's_ware)",
+                "category": 3,
+                "post_count": 16,
+                "score": 0.6366108059883118
+              }
+            ],
+            "best": {
+              "name": "desire_driver",
+              "category": 0,
+              "post_count": 251,
+              "score": 0.6657160520553589
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "effort",
+            "top_k": [
+              {
+                "name": "effort_star",
+                "category": 1,
+                "post_count": 93,
+                "score": 0.7188818454742432
+              },
+              {
+                "name": "trying_on_clothes",
+                "category": 0,
+                "post_count": 676,
+                "score": 0.604175865650177
+              },
+              {
+                "name": "reaching_towards_another",
+                "category": 0,
+                "post_count": 1242,
+                "score": 0.5818777680397034
+              },
+              {
+                "name": "practicing",
+                "category": 0,
+                "post_count": 79,
+                "score": 0.5714679956436157
+              },
+              {
+                "name": "try_(lsc)",
+                "category": 1,
+                "post_count": 466,
+                "score": 0.5696656107902527
+              }
+            ],
+            "best": {
+              "name": "effort_star",
+              "category": 1,
+              "post_count": 93,
+              "score": 0.7188818454742432
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "floating weight",
+            "top_k": [
+              {
+                "name": "floating_food",
+                "category": 0,
+                "post_count": 48,
+                "score": 0.7241706252098083
+              },
+              {
+                "name": "floating_torso",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.7052956223487854
+              },
+              {
+                "name": "floating_object",
+                "category": 0,
+                "post_count": 10920,
+                "score": 0.7042518258094788
+              },
+              {
+                "name": "floating_book",
+                "category": 0,
+                "post_count": 1296,
+                "score": 0.6932561993598938
+              },
+              {
+                "name": "floating_building",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6867806911468506
+              }
+            ],
+            "best": {
+              "name": "floating_object",
+              "category": 0,
+              "post_count": 10920,
+              "score": 0.7042518258094788
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "form and shadow",
+            "top_k": [
+              {
+                "name": "face_in_shadow",
+                "category": 0,
+                "post_count": 374,
+                "score": 0.6791995763778687
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6618549227714539
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6590397357940674
+              },
+              {
+                "name": "sitting_in_shadow",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6587811708450317
+              },
+              {
+                "name": "in_shadow",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.6440147161483765
+              }
+            ],
+            "best": {
+              "name": "face_in_shadow",
+              "category": 0,
+              "post_count": 374,
+              "score": 0.6791995763778687
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hip line definition",
+            "top_k": [
+              {
+                "name": "hips_in_air",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.5665838122367859
+              },
+              {
+                "name": "a_line",
+                "category": 1,
+                "post_count": 35,
+                "score": 0.5586249828338623
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.5536397099494934
+              },
+              {
+                "name": "hipo",
+                "category": 1,
+                "post_count": 20,
+                "score": 0.5525699853897095
+              },
+              {
+                "name": "hip_dips",
+                "category": 0,
+                "post_count": 444,
+                "score": 0.5504513382911682
+              }
+            ],
+            "best": {
+              "name": "hips_in_air",
+              "category": 0,
+              "post_count": 88,
+              "score": 0.5665838122367859
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "ribcage definition",
+            "top_k": [
+              {
+                "name": "ribs",
+                "category": 0,
+                "post_count": 12845,
+                "score": 0.6015082001686096
+              },
+              {
+                "name": "ribbedtank",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.4912760555744171
+              },
+              {
+                "name": "rollcage",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.49062561988830566
+              },
+              {
+                "name": "bookcage",
+                "category": 1,
+                "post_count": 39,
+                "score": 0.4899732172489166
+              },
+              {
+                "name": "ribbon_akai",
+                "category": 1,
+                "post_count": 28,
+                "score": 0.48946434259414673
+              }
+            ],
+            "best": {
+              "name": "ribs",
+              "category": 0,
+              "post_count": 12845,
+              "score": 0.6015082001686096
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast definition",
+            "top_k": [
+              {
+                "name": "breasts",
+                "category": 0,
+                "post_count": 4012152,
+                "score": 0.62530118227005
+              },
+              {
+                "name": "pointing_at_breasts",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6250842213630676
+              },
+              {
+                "name": "presenting_breasts",
+                "category": 0,
+                "post_count": 1493,
+                "score": 0.6211446523666382
+              },
+              {
+                "name": "book_on_breasts",
+                "category": 0,
+                "post_count": 68,
+                "score": 0.6210184693336487
+              },
+              {
+                "name": "large_breasts",
+                "category": 0,
+                "post_count": 1834086,
+                "score": 0.6185901165008545
+              }
+            ],
+            "best": {
+              "name": "breasts",
+              "category": 0,
+              "post_count": 4012152,
+              "score": 0.62530118227005
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sternum definition",
+            "top_k": [
+              {
+                "name": "starelium",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.5139572620391846
+              },
+              {
+                "name": "lorum_piercing",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.48152071237564087
+              },
+              {
+                "name": "hestu",
+                "category": 4,
+                "post_count": 14,
+                "score": 0.46924251317977905
+              },
+              {
+                "name": "misery_stentrem",
+                "category": 4,
+                "post_count": 16,
+                "score": 0.4656599164009094
+              },
+              {
+                "name": "stoned",
+                "category": 0,
+                "post_count": 137,
+                "score": 0.45842835307121277
+              }
+            ],
+            "best": {
+              "name": "stoned",
+              "category": 0,
+              "post_count": 137,
+              "score": 0.45842835307121277
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "navel definition",
+            "top_k": [
+              {
+                "name": "covering_navel",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.6613179445266724
+              },
+              {
+                "name": "nawel",
+                "category": 1,
+                "post_count": 40,
+                "score": 0.660280168056488
+              },
+              {
+                "name": "navel_penetration",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6529808640480042
+              },
+              {
+                "name": "navel_(company)",
+                "category": 3,
+                "post_count": 32,
+                "score": 0.6511374115943909
+              },
+              {
+                "name": "navel_hair",
+                "category": 0,
+                "post_count": 9282,
+                "score": 0.6404376029968262
+              }
+            ],
+            "best": {
+              "name": "covering_navel",
+              "category": 0,
+              "post_count": 84,
+              "score": 0.6613179445266724
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "collarbone definition",
+            "top_k": [
+              {
+                "name": "covered_collarbone",
+                "category": 0,
+                "post_count": 9530,
+                "score": 0.6436672806739807
+              },
+              {
+                "name": "mole_on_collarbone",
+                "category": 0,
+                "post_count": 1342,
+                "score": 0.6216814517974854
+              },
+              {
+                "name": "collarbone_tattoo",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6137963533401489
+              },
+              {
+                "name": "collarbone_peek",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.604129433631897
+              },
+              {
+                "name": "collarbone",
+                "category": 0,
+                "post_count": 915263,
+                "score": 0.5941845774650574
+              }
+            ],
+            "best": {
+              "name": "covered_collarbone",
+              "category": 0,
+              "post_count": 9530,
+              "score": 0.6436672806739807
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "waist dip",
+            "top_k": [
+              {
+                "name": "clothes_around_waist",
+                "category": 0,
+                "post_count": 17452,
+                "score": 0.6522394418716431
+              },
+              {
+                "name": "hand_around_waist",
+                "category": 0,
+                "post_count": 360,
+                "score": 0.6476491093635559
+              },
+              {
+                "name": "waist_hold",
+                "category": 0,
+                "post_count": 102,
+                "score": 0.6326357126235962
+              },
+              {
+                "name": "bodysuit_around_waist",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.630725622177124
+              },
+              {
+                "name": "holding_waist",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.6285417079925537
+              }
+            ],
+            "best": {
+              "name": "clothes_around_waist",
+              "category": 0,
+              "post_count": 17452,
+              "score": 0.6522394418716431
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thigh texture",
+            "top_k": [
+              {
+                "name": "thigh_freckles",
+                "category": 0,
+                "post_count": 112,
+                "score": 0.6570169925689697
+              },
+              {
+                "name": "thighs_together",
+                "category": 0,
+                "post_count": 198,
+                "score": 0.6435957551002502
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6414575576782227
+              },
+              {
+                "name": "bite_mark_on_thigh",
+                "category": 0,
+                "post_count": 357,
+                "score": 0.625074565410614
+              },
+              {
+                "name": "thigh_sheath",
+                "category": 0,
+                "post_count": 379,
+                "score": 0.6168782711029053
+              }
+            ],
+            "best": {
+              "name": "thigh_freckles",
+              "category": 0,
+              "post_count": 112,
+              "score": 0.6570169925689697
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "knee definition",
+            "top_k": [
+              {
+                "name": "knees",
+                "category": 0,
+                "post_count": 11885,
+                "score": 0.6836297512054443
+              },
+              {
+                "name": "kneeing",
+                "category": 0,
+                "post_count": 227,
+                "score": 0.6413010358810425
+              },
+              {
+                "name": "knee_sleeve",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6302592158317566
+              },
+              {
+                "name": "scraped_knee",
+                "category": 0,
+                "post_count": 286,
+                "score": 0.6246250867843628
+              },
+              {
+                "name": "knee_in_crotch",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.6225605010986328
+              }
+            ],
+            "best": {
+              "name": "knees",
+              "category": 0,
+              "post_count": 11885,
+              "score": 0.6836297512054443
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thigh curve",
+            "top_k": [
+              {
+                "name": "thighs_together",
+                "category": 0,
+                "post_count": 198,
+                "score": 0.6144629120826721
+              },
+              {
+                "name": "thigh_marking",
+                "category": 0,
+                "post_count": 259,
+                "score": 0.6056980490684509
+              },
+              {
+                "name": "thigh_gap",
+                "category": 0,
+                "post_count": 85690,
+                "score": 0.605169951915741
+              },
+              {
+                "name": "object_in_thighhighs",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.5934520959854126
+              },
+              {
+                "name": "taurus_curve",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.5863230228424072
+              }
+            ],
+            "best": {
+              "name": "thighs_together",
+              "category": 0,
+              "post_count": 198,
+              "score": 0.6144629120826721
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "spine curve",
+            "top_k": [
+              {
+                "name": "spine",
+                "category": 0,
+                "post_count": 2712,
+                "score": 0.6342846155166626
+              },
+              {
+                "name": "spine_sword",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6031224727630615
+              },
+              {
+                "name": "spine_eren",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.5969709157943726
+              },
+              {
+                "name": "spiny",
+                "category": 4,
+                "post_count": 41,
+                "score": 0.5909379124641418
+              },
+              {
+                "name": "spines",
+                "category": 0,
+                "post_count": 866,
+                "score": 0.5884344577789307
+              }
+            ],
+            "best": {
+              "name": "spine",
+              "category": 0,
+              "post_count": 2712,
+              "score": 0.6342846155166626
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and ribcage",
+            "top_k": [
+              {
+                "name": "ribbon_between_breasts",
+                "category": 0,
+                "post_count": 571,
+                "score": 0.6782381534576416
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6744996905326843
+              },
+              {
+                "name": "breast_ribbon",
+                "category": 0,
+                "post_count": 118,
+                "score": 0.671314537525177
+              },
+              {
+                "name": "breast_to_breast",
+                "category": 0,
+                "post_count": 33,
+                "score": 0.6399242281913757
+              },
+              {
+                "name": "book_on_breasts",
+                "category": 0,
+                "post_count": 68,
+                "score": 0.639892578125
+              }
+            ],
+            "best": {
+              "name": "ribbon_between_breasts",
+              "category": 0,
+              "post_count": 571,
+              "score": 0.6782381534576416
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stomach definition",
+            "top_k": [
+              {
+                "name": "holding_stomach",
+                "category": 0,
+                "post_count": 209,
+                "score": 0.7021857500076294
+              },
+              {
+                "name": "stomach_(organ)",
+                "category": 0,
+                "post_count": 154,
+                "score": 0.6816741228103638
+              },
+              {
+                "name": "nyelv_stomach",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.6794400215148926
+              },
+              {
+                "name": "holding_own_stomach",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.6609117388725281
+              },
+              {
+                "name": "stomach",
+                "category": 0,
+                "post_count": 325074,
+                "score": 0.660599410533905
+              }
+            ],
+            "best": {
+              "name": "holding_stomach",
+              "category": 0,
+              "post_count": 209,
+              "score": 0.7021857500076294
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "abs definition",
+            "top_k": [
+              {
+                "name": "covered_abs",
+                "category": 0,
+                "post_count": 4741,
+                "score": 0.6206122636795044
+              },
+              {
+                "name": "abs_cutout",
+                "category": 0,
+                "post_count": 102,
+                "score": 0.6016567349433899
+              },
+              {
+                "name": "abs",
+                "category": 0,
+                "post_count": 110715,
+                "score": 0.554663896560669
+              },
+              {
+                "name": "abs_peek",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.5412740707397461
+              },
+              {
+                "name": "abish",
+                "category": 1,
+                "post_count": 27,
+                "score": 0.5233166217803955
+              }
+            ],
+            "best": {
+              "name": "covered_abs",
+              "category": 0,
+              "post_count": 4741,
+              "score": 0.6206122636795044
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hip and glute",
+            "top_k": [
+              {
+                "name": "gauze_on_hip",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6601529717445374
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6579546332359314
+              },
+              {
+                "name": "hips_in_air",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6574229598045349
+              },
+              {
+                "name": "hip_gear",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.6389413475990295
+              },
+              {
+                "name": "hip_strap",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.6376909613609314
+              }
+            ],
+            "best": {
+              "name": "hips_in_air",
+              "category": 0,
+              "post_count": 88,
+              "score": 0.6574229598045349
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "shoulder blade",
+            "top_k": [
+              {
+                "name": "hand_on_blade",
+                "category": 0,
+                "post_count": 522,
+                "score": 0.6991003155708313
+              },
+              {
+                "name": "holding_blade",
+                "category": 0,
+                "post_count": 110,
+                "score": 0.68479984998703
+              },
+              {
+                "name": "covered_shoulder_blades",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6763690114021301
+              },
+              {
+                "name": "holding_razor_blade",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.6671760678291321
+              },
+              {
+                "name": "wrist_blades",
+                "category": 0,
+                "post_count": 188,
+                "score": 0.6657277941703796
+              }
+            ],
+            "best": {
+              "name": "hand_on_blade",
+              "category": 0,
+              "post_count": 522,
+              "score": 0.6991003155708313
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "ear and neck",
+            "top_k": [
+              {
+                "name": "ears_up",
+                "category": 0,
+                "post_count": 134,
+                "score": 0.674057126045227
+              },
+              {
+                "name": "hair_around_ear",
+                "category": 0,
+                "post_count": 514,
+                "score": 0.6671389937400818
+              },
+              {
+                "name": "mask_around_one_ear",
+                "category": 0,
+                "post_count": 92,
+                "score": 0.6617165803909302
+              },
+              {
+                "name": "ears_back",
+                "category": 0,
+                "post_count": 289,
+                "score": 0.6605628132820129
+              },
+              {
+                "name": "ear_to_ear",
+                "category": 0,
+                "post_count": 44,
+                "score": 0.6565181016921997
+              }
+            ],
+            "best": {
+              "name": "ears_up",
+              "category": 0,
+              "post_count": 134,
+              "score": 0.674057126045227
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "shoulder and clavicle",
+            "top_k": [
+              {
+                "name": "on_shoulder",
+                "category": 0,
+                "post_count": 5128,
+                "score": 0.6570245027542114
+              },
+              {
+                "name": "blood_on_shoulder",
+                "category": 0,
+                "post_count": 149,
+                "score": 0.65526282787323
+              },
+              {
+                "name": "mouse_on_shoulder",
+                "category": 0,
+                "post_count": 53,
+                "score": 0.6401473879814148
+              },
+              {
+                "name": "shoulder_support",
+                "category": 0,
+                "post_count": 56,
+                "score": 0.6399846076965332
+              },
+              {
+                "name": "shoulder_patch",
+                "category": 0,
+                "post_count": 637,
+                "score": 0.6391315460205078
+              }
+            ],
+            "best": {
+              "name": "on_shoulder",
+              "category": 0,
+              "post_count": 5128,
+              "score": 0.6570245027542114
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "shoulder and arm",
+            "top_k": [
+              {
+                "name": "arms_on_another's_shoulder",
+                "category": 0,
+                "post_count": 69,
+                "score": 0.7370051741600037
+              },
+              {
+                "name": "arm_over_shoulder",
+                "category": 0,
+                "post_count": 479,
+                "score": 0.7291764616966248
+              },
+              {
+                "name": "arm_around_chest",
+                "category": 0,
+                "post_count": 14,
+                "score": 0.7263908386230469
+              },
+              {
+                "name": "arm_around_back",
+                "category": 0,
+                "post_count": 1433,
+                "score": 0.7083990573883057
+              },
+              {
+                "name": "hands_on_another's_arm",
+                "category": 0,
+                "post_count": 302,
+                "score": 0.7056409120559692
+              }
+            ],
+            "best": {
+              "name": "arms_on_another's_shoulder",
+              "category": 0,
+              "post_count": 69,
+              "score": 0.7370051741600037
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "elbow definition",
+            "top_k": [
+              {
+                "name": "elbowing",
+                "category": 0,
+                "post_count": 239,
+                "score": 0.6727099418640137
+              },
+              {
+                "name": "elbow_on_leg",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6725835800170898
+              },
+              {
+                "name": "elbow_on_thigh",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.6695231199264526
+              },
+              {
+                "name": "elbow_on_table",
+                "category": 0,
+                "post_count": 1204,
+                "score": 0.6691188812255859
+              },
+              {
+                "name": "elbow_on_arm",
+                "category": 0,
+                "post_count": 113,
+                "score": 0.6677108407020569
+              }
+            ],
+            "best": {
+              "name": "elbowing",
+              "category": 0,
+              "post_count": 239,
+              "score": 0.6727099418640137
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "forearm texture",
+            "top_k": [
+              {
+                "name": "forearms",
+                "category": 0,
+                "post_count": 333,
+                "score": 0.6579284071922302
+              },
+              {
+                "name": "forehead_tattoo",
+                "category": 0,
+                "post_count": 1731,
+                "score": 0.638554036617279
+              },
+              {
+                "name": "touching_forehead",
+                "category": 0,
+                "post_count": 45,
+                "score": 0.626841127872467
+              },
+              {
+                "name": "sparse_arm_hair",
+                "category": 0,
+                "post_count": 821,
+                "score": 0.6218525171279907
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6179004311561584
+              }
+            ],
+            "best": {
+              "name": "forearms",
+              "category": 0,
+              "post_count": 333,
+              "score": 0.6579284071922302
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and nipple",
+            "top_k": [
+              {
+                "name": "covering_one_nipple",
+                "category": 0,
+                "post_count": 149,
+                "score": 0.6785022020339966
+              },
+              {
+                "name": "tweaking_own_nipple",
+                "category": 0,
+                "post_count": 1278,
+                "score": 0.6643035411834717
+              },
+              {
+                "name": "nipple_stimulation_through_clothes",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6623375415802002
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6578174829483032
+              },
+              {
+                "name": "nipple_spikes",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.657090425491333
+              }
+            ],
+            "best": {
+              "name": "covering_one_nipple",
+              "category": 0,
+              "post_count": 149,
+              "score": 0.6785022020339966
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "waist definition",
+            "top_k": [
+              {
+                "name": "holding_waist",
+                "category": 0,
+                "post_count": 61,
+                "score": 0.6893339157104492
+              },
+              {
+                "name": "hand_around_waist",
+                "category": 0,
+                "post_count": 360,
+                "score": 0.6637096405029297
+              },
+              {
+                "name": "clothes_around_waist",
+                "category": 0,
+                "post_count": 17452,
+                "score": 0.6616488695144653
+              },
+              {
+                "name": "waist_hold",
+                "category": 0,
+                "post_count": 102,
+                "score": 0.6453152894973755
+              },
+              {
+                "name": "holding_another's_waist",
+                "category": 0,
+                "post_count": 139,
+                "score": 0.6416866779327393
+              }
+            ],
+            "best": {
+              "name": "holding_waist",
+              "category": 0,
+              "post_count": 61,
+              "score": 0.6893339157104492
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "neck texture",
+            "top_k": [
+              {
+                "name": "hair_around_neck",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.7117414474487305
+              },
+              {
+                "name": "string_around_neck",
+                "category": 0,
+                "post_count": 103,
+                "score": 0.6856041550636292
+              },
+              {
+                "name": "neck_tattoo",
+                "category": 0,
+                "post_count": 8373,
+                "score": 0.6787661910057068
+              },
+              {
+                "name": "sticker_on_neck",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6702699661254883
+              },
+              {
+                "name": "tail_around_neck",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.6667181253433228
+              }
+            ],
+            "best": {
+              "name": "string_around_neck",
+              "category": 0,
+              "post_count": 103,
+              "score": 0.6856041550636292
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "collarbone shadow",
+            "top_k": [
+              {
+                "name": "collarbone_peek",
+                "category": 0,
+                "post_count": 54,
+                "score": 0.6451963186264038
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6400489211082458
+              },
+              {
+                "name": "collarbone_tattoo",
+                "category": 0,
+                "post_count": 18,
+                "score": 0.6372931003570557
+              },
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.6333106756210327
+              },
+              {
+                "name": "one_eye_in_shadow",
+                "category": 0,
+                "post_count": 172,
+                "score": 0.6299080848693848
+              }
+            ],
+            "best": {
+              "name": "collarbone_peek",
+              "category": 0,
+              "post_count": 54,
+              "score": 0.6451963186264038
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thigh shadow",
+            "top_k": [
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.6709095239639282
+              },
+              {
+                "name": "shadow_mio",
+                "category": 4,
+                "post_count": 38,
+                "score": 0.6625853776931763
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.656876266002655
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6561874747276306
+              },
+              {
+                "name": "living_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6516532897949219
+              }
+            ],
+            "best": {
+              "name": "dark_shadow",
+              "category": 4,
+              "post_count": 96,
+              "score": 0.6709095239639282
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "calf definition",
+            "top_k": [
+              {
+                "name": "calf_(animal)",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6889848113059998
+              },
+              {
+                "name": "hand_on_another's_calf",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6102902889251709
+              },
+              {
+                "name": "calves",
+                "category": 0,
+                "post_count": 245,
+                "score": 0.6050432324409485
+              },
+              {
+                "name": "klawf",
+                "category": 4,
+                "post_count": 40,
+                "score": 0.5846654772758484
+              },
+              {
+                "name": "the_cal",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.5352025032043457
+              }
+            ],
+            "best": {
+              "name": "calves",
+              "category": 0,
+              "post_count": 245,
+              "score": 0.6050432324409485
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "ankle definition",
+            "top_k": [
+              {
+                "name": "hand_on_ankle",
+                "category": 0,
+                "post_count": 34,
+                "score": 0.6631988286972046
+              },
+              {
+                "name": "holding_another's_ankle",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6553468704223633
+              },
+              {
+                "name": "string_around_ankle",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6541765928268433
+              },
+              {
+                "name": "hand_on_own_ankle",
+                "category": 0,
+                "post_count": 376,
+                "score": 0.6434902548789978
+              },
+              {
+                "name": "grabbing_another's_ankle",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6418293714523315
+              }
+            ],
+            "best": {
+              "name": "hand_on_own_ankle",
+              "category": 0,
+              "post_count": 376,
+              "score": 0.6434902548789978
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and sternum",
+            "top_k": [
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6327155232429504
+              },
+              {
+                "name": "stepping_on_breasts",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.6277787685394287
+              },
+              {
+                "name": "hand_on_breast",
+                "category": 0,
+                "post_count": 1290,
+                "score": 0.6198825836181641
+              },
+              {
+                "name": "breast_on_breast",
+                "category": 0,
+                "post_count": 133,
+                "score": 0.6171703338623047
+              },
+              {
+                "name": "hand_on_breasts",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6142523288726807
+              }
+            ],
+            "best": {
+              "name": "hand_on_breast",
+              "category": 0,
+              "post_count": 1290,
+              "score": 0.6198825836181641
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and hip",
+            "top_k": [
+              {
+                "name": "hand_on_breast",
+                "category": 0,
+                "post_count": 1290,
+                "score": 0.6855831146240234
+              },
+              {
+                "name": "hand_on_breasts",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6847878098487854
+              },
+              {
+                "name": "bra_on_hips",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6835482716560364
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6699758172035217
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6663602590560913
+              }
+            ],
+            "best": {
+              "name": "hand_on_breast",
+              "category": 0,
+              "post_count": 1290,
+              "score": 0.6855831146240234
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and rib",
+            "top_k": [
+              {
+                "name": "ribbon_between_breasts",
+                "category": 0,
+                "post_count": 571,
+                "score": 0.6749477982521057
+              },
+              {
+                "name": "breast_ribbon",
+                "category": 0,
+                "post_count": 118,
+                "score": 0.6747219562530518
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6578412652015686
+              },
+              {
+                "name": "breast_strap",
+                "category": 0,
+                "post_count": 923,
+                "score": 0.6458775997161865
+              },
+              {
+                "name": "hand_on_breast",
+                "category": 0,
+                "post_count": 1290,
+                "score": 0.639552116394043
+              }
+            ],
+            "best": {
+              "name": "ribbon_between_breasts",
+              "category": 0,
+              "post_count": 571,
+              "score": 0.6749477982521057
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and nipple",
+            "top_k": [
+              {
+                "name": "covering_one_nipple",
+                "category": 0,
+                "post_count": 149,
+                "score": 0.6785022020339966
+              },
+              {
+                "name": "tweaking_own_nipple",
+                "category": 0,
+                "post_count": 1278,
+                "score": 0.6643035411834717
+              },
+              {
+                "name": "nipple_stimulation_through_clothes",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6623375415802002
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6578174829483032
+              },
+              {
+                "name": "nipple_spikes",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.657090425491333
+              }
+            ],
+            "best": {
+              "name": "covering_one_nipple",
+              "category": 0,
+              "post_count": 149,
+              "score": 0.6785022020339966
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "shoulder and neck",
+            "top_k": [
+              {
+                "name": "hand_around_neck",
+                "category": 0,
+                "post_count": 385,
+                "score": 0.7059249877929688
+              },
+              {
+                "name": "on_shoulder",
+                "category": 0,
+                "post_count": 5128,
+                "score": 0.6980041265487671
+              },
+              {
+                "name": "sweater_around_neck",
+                "category": 0,
+                "post_count": 490,
+                "score": 0.686902642250061
+              },
+              {
+                "name": "person_on_shoulder",
+                "category": 0,
+                "post_count": 170,
+                "score": 0.6863709688186646
+              },
+              {
+                "name": "tapping_shoulder",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.6816025972366333
+              }
+            ],
+            "best": {
+              "name": "hand_around_neck",
+              "category": 0,
+              "post_count": 385,
+              "score": 0.7059249877929688
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hip and waist",
+            "top_k": [
+              {
+                "name": "hips_in_air",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6999152898788452
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6816715002059937
+              },
+              {
+                "name": "hand_around_waist",
+                "category": 0,
+                "post_count": 360,
+                "score": 0.6776359677314758
+              },
+              {
+                "name": "hip_strap",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.6636574864387512
+              },
+              {
+                "name": "hip_measuring",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6628919243812561
+              }
+            ],
+            "best": {
+              "name": "hips_in_air",
+              "category": 0,
+              "post_count": 88,
+              "score": 0.6999152898788452
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hip and thigh",
+            "top_k": [
+              {
+                "name": "hips_in_air",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6801700592041016
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.667982816696167
+              },
+              {
+                "name": "thighs_together",
+                "category": 0,
+                "post_count": 198,
+                "score": 0.6557523012161255
+              },
+              {
+                "name": "hip_gear",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.65022873878479
+              },
+              {
+                "name": "narrow_hips",
+                "category": 0,
+                "post_count": 138,
+                "score": 0.6449832916259766
+              }
+            ],
+            "best": {
+              "name": "hips_in_air",
+              "category": 0,
+              "post_count": 88,
+              "score": 0.6801700592041016
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hip and glute",
+            "top_k": [
+              {
+                "name": "gauze_on_hip",
+                "category": 0,
+                "post_count": 17,
+                "score": 0.6601529717445374
+              },
+              {
+                "name": "raised_hips",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6579546332359314
+              },
+              {
+                "name": "hips_in_air",
+                "category": 0,
+                "post_count": 88,
+                "score": 0.6574229598045349
+              },
+              {
+                "name": "hip_gear",
+                "category": 0,
+                "post_count": 150,
+                "score": 0.6389413475990295
+              },
+              {
+                "name": "hip_strap",
+                "category": 0,
+                "post_count": 41,
+                "score": 0.6376909613609314
+              }
+            ],
+            "best": {
+              "name": "hips_in_air",
+              "category": 0,
+              "post_count": 88,
+              "score": 0.6574229598045349
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and sternum",
+            "top_k": [
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6327155232429504
+              },
+              {
+                "name": "stepping_on_breasts",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.6277787685394287
+              },
+              {
+                "name": "hand_on_breast",
+                "category": 0,
+                "post_count": 1290,
+                "score": 0.6198825836181641
+              },
+              {
+                "name": "breast_on_breast",
+                "category": 0,
+                "post_count": 133,
+                "score": 0.6171703338623047
+              },
+              {
+                "name": "hand_on_breasts",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6142523288726807
+              }
+            ],
+            "best": {
+              "name": "hand_on_breast",
+              "category": 0,
+              "post_count": 1290,
+              "score": 0.6198825836181641
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "shoulder and blade",
+            "top_k": [
+              {
+                "name": "hand_on_blade",
+                "category": 0,
+                "post_count": 522,
+                "score": 0.7334145307540894
+              },
+              {
+                "name": "hand_to_blade",
+                "category": 0,
+                "post_count": 400,
+                "score": 0.7001497149467468
+              },
+              {
+                "name": "holding_blade",
+                "category": 0,
+                "post_count": 110,
+                "score": 0.6978086233139038
+              },
+              {
+                "name": "blade_&_bastard",
+                "category": 3,
+                "post_count": 11,
+                "score": 0.6814678907394409
+              },
+              {
+                "name": "blaze_and_blade",
+                "category": 3,
+                "post_count": 11,
+                "score": 0.6806709170341492
+              }
+            ],
+            "best": {
+              "name": "hand_on_blade",
+              "category": 0,
+              "post_count": 522,
+              "score": 0.7334145307540894
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "back shadow",
+            "top_k": [
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6909573674201965
+              },
+              {
+                "name": "sitting_in_shadow",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6770356893539429
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6660898327827454
+              },
+              {
+                "name": "face_in_shadow",
+                "category": 0,
+                "post_count": 374,
+                "score": 0.6660645008087158
+              },
+              {
+                "name": "in_shadow",
+                "category": 0,
+                "post_count": 84,
+                "score": 0.6613683700561523
+              }
+            ],
+            "best": {
+              "name": "different_shadow",
+              "category": 0,
+              "post_count": 1033,
+              "score": 0.6909573674201965
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thigh shadow",
+            "top_k": [
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.6709095239639282
+              },
+              {
+                "name": "shadow_mio",
+                "category": 4,
+                "post_count": 38,
+                "score": 0.6625853776931763
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.656876266002655
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6561874747276306
+              },
+              {
+                "name": "living_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.6516532897949219
+              }
+            ],
+            "best": {
+              "name": "dark_shadow",
+              "category": 4,
+              "post_count": 96,
+              "score": 0.6709095239639282
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stomach shadow",
+            "top_k": [
+              {
+                "name": "sitting_in_shadow",
+                "category": 0,
+                "post_count": 26,
+                "score": 0.6522358059883118
+              },
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.6460847854614258
+              },
+              {
+                "name": "boob_shadow_(meme)",
+                "category": 0,
+                "post_count": 30,
+                "score": 0.643618643283844
+              },
+              {
+                "name": "gradient_shadow",
+                "category": 0,
+                "post_count": 10,
+                "score": 0.6392576694488525
+              },
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.6371091604232788
+              }
+            ],
+            "best": {
+              "name": "dark_shadow",
+              "category": 4,
+              "post_count": 96,
+              "score": 0.6460847854614258
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "abs texture",
+            "top_k": [
+              {
+                "name": "covered_abs",
+                "category": 0,
+                "post_count": 4741,
+                "score": 0.6481914520263672
+              },
+              {
+                "name": "abs_cutout",
+                "category": 0,
+                "post_count": 102,
+                "score": 0.6471028923988342
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6336970329284668
+              },
+              {
+                "name": "paper_texture",
+                "category": 0,
+                "post_count": 857,
+                "score": 0.6044580340385437
+              },
+              {
+                "name": "canvas_texture",
+                "category": 0,
+                "post_count": 252,
+                "score": 0.599066436290741
+              }
+            ],
+            "best": {
+              "name": "covered_abs",
+              "category": 0,
+              "post_count": 4741,
+              "score": 0.6481914520263672
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "waist texture",
+            "top_k": [
+              {
+                "name": "clothes_around_waist",
+                "category": 0,
+                "post_count": 17452,
+                "score": 0.6970968246459961
+              },
+              {
+                "name": "waist_(chem5772)",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.6588970422744751
+              },
+              {
+                "name": "towel_around_waist",
+                "category": 0,
+                "post_count": 951,
+                "score": 0.6588500738143921
+              },
+              {
+                "name": "shirt_around_waist",
+                "category": 0,
+                "post_count": 1067,
+                "score": 0.6575826406478882
+              },
+              {
+                "name": "hand_around_waist",
+                "category": 0,
+                "post_count": 360,
+                "score": 0.6562131643295288
+              }
+            ],
+            "best": {
+              "name": "clothes_around_waist",
+              "category": 0,
+              "post_count": 17452,
+              "score": 0.6970968246459961
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "neck texture",
+            "top_k": [
+              {
+                "name": "hair_around_neck",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.7117414474487305
+              },
+              {
+                "name": "string_around_neck",
+                "category": 0,
+                "post_count": 103,
+                "score": 0.6856041550636292
+              },
+              {
+                "name": "neck_tattoo",
+                "category": 0,
+                "post_count": 8373,
+                "score": 0.6787661910057068
+              },
+              {
+                "name": "sticker_on_neck",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6702699661254883
+              },
+              {
+                "name": "tail_around_neck",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.6667181253433228
+              }
+            ],
+            "best": {
+              "name": "string_around_neck",
+              "category": 0,
+              "post_count": 103,
+              "score": 0.6856041550636292
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "chest texture",
+            "top_k": [
+              {
+                "name": "chest_tattoo",
+                "category": 0,
+                "post_count": 14870,
+                "score": 0.666760265827179
+              },
+              {
+                "name": "sticker_on_chest",
+                "category": 0,
+                "post_count": 42,
+                "score": 0.665156364440918
+              },
+              {
+                "name": "thick_chest_hair",
+                "category": 0,
+                "post_count": 1120,
+                "score": 0.6565889120101929
+              },
+              {
+                "name": "chest_hair_peek",
+                "category": 0,
+                "post_count": 267,
+                "score": 0.6459391117095947
+              },
+              {
+                "name": "chest_freckles",
+                "category": 0,
+                "post_count": 119,
+                "score": 0.6446754932403564
+              }
+            ],
+            "best": {
+              "name": "chest_tattoo",
+              "category": 0,
+              "post_count": 14870,
+              "score": 0.666760265827179
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "back texture",
+            "top_k": [
+              {
+                "name": "back_tattoo",
+                "category": 0,
+                "post_count": 4653,
+                "score": 0.6942647695541382
+              },
+              {
+                "name": "une_back",
+                "category": 1,
+                "post_count": 26,
+                "score": 0.6661496162414551
+              },
+              {
+                "name": "back_freckles",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6647576689720154
+              },
+              {
+                "name": "back_hair",
+                "category": 0,
+                "post_count": 304,
+                "score": 0.661357581615448
+              },
+              {
+                "name": "bag_behind_back",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.6560980677604675
+              }
+            ],
+            "best": {
+              "name": "back_tattoo",
+              "category": 0,
+              "post_count": 4653,
+              "score": 0.6942647695541382
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "spine texture",
+            "top_k": [
+              {
+                "name": "spine",
+                "category": 0,
+                "post_count": 2712,
+                "score": 0.6327119469642639
+              },
+              {
+                "name": "spiny",
+                "category": 4,
+                "post_count": 41,
+                "score": 0.6221156716346741
+              },
+              {
+                "name": "texture",
+                "category": 0,
+                "post_count": 948,
+                "score": 0.6199131011962891
+              },
+              {
+                "name": "spine_eren",
+                "category": 4,
+                "post_count": 22,
+                "score": 0.6188851594924927
+              },
+              {
+                "name": "spines",
+                "category": 0,
+                "post_count": 866,
+                "score": 0.598360538482666
+              }
+            ],
+            "best": {
+              "name": "spine",
+              "category": 0,
+              "post_count": 2712,
+              "score": 0.6327119469642639
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and sternum",
+            "top_k": [
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6327155232429504
+              },
+              {
+                "name": "stepping_on_breasts",
+                "category": 0,
+                "post_count": 27,
+                "score": 0.6277787685394287
+              },
+              {
+                "name": "hand_on_breast",
+                "category": 0,
+                "post_count": 1290,
+                "score": 0.6198825836181641
+              },
+              {
+                "name": "breast_on_breast",
+                "category": 0,
+                "post_count": 133,
+                "score": 0.6171703338623047
+              },
+              {
+                "name": "hand_on_breasts",
+                "category": 0,
+                "post_count": 57,
+                "score": 0.6142523288726807
+              }
+            ],
+            "best": {
+              "name": "hand_on_breast",
+              "category": 0,
+              "post_count": 1290,
+              "score": 0.6198825836181641
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and rib",
+            "top_k": [
+              {
+                "name": "ribbon_between_breasts",
+                "category": 0,
+                "post_count": 571,
+                "score": 0.6749477982521057
+              },
+              {
+                "name": "breast_ribbon",
+                "category": 0,
+                "post_count": 118,
+                "score": 0.6747219562530518
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6578412652015686
+              },
+              {
+                "name": "breast_strap",
+                "category": 0,
+                "post_count": 923,
+                "score": 0.6458775997161865
+              },
+              {
+                "name": "hand_on_breast",
+                "category": 0,
+                "post_count": 1290,
+                "score": 0.639552116394043
+              }
+            ],
+            "best": {
+              "name": "ribbon_between_breasts",
+              "category": 0,
+              "post_count": 571,
+              "score": 0.6749477982521057
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "breast and nipple",
+            "top_k": [
+              {
+                "name": "covering_one_nipple",
+                "category": 0,
+                "post_count": 149,
+                "score": 0.6785022020339966
+              },
+              {
+                "name": "tweaking_own_nipple",
+                "category": 0,
+                "post_count": 1278,
+                "score": 0.6643035411834717
+              },
+              {
+                "name": "nipple_stimulation_through_clothes",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6623375415802002
+              },
+              {
+                "name": "adjusting_breasts",
+                "category": 0,
+                "post_count": 28,
+                "score": 0.6578174829483032
+              },
+              {
+                "name": "nipple_spikes",
+                "category": 0,
+                "post_count": 20,
+                "score": 0.657090425491333
+              }
+            ],
+            "best": {
+              "name": "covering_one_nipple",
+              "category": 0,
+              "post_count": 149,
+              "score": 0.6785022020339966
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "shoulder and arm",
+            "top_k": [
+              {
+                "name": "arms_on_another's_shoulder",
+                "category": 0,
+                "post_count": 69,
+                "score": 0.7370051741600037
+              },
+              {
+                "name": "arm_over_shoulder",
+                "category": 0,
+                "post_count": 479,
+                "score": 0.7291764616966248
+              },
+              {
+                "name": "arm_around_chest",
+                "category": 0,
+                "post_count": 14,
+                "score": 0.7263908386230469
+              },
+              {
+                "name": "arm_around_back",
+                "category": 0,
+                "post_count": 1433,
+                "score": 0.7083990573883057
+              },
+              {
+                "name": "hands_on_another's_arm",
+                "category": 0,
+                "post_count": 302,
+                "score": 0.7056409120559692
+              }
+            ],
+            "best": {
+              "name": "arms_on_another's_shoulder",
+              "category": 0,
+              "post_count": 69,
+              "score": 0.7370051741600037
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "should",
+            "top_k": [
+              {
+                "name": "yes_we_can",
+                "category": 0,
+                "post_count": 13,
+                "score": 0.5488176345825195
+              },
+              {
+                "name": "you_want_to_get_beat?_hurtily?",
+                "category": 4,
+                "post_count": 23,
+                "score": 0.5411308407783508
+              },
+              {
+                "name": "i_want_to_play_basketball",
+                "category": 0,
+                "post_count": 15,
+                "score": 0.5404750108718872
+              },
+              {
+                "name": "needtobeleashed",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.5389237999916077
+              },
+              {
+                "name": "have_to_poop",
+                "category": 0,
+                "post_count": 43,
+                "score": 0.5384088158607483
+              }
+            ],
+            "best": null,
+            "dropped_reason": "no_candidate_above_floors"
+          }
+        ]
+      }
+    },
+    {
+      "step": "curate",
+      "params": {
+        "temperature": 0.5,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 3.112,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "girl, sex, intimate pose, soft surface, one leg bent, leg raised, hand gripping fabric, sweat glistening, warm overhead light, deep shadows, detailed skin texture, focused expression, natural breathing, chest rise, stretching fabric, silk, close framing, physical connection, subtle muscle tension, realistic skin tones, defined jawline, slightly parted lips, blurred background, single light source, halo effect, organic movement, distinct hair strands, visible neck pulse, weight shifting, relaxed shoulders, hands near waist, holding partner, skin catching light, sharp angles, intimate atmosphere, fabric clinging, damp skin texture, light breeze, stillness, slightly above angle, central figure focus, tangible heat, movement momentum, suspended time, mutual engagement, silhouette definition, stretching shadow, surface texture, interlaced fingers, visible breath, fullness of body, vitality, grounded stance, seamless form blend, high contrast, warm neutral palette, deep tones, pores and fine lines, specific hair sheen, curved back, voluminous hair, loose hair, single moisture drop, body language, desire, effort, floating weight, form and shadow, hip line definition, ribcage definition, breast definition, sternum definition, navel definition, collarbone definition, waist dip, thigh texture, knee definition, thigh curve, spine curve, stomach definition, abs definition, hip and glute, shoulder blade, ear and neck, shoulder and clavicle, shoulder and arm, elbow definition, forearm texture, breast and nipple, waist definition, neck texture, collarbone shadow, thigh shadow, calf definition, ankle definition, breast and sternum, breast and hip, breast and rib, shoulder and neck, hip and waist, hip and thigh, breast and sternum, shoulder and blade, back shadow, stomach shadow, abs texture, waist texture, chest texture, back texture, spine texture, breast and sternum, breast and rib, breast and nipple, shoulder and arm, should"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 4.951,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, explicit, girl (mokufuu), sex, pose, legs, bent, leg lift, fabric, sweat, light, shadow, texture, breathing, stretching, silk, muscular, realistic, parted lips, blurry foreground, halo, organic, neck, weight, relaxing, hand around waist, holding",
+        "stats": {
+          "corrected": 0,
+          "dropped": 86,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "explicit"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, explicit, girl (mokufuu), sex, pose, legs, bent, leg lift, fabric, sweat, light, shadow, texture, breathing, stretching, silk, muscular, realistic, parted lips, blurry foreground, halo, organic, neck, weight, relaxing, hand around waist, holding",
+        "slot_fill_trace": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_sex",
+  "seed": 1001,
+  "modifiers": [],
+  "prompt_source": "girl, sex",
+  "final_tags": "masterpiece, best quality, score_7, explicit, girl (mokufuu), sex, pose, legs, bent, leg lift, fabric, sweat, light, shadow, texture, breathing, stretching, silk, muscular, realistic, parted lips, blurry foreground, halo, organic, neck, weight, relaxing, hand around waist, holding",
+  "prose": "girl, sex, intimate pose on a soft surface, one leg bent and raised, hand gripping fabric, sweat glistening on skin, warm overhead light casting deep shadows, detailed texture of skin and hair, focused expression, natural breathing rhythm, slight chest rise and fall, fabric stretching across the body, specific material like silk or cotton, close framing on the torso, physical connection emphasized, subtle muscle tension, realistic skin tones, defined jawline, slightly parted lips, environment blurred in background, single light source creating a halo effect, organic movement captured mid-action, distinct hair strands falling across the face, visible pulse in the neck, weight shifting to one hip, relaxed shoulders, hands resting near the waist or holding a partner, skin catching the light at sharp angles, intimate atmosphere grounded in physical reality, fabric clinging to curves, damp skin texture, specific room temperature suggested by a light breeze or stillness, precise angle of view from slightly above, clear definition of the navel and collarbone, hair pulled back or loose and voluminous, a single drop of moisture on the lip, body language communicating desire and effort, grounded stance or floating weight, seamless blend of form and shadow, high contrast between light and dark areas, sharp focus on the central figure, minimal background distraction, every detail serving the central action of connection, tangible sense of heat and movement, fabric wrinkling at the joints, specific color palette of warm neutrals or deep tones, skin texture showing pores and fine lines, hair catching the light with a specific sheen, a moment of suspended time, body language telling a story of mutual engagement, light defining the silhouette, shadow stretching across the room, texture of the surface beneath them, fingers interlaced or tracing skin, breath visible in the air, a sense of fullness and vitality, specific weight distribution, hair moving with momentum, light hitting the spine and hip, skin glowing with internal heat, fabric draping naturally, a specific curve of the back, light hitting the knee and thigh, shadow pooling under the chin, skin meeting skin with friction, hair framing the face, light defining the shoulder blade, a specific rhythm of motion, light catching the wet hair, skin stretching over the bone, shadow elongating the limbs, fabric shifting with every movement, light creating a rim effect, skin reflecting the ambient warmth, hair falling into the eye, shadow softening the edges, light piercing the center of the frame, skin texture highlighted by a directional beam, hair creating depth with layers, light defining the hip line, shadow grounding the figure, skin glowing against the darker fabric, hair catching a stray ray, light carving out the form, shadow adding dimension, skin showing the sheen of oil or sweat, hair with a specific wave pattern, light defining the breast and sternum, shadow pooling at the base of the neck, skin meeting the fabric with a crisp line, hair framing the jaw, light hitting the shoulder and neck, shadow stretching across the chest, skin showing the dip of the waist, hair with a specific flyaway strand, light defining the curve of the spine, shadow softening the background, skin glowing with a warm tint, hair creating a specific volume, light carving the collarbone, shadow defining the thigh, skin showing the texture of muscle, hair with a specific gloss, light hitting the ear and neck, shadow pooling under the chin, skin meeting the fabric with a soft fold, hair framing the cheek, light defining the hip and glute, shadow stretching across the back, skin showing the sheen of movement, hair with a specific bounce, light hitting the knee and shin, shadow defining the ankle, skin showing the texture of a thigh, hair with a specific sweep, light defining the breast and ribcage, shadow pooling at the waist, skin showing the dip of the navel, hair with a specific curl, light hitting the shoulder and clavicle, shadow defining the arm, skin showing the texture of a back, hair with a specific tangle, light hitting the hip and thigh, shadow defining the calf, skin showing the texture of a leg, hair with a specific wave, light hitting the breast and sternum, shadow defining the neck, skin showing the texture of a chest, hair with a specific fringe, light hitting the shoulder and blade, shadow defining the back, skin showing the texture of a spine, hair with a specific part, light hitting the hip and waist, shadow defining the thigh, skin showing the texture of a hip, hair with a specific volume, light hitting the breast and rib, shadow defining the stomach, skin showing the texture of an abs, hair with a specific length, light hitting the shoulder and arm, shadow defining the elbow, skin showing the texture of a forearm, hair with a specific thickness, light hitting the breast and nipple, shadow defining the waist, skin showing the texture of a waist, hair with a specific weight, light hitting the shoulder and neck, shadow defining the collarbone, skin showing the texture of a neck, hair with a specific shine, light hitting the hip and glute, shadow defining",
+  "draft": "girl, sex, intimate pose, soft surface, one leg bent, leg raised, hand gripping fabric, sweat glistening, warm overhead light, deep shadows, detailed skin texture, focused expression, natural breathing, chest rise, stretching fabric, silk, close framing, physical connection, subtle muscle tension, realistic skin tones, defined jawline, slightly parted lips, blurred background, single light source, halo effect, organic movement, distinct hair strands, visible neck pulse, weight shifting, relaxed shoulders, hands near waist, holding partner, skin catching light, sharp angles, intimate atmosphere, fabric clinging, damp skin texture, light breeze, stillness, slightly above angle, central figure focus, tangible heat, movement momentum, suspended time, mutual engagement, silhouette definition, stretching shadow, surface texture, interlaced fingers, visible breath, fullness of body, vitality, grounded stance, seamless form blend, high contrast, warm neutral palette, deep tones, pores and fine lines, specific hair sheen, curved back, voluminous hair, loose hair, single moisture drop, body language, desire, effort, floating weight, form and shadow, hip line definition, ribcage definition, breast definition, sternum definition, navel definition, collarbone definition, waist dip, thigh texture, knee definition, thigh curve, spine curve, stomach definition, abs definition, hip and glute, shoulder blade, ear and neck, shoulder and clavicle, shoulder and arm, elbow definition, forearm texture, breast and nipple, waist definition, neck texture, collarbone shadow, thigh shadow, calf definition, ankle definition, breast and sternum, breast and hip, breast and rib, shoulder and neck, hip and waist, hip and thigh, breast and sternum, shoulder and blade, back shadow, stomach shadow, abs texture, waist texture, chest texture, back texture, spine texture, breast and sternum, breast and rib, breast and nipple, shoulder and arm, should",
+  "shortlist": {
+    "artists": [
+      "0123456789",
+      "sch",
+      "r ex",
+      "sol fa soft",
+      "e10",
+      "cl 55"
+    ],
+    "characters": [
+      "girl (mokufuu)",
+      "girlfriend (friday night funkin')",
+      "girl dm",
+      "acfun girl",
+      "female titan",
+      "hit girl"
+    ],
+    "series": [
+      "high score girl",
+      "boy meets girl",
+      "girl with a pearl earring"
+    ]
+  }
+}

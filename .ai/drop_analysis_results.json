@@ -1,0 +1,3671 @@
+[
+  {
+    "label": "baseline",
+    "stats": {
+      "config": {
+        "semantic_threshold": 0.8,
+        "semantic_min_post_count": 100,
+        "entity_min_post_count": 1000,
+        "use_compound_split": false
+      },
+      "total_tokens": 209,
+      "total_kept": 86,
+      "total_composition_tags": 69,
+      "avg_composition_tags_per_prompt": 8.6,
+      "overall_drop_rate": 0.589,
+      "reasons": {
+        "semantic_below_thr": 122,
+        "semantic_low_popularity": 1
+      },
+      "match_types": {
+        "whitelist": 17,
+        "exact": 60,
+        "drop": 123,
+        "alias": 5,
+        "semantic": 4
+      },
+      "per_prompt": [
+        {
+          "prompt": "hatsune miku holding a cake, chibi",
+          "n_tokens": 22,
+          "kept": 9,
+          "composition_tags": 7,
+          "drop_rate": 0.591,
+          "reasons": {
+            "semantic_below_thr": 13
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 5,
+            "drop": 13,
+            "alias": 1,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "teal and pink outfit",
+              "reason": "semantic_below_thr",
+              "score": 0.659
+            },
+            {
+              "token": "round cake",
+              "reason": "semantic_below_thr",
+              "score": 0.71
+            },
+            {
+              "token": "white frosting",
+              "reason": "semantic_below_thr",
+              "score": 0.658
+            },
+            {
+              "token": "simple plate",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "relaxed pose",
+              "reason": "semantic_below_thr",
+              "score": 0.747
+            },
+            {
+              "token": "cheerful expression",
+              "reason": "semantic_below_thr",
+              "score": 0.694
+            },
+            {
+              "token": "soft overhead light",
+              "reason": "semantic_below_thr",
+              "score": 0.714
+            },
+            {
+              "token": "gentle shadows",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "moist cake",
+              "reason": "semantic_below_thr",
+              "score": 0.663
+            },
+            {
+              "token": "large dark eyes",
+              "reason": "semantic_below_thr",
+              "score": 0.75
+            },
+            {
+              "token": "playful",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "cute",
+              "reason": "semantic_below_thr",
+              "score": 0.757
+            },
+            {
+              "token": "bright room",
+              "reason": "semantic_below_thr",
+              "score": 0.684
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "hatsune_miku",
+            "holding",
+            "long_hair",
+            "pale_skin",
+            "twintails"
+          ]
+        },
+        {
+          "prompt": "a girl reading in a cafe",
+          "n_tokens": 26,
+          "kept": 12,
+          "composition_tags": 9,
+          "drop_rate": 0.538,
+          "reasons": {
+            "semantic_below_thr": 13,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 7,
+            "alias": 1,
+            "drop": 14,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "dark trousers",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "ceramic cup",
+              "reason": "semantic_below_thr",
+              "score": 0.684
+            },
+            {
+              "token": "sunlit",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "overhead light",
+              "reason": "semantic_low_popularity",
+              "score": 0.809
+            },
+            {
+              "token": "soft shadow",
+              "reason": "semantic_below_thr",
+              "score": 0.673
+            },
+            {
+              "token": "dust motes",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "golden light",
+              "reason": "semantic_below_thr",
+              "score": 0.643
+            },
+            {
+              "token": "large window",
+              "reason": "semantic_below_thr",
+              "score": 0.722
+            },
+            {
+              "token": "relaxed posture",
+              "reason": "semantic_below_thr",
+              "score": 0.718
+            },
+            {
+              "token": "fabric folds",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_below_thr",
+              "score": 0.785
+            },
+            {
+              "token": "focused",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "natural light",
+              "reason": "semantic_below_thr",
+              "score": 0.661
+            },
+            {
+              "token": "hanging plants",
+              "reason": "semantic_below_thr",
+              "score": 0.795
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "brown_hair",
+            "cafe",
+            "coffee",
+            "holding_book",
+            "open_book",
+            "white_shirt",
+            "wooden_table"
+          ]
+        },
+        {
+          "prompt": "girl",
+          "n_tokens": 24,
+          "kept": 10,
+          "composition_tags": 7,
+          "drop_rate": 0.583,
+          "reasons": {
+            "semantic_below_thr": 14
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 6,
+            "drop": 14,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "long dark hair",
+              "reason": "semantic_below_thr",
+              "score": 0.69
+            },
+            {
+              "token": "deep blue",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "glowing orb",
+              "reason": "semantic_below_thr",
+              "score": 0.755
+            },
+            {
+              "token": "cool white rim light",
+              "reason": "semantic_below_thr",
+              "score": 0.645
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intense expression",
+              "reason": "semantic_below_thr",
+              "score": 0.63
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_below_thr",
+              "score": 0.785
+            },
+            {
+              "token": "vector sharp",
+              "reason": "semantic_below_thr",
+              "score": 0.685
+            },
+            {
+              "token": "clean lines",
+              "reason": "semantic_below_thr",
+              "score": 0.667
+            },
+            {
+              "token": "saturated colors",
+              "reason": "semantic_below_thr",
+              "score": 0.656
+            },
+            {
+              "token": "flawless skin",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "digital texture",
+              "reason": "semantic_below_thr",
+              "score": 0.696
+            },
+            {
+              "token": "sharp shadows",
+              "reason": "semantic_below_thr",
+              "score": 0.693
+            },
+            {
+              "token": "tight composition",
+              "reason": "semantic_below_thr",
+              "score": 0.657
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "bodysuit",
+            "confident",
+            "dark_background",
+            "hand_on_own_hip",
+            "high_contrast",
+            "upper_body"
+          ]
+        },
+        {
+          "prompt": "a lone samurai at dusk with a sword",
+          "n_tokens": 32,
+          "kept": 12,
+          "composition_tags": 10,
+          "drop_rate": 0.625,
+          "reasons": {
+            "semantic_below_thr": 20
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 10,
+            "drop": 20
+          },
+          "samples": [
+            {
+              "token": "dark blue armor",
+              "reason": "semantic_below_thr",
+              "score": 0.724
+            },
+            {
+              "token": "gold stripe",
+              "reason": "semantic_below_thr",
+              "score": 0.652
+            },
+            {
+              "token": "low katana",
+              "reason": "semantic_below_thr",
+              "score": 0.604
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "setting sun",
+              "reason": "semantic_below_thr",
+              "score": 0.664
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "long shadows",
+              "reason": "semantic_below_thr",
+              "score": 0.792
+            },
+            {
+              "token": "humid air",
+              "reason": "semantic_below_thr",
+              "score": 0.655
+            },
+            {
+              "token": "indigo",
+              "reason": "semantic_below_thr",
+              "score": 0.669
+            },
+            {
+              "token": "deep background",
+              "reason": "semantic_below_thr",
+              "score": 0.704
+            },
+            {
+              "token": "bold brushstrokes",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "sharp details",
+              "reason": "semantic_below_thr",
+              "score": 0.704
+            },
+            {
+              "token": "soft horizon",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "dust motes",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "golden beams",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "calm gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            },
+            {
+              "token": "uneven ground",
+              "reason": "semantic_below_thr",
+              "score": 0.76
+            },
+            {
+              "token": "small stones",
+              "reason": "semantic_below_thr",
+              "score": 0.636
+            },
+            {
+              "token": "solitary",
+              "reason": "semantic_below_thr",
+              "score": 0.75
+            },
+            {
+              "token": "rough texture",
+              "reason": "semantic_below_thr",
+              "score": 0.691
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "black_hair",
+            "grass",
+            "long_sword",
+            "purple_background",
+            "samurai",
+            "samuraisamurai",
+            "straw_hat",
+            "twilight",
+            "wide_brim"
+          ]
+        },
+        {
+          "prompt": "a dragon perched on a tower at sunset",
+          "n_tokens": 34,
+          "kept": 18,
+          "composition_tags": 16,
+          "drop_rate": 0.471,
+          "reasons": {
+            "semantic_below_thr": 16
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 15,
+            "drop": 16,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "stone tower",
+              "reason": "semantic_below_thr",
+              "score": 0.707
+            },
+            {
+              "token": "narrow eyes",
+              "reason": "semantic_below_thr",
+              "score": 0.705
+            },
+            {
+              "token": "focused gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.693
+            },
+            {
+              "token": "dust motes",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "orange horizon",
+              "reason": "semantic_below_thr",
+              "score": 0.711
+            },
+            {
+              "token": "crenellated",
+              "reason": "semantic_below_thr",
+              "score": 0.622
+            },
+            {
+              "token": "rough texture",
+              "reason": "semantic_below_thr",
+              "score": 0.691
+            },
+            {
+              "token": "chest emblem",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "parapet",
+              "reason": "semantic_below_thr",
+              "score": 0.721
+            },
+            {
+              "token": "ruffled ears",
+              "reason": "semantic_below_thr",
+              "score": 0.698
+            },
+            {
+              "token": "weathered",
+              "reason": "semantic_below_thr",
+              "score": 0.662
+            },
+            {
+              "token": "warm light",
+              "reason": "semantic_below_thr",
+              "score": 0.716
+            },
+            {
+              "token": "hazy",
+              "reason": "semantic_below_thr",
+              "score": 0.675
+            },
+            {
+              "token": "still",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "scaly",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            },
+            {
+              "token": "gray stone",
+              "reason": "semantic_below_thr",
+              "score": 0.695
+            }
+          ],
+          "comp_tag_sample": [
+            "1other",
+            "claws",
+            "dragon",
+            "folded_wings",
+            "golden_hour",
+            "green_skin",
+            "heat_haze",
+            "long_tail",
+            "purple_sky",
+            "shadow",
+            "silhouette",
+            "snout",
+            "spiked_tail",
+            "spire",
+            "sun_halo"
+          ]
+        },
+        {
+          "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+          "n_tokens": 21,
+          "kept": 6,
+          "composition_tags": 4,
+          "drop_rate": 0.714,
+          "reasons": {
+            "semantic_below_thr": 15
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 2,
+            "drop": 15,
+            "alias": 1,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "long silver hair",
+              "reason": "semantic_below_thr",
+              "score": 0.74
+            },
+            {
+              "token": "heavy gold necklace",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "large gemstone pendant",
+              "reason": "semantic_below_thr",
+              "score": 0.643
+            },
+            {
+              "token": "ornate jewelry",
+              "reason": "semantic_below_thr",
+              "score": 0.696
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "confident pose",
+              "reason": "semantic_below_thr",
+              "score": 0.705
+            },
+            {
+              "token": "one hand near collarbone",
+              "reason": "semantic_below_thr",
+              "score": 0.675
+            },
+            {
+              "token": "intricate metalwork",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "smooth fabric",
+              "reason": "semantic_below_thr",
+              "score": 0.638
+            },
+            {
+              "token": "shimmering texture",
+              "reason": "semantic_below_thr",
+              "score": 0.709
+            },
+            {
+              "token": "soft warm light",
+              "reason": "semantic_below_thr",
+              "score": 0.697
+            },
+            {
+              "token": "upper left lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "gentle shadows",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "cool silver hair",
+              "reason": "semantic_below_thr",
+              "score": 0.701
+            },
+            {
+              "token": "warm gold accessories",
+              "reason": "semantic_below_thr",
+              "score": 0.651
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "pale_skin",
+            "yellow_eyes"
+          ]
+        },
+        {
+          "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+          "n_tokens": 20,
+          "kept": 11,
+          "composition_tags": 10,
+          "drop_rate": 0.45,
+          "reasons": {
+            "semantic_below_thr": 9
+          },
+          "match_types": {
+            "whitelist": 1,
+            "exact": 9,
+            "semantic": 1,
+            "drop": 9
+          },
+          "samples": [
+            {
+              "token": "sheen",
+              "reason": "semantic_below_thr",
+              "score": 0.708
+            },
+            {
+              "token": "relaxed pose",
+              "reason": "semantic_below_thr",
+              "score": 0.747
+            },
+            {
+              "token": "hand",
+              "reason": "semantic_below_thr",
+              "score": 0.723
+            },
+            {
+              "token": "spring",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "natural daylight",
+              "reason": "semantic_below_thr",
+              "score": 0.619
+            },
+            {
+              "token": "dappled shadows",
+              "reason": "semantic_below_thr",
+              "score": 0.689
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_below_thr",
+              "score": 0.785
+            },
+            {
+              "token": "translucent petals",
+              "reason": "semantic_below_thr",
+              "score": 0.678
+            },
+            {
+              "token": "structured collar",
+              "reason": "semantic_below_thr",
+              "score": 0.69
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "cherry_blossoms",
+            "garden",
+            "long_hair",
+            "looking_down",
+            "on_shoulder",
+            "petals",
+            "pink_kimono",
+            "silk",
+            "soft_focus"
+          ]
+        },
+        {
+          "prompt": "anime girl with glasses, sweater, library",
+          "n_tokens": 30,
+          "kept": 8,
+          "composition_tags": 6,
+          "drop_rate": 0.733,
+          "reasons": {
+            "semantic_below_thr": 22
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 6,
+            "drop": 22
+          },
+          "samples": [
+            {
+              "token": "thick knit sweater",
+              "reason": "semantic_below_thr",
+              "score": 0.695
+            },
+            {
+              "token": "navy blue sweater",
+              "reason": "semantic_below_thr",
+              "score": 0.735
+            },
+            {
+              "token": "loose hair",
+              "reason": "semantic_below_thr",
+              "score": 0.714
+            },
+            {
+              "token": "leather bound book",
+              "reason": "semantic_below_thr",
+              "score": 0.639
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "soft shadows",
+              "reason": "semantic_below_thr",
+              "score": 0.678
+            },
+            {
+              "token": "dust motes",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "tall shelves",
+              "reason": "semantic_below_thr",
+              "score": 0.65
+            },
+            {
+              "token": "leather spines",
+              "reason": "semantic_below_thr",
+              "score": 0.631
+            },
+            {
+              "token": "red books",
+              "reason": "semantic_below_thr",
+              "score": 0.627
+            },
+            {
+              "token": "focused expression",
+              "reason": "semantic_below_thr",
+              "score": 0.656
+            },
+            {
+              "token": "tilted head",
+              "reason": "semantic_below_thr",
+              "score": 0.748
+            },
+            {
+              "token": "ink lines",
+              "reason": "semantic_below_thr",
+              "score": 0.714
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "wire frames",
+              "reason": "semantic_below_thr",
+              "score": 0.671
+            },
+            {
+              "token": "page of text",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "quiet atmosphere",
+              "reason": "semantic_below_thr",
+              "score": 0.674
+            },
+            {
+              "token": "textured fabric",
+              "reason": "semantic_below_thr",
+              "score": 0.672
+            },
+            {
+              "token": "natural light",
+              "reason": "semantic_below_thr",
+              "score": 0.661
+            },
+            {
+              "token": "high window",
+              "reason": "semantic_below_thr",
+              "score": 0.709
+            },
+            {
+              "token": "Akami Sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            },
+            {
+              "token": "@akami sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "glasses",
+            "holding_book",
+            "library",
+            "open_book",
+            "wooden_floor"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "split_only",
+    "stats": {
+      "config": {
+        "semantic_threshold": 0.8,
+        "semantic_min_post_count": 100,
+        "entity_min_post_count": 1000,
+        "use_compound_split": true
+      },
+      "total_tokens": 209,
+      "total_kept": 168,
+      "total_composition_tags": 151,
+      "avg_composition_tags_per_prompt": 18.9,
+      "overall_drop_rate": 0.196,
+      "reasons": {
+        "semantic_below_thr": 54
+      },
+      "match_types": {
+        "whitelist": 17,
+        "exact": 60,
+        "drop": 54,
+        "alias": 5,
+        "compound_split": 91,
+        "semantic": 4
+      },
+      "per_prompt": [
+        {
+          "prompt": "hatsune miku holding a cake, chibi",
+          "n_tokens": 22,
+          "kept": 17,
+          "composition_tags": 15,
+          "drop_rate": 0.227,
+          "reasons": {
+            "semantic_below_thr": 5
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 5,
+            "drop": 5,
+            "alias": 1,
+            "compound_split": 9,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "teal and pink outfit",
+              "reason": "semantic_below_thr",
+              "score": 0.659
+            },
+            {
+              "token": "cheerful expression",
+              "reason": "semantic_below_thr",
+              "score": 0.694
+            },
+            {
+              "token": "playful",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "cute",
+              "reason": "semantic_below_thr",
+              "score": 0.757
+            },
+            {
+              "token": "bright room",
+              "reason": "semantic_below_thr",
+              "score": 0.684
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "cake",
+            "dark",
+            "hatsune_miku",
+            "holding",
+            "icing",
+            "light",
+            "long_hair",
+            "pale_skin",
+            "plate",
+            "pose",
+            "relaxing",
+            "shadow",
+            "twintails"
+          ]
+        },
+        {
+          "prompt": "a girl reading in a cafe",
+          "n_tokens": 26,
+          "kept": 23,
+          "composition_tags": 20,
+          "drop_rate": 0.115,
+          "reasons": {
+            "semantic_below_thr": 3
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 7,
+            "alias": 1,
+            "compound_split": 13,
+            "drop": 3,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "sunlit",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_below_thr",
+              "score": 0.785
+            },
+            {
+              "token": "focused",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "brown_hair",
+            "cafe",
+            "coffee",
+            "cup",
+            "dark",
+            "dust",
+            "fabric",
+            "hanging",
+            "holding_book",
+            "light",
+            "open_book",
+            "pants",
+            "plant"
+          ]
+        },
+        {
+          "prompt": "girl",
+          "n_tokens": 24,
+          "kept": 19,
+          "composition_tags": 16,
+          "drop_rate": 0.25,
+          "reasons": {
+            "semantic_below_thr": 6
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 6,
+            "compound_split": 9,
+            "drop": 6,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "deep blue",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intense expression",
+              "reason": "semantic_below_thr",
+              "score": 0.63
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_below_thr",
+              "score": 0.785
+            },
+            {
+              "token": "vector sharp",
+              "reason": "semantic_below_thr",
+              "score": 0.685
+            },
+            {
+              "token": "flawless skin",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "bodysuit",
+            "clean",
+            "confident",
+            "dark",
+            "dark_background",
+            "glowing",
+            "hand_on_own_hip",
+            "high_contrast",
+            "light",
+            "orb",
+            "saturated",
+            "shadow",
+            "texture",
+            "tight_clothes"
+          ]
+        },
+        {
+          "prompt": "a lone samurai at dusk with a sword",
+          "n_tokens": 32,
+          "kept": 23,
+          "composition_tags": 21,
+          "drop_rate": 0.375,
+          "reasons": {
+            "semantic_below_thr": 12
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 10,
+            "compound_split": 11,
+            "drop": 12
+          },
+          "samples": [
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "humid air",
+              "reason": "semantic_below_thr",
+              "score": 0.655
+            },
+            {
+              "token": "indigo",
+              "reason": "semantic_below_thr",
+              "score": 0.669
+            },
+            {
+              "token": "deep background",
+              "reason": "semantic_below_thr",
+              "score": 0.704
+            },
+            {
+              "token": "bold brushstrokes",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "sharp details",
+              "reason": "semantic_below_thr",
+              "score": 0.704
+            },
+            {
+              "token": "golden beams",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "calm gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            },
+            {
+              "token": "uneven ground",
+              "reason": "semantic_below_thr",
+              "score": 0.76
+            },
+            {
+              "token": "small stones",
+              "reason": "semantic_below_thr",
+              "score": 0.636
+            },
+            {
+              "token": "solitary",
+              "reason": "semantic_below_thr",
+              "score": 0.75
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "armor",
+            "black_hair",
+            "blue_armor",
+            "dark",
+            "dust",
+            "gold",
+            "grass",
+            "horizon",
+            "katana",
+            "long_sword",
+            "purple_background",
+            "samurai",
+            "samuraisamurai",
+            "shadow"
+          ]
+        },
+        {
+          "prompt": "a dragon perched on a tower at sunset",
+          "n_tokens": 34,
+          "kept": 26,
+          "composition_tags": 24,
+          "drop_rate": 0.265,
+          "reasons": {
+            "semantic_below_thr": 9
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 15,
+            "compound_split": 9,
+            "drop": 9,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "narrow eyes",
+              "reason": "semantic_below_thr",
+              "score": 0.705
+            },
+            {
+              "token": "focused gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.693
+            },
+            {
+              "token": "crenellated",
+              "reason": "semantic_below_thr",
+              "score": 0.622
+            },
+            {
+              "token": "parapet",
+              "reason": "semantic_below_thr",
+              "score": 0.721
+            },
+            {
+              "token": "ruffled ears",
+              "reason": "semantic_below_thr",
+              "score": 0.698
+            },
+            {
+              "token": "weathered",
+              "reason": "semantic_below_thr",
+              "score": 0.662
+            },
+            {
+              "token": "hazy",
+              "reason": "semantic_below_thr",
+              "score": 0.675
+            },
+            {
+              "token": "still",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "scaly",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            }
+          ],
+          "comp_tag_sample": [
+            "1other",
+            "claws",
+            "dragon",
+            "dust",
+            "emblem",
+            "folded_wings",
+            "golden_hour",
+            "green_skin",
+            "heat_haze",
+            "horizon",
+            "light",
+            "long_tail",
+            "purple_sky",
+            "shadow",
+            "silhouette"
+          ]
+        },
+        {
+          "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+          "n_tokens": 21,
+          "kept": 21,
+          "composition_tags": 19,
+          "drop_rate": 0.238,
+          "reasons": {
+            "semantic_below_thr": 5
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 2,
+            "drop": 5,
+            "alias": 1,
+            "compound_split": 16,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "long silver hair",
+              "reason": "semantic_below_thr",
+              "score": 0.74
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intricate metalwork",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "upper left lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "cool silver hair",
+              "reason": "semantic_below_thr",
+              "score": 0.701
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "accessories",
+            "blurry_foreground",
+            "collarbone",
+            "confident",
+            "fabric",
+            "gem",
+            "gold",
+            "gold_necklace",
+            "heavy",
+            "jewelry",
+            "light",
+            "ornate",
+            "pale_skin",
+            "pendant"
+          ]
+        },
+        {
+          "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+          "n_tokens": 20,
+          "kept": 16,
+          "composition_tags": 15,
+          "drop_rate": 0.25,
+          "reasons": {
+            "semantic_below_thr": 5
+          },
+          "match_types": {
+            "whitelist": 1,
+            "exact": 9,
+            "semantic": 1,
+            "drop": 5,
+            "compound_split": 6
+          },
+          "samples": [
+            {
+              "token": "sheen",
+              "reason": "semantic_below_thr",
+              "score": 0.708
+            },
+            {
+              "token": "hand",
+              "reason": "semantic_below_thr",
+              "score": 0.723
+            },
+            {
+              "token": "spring",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "natural daylight",
+              "reason": "semantic_below_thr",
+              "score": 0.619
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_below_thr",
+              "score": 0.785
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "cherry_blossoms",
+            "collar",
+            "garden",
+            "long_hair",
+            "looking_down",
+            "on_shoulder",
+            "petals",
+            "pink_kimono",
+            "pose",
+            "relaxing",
+            "shadow",
+            "silk",
+            "soft_focus",
+            "translucent"
+          ]
+        },
+        {
+          "prompt": "anime girl with glasses, sweater, library",
+          "n_tokens": 30,
+          "kept": 23,
+          "composition_tags": 21,
+          "drop_rate": 0.3,
+          "reasons": {
+            "semantic_below_thr": 9
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 6,
+            "compound_split": 18,
+            "drop": 9
+          },
+          "samples": [
+            {
+              "token": "loose hair",
+              "reason": "semantic_below_thr",
+              "score": 0.714
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "focused expression",
+              "reason": "semantic_below_thr",
+              "score": 0.656
+            },
+            {
+              "token": "tilted head",
+              "reason": "semantic_below_thr",
+              "score": 0.748
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "page of text",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "quiet atmosphere",
+              "reason": "semantic_below_thr",
+              "score": 0.674
+            },
+            {
+              "token": "Akami Sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            },
+            {
+              "token": "@akami sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blue_sweater",
+            "book",
+            "bound",
+            "dust",
+            "fabric",
+            "glasses",
+            "holding_book",
+            "ink",
+            "knit_sweater",
+            "leather",
+            "library",
+            "light",
+            "open_book",
+            "shadow"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "split+thr_0.75",
+    "stats": {
+      "config": {
+        "semantic_threshold": 0.75,
+        "semantic_min_post_count": 100,
+        "entity_min_post_count": 1000,
+        "use_compound_split": true
+      },
+      "total_tokens": 209,
+      "total_kept": 168,
+      "total_composition_tags": 151,
+      "avg_composition_tags_per_prompt": 18.9,
+      "overall_drop_rate": 0.196,
+      "reasons": {
+        "semantic_below_thr": 49,
+        "semantic_low_popularity": 4
+      },
+      "match_types": {
+        "whitelist": 17,
+        "exact": 60,
+        "drop": 53,
+        "alias": 5,
+        "compound_split": 89,
+        "semantic": 6
+      },
+      "per_prompt": [
+        {
+          "prompt": "hatsune miku holding a cake, chibi",
+          "n_tokens": 22,
+          "kept": 17,
+          "composition_tags": 15,
+          "drop_rate": 0.227,
+          "reasons": {
+            "semantic_below_thr": 4,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 5,
+            "drop": 5,
+            "alias": 1,
+            "compound_split": 9,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "teal and pink outfit",
+              "reason": "semantic_below_thr",
+              "score": 0.659
+            },
+            {
+              "token": "cheerful expression",
+              "reason": "semantic_below_thr",
+              "score": 0.694
+            },
+            {
+              "token": "playful",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "cute",
+              "reason": "semantic_low_popularity",
+              "score": 0.757
+            },
+            {
+              "token": "bright room",
+              "reason": "semantic_below_thr",
+              "score": 0.684
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "cake",
+            "dark",
+            "hatsune_miku",
+            "holding",
+            "icing",
+            "light",
+            "long_hair",
+            "pale_skin",
+            "plate",
+            "pose",
+            "relaxing",
+            "shadow",
+            "twintails"
+          ]
+        },
+        {
+          "prompt": "a girl reading in a cafe",
+          "n_tokens": 26,
+          "kept": 22,
+          "composition_tags": 19,
+          "drop_rate": 0.115,
+          "reasons": {
+            "semantic_below_thr": 2,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 7,
+            "alias": 1,
+            "compound_split": 11,
+            "drop": 3,
+            "semantic": 2
+          },
+          "samples": [
+            {
+              "token": "sunlit",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_low_popularity",
+              "score": 0.785
+            },
+            {
+              "token": "focused",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "brown_hair",
+            "cafe",
+            "coffee",
+            "cup",
+            "dark",
+            "dust",
+            "fabric",
+            "hanging_plant",
+            "holding_book",
+            "light",
+            "open_book",
+            "pants",
+            "relaxing"
+          ]
+        },
+        {
+          "prompt": "girl",
+          "n_tokens": 24,
+          "kept": 19,
+          "composition_tags": 16,
+          "drop_rate": 0.25,
+          "reasons": {
+            "semantic_below_thr": 5,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 6,
+            "compound_split": 9,
+            "drop": 6,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "deep blue",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intense expression",
+              "reason": "semantic_below_thr",
+              "score": 0.63
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_low_popularity",
+              "score": 0.785
+            },
+            {
+              "token": "vector sharp",
+              "reason": "semantic_below_thr",
+              "score": 0.685
+            },
+            {
+              "token": "flawless skin",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "bodysuit",
+            "clean",
+            "confident",
+            "dark",
+            "dark_background",
+            "glowing",
+            "hand_on_own_hip",
+            "high_contrast",
+            "light",
+            "orb",
+            "saturated",
+            "shadow",
+            "texture",
+            "tight_clothes"
+          ]
+        },
+        {
+          "prompt": "a lone samurai at dusk with a sword",
+          "n_tokens": 32,
+          "kept": 24,
+          "composition_tags": 22,
+          "drop_rate": 0.344,
+          "reasons": {
+            "semantic_below_thr": 11
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 10,
+            "compound_split": 11,
+            "drop": 11,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "humid air",
+              "reason": "semantic_below_thr",
+              "score": 0.655
+            },
+            {
+              "token": "indigo",
+              "reason": "semantic_below_thr",
+              "score": 0.669
+            },
+            {
+              "token": "deep background",
+              "reason": "semantic_below_thr",
+              "score": 0.704
+            },
+            {
+              "token": "bold brushstrokes",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "sharp details",
+              "reason": "semantic_below_thr",
+              "score": 0.704
+            },
+            {
+              "token": "golden beams",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "calm gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            },
+            {
+              "token": "small stones",
+              "reason": "semantic_below_thr",
+              "score": 0.636
+            },
+            {
+              "token": "solitary",
+              "reason": "semantic_below_thr",
+              "score": 0.75
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "armor",
+            "black_hair",
+            "blue_armor",
+            "dark",
+            "dust",
+            "gold",
+            "grass",
+            "horizon",
+            "katana",
+            "long_sword",
+            "purple_background",
+            "samurai",
+            "samuraisamurai",
+            "shadow"
+          ]
+        },
+        {
+          "prompt": "a dragon perched on a tower at sunset",
+          "n_tokens": 34,
+          "kept": 26,
+          "composition_tags": 24,
+          "drop_rate": 0.265,
+          "reasons": {
+            "semantic_below_thr": 9
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 15,
+            "compound_split": 9,
+            "drop": 9,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "narrow eyes",
+              "reason": "semantic_below_thr",
+              "score": 0.705
+            },
+            {
+              "token": "focused gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.693
+            },
+            {
+              "token": "crenellated",
+              "reason": "semantic_below_thr",
+              "score": 0.622
+            },
+            {
+              "token": "parapet",
+              "reason": "semantic_below_thr",
+              "score": 0.721
+            },
+            {
+              "token": "ruffled ears",
+              "reason": "semantic_below_thr",
+              "score": 0.698
+            },
+            {
+              "token": "weathered",
+              "reason": "semantic_below_thr",
+              "score": 0.662
+            },
+            {
+              "token": "hazy",
+              "reason": "semantic_below_thr",
+              "score": 0.675
+            },
+            {
+              "token": "still",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "scaly",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            }
+          ],
+          "comp_tag_sample": [
+            "1other",
+            "claws",
+            "dragon",
+            "dust",
+            "emblem",
+            "folded_wings",
+            "golden_hour",
+            "green_skin",
+            "heat_haze",
+            "horizon",
+            "light",
+            "long_tail",
+            "purple_sky",
+            "shadow",
+            "silhouette"
+          ]
+        },
+        {
+          "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+          "n_tokens": 21,
+          "kept": 21,
+          "composition_tags": 19,
+          "drop_rate": 0.238,
+          "reasons": {
+            "semantic_below_thr": 5
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 2,
+            "drop": 5,
+            "alias": 1,
+            "compound_split": 16,
+            "semantic": 1
+          },
+          "samples": [
+            {
+              "token": "long silver hair",
+              "reason": "semantic_below_thr",
+              "score": 0.74
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intricate metalwork",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "upper left lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "cool silver hair",
+              "reason": "semantic_below_thr",
+              "score": 0.701
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "accessories",
+            "blurry_foreground",
+            "collarbone",
+            "confident",
+            "fabric",
+            "gem",
+            "gold",
+            "gold_necklace",
+            "heavy",
+            "jewelry",
+            "light",
+            "ornate",
+            "pale_skin",
+            "pendant"
+          ]
+        },
+        {
+          "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+          "n_tokens": 20,
+          "kept": 16,
+          "composition_tags": 15,
+          "drop_rate": 0.25,
+          "reasons": {
+            "semantic_below_thr": 4,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 1,
+            "exact": 9,
+            "semantic": 1,
+            "drop": 5,
+            "compound_split": 6
+          },
+          "samples": [
+            {
+              "token": "sheen",
+              "reason": "semantic_below_thr",
+              "score": 0.708
+            },
+            {
+              "token": "hand",
+              "reason": "semantic_below_thr",
+              "score": 0.723
+            },
+            {
+              "token": "spring",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "natural daylight",
+              "reason": "semantic_below_thr",
+              "score": 0.619
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_low_popularity",
+              "score": 0.785
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "cherry_blossoms",
+            "collar",
+            "garden",
+            "long_hair",
+            "looking_down",
+            "on_shoulder",
+            "petals",
+            "pink_kimono",
+            "pose",
+            "relaxing",
+            "shadow",
+            "silk",
+            "soft_focus",
+            "translucent"
+          ]
+        },
+        {
+          "prompt": "anime girl with glasses, sweater, library",
+          "n_tokens": 30,
+          "kept": 23,
+          "composition_tags": 21,
+          "drop_rate": 0.3,
+          "reasons": {
+            "semantic_below_thr": 9
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 6,
+            "compound_split": 18,
+            "drop": 9
+          },
+          "samples": [
+            {
+              "token": "loose hair",
+              "reason": "semantic_below_thr",
+              "score": 0.714
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.712
+            },
+            {
+              "token": "focused expression",
+              "reason": "semantic_below_thr",
+              "score": 0.656
+            },
+            {
+              "token": "tilted head",
+              "reason": "semantic_below_thr",
+              "score": 0.748
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "page of text",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "quiet atmosphere",
+              "reason": "semantic_below_thr",
+              "score": 0.674
+            },
+            {
+              "token": "Akami Sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            },
+            {
+              "token": "@akami sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blue_sweater",
+            "book",
+            "bound",
+            "dust",
+            "fabric",
+            "glasses",
+            "holding_book",
+            "ink",
+            "knit_sweater",
+            "leather",
+            "library",
+            "light",
+            "open_book",
+            "shadow"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "split+thr_0.70",
+    "stats": {
+      "config": {
+        "semantic_threshold": 0.7,
+        "semantic_min_post_count": 100,
+        "entity_min_post_count": 1000,
+        "use_compound_split": true
+      },
+      "total_tokens": 209,
+      "total_kept": 172,
+      "total_composition_tags": 155,
+      "avg_composition_tags_per_prompt": 19.4,
+      "overall_drop_rate": 0.177,
+      "reasons": {
+        "semantic_below_thr": 35,
+        "semantic_low_popularity": 11
+      },
+      "match_types": {
+        "whitelist": 17,
+        "exact": 60,
+        "drop": 46,
+        "alias": 5,
+        "semantic": 21,
+        "compound_split": 77
+      },
+      "per_prompt": [
+        {
+          "prompt": "hatsune miku holding a cake, chibi",
+          "n_tokens": 22,
+          "kept": 18,
+          "composition_tags": 16,
+          "drop_rate": 0.227,
+          "reasons": {
+            "semantic_below_thr": 4,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 5,
+            "drop": 5,
+            "alias": 1,
+            "semantic": 4,
+            "compound_split": 6
+          },
+          "samples": [
+            {
+              "token": "teal and pink outfit",
+              "reason": "semantic_below_thr",
+              "score": 0.659
+            },
+            {
+              "token": "cheerful expression",
+              "reason": "semantic_below_thr",
+              "score": 0.694
+            },
+            {
+              "token": "playful",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "cute",
+              "reason": "semantic_low_popularity",
+              "score": 0.757
+            },
+            {
+              "token": "bright room",
+              "reason": "semantic_below_thr",
+              "score": 0.684
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "cake",
+            "empty_plate",
+            "hatsune_miku",
+            "heart_shaped_cake",
+            "holding",
+            "icing",
+            "light",
+            "long_hair",
+            "pale_skin",
+            "pose",
+            "relaxing",
+            "shadow",
+            "twintails"
+          ]
+        },
+        {
+          "prompt": "a girl reading in a cafe",
+          "n_tokens": 26,
+          "kept": 22,
+          "composition_tags": 19,
+          "drop_rate": 0.115,
+          "reasons": {
+            "semantic_below_thr": 2,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 7,
+            "alias": 1,
+            "compound_split": 10,
+            "drop": 3,
+            "semantic": 3
+          },
+          "samples": [
+            {
+              "token": "sunlit",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_low_popularity",
+              "score": 0.785
+            },
+            {
+              "token": "focused",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "brown_hair",
+            "cafe",
+            "coffee",
+            "cup",
+            "dark",
+            "dust",
+            "fabric",
+            "hanging_plant",
+            "holding_book",
+            "light",
+            "looking_through_window",
+            "open_book",
+            "pants"
+          ]
+        },
+        {
+          "prompt": "girl",
+          "n_tokens": 24,
+          "kept": 19,
+          "composition_tags": 16,
+          "drop_rate": 0.25,
+          "reasons": {
+            "semantic_below_thr": 5,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 6,
+            "compound_split": 9,
+            "drop": 6,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "deep blue",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intense expression",
+              "reason": "semantic_below_thr",
+              "score": 0.63
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_low_popularity",
+              "score": 0.785
+            },
+            {
+              "token": "vector sharp",
+              "reason": "semantic_below_thr",
+              "score": 0.685
+            },
+            {
+              "token": "flawless skin",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "bodysuit",
+            "clean",
+            "confident",
+            "dark",
+            "dark_background",
+            "glowing",
+            "hand_on_own_hip",
+            "high_contrast",
+            "light",
+            "orb",
+            "saturated",
+            "shadow",
+            "texture",
+            "tight_clothes"
+          ]
+        },
+        {
+          "prompt": "a lone samurai at dusk with a sword",
+          "n_tokens": 32,
+          "kept": 22,
+          "composition_tags": 20,
+          "drop_rate": 0.344,
+          "reasons": {
+            "semantic_below_thr": 7,
+            "semantic_low_popularity": 4
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 10,
+            "semantic": 2,
+            "compound_split": 8,
+            "drop": 11
+          },
+          "samples": [
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_low_popularity",
+              "score": 0.712
+            },
+            {
+              "token": "humid air",
+              "reason": "semantic_below_thr",
+              "score": 0.655
+            },
+            {
+              "token": "indigo",
+              "reason": "semantic_below_thr",
+              "score": 0.669
+            },
+            {
+              "token": "deep background",
+              "reason": "semantic_low_popularity",
+              "score": 0.704
+            },
+            {
+              "token": "bold brushstrokes",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "sharp details",
+              "reason": "semantic_low_popularity",
+              "score": 0.704
+            },
+            {
+              "token": "golden beams",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "calm gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            },
+            {
+              "token": "small stones",
+              "reason": "semantic_below_thr",
+              "score": 0.636
+            },
+            {
+              "token": "solitary",
+              "reason": "semantic_low_popularity",
+              "score": 0.75
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "black_hair",
+            "blue_armor",
+            "dust",
+            "gold",
+            "grass",
+            "horizon",
+            "katana",
+            "long_sword",
+            "purple_background",
+            "samurai",
+            "samuraisamurai",
+            "shadow",
+            "sketch",
+            "straw_hat"
+          ]
+        },
+        {
+          "prompt": "a dragon perched on a tower at sunset",
+          "n_tokens": 34,
+          "kept": 27,
+          "composition_tags": 25,
+          "drop_rate": 0.235,
+          "reasons": {
+            "semantic_below_thr": 7,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 15,
+            "compound_split": 8,
+            "semantic": 2,
+            "drop": 8,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "focused gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.693
+            },
+            {
+              "token": "crenellated",
+              "reason": "semantic_below_thr",
+              "score": 0.622
+            },
+            {
+              "token": "parapet",
+              "reason": "semantic_low_popularity",
+              "score": 0.721
+            },
+            {
+              "token": "ruffled ears",
+              "reason": "semantic_below_thr",
+              "score": 0.698
+            },
+            {
+              "token": "weathered",
+              "reason": "semantic_below_thr",
+              "score": 0.662
+            },
+            {
+              "token": "hazy",
+              "reason": "semantic_below_thr",
+              "score": 0.675
+            },
+            {
+              "token": "still",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "scaly",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            }
+          ],
+          "comp_tag_sample": [
+            "1other",
+            "claws",
+            "dragon",
+            "dust",
+            "emblem",
+            "folded_wings",
+            "golden_hour",
+            "green_skin",
+            "heat_haze",
+            "horizon",
+            "light",
+            "long_tail",
+            "purple_sky",
+            "shadow",
+            "short_eyebrows"
+          ]
+        },
+        {
+          "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+          "n_tokens": 21,
+          "kept": 21,
+          "composition_tags": 19,
+          "drop_rate": 0.143,
+          "reasons": {
+            "semantic_below_thr": 3
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 2,
+            "semantic": 4,
+            "alias": 1,
+            "compound_split": 14,
+            "drop": 3
+          },
+          "samples": [
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intricate metalwork",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "upper left lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "accessories",
+            "blurry_foreground",
+            "collarbone",
+            "confident",
+            "fabric",
+            "gem",
+            "gold",
+            "gold_necklace",
+            "heavy",
+            "jewelry",
+            "light",
+            "ornate",
+            "pale_skin",
+            "pendant"
+          ]
+        },
+        {
+          "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+          "n_tokens": 20,
+          "kept": 18,
+          "composition_tags": 17,
+          "drop_rate": 0.15,
+          "reasons": {
+            "semantic_low_popularity": 2,
+            "semantic_below_thr": 1
+          },
+          "match_types": {
+            "whitelist": 1,
+            "exact": 9,
+            "semantic": 3,
+            "drop": 3,
+            "compound_split": 6
+          },
+          "samples": [
+            {
+              "token": "sheen",
+              "reason": "semantic_low_popularity",
+              "score": 0.708
+            },
+            {
+              "token": "natural daylight",
+              "reason": "semantic_below_thr",
+              "score": 0.619
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_low_popularity",
+              "score": 0.785
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "cherry_blossoms",
+            "collar",
+            "garden",
+            "long_hair",
+            "looking_down",
+            "on_shoulder",
+            "petals",
+            "pink_kimono",
+            "pose",
+            "relaxing",
+            "shadow",
+            "silk",
+            "soft_focus",
+            "spring_(object)"
+          ]
+        },
+        {
+          "prompt": "anime girl with glasses, sweater, library",
+          "n_tokens": 30,
+          "kept": 25,
+          "composition_tags": 23,
+          "drop_rate": 0.233,
+          "reasons": {
+            "semantic_low_popularity": 1,
+            "semantic_below_thr": 6
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 6,
+            "compound_split": 16,
+            "semantic": 3,
+            "drop": 7
+          },
+          "samples": [
+            {
+              "token": "warm lighting",
+              "reason": "semantic_low_popularity",
+              "score": 0.712
+            },
+            {
+              "token": "focused expression",
+              "reason": "semantic_below_thr",
+              "score": 0.656
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "page of text",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "quiet atmosphere",
+              "reason": "semantic_below_thr",
+              "score": 0.674
+            },
+            {
+              "token": "Akami Sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            },
+            {
+              "token": "@akami sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blue_sweater_vest",
+            "book",
+            "bound",
+            "dust",
+            "fabric",
+            "glasses",
+            "holding_book",
+            "ink",
+            "knit_sweater",
+            "leather",
+            "library",
+            "light",
+            "open_book",
+            "shadow"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "split+thr_0.70+pop_50",
+    "stats": {
+      "config": {
+        "semantic_threshold": 0.7,
+        "semantic_min_post_count": 50,
+        "entity_min_post_count": 500,
+        "use_compound_split": true
+      },
+      "total_tokens": 209,
+      "total_kept": 174,
+      "total_composition_tags": 157,
+      "avg_composition_tags_per_prompt": 19.6,
+      "overall_drop_rate": 0.167,
+      "reasons": {
+        "semantic_below_thr": 35,
+        "semantic_low_popularity": 7,
+        "semantic_entity_gate": 3
+      },
+      "match_types": {
+        "whitelist": 17,
+        "exact": 60,
+        "drop": 45,
+        "alias": 5,
+        "semantic": 27,
+        "compound_split": 72
+      },
+      "per_prompt": [
+        {
+          "prompt": "hatsune miku holding a cake, chibi",
+          "n_tokens": 22,
+          "kept": 18,
+          "composition_tags": 16,
+          "drop_rate": 0.227,
+          "reasons": {
+            "semantic_below_thr": 4,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 5,
+            "drop": 5,
+            "alias": 1,
+            "semantic": 5,
+            "compound_split": 5
+          },
+          "samples": [
+            {
+              "token": "teal and pink outfit",
+              "reason": "semantic_below_thr",
+              "score": 0.659
+            },
+            {
+              "token": "cheerful expression",
+              "reason": "semantic_below_thr",
+              "score": 0.694
+            },
+            {
+              "token": "playful",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "cute",
+              "reason": "semantic_low_popularity",
+              "score": 0.757
+            },
+            {
+              "token": "bright room",
+              "reason": "semantic_below_thr",
+              "score": 0.684
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "cake",
+            "empty_plate",
+            "hatsune_miku",
+            "heart_shaped_cake",
+            "holding",
+            "icing",
+            "long_hair",
+            "overhead_lights",
+            "pale_skin",
+            "pose",
+            "relaxing",
+            "shadow",
+            "twintails"
+          ]
+        },
+        {
+          "prompt": "a girl reading in a cafe",
+          "n_tokens": 26,
+          "kept": 23,
+          "composition_tags": 20,
+          "drop_rate": 0.115,
+          "reasons": {
+            "semantic_below_thr": 2,
+            "semantic_entity_gate": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 7,
+            "alias": 1,
+            "compound_split": 8,
+            "drop": 3,
+            "semantic": 5
+          },
+          "samples": [
+            {
+              "token": "sunlit",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_entity_gate",
+              "score": 0.785
+            },
+            {
+              "token": "focused",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "brown_hair",
+            "cafe",
+            "coffee",
+            "cup",
+            "dark",
+            "dust",
+            "folding_clothes",
+            "hanging_plant",
+            "holding_book",
+            "light",
+            "looking_through_window",
+            "open_book",
+            "overhead_lights"
+          ]
+        },
+        {
+          "prompt": "girl",
+          "n_tokens": 24,
+          "kept": 19,
+          "composition_tags": 16,
+          "drop_rate": 0.25,
+          "reasons": {
+            "semantic_below_thr": 5,
+            "semantic_entity_gate": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 6,
+            "compound_split": 9,
+            "drop": 6,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "deep blue",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intense expression",
+              "reason": "semantic_below_thr",
+              "score": 0.63
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_entity_gate",
+              "score": 0.785
+            },
+            {
+              "token": "vector sharp",
+              "reason": "semantic_below_thr",
+              "score": 0.685
+            },
+            {
+              "token": "flawless skin",
+              "reason": "semantic_below_thr",
+              "score": 0.682
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "bodysuit",
+            "clean",
+            "confident",
+            "dark",
+            "dark_background",
+            "glowing",
+            "hand_on_own_hip",
+            "high_contrast",
+            "light",
+            "orb",
+            "saturated",
+            "shadow",
+            "texture",
+            "tight_clothes"
+          ]
+        },
+        {
+          "prompt": "a lone samurai at dusk with a sword",
+          "n_tokens": 32,
+          "kept": 23,
+          "composition_tags": 21,
+          "drop_rate": 0.312,
+          "reasons": {
+            "semantic_below_thr": 7,
+            "semantic_low_popularity": 3
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 10,
+            "semantic": 4,
+            "compound_split": 7,
+            "drop": 10
+          },
+          "samples": [
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_low_popularity",
+              "score": 0.712
+            },
+            {
+              "token": "humid air",
+              "reason": "semantic_below_thr",
+              "score": 0.655
+            },
+            {
+              "token": "indigo",
+              "reason": "semantic_below_thr",
+              "score": 0.669
+            },
+            {
+              "token": "bold brushstrokes",
+              "reason": "semantic_below_thr",
+              "score": 0.665
+            },
+            {
+              "token": "sharp details",
+              "reason": "semantic_low_popularity",
+              "score": 0.704
+            },
+            {
+              "token": "golden beams",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "calm gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            },
+            {
+              "token": "small stones",
+              "reason": "semantic_below_thr",
+              "score": 0.636
+            },
+            {
+              "token": "solitary",
+              "reason": "semantic_low_popularity",
+              "score": 0.75
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "black_hair",
+            "blue_armor",
+            "dark_foreground",
+            "dust",
+            "gold",
+            "grass",
+            "horizon",
+            "katana",
+            "long_shadow",
+            "long_sword",
+            "purple_background",
+            "samurai",
+            "samuraisamurai",
+            "sketch"
+          ]
+        },
+        {
+          "prompt": "a dragon perched on a tower at sunset",
+          "n_tokens": 34,
+          "kept": 27,
+          "composition_tags": 25,
+          "drop_rate": 0.235,
+          "reasons": {
+            "semantic_below_thr": 7,
+            "semantic_low_popularity": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 15,
+            "compound_split": 8,
+            "semantic": 2,
+            "drop": 8,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "focused gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.693
+            },
+            {
+              "token": "crenellated",
+              "reason": "semantic_below_thr",
+              "score": 0.622
+            },
+            {
+              "token": "parapet",
+              "reason": "semantic_low_popularity",
+              "score": 0.721
+            },
+            {
+              "token": "ruffled ears",
+              "reason": "semantic_below_thr",
+              "score": 0.698
+            },
+            {
+              "token": "weathered",
+              "reason": "semantic_below_thr",
+              "score": 0.662
+            },
+            {
+              "token": "hazy",
+              "reason": "semantic_below_thr",
+              "score": 0.675
+            },
+            {
+              "token": "still",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            },
+            {
+              "token": "scaly",
+              "reason": "semantic_below_thr",
+              "score": 0.686
+            }
+          ],
+          "comp_tag_sample": [
+            "1other",
+            "claws",
+            "dragon",
+            "dust",
+            "emblem",
+            "folded_wings",
+            "golden_hour",
+            "green_skin",
+            "heat_haze",
+            "horizon",
+            "light",
+            "long_tail",
+            "purple_sky",
+            "shadow",
+            "short_eyebrows"
+          ]
+        },
+        {
+          "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+          "n_tokens": 21,
+          "kept": 21,
+          "composition_tags": 19,
+          "drop_rate": 0.143,
+          "reasons": {
+            "semantic_below_thr": 3
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 2,
+            "semantic": 5,
+            "alias": 1,
+            "compound_split": 13,
+            "drop": 3
+          },
+          "samples": [
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intricate metalwork",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "upper left lighting",
+              "reason": "semantic_below_thr",
+              "score": 0.677
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "accessories",
+            "blurry_foreground",
+            "collarbone",
+            "confident",
+            "fabric",
+            "gem",
+            "gold",
+            "gold_necklace",
+            "heavy",
+            "jewelry",
+            "light",
+            "ornate",
+            "pale_skin",
+            "pendant"
+          ]
+        },
+        {
+          "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+          "n_tokens": 20,
+          "kept": 18,
+          "composition_tags": 17,
+          "drop_rate": 0.15,
+          "reasons": {
+            "semantic_low_popularity": 1,
+            "semantic_below_thr": 1,
+            "semantic_entity_gate": 1
+          },
+          "match_types": {
+            "whitelist": 1,
+            "exact": 9,
+            "semantic": 3,
+            "drop": 3,
+            "compound_split": 6
+          },
+          "samples": [
+            {
+              "token": "sheen",
+              "reason": "semantic_low_popularity",
+              "score": 0.708
+            },
+            {
+              "token": "natural daylight",
+              "reason": "semantic_below_thr",
+              "score": 0.619
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_entity_gate",
+              "score": 0.785
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "cherry_blossoms",
+            "collar",
+            "garden",
+            "long_hair",
+            "looking_down",
+            "on_shoulder",
+            "petals",
+            "pink_kimono",
+            "pose",
+            "relaxing",
+            "shadow",
+            "silk",
+            "soft_focus",
+            "spring_(object)"
+          ]
+        },
+        {
+          "prompt": "anime girl with glasses, sweater, library",
+          "n_tokens": 30,
+          "kept": 25,
+          "composition_tags": 23,
+          "drop_rate": 0.233,
+          "reasons": {
+            "semantic_low_popularity": 1,
+            "semantic_below_thr": 6
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 6,
+            "compound_split": 16,
+            "semantic": 3,
+            "drop": 7
+          },
+          "samples": [
+            {
+              "token": "warm lighting",
+              "reason": "semantic_low_popularity",
+              "score": 0.712
+            },
+            {
+              "token": "focused expression",
+              "reason": "semantic_below_thr",
+              "score": 0.656
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "page of text",
+              "reason": "semantic_below_thr",
+              "score": 0.687
+            },
+            {
+              "token": "quiet atmosphere",
+              "reason": "semantic_below_thr",
+              "score": 0.674
+            },
+            {
+              "token": "Akami Sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            },
+            {
+              "token": "@akami sakura",
+              "reason": "semantic_below_thr",
+              "score": 0.7
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blue_sweater_vest",
+            "book",
+            "bound",
+            "dust",
+            "fabric",
+            "glasses",
+            "holding_book",
+            "ink",
+            "knit_sweater",
+            "leather",
+            "library",
+            "light",
+            "open_book",
+            "shadow"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "label": "split+permissive",
+    "stats": {
+      "config": {
+        "semantic_threshold": 0.65,
+        "semantic_min_post_count": 25,
+        "entity_min_post_count": 250,
+        "use_compound_split": true
+      },
+      "total_tokens": 209,
+      "total_kept": 179,
+      "total_composition_tags": 162,
+      "avg_composition_tags_per_prompt": 20.2,
+      "overall_drop_rate": 0.144,
+      "reasons": {
+        "semantic_low_popularity": 15,
+        "semantic_entity_gate": 8,
+        "semantic_below_thr": 11
+      },
+      "match_types": {
+        "whitelist": 17,
+        "exact": 60,
+        "semantic": 59,
+        "alias": 5,
+        "compound_split": 42,
+        "drop": 34
+      },
+      "per_prompt": [
+        {
+          "prompt": "hatsune miku holding a cake, chibi",
+          "n_tokens": 22,
+          "kept": 20,
+          "composition_tags": 18,
+          "drop_rate": 0.136,
+          "reasons": {
+            "semantic_low_popularity": 3
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 5,
+            "semantic": 7,
+            "alias": 1,
+            "compound_split": 5,
+            "drop": 3
+          },
+          "samples": [
+            {
+              "token": "playful",
+              "reason": "semantic_low_popularity",
+              "score": 0.665
+            },
+            {
+              "token": "cute",
+              "reason": "semantic_low_popularity",
+              "score": 0.757
+            },
+            {
+              "token": "bright room",
+              "reason": "semantic_low_popularity",
+              "score": 0.684
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "cake",
+            "empty_plate",
+            "happy_facial",
+            "hatsune_miku",
+            "heart_shaped_cake",
+            "holding",
+            "icing",
+            "long_hair",
+            "overhead_lights",
+            "pale_skin",
+            "pink_tank_top",
+            "pose",
+            "relaxing"
+          ]
+        },
+        {
+          "prompt": "a girl reading in a cafe",
+          "n_tokens": 26,
+          "kept": 23,
+          "composition_tags": 20,
+          "drop_rate": 0.115,
+          "reasons": {
+            "semantic_entity_gate": 2,
+            "semantic_below_thr": 1
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 7,
+            "alias": 1,
+            "compound_split": 7,
+            "semantic": 6,
+            "drop": 3
+          },
+          "samples": [
+            {
+              "token": "sunlit",
+              "reason": "semantic_entity_gate",
+              "score": 0.682
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_entity_gate",
+              "score": 0.785
+            },
+            {
+              "token": "focused",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blurry_foreground",
+            "brown_hair",
+            "cafe",
+            "coffee",
+            "dark",
+            "dust",
+            "folding_clothes",
+            "hanging_plant",
+            "holding_book",
+            "light",
+            "looking_through_window",
+            "open_book",
+            "overhead_lights",
+            "pants"
+          ]
+        },
+        {
+          "prompt": "girl",
+          "n_tokens": 24,
+          "kept": 19,
+          "composition_tags": 16,
+          "drop_rate": 0.208,
+          "reasons": {
+            "semantic_low_popularity": 1,
+            "semantic_below_thr": 2,
+            "semantic_entity_gate": 2
+          },
+          "match_types": {
+            "whitelist": 3,
+            "exact": 6,
+            "semantic": 7,
+            "drop": 5,
+            "alias": 1,
+            "compound_split": 2
+          },
+          "samples": [
+            {
+              "token": "deep blue",
+              "reason": "semantic_low_popularity",
+              "score": 0.682
+            },
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intense expression",
+              "reason": "semantic_below_thr",
+              "score": 0.63
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_entity_gate",
+              "score": 0.785
+            },
+            {
+              "token": "vector sharp",
+              "reason": "semantic_entity_gate",
+              "score": 0.685
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "bodysuit",
+            "clean",
+            "confident",
+            "dark_background",
+            "dark_blue_hair",
+            "glowing_organ",
+            "glowing_skin",
+            "hand_on_own_hip",
+            "high_contrast",
+            "light",
+            "saturated",
+            "shadow",
+            "texture",
+            "tight_top"
+          ]
+        },
+        {
+          "prompt": "a lone samurai at dusk with a sword",
+          "n_tokens": 32,
+          "kept": 26,
+          "composition_tags": 24,
+          "drop_rate": 0.188,
+          "reasons": {
+            "semantic_below_thr": 3,
+            "semantic_low_popularity": 2,
+            "semantic_entity_gate": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 10,
+            "semantic": 10,
+            "compound_split": 4,
+            "drop": 6
+          },
+          "samples": [
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "warm lighting",
+              "reason": "semantic_low_popularity",
+              "score": 0.712
+            },
+            {
+              "token": "golden beams",
+              "reason": "semantic_below_thr",
+              "score": 0.648
+            },
+            {
+              "token": "calm gaze",
+              "reason": "semantic_entity_gate",
+              "score": 0.686
+            },
+            {
+              "token": "small stones",
+              "reason": "semantic_below_thr",
+              "score": 0.636
+            },
+            {
+              "token": "solitary",
+              "reason": "semantic_low_popularity",
+              "score": 0.75
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "black_hair",
+            "blue_armor",
+            "brush_stroke",
+            "dark_foreground",
+            "dust",
+            "grass",
+            "high_detail",
+            "horizon",
+            "humidifier",
+            "indigo_(tylwing)",
+            "katana",
+            "long_shadow",
+            "long_sword",
+            "purple_background"
+          ]
+        },
+        {
+          "prompt": "a dragon perched on a tower at sunset",
+          "n_tokens": 34,
+          "kept": 28,
+          "composition_tags": 26,
+          "drop_rate": 0.176,
+          "reasons": {
+            "semantic_below_thr": 1,
+            "semantic_low_popularity": 5
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 15,
+            "semantic": 8,
+            "compound_split": 2,
+            "drop": 6,
+            "alias": 1
+          },
+          "samples": [
+            {
+              "token": "crenellated",
+              "reason": "semantic_below_thr",
+              "score": 0.622
+            },
+            {
+              "token": "parapet",
+              "reason": "semantic_low_popularity",
+              "score": 0.721
+            },
+            {
+              "token": "weathered",
+              "reason": "semantic_low_popularity",
+              "score": 0.662
+            },
+            {
+              "token": "hazy",
+              "reason": "semantic_low_popularity",
+              "score": 0.675
+            },
+            {
+              "token": "still",
+              "reason": "semantic_low_popularity",
+              "score": 0.677
+            },
+            {
+              "token": "scaly",
+              "reason": "semantic_low_popularity",
+              "score": 0.686
+            }
+          ],
+          "comp_tag_sample": [
+            "1other",
+            "claws",
+            "dragon",
+            "dust",
+            "flapping_ears",
+            "folded_wings",
+            "gazing_eye",
+            "golden_hour",
+            "green_skin",
+            "grey_gemstone",
+            "heat_haze",
+            "horizon",
+            "light",
+            "long_tail",
+            "purple_sky"
+          ]
+        },
+        {
+          "prompt": "portrait of a young woman with long silver hair and golden eyes, ornate jewelry",
+          "n_tokens": 21,
+          "kept": 19,
+          "composition_tags": 17,
+          "drop_rate": 0.143,
+          "reasons": {
+            "semantic_below_thr": 2,
+            "semantic_entity_gate": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 2,
+            "semantic": 8,
+            "alias": 1,
+            "compound_split": 7,
+            "drop": 3
+          },
+          "samples": [
+            {
+              "token": "direct gaze",
+              "reason": "semantic_below_thr",
+              "score": 0.623
+            },
+            {
+              "token": "intricate metalwork",
+              "reason": "semantic_below_thr",
+              "score": 0.646
+            },
+            {
+              "token": "upper left lighting",
+              "reason": "semantic_entity_gate",
+              "score": 0.677
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "accessories",
+            "blurry_foreground",
+            "confident",
+            "fabric",
+            "gem",
+            "glowing_necklace",
+            "gold",
+            "hand_around_wrist",
+            "light",
+            "ornate_weapon",
+            "pale_skin",
+            "pendant",
+            "shadow",
+            "shimmer"
+          ]
+        },
+        {
+          "prompt": "1girl, long hair, cherry blossoms, kimono, spring",
+          "n_tokens": 20,
+          "kept": 18,
+          "composition_tags": 17,
+          "drop_rate": 0.15,
+          "reasons": {
+            "semantic_entity_gate": 2,
+            "semantic_below_thr": 1
+          },
+          "match_types": {
+            "whitelist": 1,
+            "exact": 9,
+            "semantic": 4,
+            "drop": 3,
+            "compound_split": 4
+          },
+          "samples": [
+            {
+              "token": "sheen",
+              "reason": "semantic_entity_gate",
+              "score": 0.708
+            },
+            {
+              "token": "natural daylight",
+              "reason": "semantic_below_thr",
+              "score": 0.619
+            },
+            {
+              "token": "calm expression",
+              "reason": "semantic_entity_gate",
+              "score": 0.785
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "cherry_blossoms",
+            "collar",
+            "garden",
+            "long_hair",
+            "looking_down",
+            "on_shoulder",
+            "petals",
+            "pink_kimono",
+            "pose",
+            "relaxing",
+            "shadow",
+            "silk",
+            "soft_focus",
+            "spring_(object)"
+          ]
+        },
+        {
+          "prompt": "anime girl with glasses, sweater, library",
+          "n_tokens": 30,
+          "kept": 26,
+          "composition_tags": 24,
+          "drop_rate": 0.167,
+          "reasons": {
+            "semantic_low_popularity": 4,
+            "semantic_below_thr": 1
+          },
+          "match_types": {
+            "whitelist": 2,
+            "exact": 6,
+            "semantic": 9,
+            "compound_split": 11,
+            "drop": 5
+          },
+          "samples": [
+            {
+              "token": "warm lighting",
+              "reason": "semantic_low_popularity",
+              "score": 0.712
+            },
+            {
+              "token": "sharp jawline",
+              "reason": "semantic_below_thr",
+              "score": 0.647
+            },
+            {
+              "token": "quiet atmosphere",
+              "reason": "semantic_low_popularity",
+              "score": 0.674
+            },
+            {
+              "token": "Akami Sakura",
+              "reason": "semantic_low_popularity",
+              "score": 0.7
+            },
+            {
+              "token": "@akami sakura",
+              "reason": "semantic_low_popularity",
+              "score": 0.7
+            }
+          ],
+          "comp_tag_sample": [
+            "1girl",
+            "blue_sweater_vest",
+            "book",
+            "bound",
+            "dust",
+            "glasses",
+            "high_ceiling",
+            "holding_book",
+            "ink",
+            "knit_sweater",
+            "leather",
+            "library",
+            "light",
+            "open_book",
+            "reflection_focus"
+          ]
+        }
+      ]
+    }
+  }
+]

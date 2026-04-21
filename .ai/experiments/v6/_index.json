@@ -1,0 +1,286 @@
+{
+  "variant": "v6",
+  "params": {},
+  "runs": [
+    {
+      "run_id": "v6__miku_cake__seed42__dd1aa4",
+      "prompt_id": "miku_cake",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed42__dd1aa4.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed137__be6efe",
+      "prompt_id": "miku_cake",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed137__be6efe.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed7919__5a5eea",
+      "prompt_id": "miku_cake",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed7919__5a5eea.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed10001__91b7c6",
+      "prompt_id": "miku_cake",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed10001__91b7c6.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed65537__6f186b",
+      "prompt_id": "miku_cake",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed65537__6f186b.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed99991__18205b",
+      "prompt_id": "miku_cake",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed99991__18205b.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed524287__34b325",
+      "prompt_id": "miku_cake",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed524287__34b325.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed1000003__381876",
+      "prompt_id": "miku_cake",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed1000003__381876.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed1729__e52af1",
+      "prompt_id": "miku_cake",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed1729__e52af1.json"
+    },
+    {
+      "run_id": "v6__miku_cake__seed2147483000__c6bb3c",
+      "prompt_id": "miku_cake",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__miku_cake__seed2147483000__c6bb3c.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed42__08e216",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed42__08e216.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed137__2bda30",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed137__2bda30.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed7919__6ff1b0",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed7919__6ff1b0.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed10001__80d8e2",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed10001__80d8e2.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed65537__0fbbdf",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed65537__0fbbdf.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed99991__73496b",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed99991__73496b.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed524287__f70277",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed524287__f70277.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed1000003__186ff1",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed1000003__186ff1.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed1729__e3b3c2",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed1729__e3b3c2.json"
+    },
+    {
+      "run_id": "v6__girl_random_artist_random_era__seed2147483000__53b520",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_random_artist_random_era__seed2147483000__53b520.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed42__33e823",
+      "prompt_id": "girl_sex",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed42__33e823.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed137__438f37",
+      "prompt_id": "girl_sex",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed137__438f37.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed7919__e50cda",
+      "prompt_id": "girl_sex",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed7919__e50cda.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed10001__f41d12",
+      "prompt_id": "girl_sex",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed10001__f41d12.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed65537__549c92",
+      "prompt_id": "girl_sex",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed65537__549c92.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed99991__709536",
+      "prompt_id": "girl_sex",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed99991__709536.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed524287__ee1932",
+      "prompt_id": "girl_sex",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed524287__ee1932.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed1000003__7d0e90",
+      "prompt_id": "girl_sex",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed1000003__7d0e90.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed1729__873f33",
+      "prompt_id": "girl_sex",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed1729__873f33.json"
+    },
+    {
+      "run_id": "v6__girl_sex__seed2147483000__902d55",
+      "prompt_id": "girl_sex",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__girl_sex__seed2147483000__902d55.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed42__53f5fd",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed42__53f5fd.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed137__febcbe",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed137__febcbe.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed7919__d8cebe",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed7919__d8cebe.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed10001__cf4a82",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed10001__cf4a82.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed65537__90f448",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed65537__90f448.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed99991__0e8b9d",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed99991__0e8b9d.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed524287__85914b",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed524287__85914b.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed1000003__67da87",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed1000003__67da87.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed1729__797614",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed1729__797614.json"
+    },
+    {
+      "run_id": "v6__empty_random_artist_random_setting__seed2147483000__d3bfd5",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v6/v6__empty_random_artist_random_setting__seed2147483000__d3bfd5.json"
+    }
+  ]
+}

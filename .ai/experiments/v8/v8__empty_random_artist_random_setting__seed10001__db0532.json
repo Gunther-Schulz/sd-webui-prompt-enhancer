@@ -1,0 +1,216 @@
+{
+  "run_id": "v8__empty_random_artist_random_setting__seed10001__db0532",
+  "variant": "v8",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 10001
+  },
+  "started_at": 1776782231.9766579,
+  "ended_at": 1776782238.8392763,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.112,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.616,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands on a narrow, weathered cobblestone alley in the town of Kowloon, bathed in the sharp, angular shadows of a single streetlamp. The scene is rendered in the style of H.R. Giger, where every surface appears biomechanical and sleekly organic. The figure wears a coat made of seamless, chrome-like skin that merges with the metal architecture of the surrounding buildings. Deep violet and bioluminescent green light emanates from the figure's chest, casting long, distorted reflections on the wet ground. The air feels thick with floating, microscopic dust particles that catch the light like tiny gears. A massive, curved archway frames the background, its surface rippling as if made of liquid metal. The color palette is dominated by monochromatic steel greys and deep blacks, punctuated only by the electric glow of the figure's internal machinery. The perspective is slightly tilted, creating a sense of unease and depth.",
+        "prose_samples": [
+          "A solitary figure stands on a narrow, weathered cobblestone alley in the town of Kowloon, bathed in the sharp, angular shadows of a single streetlamp. The scene is rendered in the style of H.R. Giger, where every surface appears biomechanical and sleekly organic. The figure wears a coat made of seamless, chrome-like skin that merges with the metal architecture of the surrounding buildings. Deep violet and bioluminescent green light emanates from the figure's chest, casting long, distorted reflections on the wet ground. The air feels thick with floating, microscopic dust particles that catch the light like tiny gears. A massive, curved archway frames the background, its surface rippling as if made of liquid metal. The color palette is dominated by monochromatic steel greys and deep blacks, punctuated only by the electric glow of the figure's internal machinery. The perspective is slightly tilted, creating a sense of unease and depth.",
+          "A solitary figure stands in a cramped, dust-mote filled attic filled with the scent of old paper and cedar, rendered in the style of H.R. Giger. The character is a slender humanoid with elongated limbs and skin that mimics polished chrome, reflecting the dim light of a single oil lamp hanging from a rickety rope. Heavy, overlapping armor plates of black titanium wrap around the torso and legs, featuring sharp, biomechanical curves and deep recessed shadows. Long, slicked-back hair of a pale grey color frames a face that is partially obscured by a visor-like brow ridge. The floor is uneven cobblestone covered in a thin layer of translucent oil. Warm amber light spills from the lamp, casting long, distorted shadows that stretch toward the far wall where a massive, rusted gear hangs suspended in mid-air. Fine lines of mechanical texture define every surface, from the fabric of a tunic that looks like woven steel mesh to the calloused fingers gripping a lantern handle. The air feels heavy and humid, pressing against the viewer, while the composition balances organic curves with rigid, angular geometry.",
+          "A solitary figure stands in the center of a cramped, dust-mote-filled warehouse under the hum of a single bare bulb. The lighting is harsh and functional, casting sharp, geometric shadows against rough concrete walls. The subject wears a heavy, oil-stained leather jacket with frayed cuffs and a wide-brimmed fedora pulled low. Their hair is swept back in a sharp, geometric wave, and their expression is caught in a moment of sharp, almost aggressive stillness. The floor is a checkerboard of black and white tiles, slightly worn at the edges. In the background, a massive rusted industrial gear hangs suspended from the ceiling, adding depth to the composition. The entire scene is rendered with the distinctive ink-wash technique of Kazimir Malevich, where bold, flat planes of color compete with fine, linear details. Deep blacks dominate the palette, contrasting with splashes of primary red and electric yellow. The air feels thick with suspended grey dust, catching the direct light. A simple, unadorned metal stool sits to the side, its legs splayed unevenly. The perspective is slightly tilted, creating a sense of dynamic tension within the rigid industrial space."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.135,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best_quality,score_9,safe,1girl,biomechanical,h_r_giger_style,coat,chrome_skin,seamless,metal_architecture,kowloon,streetlamp,angular_shadows,bioluminescent,deep_violet,electric_glow,chest_glow,monochromatic,steel_grey,deep_black,tilted_perspective,unease,wet_ground,liquid_metal,archway,curved_archway,rippling_surface,microscopic_dust,floating_dust,tiny_gears,concrete_cobblestone,narrow_alley,weathered,sharp,organic,inner_machinery,sleek,electric_green,deep_violet,monochromatic",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.948,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, biomechanical, coat, architecture, lamppost, shadow, glowing, monochrome, perspective, wet ground, liquid metal, dust, floating, gears, concrete, cobblestone, alley, organic, machinery",
+        "stats": {
+          "corrected": 0,
+          "dropped": 18,
+          "kept_invalid": 0,
+          "total": 23
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.052,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, biomechanical, coat, architecture, lamppost, shadow, glowing, monochrome, perspective, wet ground, liquid metal, dust, floating, gears, concrete, cobblestone, alley, organic, machinery, @gofu",
+        "slot_fill_trace": {
+          "artist": "gofu"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 10001,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl, biomechanical, coat, architecture, lamppost, shadow, glowing, monochrome, perspective, wet ground, liquid metal, dust, floating, gears, concrete, cobblestone, alley, organic, machinery, @gofu",
+  "prose": "A solitary figure stands on a narrow, weathered cobblestone alley in the town of Kowloon, bathed in the sharp, angular shadows of a single streetlamp. The scene is rendered in the style of H.R. Giger, where every surface appears biomechanical and sleekly organic. The figure wears a coat made of seamless, chrome-like skin that merges with the metal architecture of the surrounding buildings. Deep violet and bioluminescent green light emanates from the figure's chest, casting long, distorted reflections on the wet ground. The air feels thick with floating, microscopic dust particles that catch the light like tiny gears. A massive, curved archway frames the background, its surface rippling as if made of liquid metal. The color palette is dominated by monochromatic steel greys and deep blacks, punctuated only by the electric glow of the figure's internal machinery. The perspective is slightly tilted, creating a sense of unease and depth.",
+  "draft": "masterpiece,best_quality,score_9,safe,1girl,biomechanical,h_r_giger_style,coat,chrome_skin,seamless,metal_architecture,kowloon,streetlamp,angular_shadows,bioluminescent,deep_violet,electric_glow,chest_glow,monochromatic,steel_grey,deep_black,tilted_perspective,unease,wet_ground,liquid_metal,archway,curved_archway,rippling_surface,microscopic_dust,floating_dust,tiny_gears,concrete_cobblestone,narrow_alley,weathered,sharp,organic,inner_machinery,sleek,electric_green,deep_violet,monochromatic",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

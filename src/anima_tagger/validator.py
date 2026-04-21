@@ -99,7 +99,10 @@ class TagValidator:
                  semantic_threshold: float = 0.80,
                  semantic_min_post_count: int = 100,
                  entity_min_post_count: int = 1000,
-                 min_len: int = 3):
+                 min_len: int = 3,
+                 # V10 experimental params — gate niche-tag pollution:
+                 general_min_post_count: int = 0,
+                 reject_meta_non_whitelist: bool = False):
         self.db = db
         self.index = index
         self.embedder = embedder
@@ -108,6 +111,17 @@ class TagValidator:
         self.semantic_min_post_count = semantic_min_post_count
         self.entity_min_post_count = entity_min_post_count
         self.min_len = min_len
+        # V10 gates (default off → identical to pre-V10 behavior):
+        #   general_min_post_count: exact/alias hits on CAT_GENERAL must
+        #     clear this popularity floor. Addresses "weapon_across_shoulders"
+        #     (65 posts) or "bent" (78 posts) slipping through on terse-
+        #     source outputs and polluting tag lists with niche variants.
+        #   reject_meta_non_whitelist: CAT_META tags are dropped unless
+        #     they're in the format whitelist (score_N, masterpiece, etc.).
+        #     Addresses "fixed" (meta tag, 183 posts) appearing in general
+        #     output where it makes no sense for image generation.
+        self.general_min_post_count = general_min_post_count
+        self.reject_meta_non_whitelist = reject_meta_non_whitelist
         # Build reverse alias maps once. `alias_multi` gives every
         # (canonical, category, post_count) mapping for ambiguity
         # resolution; `alias_single` is the legacy first-canonical
@@ -181,6 +195,22 @@ class TagValidator:
                 continue
             direct = self.db.get_by_name(norm)
             if direct:
+                # V10 gates ─────────────────────────────────────────
+                # Reject CAT_META unless whitelisted (already handled
+                # at line 193) — meta tags like "fixed", "translated"
+                # don't belong in image-gen output.
+                if self.reject_meta_non_whitelist and direct.get("category") == config.CAT_META:
+                    results[i] = ValidationResult(tok, None, 0.0, "drop", "meta_non_whitelist")
+                    continue
+                # CAT_GENERAL popularity floor — niche variants
+                # ("weapon_across_shoulders", "holding_waist") get
+                # dropped regardless of exact-match.
+                if (self.general_min_post_count > 0
+                        and direct.get("category") == config.CAT_GENERAL
+                        and direct.get("post_count", 0) < self.general_min_post_count):
+                    results[i] = ValidationResult(tok, None, 0.0, "drop", "general_low_popularity")
+                    continue
+                # ────────────────────────────────────────────────────
                 if self._is_trusted_entity(direct, norm, context):
                     results[i] = ValidationResult(tok, direct["name"], 1.0, "exact")
                     continue

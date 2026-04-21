@@ -1,0 +1,203 @@
+{
+  "run_id": "v4__empty_random_artist_random_setting__seed137__8be21a",
+  "variant": "v4",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 137
+  },
+  "started_at": 1776780637.416059,
+  "ended_at": 1776780648.6447704,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.115,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.547,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in the center of a cramped, rain-slicked alleyway in Kyoto, captured in the style of Egon Schiele. The artist's signature jagged, angular lines cut through the mist, distorting the wet cobblestones into sharp, uneven shards that reflect a single, dying streetlamp. The subject wears a long, tattered coat made of heavy wool, its hem dragging in the mud, while a thin, exposed neck stretches upward toward the grey sky. The skin is rendered with taut, almost paper-thin tension, emphasizing every bone and muscle beneath. Deep, bruised shadows cling to the corners of the mouth and under the chin, carved by the overhead glow. The background is a chaotic tangle of twisted wooden eaves and dripping eaves, all rendered with the same frantic, expressive energy. The color palette is restricted to muted ochres, slate greys, and burnt sienna, applied with a rough, scratchy texture that mimics charcoal on textured paper. The air feels cold and damp, heavy with the weight of the artist's own emotional intensity.",
+        "user_msg": "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.465,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, safe, 1girl, Egon Schiele, Kyoto, alleyway, rain-slicked, mist, cobblestones, streetlamp, long, tattered, coat, heavy wool, hem, mud, thin, exposed, neck, taut, paper-thin, bone, muscle, deep, bruised, shadows, mouth, chin, overhead, glow, chaotic, twisted, wooden, eaves, dripping, expressive, muted, ochre, slate, grey, burnt, sienna, rough, scratchy, texture, charcoal, textured, paper, cold, damp, heavy, angular, jagged, lines, uneven, shards, reflection, grey, sky, corners, mouth, single, dying, background, tangle, frantic, energy, concrete, features, specific, location, distinct, concept, subject, features, hair, eyes, clothing, layers, accessories, pose, expression, lighting, source, quality, setting, props, mood, atmosphere, background, elements, emotion, intensity, style, artist, illustrator, human, creator, lower, case, name, full, title, distinct, atomic, concept, short, one, three, words, Danbooru, vocabulary, real, existing, tag, list, comma, separated, no, explanations, no, headings, no, site, database, names, technical, image, format, tokens, resolution, aspect, ratios, file, formats, codec, UHD, HD, labels, invented, portmanteau, made, up, compound, names, underscores, spaces, multi, word, tags, long, style, directions, relevant, prose, key, descriptive, words, input, character, series, count, safety, subject, count, one, girl, one, boy, one, other, safety, safe, sensitive, nsfw, explicit, exactly, one, choice, chosen, from, list, time, period, optional, era, year, framing, explicit, reference, specific, era, year, time, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time,",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 3.047,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, kyoto, rain, fog, lamppost, coat, heavy, wool, mud, skinny, neck, paper, bone, muscular, bruise, shadow, glowing, twisted, eaves, dripping, burnt, sketch, texture, charcoal, cold, shards",
+        "stats": {
+          "corrected": 0,
+          "dropped": 465,
+          "kept_invalid": 0,
+          "total": 30
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.055,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, kyoto, rain, fog, lamppost, coat, heavy, wool, mud, skinny, neck, paper, bone, muscular, bruise, shadow, glowing, twisted, eaves, dripping, burnt, sketch, texture, charcoal, cold, shards, @colorful palette",
+        "slot_fill_trace": {
+          "artist": "colorful_palette"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 137,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, kyoto, rain, fog, lamppost, coat, heavy, wool, mud, skinny, neck, paper, bone, muscular, bruise, shadow, glowing, twisted, eaves, dripping, burnt, sketch, texture, charcoal, cold, shards, @colorful palette",
+  "prose": "A solitary figure stands in the center of a cramped, rain-slicked alleyway in Kyoto, captured in the style of Egon Schiele. The artist's signature jagged, angular lines cut through the mist, distorting the wet cobblestones into sharp, uneven shards that reflect a single, dying streetlamp. The subject wears a long, tattered coat made of heavy wool, its hem dragging in the mud, while a thin, exposed neck stretches upward toward the grey sky. The skin is rendered with taut, almost paper-thin tension, emphasizing every bone and muscle beneath. Deep, bruised shadows cling to the corners of the mouth and under the chin, carved by the overhead glow. The background is a chaotic tangle of twisted wooden eaves and dripping eaves, all rendered with the same frantic, expressive energy. The color palette is restricted to muted ochres, slate greys, and burnt sienna, applied with a rough, scratchy texture that mimics charcoal on textured paper. The air feels cold and damp, heavy with the weight of the artist's own emotional intensity.",
+  "draft": "masterpiece, best quality, score_7, safe, 1girl, Egon Schiele, Kyoto, alleyway, rain-slicked, mist, cobblestones, streetlamp, long, tattered, coat, heavy wool, hem, mud, thin, exposed, neck, taut, paper-thin, bone, muscle, deep, bruised, shadows, mouth, chin, overhead, glow, chaotic, twisted, wooden, eaves, dripping, expressive, muted, ochre, slate, grey, burnt, sienna, rough, scratchy, texture, charcoal, textured, paper, cold, damp, heavy, angular, jagged, lines, uneven, shards, reflection, grey, sky, corners, mouth, single, dying, background, tangle, frantic, energy, concrete, features, specific, location, distinct, concept, subject, features, hair, eyes, clothing, layers, accessories, pose, expression, lighting, source, quality, setting, props, mood, atmosphere, background, elements, emotion, intensity, style, artist, illustrator, human, creator, lower, case, name, full, title, distinct, atomic, concept, short, one, three, words, Danbooru, vocabulary, real, existing, tag, list, comma, separated, no, explanations, no, headings, no, site, database, names, technical, image, format, tokens, resolution, aspect, ratios, file, formats, codec, UHD, HD, labels, invented, portmanteau, made, up, compound, names, underscores, spaces, multi, word, tags, long, style, directions, relevant, prose, key, descriptive, words, input, character, series, count, safety, subject, count, one, girl, one, boy, one, other, safety, safe, sensitive, nsfw, explicit, exactly, one, choice, chosen, from, list, time, period, optional, era, year, framing, explicit, reference, specific, era, year, time, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time, period, optional, explicit, reference, specific, era, year, framing, time,",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

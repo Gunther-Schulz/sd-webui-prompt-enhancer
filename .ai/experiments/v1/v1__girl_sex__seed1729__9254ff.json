@@ -1,0 +1,201 @@
+{
+  "run_id": "v1__girl_sex__seed1729__9254ff",
+  "variant": "v1",
+  "pipeline_input": {
+    "source": "girl, sex",
+    "mods": [],
+    "seed": 1729
+  },
+  "started_at": 1776780346.3062458,
+  "ended_at": 1776780349.732403,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.488,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sol fa soft', 'e10', 'mashue', 'chaotic unknown', 'cl 55', 'ta (tama20150125)'], characters=['girl (mokufuu)', \"girlfriend (friday night funkin')\", 'girl dm', 'acfun girl', 'female titan', 'hit girl'], series=['high score girl', 'boy meets girl', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sol fa soft, e10, mashue, chaotic unknown, cl 55, ta (tama20150125)\nCharacters: girl (mokufuu), girlfriend (friday night funkin'), girl dm, acfun girl, female titan, hit girl\nSeries: high score girl, boy meets girl, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.886,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl, sex, soft warm skin tone, messy dark hair clinging to neck, one hand gripping thigh tightly, other hand pressing against chest, sweat glistening on upper lip, fabric of the top stretched thin over collarbone, shadows pooling in the curve of the waist, lips slightly parted and swollen, legs tangled in the lower frame, natural daylight filtering from above, slight blur around the edges to suggest motion, raw and unposed expression, texture of damp skin contrasting with smooth fabric, subtle sheen on the shoulder, body angled toward the viewer, intimate close-up framing.",
+        "user_msg": "SOURCE PROMPT: girl, sex"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.821,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "best quality, score_9, 1girl, sex, soft warm skin tone, messy dark hair, hair clinging to neck, one hand gripping thigh, other hand pressing against chest, sweat glistening on upper lip, fabric stretched thin, collarbone, shadows pooling in waist, lips slightly parted, swollen lips, legs tangled, natural daylight, slight blur, motion blur, raw expression, unposed, damp skin, smooth fabric, subtle sheen on shoulder, body angled, intimate close-up",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.231,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, explicit, 1girl, sex, messy, dark, clinging, neck, thighs, sweat, fabric, skinny, collarbone, shadow, lips, legs, motion blur, on shoulder, close up",
+        "stats": {
+          "corrected": 0,
+          "dropped": 5,
+          "kept_invalid": 0,
+          "total": 21
+        },
+        "anima_safety": "explicit"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, explicit, 1girl, sex, messy, dark, clinging, neck, thighs, sweat, fabric, skinny, collarbone, shadow, lips, legs, motion blur, on shoulder, close up",
+        "slot_fill_trace": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_sex",
+  "seed": 1729,
+  "modifiers": [],
+  "prompt_source": "girl, sex",
+  "final_tags": "masterpiece, best quality, score_9, explicit, 1girl, sex, messy, dark, clinging, neck, thighs, sweat, fabric, skinny, collarbone, shadow, lips, legs, motion blur, on shoulder, close up",
+  "prose": "girl, sex, soft warm skin tone, messy dark hair clinging to neck, one hand gripping thigh tightly, other hand pressing against chest, sweat glistening on upper lip, fabric of the top stretched thin over collarbone, shadows pooling in the curve of the waist, lips slightly parted and swollen, legs tangled in the lower frame, natural daylight filtering from above, slight blur around the edges to suggest motion, raw and unposed expression, texture of damp skin contrasting with smooth fabric, subtle sheen on the shoulder, body angled toward the viewer, intimate close-up framing.",
+  "draft": "best quality, score_9, 1girl, sex, soft warm skin tone, messy dark hair, hair clinging to neck, one hand gripping thigh, other hand pressing against chest, sweat glistening on upper lip, fabric stretched thin, collarbone, shadows pooling in waist, lips slightly parted, swollen lips, legs tangled, natural daylight, slight blur, motion blur, raw expression, unposed, damp skin, smooth fabric, subtle sheen on shoulder, body angled, intimate close-up",
+  "shortlist": {
+    "artists": [
+      "sol fa soft",
+      "e10",
+      "mashue",
+      "chaotic unknown",
+      "cl 55",
+      "ta (tama20150125)"
+    ],
+    "characters": [
+      "girl (mokufuu)",
+      "girlfriend (friday night funkin')",
+      "girl dm",
+      "acfun girl",
+      "female titan",
+      "hit girl"
+    ],
+    "series": [
+      "high score girl",
+      "boy meets girl",
+      "girl with a pearl earring"
+    ]
+  }
+}

@@ -1,0 +1,214 @@
+{
+  "run_id": "v6__girl_random_artist_random_era__seed524287__f70277",
+  "variant": "v6",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 524287
+  },
+  "started_at": 1776781260.5649498,
+  "ended_at": 1776781277.48993,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "SOURCE FIDELITY: if the user's source prompt contains specific subjects, actions, objects, states, or explicit/mature content, your prose preserves those elements as described — do not sanitize, euphemize, or substitute. You may add concrete detail around what the source provides, but do not replace or drop its specifics. If the source is sparse (just a subject word, or a vague cue), expand it creatively in whatever direction the modifiers and context suggest."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSOURCE FIDELITY: if the user's source prompt contains specific subjects, actions, objects, states, or explicit/mature content, your prose preserves those elements as described — do not sanitize, euphemize, or substitute. You may add concrete detail around what the source provides, but do not replace or drop its specifics. If the source is sparse (just a subject word, or a vague cue), expand it creatively in whatever direction the modifiers and context suggest.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.604,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['flipper', 'e20', '01 0219', 'sch', 'the art mage', 'eku'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSOURCE FIDELITY: if the user's source prompt contains specific subjects, actions, objects, states, or explicit/mature content, your prose preserves those elements as described — do not sanitize, euphemize, or substitute. You may add concrete detail around what the source provides, but do not replace or drop its specifics. If the source is sparse (just a subject word, or a vague cue), expand it creatively in whatever direction the modifiers and context suggest.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: flipper, e20, 01 0219, sch, the art mage, eku\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.462,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands alone in a 1924 Parisian apartment, captured in the distinct, ink-heavy style of e20. She wears a loose silk blouse and a velvet skirt that pools around her ankles, her hair a messy cascade of dark waves framing a face tilted slightly upward. Warm, golden light from a single arched window spills across the room, casting long, sharp shadows against peeling wallpaper. The scene feels lived-in and slightly chaotic, with scattered magazines on a low table and dust motes suspended in the air. Her expression is one of quiet contemplation, lips parted as if holding a silent breath. The artist's technique renders the background with loose, gestural brushstrokes that blur into the foreground, while her form remains defined by crisp, confident lines. A heavy velvet curtain frames the left side of the composition, adding depth and texture to the otherwise airy space. The girl's skin glows with a pale, porcelain sheen under the directional lamp light, contrasting with the deep indigo of the curtains.",
+        "user_msg": "SOURCE PROMPT: girl\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.453,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "best_quality,1girl,safe,1920s,parisian_apartment,loose_silk_blouse,velvet_skirt,ankle_length,messy_dark_wavy_hair,upward_tilted_face,arched_window,golden_light,long_sharp_shadows,peeling_wallpaper,lived_in,chaotic,scattered_magazines,low_table,dust_motes,quiet_contemplation,parted_lips,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo_curtains,pale_porcelain_skin,directional_lamp_light,1924,e20_style,loose_background,crisp_foreground,frame_left_side,airy_space,porcelain_skin,indigo,gestural,arched_window,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 8.406,
+      "inputs_seen": [
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, @e20, apartment, silk, blouse, skirt, wavy hair, messy, dark, arched window, light, shadow, peeling, magazine (object), table, dust, parted lips, confident, heavy, curtains, pale skin, porcelain, lamp, from side, space, waves",
+        "stats": {
+          "corrected": 0,
+          "dropped": 188,
+          "kept_invalid": 0,
+          "total": 30
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @e20, apartment, silk, blouse, skirt, wavy hair, messy, dark, arched window, light, shadow, peeling, magazine (object), table, dust, parted lips, confident, heavy, curtains, pale skin, porcelain, lamp, from side, space, waves",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 524287,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @e20, apartment, silk, blouse, skirt, wavy hair, messy, dark, arched window, light, shadow, peeling, magazine (object), table, dust, parted lips, confident, heavy, curtains, pale skin, porcelain, lamp, from side, space, waves",
+  "prose": "A girl stands alone in a 1924 Parisian apartment, captured in the distinct, ink-heavy style of e20. She wears a loose silk blouse and a velvet skirt that pools around her ankles, her hair a messy cascade of dark waves framing a face tilted slightly upward. Warm, golden light from a single arched window spills across the room, casting long, sharp shadows against peeling wallpaper. The scene feels lived-in and slightly chaotic, with scattered magazines on a low table and dust motes suspended in the air. Her expression is one of quiet contemplation, lips parted as if holding a silent breath. The artist's technique renders the background with loose, gestural brushstrokes that blur into the foreground, while her form remains defined by crisp, confident lines. A heavy velvet curtain frames the left side of the composition, adding depth and texture to the otherwise airy space. The girl's skin glows with a pale, porcelain sheen under the directional lamp light, contrasting with the deep indigo of the curtains.",
+  "draft": "best_quality,1girl,safe,1920s,parisian_apartment,loose_silk_blouse,velvet_skirt,ankle_length,messy_dark_wavy_hair,upward_tilted_face,arched_window,golden_light,long_sharp_shadows,peeling_wallpaper,lived_in,chaotic,scattered_magazines,low_table,dust_motes,quiet_contemplation,parted_lips,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo_curtains,pale_porcelain_skin,directional_lamp_light,1924,e20_style,loose_background,crisp_foreground,frame_left_side,airy_space,porcelain_skin,indigo,gestural,arched_window,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes,quiet_contemplation,gestural_brushstrokes,crisp_confident_lines,heavy_velvet_curtain,deep_indigo,arched_window,golden_light,frame_left_side,airy_space,porcelain_skin,indigo,scattered_magazines,low_table,dust_motes,parted_lips,upward_tilted_face,messy_dark_waves,velvet_skirt,loose_silk_blouse,peeling_wallpaper,sharp_shadows,scattered_magazines,low_table,dust_motes",
+  "shortlist": {
+    "artists": [
+      "flipper",
+      "e20",
+      "01 0219",
+      "sch",
+      "the art mage",
+      "eku"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

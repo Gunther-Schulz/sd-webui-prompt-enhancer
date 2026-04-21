@@ -1,0 +1,1505 @@
+{
+  "run_id": "v3__empty_random_artist_random_setting__seed1001__586285",
+  "variant": "v3",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 1001
+  },
+  "started_at": 1776780116.7063212,
+  "ended_at": 1776780122.3736804,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed"
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.119,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "prose",
+      "params": {
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.665,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in a narrow, sun-drenched alleyway in Marrakech, rendered with the sharp, ink-wash precision of the Japanese illustrator Kiyoshi Shitara. The subject wears a deep indigo linen tunic that clings to a muscular frame, with sleeves rolled up to reveal tanned forearms. Thick, ink-black hair flows over the shoulders, catching the golden light that filters down from above. One hand grips a rough-hewn wooden staff, casting a long, distinct shadow against the ochre stucco wall. The background features a hanging lantern with a paper shade and a stack of weathered crates stacked unevenly. The air feels humid and heavy, suggested by the way the light bends around the corners of the buildings. Kiyoshi Shitara's signature use of negative space frames the scene, leaving the sky as a vast, pale wash of color. The ground is uneven cobblestone, wet from a recent shower, reflecting the overhead warmth. Dust motes hang suspended in the shafts of light, visible as tiny white specks. The composition balances the heavy dark lines of the figure against the soft, glowing ambient light of the Moroccan afternoon.",
+        "user_msg": "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)\n\nApply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "concept_enumerate",
+      "params": {
+        "temperature": 0.6,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 1.045,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "concepts": [
+          "solitary figure",
+          "narrow alleyway",
+          "sun-drenched lighting",
+          "Marrakech setting",
+          "ink-wash precision",
+          "Kiyoshi Shitara style",
+          "deep indigo linen tunic",
+          "muscular frame",
+          "rolled up sleeves",
+          "tanned forearms",
+          "thick ink-black hair",
+          "golden light",
+          "one hand gripping",
+          "rough-hewn wooden staff",
+          "long distinct shadow",
+          "ochre stucco wall",
+          "hanging lantern",
+          "paper shade",
+          "stack of weathered crates",
+          "humid heavy air",
+          "pale wash sky",
+          "uneven cobblestone",
+          "wet ground",
+          "overhead warmth",
+          "suspended dust motes",
+          "soft glowing ambient light",
+          "Moroccan afternoon",
+          "negative space composition",
+          "heavy dark lines"
+        ],
+        "concepts_raw": "solitary figure\nnarrow alleyway\nsun-drenched lighting\nMarrakech setting\nink-wash precision\nKiyoshi Shitara style\ndeep indigo linen tunic\nmuscular frame\nrolled up sleeves\ntanned forearms\nthick ink-black hair\ngolden light\none hand gripping\nrough-hewn wooden staff\nlong distinct shadow\nochre stucco wall\nhanging lantern\npaper shade\nstack of weathered crates\nhumid heavy air\npale wash sky\nuneven cobblestone\nwet ground\noverhead warmth\nsuspended dust motes\nsoft glowing ambient light\nMoroccan afternoon\nnegative space composition\nheavy dark lines"
+      }
+    },
+    {
+      "step": "canonicalize",
+      "params": {
+        "min_score": 0.35,
+        "min_post_count": 50,
+        "top_k": 5
+      },
+      "elapsed_s": 0.461,
+      "inputs_seen": [
+        "base_name",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "candidates": [
+          {
+            "concept": "solitary figure",
+            "top_k": [
+              {
+                "name": "walk_alone",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.7740368247032166
+              },
+              {
+                "name": "a_mysterious_figure",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.7299925684928894
+              },
+              {
+                "name": "solitary.apple",
+                "category": 1,
+                "post_count": 17,
+                "score": 0.7014550566673279
+              },
+              {
+                "name": "lonesome_street",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.69605553150177
+              },
+              {
+                "name": "solipsist",
+                "category": 1,
+                "post_count": 107,
+                "score": 0.689445972442627
+              }
+            ],
+            "best": {
+              "name": "solipsist",
+              "category": 1,
+              "post_count": 107,
+              "score": 0.689445972442627
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "narrow alleyway",
+            "top_k": [
+              {
+                "name": "alley",
+                "category": 0,
+                "post_count": 3606,
+                "score": 0.6005914807319641
+              },
+              {
+                "name": "alley_cat",
+                "category": 1,
+                "post_count": 21,
+                "score": 0.5917284488677979
+              },
+              {
+                "name": "walkway",
+                "category": 0,
+                "post_count": 186,
+                "score": 0.5678650140762329
+              },
+              {
+                "name": "shorts_rolled_up",
+                "category": 0,
+                "post_count": 125,
+                "score": 0.5655714273452759
+              },
+              {
+                "name": "narrow_hips",
+                "category": 0,
+                "post_count": 138,
+                "score": 0.565319299697876
+              }
+            ],
+            "best": {
+              "name": "alley",
+              "category": 0,
+              "post_count": 3606,
+              "score": 0.6005914807319641
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "sun-drenched lighting",
+            "top_k": [
+              {
+                "name": "drenched_in_sunlight",
+                "category": 1,
+                "post_count": 88,
+                "score": 0.7759946584701538
+              },
+              {
+                "name": "lighting_practice",
+                "category": 0,
+                "post_count": 34,
+                "score": 0.6783588528633118
+              },
+              {
+                "name": "colored_lights",
+                "category": 0,
+                "post_count": 96,
+                "score": 0.6499185562133789
+              },
+              {
+                "name": "lighting_study",
+                "category": 5,
+                "post_count": 15,
+                "score": 0.6471628546714783
+              },
+              {
+                "name": "track_lighting",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.6252689361572266
+              }
+            ],
+            "best": {
+              "name": "drenched_in_sunlight",
+              "category": 1,
+              "post_count": 88,
+              "score": 0.7759946584701538
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "Marrakech setting",
+            "top_k": [
+              {
+                "name": "mamerakko_chan",
+                "category": 4,
+                "post_count": 24,
+                "score": 0.5455281734466553
+              },
+              {
+                "name": "mamerakkkkko",
+                "category": 1,
+                "post_count": 1010,
+                "score": 0.526261568069458
+              },
+              {
+                "name": "maruchi",
+                "category": 1,
+                "post_count": 174,
+                "score": 0.5043943524360657
+              },
+              {
+                "name": "marceline_abadeer",
+                "category": 4,
+                "post_count": 639,
+                "score": 0.49219128489494324
+              },
+              {
+                "name": "film_set",
+                "category": 0,
+                "post_count": 39,
+                "score": 0.4907461106777191
+              }
+            ],
+            "best": {
+              "name": "mamerakkkkko",
+              "category": 1,
+              "post_count": 1010,
+              "score": 0.526261568069458
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "ink-wash precision",
+            "top_k": [
+              {
+                "name": "ink_wash_painting",
+                "category": 0,
+                "post_count": 607,
+                "score": 0.6527496576309204
+              },
+              {
+                "name": "ink_blender",
+                "category": 0,
+                "post_count": 16,
+                "score": 0.5974419116973877
+              },
+              {
+                "name": "ink.",
+                "category": 1,
+                "post_count": 41,
+                "score": 0.5830928087234497
+              },
+              {
+                "name": "ink_stain",
+                "category": 0,
+                "post_count": 119,
+                "score": 0.581673264503479
+              },
+              {
+                "name": "ink_on_clothes",
+                "category": 0,
+                "post_count": 50,
+                "score": 0.5813047885894775
+              }
+            ],
+            "best": {
+              "name": "ink_wash_painting",
+              "category": 0,
+              "post_count": 607,
+              "score": 0.6527496576309204
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "Kiyoshi Shitara style",
+            "top_k": [
+              {
+                "name": "shitada",
+                "category": 1,
+                "post_count": 24,
+                "score": 0.6554961204528809
+              },
+              {
+                "name": "shitaranana",
+                "category": 1,
+                "post_count": 20,
+                "score": 0.6098189949989319
+              },
+              {
+                "name": "shitara_(kaimetsu_joutai)",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.5982813835144043
+              },
+              {
+                "name": "shitappa",
+                "category": 1,
+                "post_count": 182,
+                "score": 0.5969526767730713
+              },
+              {
+                "name": "nishitaka",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.5946792364120483
+              }
+            ],
+            "best": {
+              "name": "shitappa",
+              "category": 1,
+              "post_count": 182,
+              "score": 0.5969526767730713
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "deep indigo linen tunic",
+            "top_k": [
+              {
+                "name": "sleeveless_tunic",
+                "category": 0,
+                "post_count": 142,
+                "score": 0.5843735933303833
+              },
+              {
+                "name": "purple_tunic",
+                "category": 0,
+                "post_count": 592,
+                "score": 0.5791121125221252
+              },
+              {
+                "name": "deep_duck",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.5761474967002869
+              },
+              {
+                "name": "orange_tunic",
+                "category": 0,
+                "post_count": 273,
+                "score": 0.5732678771018982
+              },
+              {
+                "name": "black_tunic",
+                "category": 0,
+                "post_count": 322,
+                "score": 0.5684511661529541
+              }
+            ],
+            "best": {
+              "name": "sleeveless_tunic",
+              "category": 0,
+              "post_count": 142,
+              "score": 0.5843735933303833
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "muscular frame",
+            "top_k": [
+              {
+                "name": "heart_frame",
+                "category": 0,
+                "post_count": 33,
+                "score": 0.6412234902381897
+              },
+              {
+                "name": "muscular_male",
+                "category": 0,
+                "post_count": 114516,
+                "score": 0.6332255601882935
+              },
+              {
+                "name": "psycho_frame",
+                "category": 0,
+                "post_count": 47,
+                "score": 0.6289106011390686
+              },
+              {
+                "name": "bed_frame",
+                "category": 0,
+                "post_count": 626,
+                "score": 0.6204503774642944
+              },
+              {
+                "name": "smear_frame",
+                "category": 0,
+                "post_count": 376,
+                "score": 0.6152702569961548
+              }
+            ],
+            "best": {
+              "name": "muscular_male",
+              "category": 0,
+              "post_count": 114516,
+              "score": 0.6332255601882935
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rolled up sleeves",
+            "top_k": [
+              {
+                "name": "sleeve_rolled_up",
+                "category": 0,
+                "post_count": 710,
+                "score": 0.8320369720458984
+              },
+              {
+                "name": "rolling_sleeves_up",
+                "category": 0,
+                "post_count": 191,
+                "score": 0.8125243186950684
+              },
+              {
+                "name": "shirt_rolled_up",
+                "category": 0,
+                "post_count": 214,
+                "score": 0.783148467540741
+              },
+              {
+                "name": "overalls_rolled_up",
+                "category": 0,
+                "post_count": 21,
+                "score": 0.7802147269248962
+              },
+              {
+                "name": "sleeve_pushed_up",
+                "category": 0,
+                "post_count": 56,
+                "score": 0.7698124647140503
+              }
+            ],
+            "best": {
+              "name": "sleeve_rolled_up",
+              "category": 0,
+              "post_count": 710,
+              "score": 0.8320369720458984
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "tanned forearms",
+            "top_k": [
+              {
+                "name": "forearms",
+                "category": 0,
+                "post_count": 333,
+                "score": 0.69632488489151
+              },
+              {
+                "name": "oversized_forearms",
+                "category": 0,
+                "post_count": 832,
+                "score": 0.6686610579490662
+              },
+              {
+                "name": "fur_trimmed_arm_warmers",
+                "category": 0,
+                "post_count": 106,
+                "score": 0.6422528624534607
+              },
+              {
+                "name": "forked_eyebrows",
+                "category": 0,
+                "post_count": 7201,
+                "score": 0.6324460506439209
+              },
+              {
+                "name": "forehead_tattoo",
+                "category": 0,
+                "post_count": 1731,
+                "score": 0.6167011260986328
+              }
+            ],
+            "best": {
+              "name": "forearms",
+              "category": 0,
+              "post_count": 333,
+              "score": 0.69632488489151
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "thick ink-black hair",
+            "top_k": [
+              {
+                "name": "thick_back_hair",
+                "category": 0,
+                "post_count": 65,
+                "score": 0.6979475617408752
+              },
+              {
+                "name": "thick_ass_hair",
+                "category": 0,
+                "post_count": 103,
+                "score": 0.693938136100769
+              },
+              {
+                "name": "thick_navel_hair",
+                "category": 0,
+                "post_count": 858,
+                "score": 0.6847114562988281
+              },
+              {
+                "name": "thick_arm_hair",
+                "category": 0,
+                "post_count": 923,
+                "score": 0.6844395399093628
+              },
+              {
+                "name": "thick_chest_hair",
+                "category": 0,
+                "post_count": 1120,
+                "score": 0.6827561855316162
+              }
+            ],
+            "best": {
+              "name": "thick_back_hair",
+              "category": 0,
+              "post_count": 65,
+              "score": 0.6979475617408752
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "golden light",
+            "top_k": [
+              {
+                "name": "light",
+                "category": 0,
+                "post_count": 15010,
+                "score": 0.6431010365486145
+              },
+              {
+                "name": "yellow_light",
+                "category": 0,
+                "post_count": 111,
+                "score": 0.6377953290939331
+              },
+              {
+                "name": "ring_light",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.6306108236312866
+              },
+              {
+                "name": "orange_light",
+                "category": 0,
+                "post_count": 110,
+                "score": 0.6282207369804382
+              },
+              {
+                "name": "white_light",
+                "category": 1,
+                "post_count": 22,
+                "score": 0.6253244876861572
+              }
+            ],
+            "best": {
+              "name": "light",
+              "category": 0,
+              "post_count": 15010,
+              "score": 0.6431010365486145
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "one hand gripping",
+            "top_k": [
+              {
+                "name": "grabbing_another's_hand",
+                "category": 0,
+                "post_count": 577,
+                "score": 0.745478630065918
+              },
+              {
+                "name": "holding_hand_grip",
+                "category": 0,
+                "post_count": 665,
+                "score": 0.7330477237701416
+              },
+              {
+                "name": "imminent_hand_holding",
+                "category": 0,
+                "post_count": 194,
+                "score": 0.7274723649024963
+              },
+              {
+                "name": "taking_another's_hand",
+                "category": 0,
+                "post_count": 98,
+                "score": 0.7226524353027344
+              },
+              {
+                "name": "holding_another's_finger",
+                "category": 0,
+                "post_count": 130,
+                "score": 0.7160894274711609
+              }
+            ],
+            "best": {
+              "name": "grabbing_another's_hand",
+              "category": 0,
+              "post_count": 577,
+              "score": 0.745478630065918
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "rough-hewn wooden staff",
+            "top_k": [
+              {
+                "name": "wooden_staff",
+                "category": 0,
+                "post_count": 398,
+                "score": 0.7256345152854919
+              },
+              {
+                "name": "wooden_desk",
+                "category": 0,
+                "post_count": 163,
+                "score": 0.675601065158844
+              },
+              {
+                "name": "wooden_table",
+                "category": 0,
+                "post_count": 3819,
+                "score": 0.6380358934402466
+              },
+              {
+                "name": "wooden_bench",
+                "category": 0,
+                "post_count": 868,
+                "score": 0.6167020201683044
+              },
+              {
+                "name": "broken_staff",
+                "category": 0,
+                "post_count": 40,
+                "score": 0.6165255308151245
+              }
+            ],
+            "best": {
+              "name": "wooden_staff",
+              "category": 0,
+              "post_count": 398,
+              "score": 0.7256345152854919
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "long distinct shadow",
+            "top_k": [
+              {
+                "name": "different_shadow",
+                "category": 0,
+                "post_count": 1033,
+                "score": 0.7172073721885681
+              },
+              {
+                "name": "long_shadow",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.7083564400672913
+              },
+              {
+                "name": "ominous_shadow",
+                "category": 0,
+                "post_count": 209,
+                "score": 0.6308806538581848
+              },
+              {
+                "name": "dark_shadow",
+                "category": 4,
+                "post_count": 96,
+                "score": 0.628246009349823
+              },
+              {
+                "name": "one_eye_in_shadow",
+                "category": 0,
+                "post_count": 172,
+                "score": 0.624200165271759
+              }
+            ],
+            "best": {
+              "name": "different_shadow",
+              "category": 0,
+              "post_count": 1033,
+              "score": 0.7172073721885681
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "ochre stucco wall",
+            "top_k": [
+              {
+                "name": "ochi_r",
+                "category": 1,
+                "post_count": 27,
+                "score": 0.5589236617088318
+              },
+              {
+                "name": "oki_charcoal",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5573934316635132
+              },
+              {
+                "name": "ochano",
+                "category": 1,
+                "post_count": 130,
+                "score": 0.55340576171875
+              },
+              {
+                "name": "okarie",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.547658383846283
+              },
+              {
+                "name": "ochi",
+                "category": 1,
+                "post_count": 10,
+                "score": 0.5470952391624451
+              }
+            ],
+            "best": {
+              "name": "ochano",
+              "category": 1,
+              "post_count": 130,
+              "score": 0.55340576171875
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "hanging lantern",
+            "top_k": [
+              {
+                "name": "hanging_lantern",
+                "category": 0,
+                "post_count": 539,
+                "score": 0.8304452300071716
+              },
+              {
+                "name": "holding_lantern",
+                "category": 0,
+                "post_count": 4888,
+                "score": 0.7415145039558411
+              },
+              {
+                "name": "hanging_light",
+                "category": 0,
+                "post_count": 1408,
+                "score": 0.7343853116035461
+              },
+              {
+                "name": "hanging_tender",
+                "category": 1,
+                "post_count": 13,
+                "score": 0.7119982242584229
+              },
+              {
+                "name": "lantern_on_liquid",
+                "category": 0,
+                "post_count": 285,
+                "score": 0.7090228199958801
+              }
+            ],
+            "best": {
+              "name": "hanging_lantern",
+              "category": 0,
+              "post_count": 539,
+              "score": 0.8304452300071716
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "paper shade",
+            "top_k": [
+              {
+                "name": "mr._shades",
+                "category": 4,
+                "post_count": 10,
+                "score": 0.6651345491409302
+              },
+              {
+                "name": "shade_of_a_cat",
+                "category": 1,
+                "post_count": 44,
+                "score": 0.65910804271698
+              },
+              {
+                "name": "hero's_shade",
+                "category": 4,
+                "post_count": 42,
+                "score": 0.6559509634971619
+              },
+              {
+                "name": "shade_of_trees",
+                "category": 1,
+                "post_count": 86,
+                "score": 0.6549481153488159
+              },
+              {
+                "name": "wrap_around_shades",
+                "category": 0,
+                "post_count": 32,
+                "score": 0.6538244485855103
+              }
+            ],
+            "best": {
+              "name": "shade_of_trees",
+              "category": 1,
+              "post_count": 86,
+              "score": 0.6549481153488159
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "stack of weathered crates",
+            "top_k": [
+              {
+                "name": "stacked_hats",
+                "category": 0,
+                "post_count": 51,
+                "score": 0.5756629705429077
+              },
+              {
+                "name": "stacked_clothes_dryer",
+                "category": 0,
+                "post_count": 89,
+                "score": 0.5729914307594299
+              },
+              {
+                "name": "the_old_crane",
+                "category": 1,
+                "post_count": 37,
+                "score": 0.5684689283370972
+              },
+              {
+                "name": "human_stacking",
+                "category": 0,
+                "post_count": 515,
+                "score": 0.5674492120742798
+              },
+              {
+                "name": "crate",
+                "category": 0,
+                "post_count": 2197,
+                "score": 0.5644927620887756
+              }
+            ],
+            "best": {
+              "name": "stacked_hats",
+              "category": 0,
+              "post_count": 51,
+              "score": 0.5756629705429077
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "humid heavy air",
+            "top_k": [
+              {
+                "name": "heavy_rain",
+                "category": 3,
+                "post_count": 11,
+                "score": 0.6445804834365845
+              },
+              {
+                "name": "very_sweaty",
+                "category": 0,
+                "post_count": 7428,
+                "score": 0.6064572930335999
+              },
+              {
+                "name": "visible_air",
+                "category": 0,
+                "post_count": 2580,
+                "score": 0.6027483940124512
+              },
+              {
+                "name": "humidifier",
+                "category": 0,
+                "post_count": 33,
+                "score": 0.6004829406738281
+              },
+              {
+                "name": "humidifier_xd",
+                "category": 1,
+                "post_count": 19,
+                "score": 0.6001822352409363
+              }
+            ],
+            "best": {
+              "name": "very_sweaty",
+              "category": 0,
+              "post_count": 7428,
+              "score": 0.6064572930335999
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "pale wash sky",
+            "top_k": [
+              {
+                "name": "white_sky",
+                "category": 0,
+                "post_count": 1552,
+                "score": 0.6155160069465637
+              },
+              {
+                "name": "clear_sky",
+                "category": 0,
+                "post_count": 1842,
+                "score": 0.5944421887397766
+              },
+              {
+                "name": "pale_blue",
+                "category": 3,
+                "post_count": 10,
+                "score": 0.5824415683746338
+              },
+              {
+                "name": "sky_sky",
+                "category": 1,
+                "post_count": 15,
+                "score": 0.5822840929031372
+              },
+              {
+                "name": "multicolored_sky",
+                "category": 0,
+                "post_count": 597,
+                "score": 0.5813636183738708
+              }
+            ],
+            "best": {
+              "name": "white_sky",
+              "category": 0,
+              "post_count": 1552,
+              "score": 0.6155160069465637
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "uneven cobblestone",
+            "top_k": [
+              {
+                "name": "cobblestone",
+                "category": 0,
+                "post_count": 1260,
+                "score": 0.7013731002807617
+              },
+              {
+                "name": "uneven_footing",
+                "category": 0,
+                "post_count": 117,
+                "score": 0.6790114641189575
+              },
+              {
+                "name": "uneven_footwear",
+                "category": 0,
+                "post_count": 724,
+                "score": 0.6641988754272461
+              },
+              {
+                "name": "uneven_bangs",
+                "category": 0,
+                "post_count": 337,
+                "score": 0.6291847229003906
+              },
+              {
+                "name": "odd_keystone",
+                "category": 0,
+                "post_count": 11,
+                "score": 0.5837327837944031
+              }
+            ],
+            "best": {
+              "name": "cobblestone",
+              "category": 0,
+              "post_count": 1260,
+              "score": 0.7013731002807617
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "wet ground",
+            "top_k": [
+              {
+                "name": "wet_ground",
+                "category": 0,
+                "post_count": 80,
+                "score": 0.8282554745674133
+              },
+              {
+                "name": "wet_floor",
+                "category": 0,
+                "post_count": 736,
+                "score": 0.7366313338279724
+              },
+              {
+                "name": "wet_pavement",
+                "category": 0,
+                "post_count": 72,
+                "score": 0.7109121680259705
+              },
+              {
+                "name": "wet_spot",
+                "category": 0,
+                "post_count": 443,
+                "score": 0.6903471946716309
+              },
+              {
+                "name": "wet_floor_sign",
+                "category": 0,
+                "post_count": 131,
+                "score": 0.6812379956245422
+              }
+            ],
+            "best": {
+              "name": "wet_ground",
+              "category": 0,
+              "post_count": 80,
+              "score": 0.8282554745674133
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "overhead warmth",
+            "top_k": [
+              {
+                "name": "feeling_warmth",
+                "category": 0,
+                "post_count": 12,
+                "score": 0.6945013999938965
+              },
+              {
+                "name": "overhead_swing",
+                "category": 0,
+                "post_count": 58,
+                "score": 0.6472428441047668
+              },
+              {
+                "name": "overhead_lights",
+                "category": 0,
+                "post_count": 59,
+                "score": 0.6422247886657715
+              },
+              {
+                "name": "overhead_door",
+                "category": 0,
+                "post_count": 60,
+                "score": 0.6359070539474487
+              },
+              {
+                "name": "warming_hands",
+                "category": 0,
+                "post_count": 274,
+                "score": 0.6326090097427368
+              }
+            ],
+            "best": {
+              "name": "overhead_swing",
+              "category": 0,
+              "post_count": 58,
+              "score": 0.6472428441047668
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "suspended dust motes",
+            "top_k": [
+              {
+                "name": "dust_(mth)",
+                "category": 1,
+                "post_count": 31,
+                "score": 0.6146696209907532
+              },
+              {
+                "name": "suspenders_hanging",
+                "category": 0,
+                "post_count": 548,
+                "score": 0.5666593313217163
+              },
+              {
+                "name": "dust_cloud",
+                "category": 0,
+                "post_count": 2536,
+                "score": 0.5596998929977417
+              },
+              {
+                "name": "suspenders_under_shirt",
+                "category": 0,
+                "post_count": 25,
+                "score": 0.5581004023551941
+              },
+              {
+                "name": "suspenders_removed",
+                "category": 0,
+                "post_count": 43,
+                "score": 0.5576889514923096
+              }
+            ],
+            "best": {
+              "name": "suspenders_hanging",
+              "category": 0,
+              "post_count": 548,
+              "score": 0.5666593313217163
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "soft glowing ambient light",
+            "top_k": [
+              {
+                "name": "glowing_object",
+                "category": 0,
+                "post_count": 19,
+                "score": 0.7235884666442871
+              },
+              {
+                "name": "glowing_windows",
+                "category": 0,
+                "post_count": 95,
+                "score": 0.7075753808021545
+              },
+              {
+                "name": "glowing_body_fluid",
+                "category": 0,
+                "post_count": 82,
+                "score": 0.702526330947876
+              },
+              {
+                "name": "glowing_liquid",
+                "category": 0,
+                "post_count": 132,
+                "score": 0.6981410384178162
+              },
+              {
+                "name": "glowing_clothes",
+                "category": 0,
+                "post_count": 371,
+                "score": 0.6978140473365784
+              }
+            ],
+            "best": {
+              "name": "glowing_windows",
+              "category": 0,
+              "post_count": 95,
+              "score": 0.7075753808021545
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "Moroccan afternoon",
+            "top_k": [
+              {
+                "name": "resolute_mind_afternoon",
+                "category": 4,
+                "post_count": 29,
+                "score": 0.6003507971763611
+              },
+              {
+                "name": "afternoon_(magazine)",
+                "category": 3,
+                "post_count": 24,
+                "score": 0.5840840339660645
+              },
+              {
+                "name": "nocturnal_melonpan",
+                "category": 1,
+                "post_count": 37,
+                "score": 0.5807762742042542
+              },
+              {
+                "name": "drenched_in_sunlight",
+                "category": 1,
+                "post_count": 88,
+                "score": 0.5610381364822388
+              },
+              {
+                "name": "perfumer_(leisurely_afternoon)_(arknights)",
+                "category": 4,
+                "post_count": 28,
+                "score": 0.5542082786560059
+              }
+            ],
+            "best": {
+              "name": "drenched_in_sunlight",
+              "category": 1,
+              "post_count": 88,
+              "score": 0.5610381364822388
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "negative space composition",
+            "top_k": [
+              {
+                "name": "negative_space",
+                "category": 0,
+                "post_count": 1326,
+                "score": 0.5916871428489685
+              },
+              {
+                "name": "negative_frames",
+                "category": 3,
+                "post_count": 73,
+                "score": 0.5757971405982971
+              },
+              {
+                "name": "negativusc",
+                "category": 1,
+                "post_count": 11,
+                "score": 0.5733992457389832
+              },
+              {
+                "name": "negativeundead",
+                "category": 1,
+                "post_count": 23,
+                "score": 0.5690920352935791
+              },
+              {
+                "name": "negative_cha09",
+                "category": 1,
+                "post_count": 16,
+                "score": 0.5314328670501709
+              }
+            ],
+            "best": {
+              "name": "negative_space",
+              "category": 0,
+              "post_count": 1326,
+              "score": 0.5916871428489685
+            },
+            "dropped_reason": null
+          },
+          {
+            "concept": "heavy dark lines",
+            "top_k": [
+              {
+                "name": "thick_outlines",
+                "category": 0,
+                "post_count": 463,
+                "score": 0.6614639759063721
+              },
+              {
+                "name": "dead_line",
+                "category": 1,
+                "post_count": 42,
+                "score": 0.6262677311897278
+              },
+              {
+                "name": "dark_foreground",
+                "category": 0,
+                "post_count": 66,
+                "score": 0.6106050610542297
+              },
+              {
+                "name": "glowing_lines",
+                "category": 0,
+                "post_count": 552,
+                "score": 0.6085149049758911
+              },
+              {
+                "name": "hard_degenerate",
+                "category": 1,
+                "post_count": 69,
+                "score": 0.6050811409950256
+              }
+            ],
+            "best": {
+              "name": "thick_outlines",
+              "category": 0,
+              "post_count": 463,
+              "score": 0.6614639759063721
+            },
+            "dropped_reason": null
+          }
+        ]
+      }
+    },
+    {
+      "step": "curate",
+      "params": {
+        "temperature": 0.5,
+        "num_predict": 512,
+        "model": null
+      },
+      "elapsed_s": 1.017,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "draft": "solitary figure, narrow alleyway, sun-drenched lighting, Marrakech setting, ink-wash precision, Kiyoshi Shitara style, deep indigo linen tunic, muscular frame, rolled up sleeves, tanned forearms, thick ink-black hair, golden light, one hand gripping, rough-hewn wooden staff, long distinct shadow, ochre stucco wall, hanging lantern, paper shade, stack of weathered crates, humid heavy air, pale wash sky, uneven cobblestone, wet ground, suspended dust motes, soft glowing ambient light, negative space composition, heavy dark lines"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.304,
+      "inputs_seen": [
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, figure, sun, ink, tunic, muscular, sleeve rolled up, tan, forearms, black hair, light, wooden staff, sketch, shadow, stucco, wall, hanging lantern, paper, shade, stack, crate, heavy, pale skin, sky, cobblestone, wet ground",
+        "stats": {
+          "corrected": 0,
+          "dropped": 0,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.056,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "candidates",
+        "concepts",
+        "concepts_raw",
+        "draft",
+        "mods",
+        "prose",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tags_after_validate",
+        "user_msg"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, figure, sun, ink, tunic, muscular, sleeve rolled up, tan, forearms, black hair, light, wooden staff, sketch, shadow, stucco, wall, hanging lantern, paper, shade, stack, crate, heavy, pale skin, sky, cobblestone, wet ground, @mizuki makoto",
+        "slot_fill_trace": {
+          "artist": "mizuki_makoto"
+        }
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 1001,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, safe, figure, sun, ink, tunic, muscular, sleeve rolled up, tan, forearms, black hair, light, wooden staff, sketch, shadow, stucco, wall, hanging lantern, paper, shade, stack, crate, heavy, pale skin, sky, cobblestone, wet ground, @mizuki makoto",
+  "prose": "A solitary figure stands in a narrow, sun-drenched alleyway in Marrakech, rendered with the sharp, ink-wash precision of the Japanese illustrator Kiyoshi Shitara. The subject wears a deep indigo linen tunic that clings to a muscular frame, with sleeves rolled up to reveal tanned forearms. Thick, ink-black hair flows over the shoulders, catching the golden light that filters down from above. One hand grips a rough-hewn wooden staff, casting a long, distinct shadow against the ochre stucco wall. The background features a hanging lantern with a paper shade and a stack of weathered crates stacked unevenly. The air feels humid and heavy, suggested by the way the light bends around the corners of the buildings. Kiyoshi Shitara's signature use of negative space frames the scene, leaving the sky as a vast, pale wash of color. The ground is uneven cobblestone, wet from a recent shower, reflecting the overhead warmth. Dust motes hang suspended in the shafts of light, visible as tiny white specks. The composition balances the heavy dark lines of the figure against the soft, glowing ambient light of the Moroccan afternoon.",
+  "draft": "solitary figure, narrow alleyway, sun-drenched lighting, Marrakech setting, ink-wash precision, Kiyoshi Shitara style, deep indigo linen tunic, muscular frame, rolled up sleeves, tanned forearms, thick ink-black hair, golden light, one hand gripping, rough-hewn wooden staff, long distinct shadow, ochre stucco wall, hanging lantern, paper shade, stack of weathered crates, humid heavy air, pale wash sky, uneven cobblestone, wet ground, suspended dust motes, soft glowing ambient light, negative space composition, heavy dark lines",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

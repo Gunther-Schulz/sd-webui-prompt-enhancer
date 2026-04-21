@@ -1,0 +1,58 @@
+{
+  "_meta": {
+    "rubric_version": 0,
+    "rated_by": "claude-opus-4-7",
+    "seeds_used": [42, 137, 1729, 7919, 10001, 65537, 99991, 524287, 1000003, 2147483000],
+    "variant_delta_from_v5": "Softer directive text — conditional WITHIN the directive (if source has content, preserve; otherwise expand creatively). Gating on source-non-empty still present from V5."
+  },
+
+  "girl_sex_faithfulness_by_seed": {
+    "42":        {"score": 3, "note": "safety=explicit. sheer lace garment + arm up + parted lips. Suggestive."},
+    "137":       {"score": 4, "note": "safety=nsfw. 'sheer white silk sheet clings, thighs exposed, breasts exposed, arm above head'. Implied nude erotic."},
+    "1729":      {"score": 2, "note": "safety=SAFE. Suggestive only. Regression from V5's 4."},
+    "7919":      {"score": 3, "note": "safety=nsfw. 'tight garment, curves exposed'. Implied only. Regression from V5's 4."},
+    "10001":     {"score": 2, "note": "safety=SAFE. 'silk slip dress, bedroom, dynamic pose'. Regression from V5's 4."},
+    "65537":     {"score": 4, "note": "safety=explicit. 'caught mid-motion in intimate embrace, hips swaying'. Implied explicit."},
+    "99991":     {"score": 2, "note": "safety=SAFE. Just suggestive. Regression from V5's 3."},
+    "524287":    {"score": 5, "note": "safety=explicit. 'girl, sex, nude, thighs spread wide, heavy breathing'. Big improvement vs V5's 4."},
+    "1000003":   {"score": 4, "note": "safety=sensitive. 'state of sexual intimacy, skin glistening, hug'. Implied."},
+    "2147483000":{"score": 3, "note": "safety=explicit. Relaxed intimate pose + bent leg + lace. Suggestive."}
+  },
+
+  "girl_sex_distribution": {
+    "v5": {"mean": 3.7, "std": 0.9,  "full_sanitize_rate": 0.0, "success_rate": 0.6},
+    "v6": {"mean": 3.2, "std": 1.1,  "full_sanitize_rate": 0.0, "success_rate": 0.4},
+    "interpretation": "V6 REGRESSED vs V5 on girl_sex. Softer directive = less adherence = less explicit preservation. Mean dropped 3.7→3.2, stdev went UP slightly (0.9→1.1), success rate dropped 60%→40%. The soft 'if source has explicit content' language gives the LLM license to interpret what qualifies — and it often decides the prompt doesn't really warrant explicit."
+  },
+
+  "other_prompts_overall": {
+    "miku_cake": {
+      "by_seed": {"42": 2, "137": 4, "1729": 4, "7919": 3, "10001": 3, "65537": 3, "99991": 4, "524287": 4, "1000003": 4, "2147483000": 4},
+      "v1_mean": 3.2, "v5_mean": 3.2, "v6_mean": 3.5,
+      "notes": "Slight improvement. Seed 42 missed hatsune_miku tag ('hands on another's chest' weird hallucination). Otherwise small quality bump."
+    },
+    "girl_random_artist_random_era": {
+      "by_seed": {"42": 4, "137": 4, "1729": 4, "7919": 4, "10001": 4, "65537": 4, "99991": 3, "524287": 4, "1000003": 4, "2147483000": 4},
+      "v1_mean": 4.2, "v5_mean": 3.8, "v6_mean": 3.9,
+      "notes": "Marginal improvement vs V5. Still below V1. The softer directive still fires on thin 'girl' source."
+    },
+    "empty_random_artist_random_setting": {
+      "by_seed": {"42": 4, "137": 5, "1729": 4, "7919": 4, "10001": 5, "65537": 3, "99991": 4, "524287": 4, "1000003": 4, "2147483000": 4},
+      "v1_mean": 4.0, "v5_mean": 4.1, "v6_mean": 4.1,
+      "notes": "Same as V1/V5 — directive skipped for empty source."
+    }
+  },
+
+  "_summary": {
+    "by_prompt_mean": {
+      "girl_sex":                      {"v1": 3.3, "v5": 3.7, "v6": 3.2, "delta_v6_v5": -0.5},
+      "miku_cake":                     {"v1": 3.2, "v5": 3.2, "v6": 3.5, "delta_v6_v5": 0.3},
+      "girl_random_artist_random_era": {"v1": 4.2, "v5": 3.8, "v6": 3.9, "delta_v6_v5": 0.1},
+      "empty_random_artist_random_setting": {"v1": 4.0, "v5": 4.1, "v6": 4.1, "delta_v6_v5": 0.0}
+    },
+    "overall_mean": {"v1": 3.675, "v5": 3.7, "v6": 3.675, "delta_v6_v5": -0.025},
+    "verdict": "V6 REJECTED. Softer directive surrendered girl_sex win (-0.5 vs V5) for small miku_cake/girl_ra_re gains. Net: same as V1 baseline, worse than V5.",
+    "lesson_learned": "Softness is the wrong axis to adjust. V5's strictness IS what delivers on girl_sex — a softer version lets the LLM 'decide' the prompt doesn't warrant explicit, which surrenders the win. The girl_ra_re regression needs a different mechanism (not directive softness).",
+    "next_hypothesis_v7": "Lower prose-pass temperature (0.8 → 0.3) on V5 pipeline. Hypothesis: LLM variance at prose step is sampling-noise driven; lower temperature reduces that noise. Expected: girl_sex becomes more consistent (maybe at the cost of dice-roll creativity). Single factor: prose temperature."
+  }
+}
