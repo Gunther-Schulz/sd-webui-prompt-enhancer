@@ -1,9 +1,8 @@
 """High-level entry point: LLM-drafted tokens → final Anima tag list.
 
-Takes the raw tag draft the LLM produced (Fuzzy-mode output, possibly
-containing hallucinations like 'animedia' or phrase-shaped padding
-like 'detailed_background'), runs each token through the embedding
-validator against the Danbooru tag DB, then applies the Anima rule
+Takes the raw tag draft the LLM produced, runs each token through the
+embedding validator (with optional shortlist context for category-aware
+alias resolution + popularity gating), then applies the Anima rule
 layer (quality prefix, safety, @ prefix, character→series pairing).
 
 Drop-in replacement for the rapidfuzz-based Fuzzy Strict path.
@@ -14,11 +13,11 @@ from typing import List, Optional
 from .cooccurrence import CoOccurrence
 from .db import TagDB
 from .rule_layer import apply_anima_rules
-from .validator import TagValidator
+from .shortlist import Shortlist
+from .validator import TagValidator, ValidationContext
 
 
 def _split_tokens(draft: str) -> List[str]:
-    """Split an LLM tag-draft string into individual tokens."""
     tokens: List[str] = []
     for t in draft.replace("\n", ",").split(","):
         t = t.strip()
@@ -27,9 +26,29 @@ def _split_tokens(draft: str) -> List[str]:
     return tokens
 
 
-class AnimaTagger:
-    """Validate an LLM tag draft and emit a compliant Anima tag list."""
+def _context_from_shortlist(sl: Optional[Shortlist], db: TagDB) -> Optional[ValidationContext]:
+    """Build a ValidationContext from a shortlist for category-aware
+    alias resolution and popularity gating. Returns None when sl is None
+    or empty (validator then uses no-context defaults)."""
+    if sl is None:
+        return None
+    names: set[str] = set()
+    cats: set[int] = set()
+    # Shortlist entries are in space-form ("hatsune miku"); DB uses
+    # underscore form. Normalize both.
+    for name_list in (sl.artists, sl.characters, sl.series):
+        for n in name_list:
+            canonical = n.replace(" ", "_").replace("-", "_")
+            rec = db.get_by_name(canonical)
+            if rec:
+                names.add(rec["name"])
+                cats.add(rec["category"])
+    if not names and not cats:
+        return None
+    return ValidationContext(shortlist_names=names, shortlist_categories=cats)
 
+
+class AnimaTagger:
     def __init__(self,
                  validator: TagValidator,
                  db: TagDB,
@@ -42,21 +61,18 @@ class AnimaTagger:
                        draft: str | List[str],
                        safety: str = "safe",
                        use_underscores: bool = False,
-                       max_tags: int = 30) -> List[str]:
+                       max_tags: int = 30,
+                       shortlist: Optional[Shortlist] = None) -> List[str]:
         """Validate + transform LLM draft into final Anima tag list.
 
-        `draft` may be the raw LLM string (comma-separated tags) or a
-        pre-split list of tokens. Returns the final ordered tag list.
+        `shortlist`, if provided, gives the validator category context
+        to disambiguate aliases (e.g. `rococo` → character vs artist).
         """
         tokens = _split_tokens(draft) if isinstance(draft, str) else list(draft)
 
-        results = self.validator.validate(tokens)
+        ctx = _context_from_shortlist(shortlist, self.db)
+        results = self.validator.validate(tokens, context=ctx)
 
-        # Fetch full DB records for each canonical hit so the rule
-        # layer has category info for bucketing. Whitelist tokens
-        # (Anima-convention like masterpiece/score_7/safe) aren't in
-        # the DB — synthesize a minimal meta record so the rule layer
-        # can still route them.
         from . import config
         records: list[dict] = []
         seen: set[str] = set()

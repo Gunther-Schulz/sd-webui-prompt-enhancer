@@ -106,6 +106,30 @@ class TagDB:
                     lookup[a] = name
         return lookup
 
+    def build_alias_lookup_multi(self) -> dict[str, list[dict]]:
+        """Return {alias_token: [{name, category, post_count}, …]} sorted
+        by post_count desc. Lets the validator disambiguate between
+        multiple canonicals (e.g. 'rococo' can map to both a character
+        and an artist — pick by shortlist context / popularity).
+        """
+        lookup: dict[str, list[dict]] = {}
+        cur = self.conn.execute(
+            "SELECT name, category, post_count, aliases FROM tags "
+            "WHERE aliases != ''"
+        )
+        for name, category, post_count, aliases_str in cur:
+            for a in aliases_str.split(","):
+                a = a.strip().replace("-", "_").replace(" ", "_").lower()
+                if not a or a == name:
+                    continue
+                lookup.setdefault(a, []).append({
+                    "name": name, "category": category,
+                    "post_count": post_count,
+                })
+        for a, cands in lookup.items():
+            cands.sort(key=lambda c: c["post_count"], reverse=True)
+        return lookup
+
     def iter_ordered(self) -> Iterable[dict]:
         """Yield all tags in ascending id order (index-alignment contract)."""
         cur = self.conn.execute("SELECT * FROM tags ORDER BY id ASC")

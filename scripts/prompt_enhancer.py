@@ -99,16 +99,18 @@ def _use_anima_pipeline(tag_fmt: str) -> bool:
 
 
 def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
-                          use_underscores: bool = False) -> tuple[str, dict]:
+                          use_underscores: bool = False,
+                          shortlist=None) -> tuple[str, dict]:
     """Validate + rule-layer an LLM draft via anima_tagger.
 
     Drop-in replacement for _postprocess_tags when anima_tagger is
-    active. Returns (comma-separated final tags, stats dict).
+    active. Passes the shortlist (if any) to the validator for
+    category-aware alias resolution.
     """
     tags_list = stack.tagger.tag_from_draft(
         draft_str, safety=safety, use_underscores=use_underscores,
+        shortlist=shortlist,
     )
-    # Rough stats in the same shape the existing path returns
     draft_token_count = len([t for t in draft_str.split(",") if t.strip()])
     stats = {
         "corrected": 0,
@@ -1626,6 +1628,7 @@ class PromptEnhancer(scripts.Script):
                 # stack's tagger replaces the rapidfuzz validation path below.
                 _anima = None
                 _anima_cm = None
+                _anima_shortlist = None  # kept for validator context at the tag step
                 if _use_anima_pipeline(tag_fmt):
                     _s = _get_anima_stack()
                     if _s is not None:
@@ -1633,17 +1636,17 @@ class PromptEnhancer(scripts.Script):
                             _anima_cm = _s.models()
                             _anima_cm.__enter__()
                             _anima = _s
-                            _sl = _s.build_shortlist(
+                            _anima_shortlist = _s.build_shortlist(
                                 source_prompt=source,
                                 modifier_keywords=style_str,
                             )
-                            _sl_frag = _sl.as_system_prompt_fragment()
+                            _sl_frag = _anima_shortlist.as_system_prompt_fragment()
                             if _sl_frag:
                                 sp = f"{sp}\n\n{_sl_frag}"
                             print(f"[PromptEnhancer] Anima shortlist: "
-                                  f"{len(_sl.artists)} artists, "
-                                  f"{len(_sl.characters)} characters, "
-                                  f"{len(_sl.series)} series")
+                                  f"{len(_anima_shortlist.artists)} artists, "
+                                  f"{len(_anima_shortlist.characters)} characters, "
+                                  f"{len(_anima_shortlist.series)} series")
                         except Exception as e:
                             logger.warning(f"anima setup failed, falling back: {e}")
                             if _anima_cm:
@@ -1651,6 +1654,7 @@ class PromptEnhancer(scripts.Script):
                                 except Exception: pass
                             _anima = None
                             _anima_cm = None
+                            _anima_shortlist = None
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
@@ -1724,7 +1728,10 @@ class PromptEnhancer(scripts.Script):
                     # Post-process negative tags through tag pipeline when applicable
                     if neg_cb and negative:
                         if _anima is not None:
-                            negative, _ = _anima_tag_from_draft(_anima, negative, safety="safe")
+                            negative, _ = _anima_tag_from_draft(
+                                _anima, negative, safety="safe",
+                                shortlist=_anima_shortlist,
+                            )
                         else:
                             negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
 
@@ -1732,7 +1739,10 @@ class PromptEnhancer(scripts.Script):
                     # When Anima retrieval is active, the bge-m3 validator
                     # + rule layer replace the rapidfuzz path entirely.
                     if _anima is not None:
-                        tags_raw, stats = _anima_tag_from_draft(_anima, tags_raw, safety="safe")
+                        tags_raw, stats = _anima_tag_from_draft(
+                            _anima, tags_raw, safety="safe",
+                            shortlist=_anima_shortlist,
+                        )
                     else:
                         tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
@@ -1985,6 +1995,7 @@ class PromptEnhancer(scripts.Script):
                 # Anima retrieval: shortlist injection + bge-m3 validator
                 _anima_t = None
                 _anima_t_cm = None
+                _anima_t_shortlist = None
                 if _use_anima_pipeline(tag_fmt):
                     _s = _get_anima_stack()
                     if _s is not None:
@@ -1992,16 +2003,16 @@ class PromptEnhancer(scripts.Script):
                             _anima_t_cm = _s.models()
                             _anima_t_cm.__enter__()
                             _anima_t = _s
-                            _sl = _s.build_shortlist(
+                            _anima_t_shortlist = _s.build_shortlist(
                                 source_prompt=source, modifier_keywords=style_str,
                             )
-                            _frag = _sl.as_system_prompt_fragment()
+                            _frag = _anima_t_shortlist.as_system_prompt_fragment()
                             if _frag:
                                 sp = f"{sp}\n\n{_frag}"
                             print(f"[PromptEnhancer] Anima shortlist: "
-                                  f"{len(_sl.artists)} artists, "
-                                  f"{len(_sl.characters)} characters, "
-                                  f"{len(_sl.series)} series")
+                                  f"{len(_anima_t_shortlist.artists)} artists, "
+                                  f"{len(_anima_t_shortlist.characters)} characters, "
+                                  f"{len(_anima_t_shortlist.series)} series")
                         except Exception as _e:
                             logger.warning(f"anima setup failed in tags mode, falling back: {_e}")
                             if _anima_t_cm:
@@ -2009,6 +2020,7 @@ class PromptEnhancer(scripts.Script):
                                 except Exception: pass
                             _anima_t = None
                             _anima_t_cm = None
+                            _anima_t_shortlist = None
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags)...</span>"
@@ -2030,13 +2042,19 @@ class PromptEnhancer(scripts.Script):
                     if neg_cb:
                         tags, negative = _split_positive_negative(raw)
                         if _anima_t is not None:
-                            negative, _ = _anima_tag_from_draft(_anima_t, negative, safety="safe")
+                            negative, _ = _anima_tag_from_draft(
+                                _anima_t, negative, safety="safe",
+                                shortlist=_anima_t_shortlist,
+                            )
                         else:
                             negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
                     else:
                         tags, negative = raw, ""
                     if _anima_t is not None:
-                        tags, stats = _anima_tag_from_draft(_anima_t, tags, safety="safe")
+                        tags, stats = _anima_tag_from_draft(
+                            _anima_t, tags, safety="safe",
+                            shortlist=_anima_t_shortlist,
+                        )
                     else:
                         tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
