@@ -743,15 +743,16 @@ def _build_style_string(mod_list, mode="prose"):
             clean_name = name.replace("\U0001F3B2", "").strip()
             kw = entry.get("keywords") or ""
             if not kw:
-                # Random entry (empty keywords). Don't leak the full behavioral
-                # prose as tag soup — emit a compact directive instead.
-                subject = clean_name.lower()
-                if subject.startswith("random "):
-                    subject = subject[len("random "):]
-                kw = f"pick a surprising {subject} and include its tags"
-            else:
-                if clean_name.lower() not in kw.lower():
-                    kw = f"{clean_name.lower()}, {kw}"
+                # Dice entry (empty keywords). In Tags mode, any instruction
+                # text we inject is parsed by the LLM as tag tokens — even
+                # bracketed directives and "pick a surprising X" fallbacks
+                # leak words like "surprising", "location", "artist",
+                # "detailed_background" into the output. So skip these
+                # entirely in Tags mode. Dice entries remain fully functional
+                # in Prose/Hybrid mode where the LLM reads context correctly.
+                continue
+            if clean_name.lower() not in kw.lower():
+                kw = f"{clean_name.lower()}, {kw}"
             parts.append(kw)
         return f"Apply these styles: {', '.join(parts)}." if parts else ""
     # Prose/Hybrid: short behaviorals concatenate into a compact directive.
