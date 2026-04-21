@@ -648,6 +648,14 @@ def _normalize_modifier(entry):
         norm["source"] = entry["source"]
     if not norm["behavioral"] and norm["keywords"]:
         norm["behavioral"] = f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {norm['keywords']}."
+    # Entries with `source:` legitimately ship with both behavioral AND
+    # keywords empty — _collect_modifiers fills them at runtime from the
+    # picked DB tag. Skipping the empty-reject below is what lets these
+    # survive the normalization pass. (target_slot alone without source
+    # still needs a behavioral directive for the LLM, so it doesn't get
+    # the same bypass.)
+    if norm.get("source"):
+        return norm
     if not norm["behavioral"] and not norm["keywords"]:
         return None
     return norm
