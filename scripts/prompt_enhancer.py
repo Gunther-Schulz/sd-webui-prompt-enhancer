@@ -635,21 +635,29 @@ _STRUCTURAL_CATEGORIES = {1, 3, 4}
 
 
 def _filter_to_structural_tags(tag_csv: str, stack, tag_fmt: str) -> str:
-    """V14 Hybrid filter: keep only structural tags.
+    """V14 Hybrid filter + V19 carve-outs: keep structural tags, plus a
+    small curated set of general tags that carry tag-level conditioning.
 
-    Structural = format whitelist (quality/safety/rating) + subject-count
-    (1girl, 1boy, 2girls, 1other) + Danbooru categories {artist, character,
-    copyright}. Everything else (general body/pose/clothing/setting/lighting,
-    meta) is dropped — the Hybrid prose carries those concepts natively since
-    Anima's Qwen3 text encoder handles natural language.
+    V14 baseline: drop CAT_GENERAL and CAT_META. Keep only format whitelist
+    (quality/safety/rating), subject-count (1girl/1boy/2girls/…), and
+    Danbooru categories {artist, character, copyright}. The Hybrid prose
+    carries everything else since Anima's Qwen3 text encoder handles
+    natural language natively.
 
-    Rationale: general-category tags are the exclusive origin of FAISS
-    mis-retrievals on terse sources ('sparse leg hair' for 'loose hair',
-    'simple fish' for a garden scene, 'overhead lights' for 'warm light').
-    By dropping the category entirely, that failure class is eliminated by
-    construction — no threshold-tuning required.
+    V19 carve-outs on top of V14:
+      (A) Co-occurrence — for each surviving structural tag (character /
+          series / artist), retain CAT_GENERAL tags the DB records as
+          highly co-occurring (p_given_src ≥ min_prob). Fixes character-
+          signature objects (e.g. hatsune_miku → leek retained).
+      (B) Format allowlist — retain CAT_GENERAL tags in the format's
+          `general_tags_allowlist` yaml field. These are rendering-
+          control / booru-trained-convention tokens (framing, named
+          poses, clothing archetypes, anime-specific visual tokens,
+          rendering techniques) that carry tag-level conditioning prose
+          cannot fully replicate.
 
     Must be called with a stack that has an active DB (Anima format + RAG).
+    Co-occurrence carve-out is a no-op if stack.cooccurrence is unavailable.
     """
     if not tag_csv:
         return tag_csv
@@ -658,25 +666,63 @@ def _filter_to_structural_tags(tag_csv: str, stack, tag_fmt: str) -> str:
     whitelist |= {str(t).lower() for t in (fmt.get("quality_tags") or set())}
     whitelist |= {str(t).lower() for t in (fmt.get("leading_tags") or set())}
     whitelist |= {str(t).lower() for t in (fmt.get("rating_tags") or set())}
-    kept = []
+    general_allow: set = set(fmt.get("general_tags_allowlist") or set())
+
+    # Parse once, normalize, classify per tag
+    parsed = []
     for t in tag_csv.split(","):
         t = t.strip()
         if not t:
             continue
         norm = t.lstrip("@").lower().replace(" ", "_").replace("-", "_")
-        if not norm:
-            continue
-        if norm in whitelist:
-            kept.append(t)
-            continue
-        if _SUBJECT_COUNT_RE.match(norm):
-            kept.append(t)
+        if norm:
+            parsed.append((t, norm))
+
+    # Pass 1: keep structural tags; collect their names for co-occurrence lookup
+    kept_indices = set()
+    structural_names: list = []
+    for i, (t, norm) in enumerate(parsed):
+        if norm in whitelist or _SUBJECT_COUNT_RE.match(norm):
+            kept_indices.add(i)
             continue
         if stack is not None and stack.db is not None:
             rec = stack.db.get_by_name(norm)
             if rec and rec.get("category") in _STRUCTURAL_CATEGORIES:
-                kept.append(t)
-    return ", ".join(kept)
+                kept_indices.add(i)
+                structural_names.append(norm)
+
+    # Pass 2a: build co-occurrence allowlist from surviving structural tags
+    cooc_allow: set = set()
+    if (stack is not None and getattr(stack, "cooccurrence", None) is not None
+            and structural_names):
+        top_k = int(_anima_opt("anima_tagger_v19_cooc_top_k", 20))
+        min_prob = float(_anima_opt("anima_tagger_v19_cooc_min_prob", 0.3))
+        for sname in structural_names:
+            try:
+                hits = stack.cooccurrence.top_for(
+                    sname, category=0, top_k=top_k, min_prob=min_prob,
+                )
+            except Exception:
+                hits = []
+            for hit in hits:
+                cooc_allow.add(hit.get("tag", ""))
+
+    # Pass 2b: carve-outs — retain CAT_GENERAL tags present in the format
+    # allowlist or the co-occurrence allowlist
+    if general_allow or cooc_allow:
+        for i, (t, norm) in enumerate(parsed):
+            if i in kept_indices:
+                continue
+            if norm not in general_allow and norm not in cooc_allow:
+                continue
+            # Sanity: verify it's actually CAT_GENERAL (not meta etc.)
+            if stack is not None and stack.db is not None:
+                rec = stack.db.get_by_name(norm)
+                if rec is None or rec.get("category") != 0:
+                    continue
+            kept_indices.add(i)
+
+    return ", ".join(parsed[i][0] for i in sorted(kept_indices))
 
 
 def _load_tag_formats():
@@ -694,6 +740,12 @@ def _load_tag_formats():
             quality = {t.replace(" ", "_") for t in (data.get("quality_tags") or [])}
             leading = {t.replace(" ", "_") for t in (data.get("leading_tags") or [])}
             rating = {t.replace(" ", "_") for t in (data.get("rating_tags") or [])}
+            # V19: CAT_GENERAL tags that pass the V14 structural filter.
+            # Stored underscored (DB-lookup form) for O(1) membership checks.
+            general_allow = {
+                str(t).lower().replace(" ", "_").replace("-", "_")
+                for t in (data.get("general_tags_allowlist") or [])
+            }
             quality_merged = _UNIVERSAL_QUALITY_TAGS | quality
             _tag_formats[label] = {
                 "system_prompt": data["system_prompt"].strip(),
@@ -704,6 +756,7 @@ def _load_tag_formats():
                 "quality_tags": quality_merged,
                 "leading_tags": leading,
                 "rating_tags": rating,
+                "general_tags_allowlist": general_allow,
                 "whitelist_set": quality_merged | leading | rating,
             }
 

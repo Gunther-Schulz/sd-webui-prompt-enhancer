@@ -82,6 +82,111 @@ leading_tags:
 # Anima doesn't use rating:* tokens.
 rating_tags: []
 
+# V19 structural-filter allowlist — CAT_GENERAL tags that survive the
+# V14 filter in addition to quality/safety/subject-count/artist/character/
+# series. These are rendering-control and booru-trained-convention tags
+# that function as structural signals rather than scene descriptions:
+# framing controls the shot, named poses set body configuration, named
+# clothing triggers trained silhouette priors, named techniques trigger
+# trained rendering priors, and named visual conventions (ahoge etc.)
+# are tokens the model was specifically trained on.
+#
+# Rationale: prose handles descriptive general tags well via Qwen3, but
+# these specific-token general tags carry tag-level conditioning the
+# prose cannot fully replicate. Keep the list conservative — expand
+# only when a missing tag is observably hurting images.
+general_tags_allowlist:
+  # Framing / camera angle
+  - from below
+  - from above
+  - from behind
+  - from side
+  - looking at viewer
+  - looking back
+  - looking away
+  - looking up
+  - looking down
+  - close-up
+  - portrait
+  - upper body
+  - cowboy shot
+  - full body
+  - pov
+  - dutch angle
+  - bird's-eye view
+
+  # Subject composition
+  - solo
+  - multiple girls
+  - multiple boys
+
+  # Named poses / body configuration
+  - contrapposto
+  - seiza
+  - sitting
+  - standing
+  - kneeling
+  - lying
+  - prone
+  - supine
+  - arms behind back
+  - arms up
+  - arms crossed
+  - hand on own hip
+  - hands on hips
+  - crossed legs
+  - crossed arms
+  - peace sign
+
+  # Anime-specific visual conventions (tokens the model was trained on)
+  - ahoge
+  - heterochromia
+  - twintails
+  - drill hair
+  - gradient hair
+  - two-tone hair
+  - long hair
+  - short hair
+  - medium hair
+  - very long hair
+
+  # Facial expression (specific booru-trained tokens)
+  - blushing
+  - heart-shaped pupils
+  - closed eyes
+  - half-closed eyes
+  - open mouth
+  - closed mouth
+  - smile
+  - smirking
+  - tears
+  - crying
+
+  # Clothing archetypes (booru silhouette triggers)
+  - school uniform
+  - sailor fuku
+  - maid
+  - miko
+  - china dress
+  - kimono
+  - yukata
+  - hanbok
+  - hakama
+  - gothic lolita
+  - thigh highs
+  - pantyhose
+
+  # Style / rendering technique
+  - watercolor (medium)
+  - oil painting (medium)
+  - sketch
+  - lineart
+  - monochrome
+  - sepia
+  - grayscale
+  - traditional media
+  - 3d
+
 # Anima trains on generic Danbooru/Gelbooru (not a NoobAI-curated subset),
 # so use the fresher general Danbooru tag list maintained by DominikDoom.
 tag_db: danbooru.csv
