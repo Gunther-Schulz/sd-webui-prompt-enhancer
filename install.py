@@ -93,22 +93,64 @@ def _download(url: str, dest: str) -> None:
     os.replace(dest + ".part", dest)
 
 
+def _warn(msg: str) -> None:
+    """Print a prominently-formatted warning to stderr so it's visible
+    in the Forge console log, not lost in a sea of startup messages."""
+    bar = "*" * 72
+    print("", file=sys.stderr)
+    print(bar, file=sys.stderr)
+    print(f"  sd-webui-prompt-enhancer — ANIMA RAG UNAVAILABLE", file=sys.stderr)
+    for line in msg.rstrip().splitlines():
+        print(f"  {line}", file=sys.stderr)
+    print(bar, file=sys.stderr)
+    print("", file=sys.stderr)
+
+
 def _fetch_artefacts():
     """Ensure data/ has the current pre-built artefacts from HF.
 
     Called on every extension load. Fast when files are already fresh
-    (just reads VERSION to compare hashes). Skips silently on any
-    error — extension still works, Anima RAG just won't activate
-    until the next successful run.
+    (just reads VERSION to compare hashes). On failure: prints a
+    visible multi-line warning AND writes a human-readable reason to
+    data/.rag_unavailable so the runtime side can surface it in the UI.
+    Extension continues to work — Anima tag format falls back to the
+    rapidfuzz path, other formats are unaffected.
     """
+    reason_path = os.path.join(_DATA_DIR, ".rag_unavailable")
+    # Clear stale reason at start of each run
+    if os.path.exists(reason_path):
+        try:
+            os.remove(reason_path)
+        except Exception:
+            pass
+
+    def _record_failure(reason: str) -> None:
+        try:
+            os.makedirs(_DATA_DIR, exist_ok=True)
+            with open(reason_path, "w") as f:
+                f.write(reason)
+        except Exception:
+            pass
+
     base = f"https://huggingface.co/datasets/{HF_REPO}/resolve/main"
     ver_url = f"{base}/VERSION"
     try:
         with urllib.request.urlopen(ver_url, timeout=15) as r:
             manifest = json.loads(r.read())
     except Exception as e:
-        print(f"[sd-webui-prompt-enhancer] anima artefacts: could not reach "
-              f"{ver_url} ({type(e).__name__}: {e}) — skipping download")
+        err = f"{type(e).__name__}: {e}"
+        _warn(
+            f"Could not reach HuggingFace to download the RAG index.\n"
+            f"URL: {ver_url}\n"
+            f"Error: {err}\n\n"
+            f"The Anima tag format will fall back to the rapidfuzz\n"
+            f"validation path — usable but without embedding-based\n"
+            f"retrieval, shortlist injection, or co-occurrence pairing.\n\n"
+            f"Other tag formats (Illustrious / NoobAI / Pony) are unaffected.\n\n"
+            f"Fix: check network connectivity to huggingface.co and\n"
+            f"restart Forge to retry."
+        )
+        _record_failure(f"HF unreachable at install time: {err}")
         return
 
     expected = manifest.get("files", {})

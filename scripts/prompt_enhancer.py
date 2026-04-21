@@ -90,13 +90,48 @@ def _get_anima_stack():
         return None
 
 
-def _use_anima_pipeline(tag_fmt: str) -> bool:
-    """True iff Anima retrieval should replace the rapidfuzz path."""
+def _rag_available_for(tag_fmt: str) -> tuple[bool, str]:
+    """True + empty-string reason iff RAG pipeline can run for tag_fmt.
+    Returns (False, reason_string) when unavailable — the caller can
+    surface the reason in the status output so users see why their
+    RAG radio choice didn't take effect."""
     if tag_fmt != "Anima":
+        return False, (
+            f"RAG is currently Anima-only; '{tag_fmt}' uses the rapidfuzz "
+            f"path. Falling back to Fuzzy."
+        )
+    stack = _get_anima_stack()
+    if stack is None:
+        reason_path = os.path.join(_EXT_DIR, "data", ".rag_unavailable")
+        detail = ""
+        if os.path.exists(reason_path):
+            try:
+                with open(reason_path) as f:
+                    detail = f" ({f.read().strip()})"
+            except Exception:
+                pass
+        return False, (
+            f"RAG artefacts not available{detail}. "
+            f"Falling back to Fuzzy. Restart Forge to retry HuggingFace download."
+        )
+    return True, ""
+
+
+def _use_anima_pipeline(tag_fmt: str, validation_mode: str = "RAG") -> bool:
+    """True iff the user picked RAG AND it's available for this format."""
+    if validation_mode != "RAG":
         return False
-    if not bool(_anima_opt("anima_tagger_enabled", True)):
-        return False
-    return _get_anima_stack() is not None
+    ok, _ = _rag_available_for(tag_fmt)
+    return ok
+
+
+def _rapidfuzz_mode_for(validation_mode: str) -> str:
+    """Map the radio value to a mode the rapidfuzz _postprocess_tags
+    path understands. When the user picked 'RAG' but we fell back,
+    use 'Fuzzy' (non-destructive typo correction)."""
+    if validation_mode == "RAG":
+        return "Fuzzy"
+    return validation_mode
 
 
 def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, seed=-1):
@@ -549,11 +584,10 @@ _TAG_CORRECTIONS = {
     "3boy": "3boys",
 }
 
-def _validate_tags(tags_str, tag_format, mode="Check"):
+def _validate_tags(tags_str, tag_format, mode="Fuzzy"):
     """Validate and correct tags against the database.
 
     Modes:
-      Check        — exact + alias match only, keep unrecognized
       Fuzzy        — exact + alias + fuzzy correction, keep unrecognized
       Fuzzy Strict — exact + alias + fuzzy correction, drop unrecognized
 
@@ -1471,9 +1505,9 @@ class PromptEnhancer(scripts.Script):
                 tag_format = gr.Dropdown(label="Tag Format", choices=_tf_names, value=_tf_names[0] if _tf_names else "", scale=1, info="Tag conventions for booru-trained fine-tunes.")
                 tag_validation = gr.Radio(
                     label="Tag Validation",
-                    choices=["Fuzzy Strict", "Fuzzy", "Check", "Off"],
-                    value="Fuzzy", scale=2,
-                    info="Fuzzy Strict=guess+drop | Fuzzy=guess+keep | Check=alias only | Off=raw",
+                    choices=["RAG", "Fuzzy Strict", "Fuzzy", "Off"],
+                    value="RAG", scale=2,
+                    info="RAG=retrieval + embedding validator (Anima) | Fuzzy Strict=guess+drop | Fuzzy=guess+keep | Off=raw",
                 )
                 tag_validation.do_not_save_to_config = True
 
@@ -1697,17 +1731,21 @@ class PromptEnhancer(scripts.Script):
                 if inline_text:
                     user_msg = f"{user_msg}\n\n{inline_text}"
 
-                # Anima retrieval: if the Anima tag-format is selected AND the
-                # artefacts are built, pre-retrieve a shortlist of real
-                # artists/characters/series and inject into the prose system
-                # prompt so the LLM references only real entities. The same
-                # stack's tagger replaces the rapidfuzz validation path below.
+                # RAG path when the user picked it on the Tag Validation radio.
+                # If picked but unavailable (non-Anima format, or artefacts
+                # missing), surface the reason so the user sees why we fell
+                # back to rapidfuzz.
                 _anima = None
                 _anima_cm = None
-                _anima_shortlist = None  # kept for validator context at the tag step
-                if _use_anima_pipeline(tag_fmt):
-                    _s = _get_anima_stack()
-                    if _s is not None:
+                _anima_shortlist = None
+                _rag_fallback_msg = ""
+                if validation_mode == "RAG":
+                    ok, reason = _rag_available_for(tag_fmt)
+                    if not ok:
+                        _rag_fallback_msg = reason
+                        logger.warning(f"RAG unavailable: {reason}")
+                    else:
+                        _s = _get_anima_stack()
                         try:
                             _anima_cm = _s.models()
                             _anima_cm.__enter__()
@@ -1724,18 +1762,22 @@ class PromptEnhancer(scripts.Script):
                             _sl_frag = _anima_shortlist.as_system_prompt_fragment()
                             if _sl_frag:
                                 sp = f"{sp}\n\n{_sl_frag}"
-                            print(f"[PromptEnhancer] Anima shortlist: "
+                            print(f"[PromptEnhancer] RAG shortlist: "
                                   f"{len(_anima_shortlist.artists)} artists, "
                                   f"{len(_anima_shortlist.characters)} characters, "
                                   f"{len(_anima_shortlist.series)} series")
                         except Exception as e:
-                            logger.warning(f"anima setup failed, falling back: {e}")
+                            _rag_fallback_msg = f"RAG failed to load: {e}"
+                            logger.warning(f"RAG setup failed: {e}")
                             if _anima_cm:
                                 try: _anima_cm.__exit__(None, None, None)
                                 except Exception: pass
                             _anima = None
                             _anima_cm = None
                             _anima_shortlist = None
+
+                if _rag_fallback_msg:
+                    yield gr.update(), gr.update(), f"<span style='color:#ca6'>{_rag_fallback_msg}</span>"
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
@@ -1817,7 +1859,7 @@ class PromptEnhancer(scripts.Script):
                                 shortlist=_anima_shortlist,
                             )
                         else:
-                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+                            negative, _ = _postprocess_tags(negative, tag_fmt, _rapidfuzz_mode_for(validation_mode))
 
                     # Run tags through full post-processing pipeline.
                     # When Anima retrieval is active, the bge-m3 validator
@@ -1828,7 +1870,7 @@ class PromptEnhancer(scripts.Script):
                             shortlist=_anima_shortlist,
                         )
                     else:
-                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
+                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, _rapidfuzz_mode_for(validation_mode))
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags + NL"]
                     if stats:
@@ -1975,12 +2017,21 @@ class PromptEnhancer(scripts.Script):
                     if validation_mode != "Off":
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
 
-                    # Anima routing for remix. Remix operates on already-
-                    # curated prompts, so we only engage anima_tagger when
-                    # the user is explicitly working in Anima tag format.
-                    # No shortlist here — remix doesn't re-query.
-                    _anima_r = _get_anima_stack() if _use_anima_pipeline(tag_fmt) else None
+                    # RAG routing for remix — only when user picked RAG on
+                    # the Tag Validation radio AND it's available for this
+                    # format. No shortlist here — remix doesn't re-query.
+                    _anima_r = None
                     _anima_r_cm = None
+                    _rag_fallback_msg_r = ""
+                    if validation_mode == "RAG":
+                        ok, reason = _rag_available_for(tag_fmt)
+                        if ok:
+                            _anima_r = _get_anima_stack()
+                        else:
+                            _rag_fallback_msg_r = reason
+                            logger.warning(f"RAG unavailable (remix): {reason}")
+                    if _rag_fallback_msg_r:
+                        yield gr.update(), gr.update(), f"<span style='color:#ca6'>{_rag_fallback_msg_r}</span>"
                     if _anima_r is not None:
                         try:
                             _anima_r_cm = _anima_r.models()
@@ -1996,7 +2047,7 @@ class PromptEnhancer(scripts.Script):
                             return _anima_tag_from_draft(
                                 _anima_r, tag_str, safety=_anima_r_safety,
                             )
-                        return _postprocess_tags(tag_str, tag_fmt, validation_mode)
+                        return _postprocess_tags(tag_str, tag_fmt, _rapidfuzz_mode_for(validation_mode))
 
                     if fmt == "hybrid":
                         # Split tags and NL, post-process tags only
@@ -2111,9 +2162,14 @@ class PromptEnhancer(scripts.Script):
                 _anima_t = None
                 _anima_t_cm = None
                 _anima_t_shortlist = None
-                if _use_anima_pipeline(tag_fmt):
-                    _s = _get_anima_stack()
-                    if _s is not None:
+                _rag_fallback_msg_t = ""
+                if validation_mode == "RAG":
+                    ok, reason = _rag_available_for(tag_fmt)
+                    if not ok:
+                        _rag_fallback_msg_t = reason
+                        logger.warning(f"RAG unavailable: {reason}")
+                    else:
+                        _s = _get_anima_stack()
                         try:
                             _anima_t_cm = _s.models()
                             _anima_t_cm.__enter__()
@@ -2129,18 +2185,22 @@ class PromptEnhancer(scripts.Script):
                             _frag = _anima_t_shortlist.as_system_prompt_fragment()
                             if _frag:
                                 sp = f"{sp}\n\n{_frag}"
-                            print(f"[PromptEnhancer] Anima shortlist: "
+                            print(f"[PromptEnhancer] RAG shortlist: "
                                   f"{len(_anima_t_shortlist.artists)} artists, "
                                   f"{len(_anima_t_shortlist.characters)} characters, "
                                   f"{len(_anima_t_shortlist.series)} series")
                         except Exception as _e:
-                            logger.warning(f"anima setup failed in tags mode, falling back: {_e}")
+                            _rag_fallback_msg_t = f"RAG failed to load: {_e}"
+                            logger.warning(f"RAG setup failed: {_e}")
                             if _anima_t_cm:
                                 try: _anima_t_cm.__exit__(None, None, None)
                                 except Exception: pass
                             _anima_t = None
                             _anima_t_cm = None
                             _anima_t_shortlist = None
+
+                if _rag_fallback_msg_t:
+                    yield gr.update(), gr.update(), f"<span style='color:#ca6'>{_rag_fallback_msg_t}</span>"
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags)...</span>"
@@ -2168,7 +2228,7 @@ class PromptEnhancer(scripts.Script):
                                 shortlist=_anima_t_shortlist,
                             )
                         else:
-                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
+                            negative, _ = _postprocess_tags(negative, tag_fmt, _rapidfuzz_mode_for(validation_mode))
                     else:
                         tags, negative = raw, ""
                     if _anima_t is not None:
@@ -2177,7 +2237,7 @@ class PromptEnhancer(scripts.Script):
                             shortlist=_anima_t_shortlist,
                         )
                     else:
-                        tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
+                        tags, stats = _postprocess_tags(tags, tag_fmt, _rapidfuzz_mode_for(validation_mode))
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
                     if stats:
@@ -2286,11 +2346,7 @@ class PromptEnhancer(scripts.Script):
 
         def _restore_tag_validation(params):
             val = params.get("PE Tag Validation", "")
-            # Migrate legacy plain "Strict" (since dropped — Fuzzy Strict
-            # subsumes it now that rapidfuzz makes fuzzy correction free).
-            if val == "Strict":
-                val = "Fuzzy Strict"
-            return val if val in ("Off", "Check", "Fuzzy", "Fuzzy Strict") else gr.update()
+            return val if val in ("RAG", "Fuzzy Strict", "Fuzzy", "Off") else gr.update()
 
         def _restore_temperature(params):
             raw = params.get("PE Temperature", "")
@@ -2384,22 +2440,12 @@ def _on_ui_settings():
 
     section = ("anima_tagger", "Anima Tagger")
 
-    shared.opts.add_option(
-        "anima_tagger_enabled",
-        OptionInfo(
-            True,
-            "Enable Anima retrieval pipeline",
-            section=section,
-        ).info(
-            "When Tag Format = Anima, replaces rapidfuzz validation with "
-            "embedding-based validator + RAG shortlist. Requires one-time "
-            "artefact build (see README)."
-        ),
-    )
     try:
         import gradio as _gr
     except ImportError:
         _gr = None
+    # RAG enable/disable lives on the main Tag Validation radio, not here.
+    # Settings below are tuning knobs for power users.
     shared.opts.add_option(
         "anima_tagger_semantic_threshold",
         OptionInfo(
