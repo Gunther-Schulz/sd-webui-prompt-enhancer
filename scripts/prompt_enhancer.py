@@ -182,51 +182,36 @@ def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, see
     return _expander
 
 
-_ANIMA_NSFW_INTENSITY_TO_SAFETY = {
-    "Modest": "safe",
-    "Suggestive": "sensitive",
-    "Sensual": "sensitive",
-    "Erotic": "nsfw",
-    "Explicit": "explicit",
-    "Hardcore": "explicit",
-    "🎲 Random Intensity": "nsfw",
-}
-_ANIMA_NSFW_PRODUCTION_NAMES = {
-    "Professional", "Glamour", "Bedroom", "Shower", "Striptease",
-    "Massage", "Poolside", "Voyeuristic", "Exhibitionist",
-    "Dominant", "Submissive", "Bondage", "Oral", "Seduction",
-    "🎲 Random Production Style",
-}
+# Tier precedence — most permissive first. A modifier YAML entry declares
+# its safety tier via a `safety_tier` field with one of these values.
+# The highest-tier active modifier wins.
+_SAFETY_TIER_ORDER = ("explicit", "nsfw", "sensitive", "safe")
 
 
 def _anima_safety_from_modifiers(mod_list, source: str = "") -> str:
-    """Map active modifier selections to a safety tag.
+    """Resolve the safety tag from active modifiers via the `safety_tier`
+    field declared on each modifier's YAML entry.
 
-    Precedence:
-      1. Active intensity modifier (highest signal, explicit user choice)
-      2. Production-style modifier without intensity → nsfw
-      3. Default → safe
-
-    Rating detection from source text is deferred to the LLM — the tag-
-    extract system prompt instructs it to emit the safety tag that matches
-    the prose content. The previous Python-side keyword fallback list was
-    removed to keep the codebase free of content-adjacent vocabulary;
-    rating signal is now fully data / LLM driven.
+    Precedence: most permissive tier among active modifiers wins. If no
+    active modifier declares a tier, defaults to `safe`. Rating detection
+    from raw source text is deferred to the LLM (see V16 tag-extract SP).
 
     `source` argument is retained (unused) for call-site compatibility.
+
+    Knowledge lives in data, not Python: the previous name-to-tier dict
+    and production-style name set have been removed. A modifier's tier is
+    declared on the modifier itself via YAML; adding a new modifier with
+    a safety implication never requires a Python edit.
     """
-    del source  # rating signal comes from modifiers or the LLM's own judgment
-    names = {name for name, _ in mod_list}
-    # 1. Intensity levels — most permissive wins (reflects user intent)
-    for lvl in ("Hardcore", "Explicit", "Erotic", "🎲 Random Intensity",
-                "Sensual", "Suggestive", "Modest"):
-        if lvl in names:
-            return _ANIMA_NSFW_INTENSITY_TO_SAFETY[lvl]
-    # 2. Production-style implies NSFW
-    if names & _ANIMA_NSFW_PRODUCTION_NAMES:
-        return "nsfw"
-    # 3. Default
-    return "safe"
+    del source  # rating signal comes from modifiers' own declarations
+    winning_index = len(_SAFETY_TIER_ORDER)  # higher = less permissive
+    for _name, entry in mod_list:
+        tier = entry.get("safety_tier") if isinstance(entry, dict) else None
+        if tier in _SAFETY_TIER_ORDER:
+            idx = _SAFETY_TIER_ORDER.index(tier)
+            if idx < winning_index:
+                winning_index = idx
+    return _SAFETY_TIER_ORDER[winning_index] if winning_index < len(_SAFETY_TIER_ORDER) else "safe"
 
 
 def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",

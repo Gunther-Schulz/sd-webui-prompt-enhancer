@@ -16,14 +16,15 @@ data/
 # SETUP fixtures and RESULTS are gitignored.
 .ai/
 
-# Experiment setup fixtures (test prompts + rating rubric). Kept local
-# so published runs aren't tied to a specific maintainer's rubric or
-# test suite.
+# The published experiment surface is the generic harness only
+# (runner.py, pipeline.py, rate.py, rate_variant.py, seeds.py,
+# preflight_db_retrieve.py, __init__.py). The actual experiments —
+# variant pipelines, per-variant step implementations, test fixtures,
+# rubric, and the maintainer's narrative — are maintainer-local.
+experiments/variants/
+experiments/steps/
 experiments/prompts/
 experiments/rubric.yaml
-
-# Experiment log (maintainer's local narrative — cross-variant findings,
-# current status, open questions).
 experiments/LOG.md
 
 # Run logs and tmp artefacts
