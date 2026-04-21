@@ -91,14 +91,97 @@ def _load_and_filter_tags() -> list[dict]:
     return records
 
 
-def _format_for_embedding(rec: dict) -> str:
+def _format_for_embedding(rec: dict, signatures: dict = None) -> str:
+    """Format a tag record as text for bge-m3 embedding.
+
+    Artists and characters get an extra "associated with: ..." segment
+    carrying their top co-occurring general tags (built from the post
+    dataset). Without it, their embeddings only see the name itself
+    (there's ~0 wiki coverage for these categories) and the retriever
+    falls back to name-overlap matching. With signatures, retrieval
+    can match on style/theme.
+    """
     cat_name = _CATEGORY_INT_TO_STR.get(rec["category"], "General").lower()
     parts = [f"{rec['name'].replace('_', ' ')} ({cat_name})"]
     if rec["aliases"]:
         parts.append(f"aliases: {rec['aliases'].replace('_', ' ')}")
     if rec["wiki"]:
         parts.append(rec["wiki"][:800])
+    if signatures and rec["category"] in (config.CAT_ARTIST, config.CAT_CHARACTER):
+        sig = signatures.get(rec["name"])
+        if sig:
+            sig_text = ", ".join(t.replace("_", " ") for t in sig)
+            parts.append(f"associated with: {sig_text}")
     return " | ".join(parts)
+
+
+def _build_entity_signatures(min_posts: int = 3, top_n: int = 12) -> dict:
+    """For each artist/character, compute top-N co-occurring general tags
+    from the post dataset. Returns {entity_name: [tag, tag, ...]}.
+
+    Parses once from danbooru_posts.parquet. Complexity is linear in
+    posts × avg-tags-per-post; ~500k posts × ~30 generals completes in
+    under a minute on CPU.
+    """
+    from collections import Counter
+    if not os.path.exists(POSTS_PATH):
+        print("  no posts parquet — signatures not built")
+        return {}
+    import pyarrow.parquet as pq
+    print(f"  reading {POSTS_PATH} for entity signatures …")
+    tbl = pq.read_table(POSTS_PATH)
+    gen_col = tbl["general"].to_pylist()
+    char_col = tbl["character"].to_pylist()
+    art_col = tbl["artist"].to_pylist()
+    n_posts = len(gen_col)
+
+    def _split(raw: str) -> list[str]:
+        if not raw:
+            return []
+        return [t.strip().replace(" ", "_").replace("-", "_")
+                for t in raw.split(",") if t.strip()]
+
+    entity_general: dict[str, Counter] = {}
+    entity_total: dict[str, int] = {}
+
+    for i in range(n_posts):
+        generals = _split(gen_col[i])
+        if not generals:
+            continue
+        entities = _split(char_col[i]) + _split(art_col[i])
+        for e in entities:
+            entity_total[e] = entity_total.get(e, 0) + 1
+            ctr = entity_general.get(e)
+            if ctr is None:
+                ctr = Counter()
+                entity_general[e] = ctr
+            ctr.update(generals)
+        if (i + 1) % 100_000 == 0:
+            print(f"    processed {i+1:,} / {n_posts:,} posts …")
+
+    signatures: dict[str, list[str]] = {}
+    for e, ctr in entity_general.items():
+        if entity_total.get(e, 0) < min_posts:
+            continue
+        # Drop the generic "1girl"/"1boy" noise that pollutes nearly every
+        # post — the embedder gains little from these. Keep everything else.
+        _BLOCK = {"1girl", "1boy", "1other", "solo", "multiple_girls",
+                  "multiple_boys", "highres", "absurdres", "bad_id",
+                  "bad_pixiv_id", "commentary", "commentary_request",
+                  "translated", "translation_request", "english_commentary"}
+        top = []
+        for tag, _n in ctr.most_common(top_n + len(_BLOCK)):
+            if tag in _BLOCK:
+                continue
+            top.append(tag)
+            if len(top) >= top_n:
+                break
+        if top:
+            signatures[e] = top
+
+    print(f"  built signatures for {len(signatures):,} entities "
+          f"({sum(1 for k in signatures if len(k) > 0):,} non-empty)")
+    return signatures
 
 
 def _build_tag_db(records: list[dict]) -> None:
@@ -115,10 +198,10 @@ def _build_tag_db(records: list[dict]) -> None:
     db.close()
 
 
-def _build_faiss_index(records: list[dict]) -> None:
+def _build_faiss_index(records: list[dict], signatures: dict = None) -> None:
     print("Loading bge-m3 on GPU …")
     embedder = Embedder()
-    texts = [_format_for_embedding(r) for r in records]
+    texts = [_format_for_embedding(r, signatures) for r in records]
 
     print(f"Embedding {len(texts):,} tags … (this may take several minutes)")
     vecs = embedder.encode(texts, batch_size=128)
@@ -250,8 +333,11 @@ def main() -> int:
     print("\n— Building tag DB —")
     _build_tag_db(records)
 
+    print("\n— Building entity co-occurrence signatures —")
+    signatures = _build_entity_signatures(min_posts=3, top_n=12)
+
     print("\n— Building faiss index —")
-    _build_faiss_index(records)
+    _build_faiss_index(records, signatures=signatures)
 
     print("\n— Building co-occurrence table —")
     _build_cooccurrence(records)
