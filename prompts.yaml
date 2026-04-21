@@ -89,6 +89,8 @@ empty_source_signal: "SOURCE PROMPT: (none — the user has not specified a scen
 prose_adherence: |
   STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. Whatever wording the source uses, your prose uses that wording or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.
 
+  INTEGRATION — do NOT prepend a literal echo of the source text. Do not begin your prose with the source phrase (e.g. "girl, cooking, …"). Weave each source element into proper flowing sentences that describe the scene. The source elements are required to appear, but they must read as part of the scene description, not as a comma-separated header pasted onto the front. If the user wants the raw source prepended verbatim they will enable a separate "Prepend" option on their end — it is not your job.
+
 # Appended to the prose SP on V14 Hybrid path (Anima + RAG). Since V14 drops
 # all general-category tags post-validation, the prose is the primary image
 # signal and must cover every visual element the downstream tag prefix does
