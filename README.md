@@ -10,7 +10,7 @@ Takes your short prompt and expands it into a detailed description, booru-style 
 - **Four generation modes** — Prose (flowing paragraph), Hybrid (tags + NL supplement), Tags (booru tags), Remix (modify existing)
 - **Mode modifiers** — Still (frozen moment), Scene (action over time), Audio (sound cues) — available in the Mode dropdown alongside other modifiers
 - **130+ categorized modifiers** — organized into auto-generated dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
-- **Tag generation & validation** — Illustrious, NoobAI, Pony formats with auto-downloaded danbooru databases, alias correction, fuzzy matching, deduplication, and standard tag ordering
+- **Tag generation & validation** — Illustrious, NoobAI, Pony, and **Anima** (retrieval-augmented) formats with auto-downloaded danbooru databases, alias correction, fuzzy matching, deduplication, and standard tag ordering
 - **Tag post-processing** — strips LLM meta-annotations, converts hyphens, escapes parentheses for SD, prefix-matches danbooru disambiguation suffixes
 - **Wildcards** — creative LLM choices: surprise location, random artist, anime era, narrative detail, and more
 - **Inline wildcards** — `{name?}` placeholders in your prompt
@@ -80,23 +80,24 @@ Restart the WebUI.
 
 **Hybrid** — Click **✨ Hybrid** for danbooru-style tags followed by a short NL description. Three-pass pipeline: (1) generates rich prose with wildcards/modifiers, (2) extracts tags from that prose using the selected tag format, (3) summarizes the prose into 1-2 compositional sentences. Best for Illustrious, NoobAI, and Pony — follows the community-recommended "tags + NL" format where tags provide precise control and the NL supplement captures spatial relationships, lighting, and mood that tags alone cannot express.
 
-**Tags** — Click **🏷 Tags** for pure booru-style tags. Uses the selected tag format's system prompt directly. Tags are post-processed through validation, correction, reordering, and paren escaping.
+**Tags** — Click **🏷 Tags** for pure booru-style tags. Two-pass pipeline: (1) generates rich prose (same as Prose mode, with wildcards/modifiers), (2) extracts tags from that prose using the selected tag format. The prose pass gives the LLM room to reason about the scene before compressing it to tags — producing richer, more coherent tag lists than asking for tags directly. Tags are post-processed through validation, correction, reordering, and paren escaping.
 
 ### Tag generation
 
 Both **Hybrid** and **Tags** modes use the tag post-processing pipeline:
 
-1. Select a **Tag Format** — Illustrious, NoobAI, or Pony
-2. Choose a **Tag Validation** mode (Check recommended)
+1. Select a **Tag Format** — Illustrious, NoobAI, Pony, or **Anima** (recommended)
+2. Choose a **Tag Validation** mode (RAG recommended with Anima)
 
-Tag databases are automatically downloaded on first use (~2-3 MB per format). Tags are validated, corrected (aliases, common mistakes like `1man` → `1boy`), deduplicated, and reordered into standard danbooru convention. Parentheses in disambiguation suffixes (e.g., `artist_(style)`) are automatically escaped for SD.
+Tag databases are automatically downloaded on first use (~2-3 MB per format; ~1.1 GB for Anima's FAISS index). Tags are validated, corrected (aliases, common mistakes like `1man` → `1boy`), deduplicated, and reordered into standard danbooru convention. Parentheses in disambiguation suffixes (e.g., `artist_(style)`) are automatically escaped for SD.
 
 **Validation modes:**
-- **Off** — raw LLM output, no validation
-- **Check** — exact match + alias + prefix matching, keep unrecognized (default, safe)
-- **Fuzzy** — alias + fuzzy string matching, keep unrecognized
-- **Strict** — alias only, drop unrecognized tags
+- **RAG** — retrieval + embedding validator (Anima format only) — shortlist of real artists/characters/series injected into system prompt + every drafted tag checked against FAISS index. Default.
 - **Fuzzy Strict** — alias + fuzzy matching, drop unrecognized
+- **Fuzzy** — alias + fuzzy string matching, keep unrecognized
+- **Off** — raw LLM output, no validation
+
+On truncation (Ollama hit the token or time budget), tag-mode outputs fail loud: empty textbox, red "Truncated — no output (retry)" status. A reduced partial result would look like success but silently missing content; the retry path is more honest.
 
 ### Remixing an existing prompt
 
@@ -125,8 +126,8 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 |---------|---------|-------------|
 | Mode | (none) | Dropdown: Still (frozen moment), Scene (action over time), Audio (sound cues) |
 | Base | Default | System prompt template (Default or Custom) |
-| Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony (for Tags and Hybrid buttons) |
-| Tag Validation | Check | How to validate generated tags against the database |
+| Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony, Anima (for Tags and Hybrid buttons) |
+| Tag Validation | RAG | How to validate generated tags: RAG (Anima only), Fuzzy Strict, Fuzzy, Off |
 | Modifiers | (none) | Multiple categorized dropdowns auto-generated from YAML files |
 | Wildcards | (none) | Creative delegation — let the LLM make choices |
 | Detail | 0 (auto) | Output length: 0=auto, 1=minimal ... 10=extensive, scales to model |
@@ -335,7 +336,7 @@ Rules of thumb:
 
 1. **Prose**: source prompt is sent to the local LLM with system prompt (base + modifiers + detail level) and wildcards in the user message. The LLM returns a detailed flowing paragraph.
 2. **Hybrid**: three-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 extracts danbooru tags from that prose using the selected tag format's system prompt. Pass 3 summarizes the prose into 1-2 compositional sentences. Tags go through the full post-processing pipeline. All three passes use the same seed for consistency.
-3. **Tags**: source prompt + modifiers + wildcards are sent as a structured user message with tag format instructions. LLM generates booru tags which are validated, corrected, deduplicated, reordered, and paren-escaped.
+3. **Tags**: two-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 extracts danbooru tags from that prose using the selected tag format's system prompt. Tags go through the full post-processing pipeline. Both passes use the same seed for consistency. On Anima + RAG, the same shortlist + embedding validator as Hybrid applies; on truncation, tag mode fails loud (empty output + retry status) rather than delivering a partial list that looks complete.
 4. **Remix**: the current prompt is sent back to the LLM with new modifiers/wildcards to integrate. Auto-detects prose, tags, or hybrid format and uses the appropriate refine prompt and post-processing.
 5. **Streaming**: all LLM calls use streaming with real-time stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
 6. The output is written to the main prompt textbox and all settings are saved to image metadata for reproducibility.

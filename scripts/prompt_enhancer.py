@@ -299,38 +299,7 @@ def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
         "total": len(tags_list),
     }
     print(f"[PromptEnhancer]   → {len(tags_list)} kept, raw dropped={stats['dropped']}")
-    # Belt-and-suspenders: final filter that guarantees every emitted
-    # tag is either in the DB (by normalized name) or on the tag-format
-    # whitelist (score_N, masterpiece, safe, etc.). Catches any bug
-    # upstream (bad rule-layer, validator bypass, etc.) that lets a
-    # non-DB prose phrase reach this point. Logs drops loudly — if this
-    # filter ever fires, there's a real bug to investigate.
-    from anima_tagger.validator import ANIMA_WHITELIST
-    clean_tags = []
-    dropped_by_final = []
-    for t in tags_list:
-        norm = t.strip().lstrip("@").lower().replace(" ", "_").replace("-", "_")
-        if not norm:
-            continue
-        # Whitelist check (score_N, masterpiece, safe, etc.)
-        if norm in ANIMA_WHITELIST:
-            clean_tags.append(t)
-            continue
-        # Safety tags are whitelisted by category — explicit, nsfw, safe, sensitive
-        if norm in ("safe", "sensitive", "nsfw", "explicit"):
-            clean_tags.append(t)
-            continue
-        # DB check — every real tag has a DB entry
-        if stack.db.get_by_name(norm) is not None:
-            clean_tags.append(t)
-            continue
-        # Nothing matched — this is a non-DB, non-whitelist phrase that
-        # must not be in the final output. Drop + log.
-        dropped_by_final.append(t)
-    if dropped_by_final:
-        print(f"[PromptEnhancer] FINAL FILTER dropped {len(dropped_by_final)} "
-              f"non-DB tokens that slipped through validator: {dropped_by_final}")
-    return ", ".join(clean_tags), stats
+    return ", ".join(tags_list), stats
 
 
 # Map of target_slot → (category_code, min_post_count, prefer_popularity).
@@ -2292,8 +2261,10 @@ class PromptEnhancer(scripts.Script):
                         yield partial, "", f"<span style='color:#c66'>Cancelled (partial)</span>"
                     else:
                         yield "", "", "<span style='color:#c66'>Cancelled</span>"
-                except _TruncatedError as e:
-                    yield _clean_output(str(e), strip_underscores=False), "", "<span style='color:#ca6'>Truncated</span>"
+                except _TruncatedError:
+                    # Fail loud — truncated tag output is a reduced result
+                    # that looks like success. Empty textbox + red status.
+                    yield "", "", "<span style='color:#c66'>Truncated — no output (retry)</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
@@ -2480,7 +2451,13 @@ class PromptEnhancer(scripts.Script):
                 except InterruptedError:
                     yield "", "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
-                    yield _clean_output(str(e), strip_underscores=(fmt == "prose")), "", "<span style='color:#ca6'>Truncated</span>"
+                    if fmt == "prose":
+                        # Prose truncation → truncated prose is still prose,
+                        # surface it so the user can use/edit it.
+                        yield _clean_output(str(e), strip_underscores=True), "", "<span style='color:#ca6'>Truncated</span>"
+                    else:
+                        # Tag-mode truncation → fail loud, no silent partial.
+                        yield "", "", "<span style='color:#c66'>Truncated — no output (retry)</span>"
                 except urllib.error.URLError as e:
                     yield "", "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
@@ -2718,8 +2695,12 @@ class PromptEnhancer(scripts.Script):
                         yield partial, "", f"<span style='color:#c66'>Cancelled (partial)</span>"
                     else:
                         yield "", "", "<span style='color:#c66'>Cancelled</span>"
-                except _TruncatedError as e:
-                    yield _clean_output(str(e), strip_underscores=False), "", "<span style='color:#ca6'>Truncated</span>"
+                except _TruncatedError:
+                    # Fail loud. A truncated partial — even post-validation —
+                    # is a reduced result that looks like success to the user.
+                    # Empty textbox + red status makes the failure visible so
+                    # the user retries instead of accepting degraded output.
+                    yield "", "", "<span style='color:#c66'>Truncated — no output (retry)</span>"
                 except urllib.error.URLError as e:
                     yield "", "", f"<span style='color:#c66'>Connection failed: {e.reason}</span>"
                 except Exception as e:
