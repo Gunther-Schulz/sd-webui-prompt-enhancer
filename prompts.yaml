@@ -89,22 +89,31 @@ empty_source_signal: "SOURCE PROMPT: (none — the user has not specified a scen
 prose_adherence: |
   STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. Whatever wording the source uses, your prose uses that wording or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.
 
-  INTEGRATION — do NOT prepend a literal echo of the source text. Do not begin your prose with the source phrase (e.g. "girl, cooking, …"). Weave each source element into proper flowing sentences that describe the scene. The source elements are required to appear, but they must read as part of the scene description, not as a comma-separated header pasted onto the front. If the user wants the raw source prepended verbatim they will enable a separate "Prepend" option on their end — it is not your job.
+  INTEGRATION — your output is PROSE ONLY: full sentences with proper grammar and punctuation. Never begin with comma-separated tokens, whether echoed from the source ("girl, cooking, …") or invented to mimic booru tags ("1girl, 1boy, kissing, …"). Tags are produced by a separate downstream step; the prose must read as prose from the first word. Every source element must still appear, but woven into flowing sentences, not pasted as a tag-like header. If the user wants the source prepended verbatim they will enable a separate "Prepend" option on their end — it is not your job.
 
 # Appended to the prose SP on V14 Hybrid path (Anima + RAG). Since V14 drops
 # all general-category tags post-validation, the prose is the primary image
 # signal and must cover every visual element the downstream tag prefix does
-# not.
+# not — EXCEPT drawing-style / rendering-technique descriptions, which are
+# handled exclusively by tags (@artist for style, and the curated style-
+# technique allowlist: watercolor, sketch, monochrome, lineart, 3d, etc.).
 prose_v14_coverage: |
-  PROSE IS THE PRIMARY IMAGE INPUT. The downstream output has only a small structural tag prefix (quality, safety, 1girl/1boy, artist, character, series). All other visual content must be in the prose itself — it is fed directly to the image generator. Cover every visual element the image needs:
+  PROSE IS THE PRIMARY IMAGE INPUT for scene content. The downstream output has a structural tag prefix (quality, safety, 1girl/1boy, artist, character, series) and a small curated set of style / framing / pose tags. Prose carries the rest of the SCENE — it is fed directly to the image generator. Cover every scene element the image needs:
     - Subject features: skin tone, hair color/length/style, eye color and shape, age / build.
     - Clothing: every garment layer, material, color, fit, and any distinguishing detail (straps, frills, patterns).
     - Pose and body position: stance, limbs, hand positions, head orientation, weight distribution.
     - Expression and gaze: mouth, eyes, eyebrows, direction of look.
     - Lighting: source, direction, quality (harsh/soft), color temperature, resulting shadows.
     - Setting: location, background elements, architecture, objects, floor/wall textures, atmosphere.
-    - Composition: framing (close-up, full-body), angle, depth of field, focal subject.
-  If it is not in the prose it will not be in the image. Be concrete and specific — name materials, colors, shapes, directions. Avoid abstract labels; a reader must be able to picture the exact scene.
+    - Composition of the scene: focal subject, what's in the foreground vs background, spatial layout.
+
+  DO NOT DESCRIBE DRAWING STYLE, RENDERING TECHNIQUE, OR MEDIUM IN THE PROSE. Style is handled by tags exclusively:
+    - Do not describe the artist's style, school, or signature technique ("in the style of X", "like Y's ink-wash aesthetic", "bold black outlines typical of Z"). The @artist tag conveys style conditioning directly.
+    - Do not describe the rendering medium or technique ("watercolor painting of…", "sketch-like lineart…", "monochrome ink illustration…", "3D render with smooth surfaces"). The style-technique tag handles this.
+    - Do not describe the illustration process or art-production artifacts ("visible brushstrokes", "clean black outlines", "cel-shaded", "flat colors typical of anime"). These are tag territory.
+    - You MAY describe scene-physical properties (a shadow, a wet surface reflection, the physical texture of a fabric, a light source) — those are scene facts, not style. The line: if it describes WHAT is in the image, prose. If it describes HOW the image is rendered, tags.
+
+  Be concrete and specific about scene content — name materials, colors, shapes, directions. Avoid abstract labels; a reader must be able to picture the exact scene (but not the rendering style — that is the tags' job).
 
 # System prompt for the V8 multi-sample prose picker. Run at near-zero
 # temperature to pick the source-faithful sample among N prose drafts.
