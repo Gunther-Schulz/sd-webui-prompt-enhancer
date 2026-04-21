@@ -76,31 +76,35 @@ def _load_prompts(path: Path) -> List[Dict[str, Any]]:
     return prompts
 
 
-def _collect_modifiers(names: List[str]):
-    """Resolve modifier names to the (name, normalized_entry) pair shape
-    that the extension's _collect_modifiers produces.
+def _collect_modifiers(names: List[str], seed: int = -1):
+    """Resolve modifier names via the shipped pe._collect_modifiers so
+    source: mechanism and badge-stripping fire identically here and
+    in Forge. Passing the seed lets db_pattern source entries resolve
+    immediately (db_retrieve entries stay deferred — they need the
+    anima stack which isn't up at collect-time).
 
     Fails if any name isn't registered — avoids silent "0 modifiers
     active" when a YAML typo names a non-existent modifier.
     """
     from experiments.steps.common import pe
-    out = []
+    # Validate up-front
     for name in names:
-        entry = pe._all_modifiers.get(name)
-        if entry is None:
+        clean = pe._strip_mechanism_badges(name) if hasattr(pe, "_strip_mechanism_badges") else name
+        if pe._all_modifiers.get(clean) is None:
             raise SystemExit(
                 f"Unknown modifier: {name!r}. "
                 f"Check for typos; available modifiers: {len(pe._all_modifiers)} registered."
             )
-        out.append((name, entry))
-    return out
+    # pe._collect_modifiers expects a list-of-lists (one inner list per
+    # dropdown). The runner has a single flat list — wrap it.
+    return pe._collect_modifiers([names], seed=seed)
 
 
 def run_one(variant_build, variant_name: str, variant_params: Dict[str, Any],
             prompt: Dict[str, Any], seed: int) -> Dict[str, Any]:
     """Execute one (variant, prompt, seed) run. Returns the trace as dict."""
     pipeline = variant_build(variant_params)
-    mods = _collect_modifiers(prompt["modifiers"])
+    mods = _collect_modifiers(prompt["modifiers"], seed=seed)
     initial_state = {
         "source": prompt["source"],
         "mods": mods,

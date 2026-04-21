@@ -49,16 +49,35 @@ art style:
 
 style influence:
   🎲 Random Artist:
-    behavioral: "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
+    # ◆◇ Pre-pick + post-fill:
+    #  - source.db_retrieve seeds a concrete artist from Danbooru's artist
+    #    category (cat=1), scene-relevant via FAISS over the source prompt.
+    #    The picked @artist gets named in the system prompt so the whole
+    #    prose is shaped by that artist's style.
+    #  - target_slot: artist then post-fills via _retrieve_prose_slot if
+    #    the LLM somehow dropped the artist tag (belt-and-suspenders).
+    behavioral: ""  # filled at runtime from picked artist
     keywords: ""
-    # Anima RAG: after validation, if no CAT_ARTIST tag survived, inject
-    # the best-matching real artist for the generated prose as an @-tag.
+    source:
+      db_retrieve:
+        category: 1
+        min_post_count: 500
+        final_k: 10
+      template: "Render this scene in the distinctive style of @{display} (a real Danbooru artist). Describe their characteristic techniques — brushwork, palette, composition, line weight — and how they shape this specific scene. Name @{display} in the prose."
     target_slot: artist
   🎲 Random Franchise:
-    behavioral: "Choose ONE specific franchise or visual IP (be surprising). Explicitly NAME the franchise in the prose — e.g. 'in the visual language of <franchise>' — then describe its distinctive style and how it shapes this scene. The franchise name must appear in the prose."
+    # ◆◇ Same pattern as Random Artist but for copyright/franchise tags
+    # (cat=3). prefer_popularity: true picks the mainstream option from
+    # the top-K (e.g. "vocaloid" over a niche long-title series).
+    behavioral: ""
     keywords: ""
-    # Anima RAG: after validation, if no CAT_COPYRIGHT tag survived, inject
-    # the best-matching real franchise/series for the generated prose.
+    source:
+      db_retrieve:
+        category: 3
+        min_post_count: 500
+        final_k: 10
+        prefer_popularity: true
+      template: "Render this scene in the visual language of {display} (a real Danbooru franchise/series). Describe its distinctive style, recurring motifs, and palette, and how they shape this specific scene."
     target_slot: copyright
   🎲 Random Art Movement:
     behavioral: "Choose a specific art movement (be surprising). Apply its principles throughout."
@@ -87,18 +106,11 @@ symbol:
       template: "Incorporate a {display} motif in the scene — as an ornament, pattern, or compositional anchor."
 
 anime:
-  🎲 Random Anime Style:
-    behavioral: "Choose a specific anime visual style (be surprising) — a distinctive illustrator, franchise, or character archetype — and apply its hallmarks."
-    keywords: ""
-  🎲 Random Anime Era:
-    behavioral: "Choose a specific anime era or season (be surprising) and apply its visual conventions."
-    keywords: ""
-  🎲 Random Anime Element:
-    behavioral: "Add a surprising anime element — a specific creature race, weapon, or distinctive framing — that fits the scene."
-    keywords: ""
-  🎲 Random Anime Color Scheme:
-    behavioral: "Choose a distinctive anime color scheme (be surprising) that matches a specific genre or mood."
-    keywords: ""
+  # Anime-flavored variety is covered by chaining the Anime modifier
+  # with Random Artist ◇ / Random Era ◆ / Random Color Palette / etc.
+  # Previously had 4 Random Anime * LLM-driven wildcards that duplicated
+  # those compositions and added collapse-risk surface without new
+  # capability; removed.
   Anime:
     behavioral: "Anime style."
     keywords: "anime style, drawn not photographic, Japanese animation, stylized features, illustrated"

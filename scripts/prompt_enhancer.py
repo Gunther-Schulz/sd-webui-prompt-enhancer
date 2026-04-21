@@ -366,21 +366,34 @@ _BADGE_SOURCE = "\u25c6"      # ◆ filled diamond: source: pre-pick
 _BADGE_TARGET_SLOT = "\u25c7" # ◇ hollow diamond: target_slot: post-fill
 
 
-def _resolve_source(source_spec: dict, seed: int) -> dict | None:
+def _resolve_source(source_spec: dict, seed: int,
+                    stack=None, query: str = "") -> dict | None:
     """Seed-pick a real Danbooru tag from the DB based on `source_spec`.
 
-    YAML schema under a modifier's `source:` key:
-        db_pattern:     python regex matched against category=general names
-        min_post_count: int, default 50
-        template:       format string with {display}; default "Apply {display}."
+    Two mechanisms supported (exactly one per modifier):
 
-    Returns a dict {name, display, behavioral, keywords} or None on any
-    failure (DB missing, empty pool, bad pattern). Callers treat None as
-    "pool empty — fall through to LLM defaults" so a missing DB doesn't
-    break the extension.
+        db_pattern:  regex matched against category=general names. Fast,
+                     no models required. Used by Random Era, Random Flower,
+                     Random Food, Random Animal, Random Constellation,
+                     Random Tarot Card, Random Symbol.
 
-    Fully data-driven: the pattern is structural, the pool is whatever
-    Danbooru has. Zero curated values here.
+        db_retrieve: FAISS retrieval against a specific Danbooru category
+                     (1=artist, 3=copyright, 4=character). Requires the
+                     anima_tagger stack with models loaded. Query is the
+                     user's source prompt + modifier keywords. Seed-picks
+                     from top-K scene-relevant candidates. Used by ◆ on
+                     Random Artist / Random Franchise / Random Character.
+
+    YAML schemas:
+        source: { db_pattern: "^\\d{4}s_\\(style\\)$", min_post_count: 50,
+                  template: "Set scene in {display}." }
+        source: { db_retrieve: { category: 1, min_post_count: 500,
+                                 final_k: 10 },
+                  template: "Render in the style of {display}." }
+
+    Returns dict {name, display, behavioral, keywords, post_count,
+    pool_size} or None on failure. `db_retrieve` returns None when
+    called without a stack (caller re-resolves after models load).
     """
     import re as _re
     import sqlite3 as _sqlite3
@@ -388,37 +401,74 @@ def _resolve_source(source_spec: dict, seed: int) -> dict | None:
         from anima_tagger.config import TAG_DB_PATH as _TAG_DB_PATH
     except Exception:
         return None
-    if not os.path.isfile(_TAG_DB_PATH):
-        return None
-    pattern = source_spec.get("db_pattern")
-    if not pattern:
-        return None
-    min_pc = int(source_spec.get("min_post_count", 50))
     template = source_spec.get("template") or "Apply {display}."
-    try:
-        rx = _re.compile(pattern)
-    except _re.error as e:
-        logger.warning(f"_resolve_source: bad regex {pattern!r}: {e}")
-        return None
-    try:
-        conn = _sqlite3.connect(_TAG_DB_PATH)
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT name, post_count FROM tags WHERE category=0 AND post_count >= ?",
-            (min_pc,),
-        )
-        # search() not match(): suffix patterns like `_\(flower\)$` need
-        # to match anywhere; fully-anchored patterns (`^...$`) still work.
-        pool = [(n, pc) for n, pc in cur.fetchall() if rx.search(n)]
-        conn.close()
-    except Exception as e:
-        logger.warning(f"_resolve_source: DB query failed: {e}")
-        return None
-    if not pool:
-        return None
     import random as _random
     rng = _random.Random(int(seed) if seed not in (None, -1) else _random.randint(0, 2**31 - 1))
-    picked_name, picked_pc = rng.choice(pool)
+
+    picked_name = None
+    picked_pc = 0
+    pool_size = 0
+
+    if "db_pattern" in source_spec:
+        pattern = source_spec["db_pattern"]
+        if not os.path.isfile(_TAG_DB_PATH):
+            return None
+        min_pc = int(source_spec.get("min_post_count", 50))
+        try:
+            rx = _re.compile(pattern)
+        except _re.error as e:
+            logger.warning(f"_resolve_source: bad regex {pattern!r}: {e}")
+            return None
+        try:
+            conn = _sqlite3.connect(_TAG_DB_PATH)
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT name, post_count FROM tags WHERE category=0 AND post_count >= ?",
+                (min_pc,),
+            )
+            pool = [(n, pc) for n, pc in cur.fetchall() if rx.search(n)]
+            conn.close()
+        except Exception as e:
+            logger.warning(f"_resolve_source: DB query failed: {e}")
+            return None
+        if not pool:
+            return None
+        picked_name, picked_pc = rng.choice(pool)
+        pool_size = len(pool)
+
+    elif "db_retrieve" in source_spec:
+        spec = source_spec["db_retrieve"]
+        # db_retrieve requires the anima_tagger stack with models loaded.
+        # When stack is absent (e.g. pre-RAG-load phase), return None so
+        # the caller can re-resolve later.
+        if stack is None or getattr(stack, "retriever", None) is None:
+            return None
+        category = spec.get("category")
+        min_pc = int(spec.get("min_post_count", 500))
+        final_k = int(spec.get("final_k", 10))
+        prefer_pop = bool(spec.get("prefer_popularity", False))
+        q = (query or "").strip() or "image"
+        try:
+            cands = stack.retriever.retrieve(
+                q, retrieve_k=200, final_k=final_k,
+                category=category, min_post_count=min_pc,
+            )
+        except Exception as e:
+            logger.warning(f"_resolve_source: db_retrieve failed: {e}")
+            return None
+        if not cands:
+            return None
+        if prefer_pop:
+            chosen = max(cands, key=lambda c: getattr(c, "post_count", 0))
+        else:
+            chosen = rng.choice(cands)
+        picked_name = chosen.name
+        picked_pc = getattr(chosen, "post_count", 0)
+        pool_size = len(cands)
+
+    else:
+        return None
+
     # display = human form: underscores→spaces, strip Danbooru _(X) disambiguator
     display = _re.sub(r"_\([^)]+\)$", "", picked_name).replace("_", " ")
     keywords = picked_name.replace("_", " ")
@@ -433,8 +483,44 @@ def _resolve_source(source_spec: dict, seed: int) -> dict | None:
         "behavioral": behavioral,
         "keywords": keywords,
         "post_count": picked_pc,
-        "pool_size": len(pool),
+        "pool_size": pool_size,
     }
+
+
+def _resolve_deferred_sources(mods, seed: int, stack, query: str):
+    """Second-pass source resolution for entries that needed the anima
+    stack (db_retrieve). Mutates `mods` in place. Called by handlers after
+    the RAG models are loaded. Returns count of entries resolved.
+
+    `mods` is the (name, entry) list from _collect_modifiers. Entries
+    with `source.db_retrieve` and no `_resolved_from_source` yet are
+    candidates — the pre-models _collect_modifiers pass couldn't fill
+    them because the retriever wasn't available. Now it is.
+    """
+    resolved_count = 0
+    for i, (name, entry) in enumerate(mods or []):
+        if not isinstance(entry, dict):
+            continue
+        source = entry.get("source")
+        if not source:
+            continue
+        if entry.get("_resolved_from_source"):
+            continue  # already resolved via db_pattern
+        if "db_retrieve" not in source:
+            continue
+        picked = _resolve_source(source, seed, stack=stack, query=query)
+        if not picked:
+            continue
+        updated = dict(entry)
+        updated["behavioral"] = picked["behavioral"]
+        updated["keywords"] = picked["keywords"]
+        updated["_resolved_from_source"] = picked["name"]
+        mods[i] = (name, updated)
+        resolved_count += 1
+        print(f"[PromptEnhancer] Random pick ({name}): "
+              f"{picked['name']} (pool={picked['pool_size']}, "
+              f"post_count={picked['post_count']})")
+    return resolved_count
 
 
 def _inject_source_picks(tags_csv: str, mods, stats: dict | None = None):
@@ -1252,22 +1338,32 @@ def _collect_modifiers(dropdown_selections, seed: int | None = None):
                 continue
             source = entry.get("source") if isinstance(entry, dict) else None
             if source and seed is not None:
-                picked = _resolve_source(source, seed)
-                if picked:
-                    # Materialize a per-run entry with picked values baked
-                    # in. Preserve target_slot / other keys so the post-fill
-                    # safety net still fires when combined with source.
-                    resolved = dict(entry)
-                    resolved["behavioral"] = picked["behavioral"]
-                    resolved["keywords"] = picked["keywords"]
-                    resolved["_resolved_from_source"] = picked["name"]
-                    print(f"[PromptEnhancer] Random pick ({name}): "
-                          f"{picked['name']} (pool={picked['pool_size']}, "
-                          f"post_count={picked['post_count']})")
-                    entry = resolved
+                # db_retrieve needs the anima stack (retriever + models),
+                # which isn't available at _collect_modifiers time. Defer
+                # those to _resolve_deferred_sources in the handler after
+                # models load. db_pattern resolves immediately here.
+                is_deferred = "db_retrieve" in source and "db_pattern" not in source
+                if is_deferred:
+                    # Leave entry as-is; handler will resolve later and
+                    # update behavioral/keywords/_resolved_from_source.
+                    pass
                 else:
-                    print(f"[PromptEnhancer] Random pick ({name}): "
-                          f"pool empty, falling back to LLM behavioral")
+                    picked = _resolve_source(source, seed)
+                    if picked:
+                        # Materialize a per-run entry with picked values baked
+                        # in. Preserve target_slot / other keys so the post-fill
+                        # safety net still fires when combined with source.
+                        resolved = dict(entry)
+                        resolved["behavioral"] = picked["behavioral"]
+                        resolved["keywords"] = picked["keywords"]
+                        resolved["_resolved_from_source"] = picked["name"]
+                        print(f"[PromptEnhancer] Random pick ({name}): "
+                              f"{picked['name']} (pool={picked['pool_size']}, "
+                              f"post_count={picked['post_count']})")
+                        entry = resolved
+                    else:
+                        print(f"[PromptEnhancer] Random pick ({name}): "
+                              f"pool empty, falling back to LLM behavioral")
             result.append((name, entry))
     return result
 
@@ -2283,6 +2379,17 @@ class PromptEnhancer(scripts.Script):
                         _anima_cm = _s.models()
                         _anima_cm.__enter__()
                         _anima = _s
+                        # Resolve any db_retrieve source: picks (e.g. ◆ on
+                        # Random Artist) now that the stack is up. If any
+                        # fire, rebuild style_str + user_msg so the picked
+                        # value flows into the prompt AND the shortlist.
+                        if _resolve_deferred_sources(mods, int(sd), _anima, query=source):
+                            style_str = _build_style_string(mods)
+                            user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                            if style_str:
+                                user_msg = f"{user_msg}\n\n{style_str}"
+                            if inline_text:
+                                user_msg = f"{user_msg}\n\n{inline_text}"
                         _expander = _make_anima_query_expander(
                             api_url, model, temperature=0.3,
                             think=False, seed=int(sd),
@@ -2614,6 +2721,13 @@ class PromptEnhancer(scripts.Script):
                             logger.error(f"RAG setup failed in remix: {_e}")
                             yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: RAG setup failed: {type(_e).__name__}: {_e}</span>"
                             return
+                        # Resolve any db_retrieve source: picks now. In Remix
+                        # the LLM already ran with an unresolved directive
+                        # (stack wasn't up yet) — this late resolution at
+                        # least ensures _inject_source_picks can land the
+                        # picked tag. Pre-pick prose-shaping is a Remix
+                        # limitation; ◆◇ still post-fills correctly.
+                        _resolve_deferred_sources(mods, int(sd), _anima_r, query=(source or existing))
                     _anima_r_safety = _anima_safety_from_modifiers(mods, source)
 
                     def _validate_tag_str(tag_str: str) -> tuple[str, dict | None]:
@@ -2756,6 +2870,15 @@ class PromptEnhancer(scripts.Script):
                         _anima_t_cm = _s.models()
                         _anima_t_cm.__enter__()
                         _anima_t = _s
+                        # Resolve any db_retrieve source: picks now that
+                        # the stack is up (see _hybrid for the rationale).
+                        if _resolve_deferred_sources(mods, int(sd), _anima_t, query=source):
+                            style_str = _build_style_string(mods)
+                            user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                            if style_str:
+                                user_msg = f"{user_msg}\n\n{style_str}"
+                            if inline_text:
+                                user_msg = f"{user_msg}\n\n{inline_text}"
                         _expander_t = _make_anima_query_expander(
                             api_url, model, temperature=0.3,
                             think=False, seed=int(sd),
