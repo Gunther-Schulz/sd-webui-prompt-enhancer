@@ -21,24 +21,9 @@ from experiments.steps.common import call_llm, pe
 from experiments.steps import v1_baseline as v1s
 
 
-_PICKER_SP = """\
-You are a prose quality picker. You will see:
-  - a user SOURCE prompt (may be terse or contain explicit/adult content)
-  - N candidate PROSE passages, each an attempt to expand the source
-
-Your job: choose the prose that most faithfully preserves the source's
-concrete content. In particular:
-  - If the source contains explicit, mature, or adult content (sex,
-    nudity, specific acts, named adult scenarios), choose the prose
-    that preserves that content literally.
-  - If the source names specific subjects, choose the prose that
-    features those exact subjects.
-  - Penalize proses that sanitize, euphemize, or redirect the source.
-  - All else equal, prefer the prose with richer concrete detail.
-
-Output format: respond with ONLY the number of the best prose (1, 2, 3, …).
-No explanation. No other text.
-"""
+# Picker system prompt is loaded from the shipped prompts.yaml via the pe
+# bootstrap — lives as a single source of truth in yaml, no duplicate
+# here. See prompts.yaml key: `picker`.
 
 
 def multi_sample_prose(state: Dict[str, Any], params: Dict[str, Any]) -> Dict[str, Any]:
@@ -83,7 +68,7 @@ def multi_sample_prose(state: Dict[str, Any], params: Dict[str, Any]) -> Dict[st
     picker_user_msg = "\n".join(picker_user_msg_parts)
 
     pick_raw = call_llm(
-        _PICKER_SP, picker_user_msg,
+        pe._prompts.get("picker", ""), picker_user_msg,
         seed=base_seed,
         temperature=0.1,   # picker should be near-deterministic
         num_predict=10,

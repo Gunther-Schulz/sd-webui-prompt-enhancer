@@ -7,3 +7,25 @@ test_*.py
 tags/
 data/
 
+# Claude Code local workspace state
+.claude/
+
+# Experiment run artefacts (traces, ratings, index) — can grow large
+# and are maintainer-local. The harness CODE (runner.py, pipeline.py,
+# steps/, variants/, rate.py, seeds.py) remains tracked; only the
+# SETUP fixtures and RESULTS are gitignored.
+.ai/
+
+# Experiment setup fixtures (test prompts + rating rubric). Kept local
+# so published runs aren't tied to a specific maintainer's rubric or
+# test suite.
+experiments/prompts/
+experiments/rubric.yaml
+
+# Experiment log (maintainer's local narrative — cross-variant findings,
+# current status, open questions).
+experiments/LOG.md
+
+# Run logs and tmp artefacts
+*.log
+/tmp/

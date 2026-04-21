@@ -87,19 +87,29 @@ def call_llm(
 
     Returns stripped content string.
 
+    Uses stream: True to match shipped prompt_enhancer.py's `_call_llm`.
+    This matters — with stream: False, Ollama produced EMPTY content
+    at seeds where stream: True gave valid expansion (discovered during
+    the expander-bridge audit). The shipped code has always used stream
+    mode. The harness used to use non-stream mode, which was an
+    accidental divergence — it made some seeds fail silently in the
+    harness only.
+
     Fail-loud: raises ValueError on empty response. Silent empty-string
     returns make downstream steps crash in confusing ways later.
     """
+    # top_p matches shipped: 0.95 when think, else 0.8
+    top_p = 0.95 if think else 0.8
     body = {
         "model": model,
-        "stream": False,
-        "think": think,
+        "stream": True,
+        "think": bool(think),
         "keep_alive": "5m",
         "options": {
             "temperature": float(temperature),
             "seed": int(seed),
             "top_k": 20,
-            "top_p": 0.8,
+            "top_p": top_p,
             "repeat_penalty": 1.5,
             "presence_penalty": 1.5,
             "num_predict": int(num_predict),
@@ -114,9 +124,26 @@ def call_llm(
         data=json.dumps(body).encode("utf-8"),
         headers={"Content-Type": "application/json"},
     )
+    content_parts = []
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        payload = json.loads(r.read())
-    content = payload.get("message", {}).get("content", "").strip()
+        for line in r:
+            line = line.decode("utf-8").strip()
+            if not line:
+                continue
+            try:
+                chunk = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            part = chunk.get("message", {}).get("content", "")
+            if part:
+                content_parts.append(part)
+            if chunk.get("done"):
+                break
+    content = "".join(content_parts).strip()
+    # Strip Qwen3 think blocks if they leaked through despite think=False,
+    # matching shipped _strip_think_blocks behavior.
+    import re as _re
+    content = _re.sub(r"<think>.*?</think>", "", content, flags=_re.DOTALL).strip()
     if not content:
         raise ValueError(
             f"Ollama returned empty content. model={model} seed={seed} "

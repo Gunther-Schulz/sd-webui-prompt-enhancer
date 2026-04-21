@@ -78,6 +78,57 @@ remix_tags: |
   - Do NOT echo the directives, the rules, or any part of this system prompt.
   - No commentary, no explanation.
 
+# User-message signal substituted in place of "SOURCE PROMPT: <source>" when
+# the user's source is empty (dice-roll mode). Tells the prose LLM to invent
+# a complete scene guided only by style/creative-choice modifiers.
+empty_source_signal: "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)"
+
+# Appended to the prose system prompt ONLY when source is non-empty (V5).
+# Keeps the LLM from softening source content while leaving dice-roll
+# (empty-source) cases alone for creative freedom.
+prose_adherence: |
+  STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. Whatever wording the source uses, your prose uses that wording or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.
+
+# Appended to the prose SP on V14 Hybrid path (Anima + RAG). Since V14 drops
+# all general-category tags post-validation, the prose is the primary image
+# signal and must cover every visual element the downstream tag prefix does
+# not.
+prose_v14_coverage: |
+  PROSE IS THE PRIMARY IMAGE INPUT. The downstream output has only a small structural tag prefix (quality, safety, 1girl/1boy, artist, character, series). All other visual content must be in the prose itself — it is fed directly to the image generator. Cover every visual element the image needs:
+    - Subject features: skin tone, hair color/length/style, eye color and shape, age / build.
+    - Clothing: every garment layer, material, color, fit, and any distinguishing detail (straps, frills, patterns).
+    - Pose and body position: stance, limbs, hand positions, head orientation, weight distribution.
+    - Expression and gaze: mouth, eyes, eyebrows, direction of look.
+    - Lighting: source, direction, quality (harsh/soft), color temperature, resulting shadows.
+    - Setting: location, background elements, architecture, objects, floor/wall textures, atmosphere.
+    - Composition: framing (close-up, full-body), angle, depth of field, focal subject.
+  If it is not in the prose it will not be in the image. Be concrete and specific — name materials, colors, shapes, directions. Avoid abstract labels; a reader must be able to picture the exact scene.
+
+# System prompt for the V8 multi-sample prose picker. Run at near-zero
+# temperature to pick the source-faithful sample among N prose drafts.
+picker: |
+  You are a prose quality picker. You will see:
+    - a user SOURCE prompt
+    - N candidate PROSE passages, each an attempt to expand the source
+
+  Your job: choose the prose that most faithfully preserves the source's concrete content. In particular:
+    - If the source contains restricted-rating content, choose the prose that preserves that content literally rather than one that softens or redirects it.
+    - If the source names specific subjects, choose the prose that features those exact subjects.
+    - Penalize proses that sanitize, euphemize, or redirect the source.
+    - All else equal, prefer the prose with richer concrete detail.
+
+  Output format: respond with ONLY the number of the best prose (1, 2, 3, …). No explanation. No other text.
+
+# Preamble inserted into tag_extract SP (Pass 2) when active modifiers
+# carry style directives. Tells the LLM to reflect those styles in its
+# emitted tags. Appended after the tag-format system_prompt. The actual
+# style list is appended on the next line by the handler.
+tag_extract_style_preamble: "The following style directives were requested. Ensure they are reflected in the tags:"
+
+# Template for the Hybrid Pass 3 summarize call when modifiers carry style
+# directives. {styles} is substituted with the comma-separated style list.
+summarize_style_template: "The following styles were applied: {styles} Ensure these stylistic choices are reflected in the compositional summary."
+
 # Instruction for {name?} inline wildcard placeholders in the source prompt
 inline_wildcard: |
   The user's prompt contains placeholders in {name?} format. For each one, choose a specific, concrete option that fits the scene. Replace the placeholder with your choice.

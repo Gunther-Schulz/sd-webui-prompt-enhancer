@@ -199,58 +199,23 @@ _ANIMA_NSFW_PRODUCTION_NAMES = {
 }
 
 
-# Source-content keywords that imply a non-safe rating. Ordered by
-# strength — higher-tier match wins. Used as a last-resort override
-# when no NSFW modifier is active but the user's own source prompt
-# clearly implies adult content (the LLM should not downgrade the
-# rating to "safe" against user intent).
-_SOURCE_EXPLICIT_KEYWORDS = {
-    "explicit": {
-        "sex", "penetration", "fucking", "penis", "vagina", "pussy",
-        "cock", "cum", "ejaculation", "orgasm", "oral sex", "blowjob",
-        "handjob", "footjob", "titfuck", "anal", "vaginal",
-    },
-    "nsfw": {
-        "nude", "naked", "topless", "bottomless", "exposed",
-        "pantsless", "nsfw", "nipples", "breasts out",
-    },
-    "sensitive": {
-        "bikini", "lingerie", "underwear", "panties", "swimsuit",
-        "sensual", "suggestive", "revealing",
-    },
-}
-
-
-def _safety_from_source(source: str) -> str | None:
-    """Scan the user's source prompt for explicit keywords. Returns the
-    strongest matching safety tier, or None if no match. Case-insensitive,
-    word-boundary-aware so "sexual" matches "sex" but "essex" doesn't
-    match spuriously."""
-    if not source:
-        return None
-    import re as _re
-    s = source.lower()
-    for tier in ("explicit", "nsfw", "sensitive"):
-        for kw in _SOURCE_EXPLICIT_KEYWORDS[tier]:
-            # word-boundary match so "sex" matches "sex," "sex." etc.
-            if _re.search(r"\b" + _re.escape(kw) + r"\b", s):
-                return tier
-    return None
-
-
 def _anima_safety_from_modifiers(mod_list, source: str = "") -> str:
-    """Map active NSFW modifier selections AND source content to a safety tag.
+    """Map active modifier selections to a safety tag.
 
     Precedence:
       1. Active intensity modifier (highest signal, explicit user choice)
       2. Production-style modifier without intensity → nsfw
-      3. Explicit keywords found in source text → derived tier
-      4. Default → safe
+      3. Default → safe
 
-    `source` argument is optional for back-compat; callers should pass it
-    so that typing "girl, sex" in the source still yields nsfw even
-    without the user selecting an intensity modifier.
+    Rating detection from source text is deferred to the LLM — the tag-
+    extract system prompt instructs it to emit the safety tag that matches
+    the prose content. The previous Python-side keyword fallback list was
+    removed to keep the codebase free of content-adjacent vocabulary;
+    rating signal is now fully data / LLM driven.
+
+    `source` argument is retained (unused) for call-site compatibility.
     """
+    del source  # rating signal comes from modifiers or the LLM's own judgment
     names = {name for name, _ in mod_list}
     # 1. Intensity levels — most permissive wins (reflects user intent)
     for lvl in ("Hardcore", "Explicit", "Erotic", "🎲 Random Intensity",
@@ -260,11 +225,7 @@ def _anima_safety_from_modifiers(mod_list, source: str = "") -> str:
     # 2. Production-style implies NSFW
     if names & _ANIMA_NSFW_PRODUCTION_NAMES:
         return "nsfw"
-    # 3. Source keyword fallback — prevents "girl, sex" → "safe"
-    src_tier = _safety_from_source(source)
-    if src_tier:
-        return src_tier
-    # 4. Default
+    # 3. Default
     return "safe"
 
 
@@ -1561,7 +1522,6 @@ DEFAULT_MODEL = "huihui_ai/qwen3.5-abliterated:9b"
 # Placeholder used in the user message when Source Prompt is empty (dice roll).
 # Styles and wildcards still flow through normally; this only replaces the
 # "SOURCE PROMPT: {source}" line so the LLM knows to invent rather than expand.
-_EMPTY_SOURCE_SIGNAL = "SOURCE PROMPT: (none — the user has not specified a scene. Invent a complete, compelling scene, guided by any styles or creative choices below.)"
 DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 
 
@@ -1851,78 +1811,12 @@ class _TruncatedError(Exception):
 
 
 # ── V5 conditional adherence directive ──────────────────────────────
-# Appended to the prose-pass system prompt ONLY when the user's source
-# is non-empty. Keeps the LLM from softening source content (explicit,
-# adult, concrete) while leaving dice-roll (empty-source) cases alone.
-# Experiment-validated: gains +0.9 on girl_sex, no regression on empty-
-# source cases. See experiments/variants/v5.py and LOG.md.
-_PROSE_ADHERENCE_DIRECTIVE = (
-    "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. "
-    "Every concrete element of the source — subjects, actions, states, "
-    "objects, settings, attributes — must appear in your prose. Do not "
-    "drop any element. Do not substitute with a softer or more abstract "
-    "equivalent. Do not re-interpret. If the source uses a specific word "
-    "(including explicit, adult, violent, or otherwise mature words), "
-    "your prose uses that word or its direct concrete equivalent — never "
-    "a euphemism and never a sanitized rephrasing. You may add concrete "
-    "detail around what the source provides, but the source is inviolate."
-)
-
-
-# ── V15 prose-as-direct-image-input directive ───────────────────────
-# Appended to the prose SP when the V14 Hybrid path is active (Anima +
-# RAG). Since V14 drops all general-category tags post-validation and
-# the structural prefix carries only quality/safety/subject-count/
-# @artist/character/series, the prose now IS the primary image signal
-# rather than scaffold for tag extraction. This directive tells the LLM
-# it must cover every visual element itself.
-_PROSE_V14_COVERAGE_DIRECTIVE = (
-    "PROSE IS THE PRIMARY IMAGE INPUT. The downstream output has only a "
-    "small structural tag prefix (quality, safety, 1girl/1boy, artist, "
-    "character, series). All other visual content must be in the prose "
-    "itself — it is fed directly to the image generator. Cover every "
-    "visual element the image needs:\n"
-    "  - Subject features: skin tone, hair color/length/style, eye color "
-    "and shape, age / build.\n"
-    "  - Clothing: every garment layer, material, color, fit, and any "
-    "distinguishing detail (straps, frills, patterns).\n"
-    "  - Pose and body position: stance, limbs, hand positions, head "
-    "orientation, weight distribution.\n"
-    "  - Expression and gaze: mouth, eyes, eyebrows, direction of look.\n"
-    "  - Lighting: source, direction, quality (harsh/soft), color "
-    "temperature, resulting shadows.\n"
-    "  - Setting: location, background elements, architecture, objects, "
-    "floor/wall textures, atmosphere.\n"
-    "  - Composition: framing (close-up, full-body), angle, depth of "
-    "field, focal subject.\n"
-    "If it is not in the prose it will not be in the image. Be concrete "
-    "and specific — name materials, colors, shapes, directions. Avoid "
-    "abstract labels; a reader must be able to picture the exact scene."
-)
-
-
-# ── V8 multi-sample picker ──────────────────────────────────────────
-# When anima_tagger_prose_samples > 1, generate N prose samples at
-# the normal temperature and have a small "picker" LLM call select the
-# best one for source fidelity. Experiment-validated: +0.5 on
-# girl_sex mean (from V5 3.7 to V8 4.2), +0.2 on empty_ra_rs, zero
-# regression. See experiments/variants/v8.py.
-_PICKER_SP = (
-    "You are a prose quality picker. You will see:\n"
-    "  - a user SOURCE prompt (may be terse or contain explicit/adult content)\n"
-    "  - N candidate PROSE passages, each an attempt to expand the source\n\n"
-    "Your job: choose the prose that most faithfully preserves the "
-    "source's concrete content. In particular:\n"
-    "  - If the source contains explicit, mature, or adult content "
-    "(sex, nudity, specific acts, named adult scenarios), choose the "
-    "prose that preserves that content literally.\n"
-    "  - If the source names specific subjects, choose the prose that "
-    "features those exact subjects.\n"
-    "  - Penalize proses that sanitize, euphemize, or redirect the source.\n"
-    "  - All else equal, prefer the prose with richer concrete detail.\n\n"
-    "Output format: respond with ONLY the number of the best prose "
-    "(1, 2, 3, …). No explanation. No other text."
-)
+# V5 prose-adherence directive and V15 prose-v14-coverage directive are
+# defined in prompts.yaml (keys: `prose_adherence`, `prose_v14_coverage`).
+# Appended to the prose SP by the Hybrid handler when active. The V8
+# picker SP is also in prompts.yaml (key: `picker`). See prompts.yaml
+# for the full text; keeping all LLM-facing strings in yaml ensures no
+# "hidden" prompt influence lives in Python.
 
 
 def _multi_sample_prose(user_msg, sp, api_url, model, temperature,
@@ -1969,7 +1863,7 @@ def _multi_sample_prose(user_msg, sp, api_url, model, temperature,
     picker_msg = "\n".join(picker_parts)
 
     pick_raw = _call_llm(
-        picker_msg, api_url, model, _PICKER_SP, 0.1,
+        picker_msg, api_url, model, _prompts.get("picker", ""), 0.1,
         think=False, seed=seed, num_predict=10,
     )
     # Parse first digit in 1..len(picker_options)
@@ -2430,7 +2324,7 @@ class PromptEnhancer(scripts.Script):
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 # Build user message with modifiers + inline wildcards
-                user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -2518,7 +2412,7 @@ class PromptEnhancer(scripts.Script):
                         neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
 
-                user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -2554,7 +2448,7 @@ class PromptEnhancer(scripts.Script):
                         # value flows into the prompt AND the shortlist.
                         if _resolve_deferred_sources(mods, int(sd), _anima, query=source):
                             style_str = _build_style_string(mods)
-                            user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                            user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                             if style_str:
                                 user_msg = f"{user_msg}\n\n{style_str}"
                             if inline_text:
@@ -2575,13 +2469,13 @@ class PromptEnhancer(scripts.Script):
                         # source is non-empty, so dice-roll creativity
                         # stays free.
                         if source:
-                            sp = f"{sp}\n\n{_PROSE_ADHERENCE_DIRECTIVE}"
+                            sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
                         # V15: on V14 Hybrid path (Anima+RAG), the prose is
                         # the primary image input — no general tags will
                         # survive the structural filter to cover pose /
                         # clothing / setting / lighting. Tell the LLM so it
                         # produces self-sufficient prose.
-                        sp = f"{sp}\n\n{_PROSE_V14_COVERAGE_DIRECTIVE}"
+                        sp = f"{sp}\n\n{_prompts.get('prose_v14_coverage', '')}"
                         print(f"[PromptEnhancer] RAG shortlist: "
                               f"{len(_anima_shortlist.artists)} artists, "
                               f"{len(_anima_shortlist.characters)} characters, "
@@ -2639,7 +2533,7 @@ class PromptEnhancer(scripts.Script):
                         yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: No tag format configured.</span>"
                         return
                     if style_str:
-                        tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                        tag_sp = f"{tag_sp}\n\n{_prompts.get('tag_extract_style_preamble', '')}\n{style_str}"
                     # V17: shortlist-aware tag_extract. The RAG shortlist
                     # (retrieved artists / characters / series candidates)
                     # was previously injected only into the prose SP. The
@@ -3074,7 +2968,7 @@ class PromptEnhancer(scripts.Script):
                         neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
 
-                user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                 style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
@@ -3102,7 +2996,7 @@ class PromptEnhancer(scripts.Script):
                         # the stack is up (see _hybrid for the rationale).
                         if _resolve_deferred_sources(mods, int(sd), _anima_t, query=source):
                             style_str = _build_style_string(mods)
-                            user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
+                            user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                             if style_str:
                                 user_msg = f"{user_msg}\n\n{style_str}"
                             if inline_text:
@@ -3121,7 +3015,7 @@ class PromptEnhancer(scripts.Script):
                         # V5 conditional adherence directive — only when
                         # source is non-empty.
                         if source:
-                            sp = f"{sp}\n\n{_PROSE_ADHERENCE_DIRECTIVE}"
+                            sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
                         print(f"[PromptEnhancer] RAG shortlist: "
                               f"{len(_anima_t_shortlist.artists)} artists, "
                               f"{len(_anima_t_shortlist.characters)} characters, "
@@ -3178,7 +3072,7 @@ class PromptEnhancer(scripts.Script):
                         yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: No tag format configured.</span>"
                         return
                     if style_str:
-                        tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                        tag_sp = f"{tag_sp}\n\n{_prompts.get('tag_extract_style_preamble', '')}\n{style_str}"
                     # V17: shortlist-aware tag_extract. See _hybrid for rationale.
                     if _anima_t_shortlist is not None:
                         _sl_frag_tag = _anima_t_shortlist.as_system_prompt_fragment()

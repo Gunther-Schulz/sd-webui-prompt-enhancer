@@ -17,7 +17,7 @@ system_prompt: |
   - Use the user's key descriptive words as tags. Do not replace them with synonyms.
   - Only describe what the user explicitly mentions. Do not invent unmentioned subjects or details.
   - Do NOT use quality words like masterpiece or best quality
-  - MUST end with exactly one rating tag matching the content: rating safe (SFW), rating questionable (suggestive/nudity), rating explicit (sex, genitalia). No other rating values.
+  - MUST end with exactly one rating tag matching the content: rating safe (SFW), rating questionable (suggestive), rating explicit (restricted-rating content). No other rating values.
   - When style directions are provided, include relevant tags for them
 
 use_underscores: true

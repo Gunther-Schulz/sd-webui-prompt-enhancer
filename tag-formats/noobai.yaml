@@ -15,7 +15,7 @@ system_prompt: |
   - CRITICAL: Every tag must be consistent with the user's input and style directions. Never add tags that contradict what was requested. If the user says "blonde hair", do not add "brown hair". If a style direction says "rain", do not add "sunny".
   - Use the user's key descriptive words as tags. Do not replace them with synonyms.
   - Only describe what the user explicitly mentions. Do not invent unmentioned subjects or details.
-  - MUST end with exactly one rating tag matching the content: rating:general (SFW), rating:sensitive (swimsuits, mild), rating:questionable (nudity, suggestive), rating:explicit (sex, genitalia). No other rating values.
+  - MUST end with exactly one rating tag matching the content: rating:general (SFW), rating:sensitive (mild), rating:questionable (suggestive), rating:explicit (restricted-rating content). No other rating values.
   - When style directions are provided, include relevant tags for them
 
 use_underscores: false
