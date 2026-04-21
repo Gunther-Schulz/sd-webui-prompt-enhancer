@@ -106,28 +106,28 @@ anime:
     keywords: "shoujo anime, soft features, sparkling eyes, flower motifs, pastel backgrounds, romantic atmosphere, elegant flowing lines"
   Anime Ghibli:
     behavioral: "Studio Ghibli style."
-    keywords: "Studio Ghibli style, painterly backgrounds, naturalistic lighting, gentle character design, whimsical, hand-painted watercolor skies, Miyazaki warmth"
+    keywords: "studio ghibli, painterly backgrounds, naturalistic lighting, gentle character design, whimsical, hand-painted watercolor skies, miyazaki warmth"
   Anime Makoto Shinkai:
     behavioral: "Makoto Shinkai style."
-    keywords: "Makoto Shinkai style, photorealistic backgrounds, hyper-detailed clouds and light, lens flare, vivid color saturation, emotional atmosphere, Your Name aesthetic"
+    keywords: "makoto shinkai, photorealistic backgrounds, hyper-detailed clouds and light, lens flare, vivid color saturation, emotional atmosphere"
   Anime Satoshi Kon:
     behavioral: "Satoshi Kon style."
-    keywords: "Satoshi Kon style, reality-bending, fluid transitions, psychological intensity, detailed adult faces, cinematic framing, Perfect Blue or Paprika aesthetic"
+    keywords: "satoshi kon, reality-bending, fluid transitions, psychological intensity, detailed adult faces, cinematic framing"
   Anime Junji Ito:
     behavioral: "Junji Ito horror manga style."
-    keywords: "Junji Ito style, horror manga, extreme detail in grotesque forms, spiral patterns, body horror, black ink heavy, unsettling, Uzumaki aesthetic"
+    keywords: "junji ito, horror manga, extreme detail in grotesque forms, spiral patterns, body horror, black ink heavy, unsettling"
   Anime Takeshi Obata:
     behavioral: "Takeshi Obata manga style."
-    keywords: "Takeshi Obata style, highly detailed realistic anatomy, sharp features, dramatic shading, intricate clothing folds, Death Note or Bakuman aesthetic"
+    keywords: "takeshi obata, highly detailed realistic anatomy, sharp features, dramatic shading, intricate clothing folds"
   Anime CLAMP:
     behavioral: "CLAMP manga style."
-    keywords: "CLAMP style, elongated proportions, flowing fabric and hair, ornate costumes, art nouveau influence, ethereal, Cardcaptor Sakura or xxxHolic aesthetic"
+    keywords: "clamp, elongated proportions, flowing fabric and hair, ornate costumes, art nouveau influence, ethereal"
   Anime Trigger:
     behavioral: "Studio Trigger anime style."
-    keywords: "Studio Trigger style, exaggerated poses, thick dynamic outlines, explosive energy, vivid neon colors, kinetic motion, Kill la Kill or Promare aesthetic"
+    keywords: "studio trigger, exaggerated poses, thick dynamic outlines, explosive energy, vivid neon colors, kinetic motion"
   Anime Mappa:
     behavioral: "MAPPA anime style."
-    keywords: "MAPPA style, fluid dark animation, gritty realism, detailed facial expressions, cinematic composition, Jujutsu Kaisen or Chainsaw Man aesthetic"
+    keywords: "mappa, fluid dark animation, gritty realism, detailed facial expressions, cinematic composition"
   Anime Seinen:
     behavioral: "Seinen anime."
     keywords: "seinen anime, mature themes, realistic proportions, muted color palette, psychological depth, detailed environments, Berserk or Vinland Saga tone"
@@ -183,13 +183,13 @@ cinema style:
     keywords: "arthouse cinema, deliberate composition, long-take framing, muted palette, symbolic staging, contemplative, austere"
   Wes Anderson:
     behavioral: "Wes Anderson style."
-    keywords: "wes anderson style, symmetrical composition, pastel palette, centered framing, whimsical, deadpan, dollhouse aesthetic"
+    keywords: "wes anderson, symmetrical composition, pastel palette, centered framing, whimsical, deadpan, dollhouse aesthetic"
   Wong Kar-wai:
     behavioral: "Wong Kar-wai style."
-    keywords: "wong kar-wai style, smeared neon, motion blur, saturated red and green, melancholic, step-printed, urban romance"
+    keywords: "wong kar-wai, smeared neon, motion blur, saturated red and green, melancholic, step-printed, urban romance"
   Kubrick:
     behavioral: "Kubrick style."
-    keywords: "kubrick style, one-point perspective, symmetrical wide angle, cold precision, unsettling stillness, geometric composition"
+    keywords: "kubrick, one-point perspective, symmetrical wide angle, cold precision, unsettling stillness, geometric composition"
 
 photography format:
   Polaroid:
