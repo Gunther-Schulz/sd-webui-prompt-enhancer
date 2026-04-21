@@ -136,10 +136,10 @@ SCENARIOS = [
 # ── Main ──────────────────────────────────────────────────────────────
 
 def main() -> int:
-    print("Loading anima_tagger stack …")
+    print("Opening anima_tagger stack (no models yet) …")
     t0 = time.perf_counter()
     stack = load_all()
-    print(f"  loaded in {time.perf_counter()-t0:.1f}s")
+    print(f"  opened in {time.perf_counter()-t0:.1f}s")
 
     bases = load_yaml("bases.yaml")
     prompts = load_yaml("prompts.yaml")
@@ -148,46 +148,52 @@ def main() -> int:
     detailed_sp = assemble_base_prompt(bases, "Detailed")
     anima_tag_sp = tf_anima["system_prompt"]
 
-    for sc in SCENARIOS:
-        print("\n" + "=" * 80)
-        print(f"SCENARIO: {sc['label']}")
-        print(f"SOURCE:   {sc['source']}")
-        print(f"MODIFIERS: {sc['modifiers']}")
+    print("Loading bge-m3 + reranker …")
+    t0 = time.perf_counter()
+    with stack.models():
+        print(f"  models up in {time.perf_counter()-t0:.1f}s")
 
-        # 1. Shortlist from source
-        t = time.perf_counter()
-        sl = stack.build_shortlist(sc["source"])
-        print(f"\nSHORTLIST ({time.perf_counter()-t:.2f}s)")
-        print(f"  artists:    {sl.artists}")
-        print(f"  characters: {sl.characters}")
-        print(f"  series:     {sl.series}")
+        for sc in SCENARIOS:
+            print("\n" + "=" * 80)
+            print(f"SCENARIO: {sc['label']}")
+            print(f"SOURCE:   {sc['source']}")
+            print(f"MODIFIERS: {sc['modifiers']}")
 
-        # 2. Build prose-pass user message with modifier directives + shortlist
-        style = build_style_prose(sc["modifiers"], all_mods)
-        shortlist_frag = sl.as_system_prompt_fragment()
-        user_msg = f"SOURCE PROMPT: {sc['source']}\n\n{style}"
-        prose_sp = detailed_sp
-        if shortlist_frag:
-            prose_sp = prose_sp + "\n\n" + shortlist_frag
-        t = time.perf_counter()
-        prose = call_llm(prose_sp, user_msg, max_tokens=500)
-        print(f"\nPROSE ({time.perf_counter()-t:.1f}s):")
-        print("  " + prose.replace("\n", "\n  ")[:800])
-        if len(prose) > 800:
-            print("  …")
+            # 1. Shortlist from source
+            t = time.perf_counter()
+            sl = stack.build_shortlist(sc["source"])
+            print(f"\nSHORTLIST ({time.perf_counter()-t:.2f}s)")
+            print(f"  artists:    {sl.artists}")
+            print(f"  characters: {sl.characters}")
+            print(f"  series:     {sl.series}")
 
-        # 3. Tag draft from rich prose
-        t = time.perf_counter()
-        draft = call_llm(anima_tag_sp, prose, max_tokens=400)
-        print(f"\nDRAFT ({time.perf_counter()-t:.1f}s):")
-        print("  " + draft)
+            # 2. Build prose-pass user message with modifier directives + shortlist
+            style = build_style_prose(sc["modifiers"], all_mods)
+            shortlist_frag = sl.as_system_prompt_fragment()
+            user_msg = f"SOURCE PROMPT: {sc['source']}\n\n{style}"
+            prose_sp = detailed_sp
+            if shortlist_frag:
+                prose_sp = prose_sp + "\n\n" + shortlist_frag
+            t = time.perf_counter()
+            prose = call_llm(prose_sp, user_msg, max_tokens=500)
+            print(f"\nPROSE ({time.perf_counter()-t:.1f}s):")
+            print("  " + prose.replace("\n", "\n  ")[:800])
+            if len(prose) > 800:
+                print("  …")
 
-        # 4. Validator + rule layer
-        t = time.perf_counter()
-        final = stack.tagger.tag_from_draft(draft, safety="safe")
-        print(f"\nFINAL TAGS ({time.perf_counter()-t:.2f}s):")
-        print("  " + ", ".join(final))
+            # 3. Tag draft from rich prose
+            t = time.perf_counter()
+            draft = call_llm(anima_tag_sp, prose, max_tokens=400)
+            print(f"\nDRAFT ({time.perf_counter()-t:.1f}s):")
+            print("  " + draft)
 
+            # 4. Validator + rule layer
+            t = time.perf_counter()
+            final = stack.tagger.tag_from_draft(draft, safety="safe")
+            print(f"\nFINAL TAGS ({time.perf_counter()-t:.2f}s):")
+            print("  " + ", ".join(final))
+
+    print("\nModels unloaded; VRAM freed.")
     return 0
 
 

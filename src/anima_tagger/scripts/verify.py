@@ -61,41 +61,47 @@ CASES = [
 
 
 def main() -> int:
-    print("Loading anima_tagger stack …")
+    print("Opening anima_tagger stack (no models yet) …")
     t0 = time.perf_counter()
     stack = load_all()
-    print(f"  loaded in {time.perf_counter()-t0:.1f}s (cooccur={'yes' if stack.cooccurrence else 'no'})")
+    print(f"  opened in {time.perf_counter()-t0:.1f}s "
+          f"(cooccur={'yes' if stack.cooccurrence else 'no'})")
 
-    for src, draft, safety in CASES:
-        print("\n" + "=" * 72)
-        print(f"SOURCE: {src!r}")
-        print(f"DRAFT:  {draft}")
+    # All four cases share one models() session so we only pay the
+    # load cost once. In the Forge extension it'll be per Tags/Hybrid
+    # click — ~3 sec overhead each time, VRAM freed between clicks.
+    print("Loading bge-m3 + reranker …")
+    t0 = time.perf_counter()
+    with stack.models():
+        print(f"  models up in {time.perf_counter()-t0:.1f}s")
 
-        # Shortlist (for prose-pass RAG)
-        t = time.perf_counter()
-        sl = stack.build_shortlist(src)
-        print(f"\nSHORTLIST ({time.perf_counter()-t:.2f}s)")
-        print(f"  artists:    {sl.artists}")
-        print(f"  characters: {sl.characters}")
-        print(f"  series:     {sl.series}")
+        for src, draft, safety in CASES:
+            print("\n" + "=" * 72)
+            print(f"SOURCE: {src!r}")
+            print(f"DRAFT:  {draft}")
 
-        # Validator trace (per-token)
-        from anima_tagger.tagger import _split_tokens
-        tokens = _split_tokens(draft)
-        t = time.perf_counter()
-        results = stack.validator.validate(tokens)
-        print(f"\nVALIDATOR ({time.perf_counter()-t:.2f}s)")
-        for r in results:
-            mark = "✓" if r.canonical else "✗"
-            print(f"  {mark} {r.original!r:40} → {r.canonical!r:30} "
-                  f"({r.match_type}, conf={r.confidence:.2f})")
+            t = time.perf_counter()
+            sl = stack.build_shortlist(src)
+            print(f"\nSHORTLIST ({time.perf_counter()-t:.2f}s)")
+            print(f"  artists:    {sl.artists}")
+            print(f"  characters: {sl.characters}")
+            print(f"  series:     {sl.series}")
 
-        # Final pipeline output
-        t = time.perf_counter()
-        final = stack.tagger.tag_from_draft(draft, safety=safety)
-        print(f"\nFINAL TAGS ({time.perf_counter()-t:.2f}s)")
-        print("  " + ", ".join(final))
+            from anima_tagger.tagger import _split_tokens
+            tokens = _split_tokens(draft)
+            t = time.perf_counter()
+            results = stack.validator.validate(tokens)
+            print(f"\nVALIDATOR ({time.perf_counter()-t:.2f}s)")
+            for r in results:
+                mark = "✓" if r.canonical else "✗"
+                print(f"  {mark} {r.original!r:40} → {r.canonical!r:30} "
+                      f"({r.match_type}, conf={r.confidence:.2f})")
 
+            t = time.perf_counter()
+            final = stack.tagger.tag_from_draft(draft, safety=safety)
+            print(f"\nFINAL TAGS ({time.perf_counter()-t:.2f}s)")
+            print("  " + ", ".join(final))
+    print("\nModels unloaded; VRAM freed.")
     return 0
 
 

@@ -11,10 +11,18 @@ from . import config
 
 
 class Reranker:
+    """bge-reranker-v2-m3 in fp16 (halves VRAM, negligible quality hit)."""
+
     def __init__(self, model_name: str = config.RERANK_MODEL,
-                 device: str = config.DEVICE):
+                 device: str = config.DEVICE,
+                 dtype: str = "float16"):
+        import torch
         from sentence_transformers import CrossEncoder
-        self.model = CrossEncoder(model_name, device=device)
+        torch_dtype = getattr(torch, dtype) if device.startswith("cuda") else torch.float32
+        self.model = CrossEncoder(
+            model_name, device=device,
+            model_kwargs={"torch_dtype": torch_dtype},
+        )
 
     def rerank(self,
                query: str,
