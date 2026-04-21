@@ -1,0 +1,271 @@
+{
+  "run_id": "v11__girl_random_artist__seed137__0716a7",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ]
+    ],
+    "seed": 137
+  },
+  "started_at": 1776799334.5763075,
+  "ended_at": 1776799340.3773046,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.578,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['nakagami takashi', 'murakami hisashi', 'murakami yuichi', 'takami ryou', 'fujiyama takashi', 'konno takashi'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: nakagami takashi, murakami hisashi, murakami yuichi, takami ryou, fujiyama takashi, konno takashi\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.721,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in the center of the composition in the style of Leysritt. Her face is rendered with sharp, precise lines and a flat, graphic color palette that defines the character. She wears a fitted bodice with clean seams and a skirt that falls in stiff, geometric folds. Her hair is cut into a sharp bob with a blunt fringe, catching a single point of light from the left. The background is a solid block of muted color, providing a flat canvas that makes her form pop. Shadows are hard and distinct, cast directly beneath her feet and against the wall behind her. Her expression is neutral and direct, engaging the viewer with a steady gaze. The scene feels constructed from distinct planes rather than blended gradients, emphasizing the illustrative technique.",
+        "prose_samples": [
+          "A girl stands in the foreground rendered in the style of Leysritt. Her form is defined by sharp, ink-like outlines and a flat, graphic color palette. She wears a garment made of a single solid hue with no internal shading, cut in a simple geometric shape. Her hair is a uniform block of color that flows in one continuous, jagged mass over her shoulders. The lighting is stark and directional, casting a hard, black shadow against her skin that emphasizes the two-dimensional nature of the composition. Her expression is neutral, captured in a dynamic, slightly twisted pose that suggests motion frozen in time. The background remains a muted, flat wash of color that does not compete with her silhouette. Every edge is crisp, lacking soft gradients or atmospheric haze. The overall effect is a bold, illustrative statement where the girl dominates the frame through high contrast and deliberate, stylized proportions.",
+          "A girl stands in a dim room, rendered in the style of Konno Takashi. Her form is defined by sharp, precise linework and flat, unblended color fields. She wears a simple dress of solid midnight blue fabric that catches the light without gradient. Her hair is a single mass of dark brown, cut with geometric angles at the jawline. The lighting is a cool, overhead source casting long, hard shadows against a wall of neutral beige. Her pose is static, one hand resting on her hip, the other holding a small object. The composition balances her figure against negative space, utilizing the artist's signature high-contrast palette. Her expression is neutral, eyes fixed forward with minimal shading around the iris. The scene feels constructed rather than organic, prioritizing structural clarity over soft texture.",
+          "A girl stands in the center of the composition in the style of Leysritt. Her face is rendered with sharp, precise lines and a flat, graphic color palette that defines the character. She wears a fitted bodice with clean seams and a skirt that falls in stiff, geometric folds. Her hair is cut into a sharp bob with a blunt fringe, catching a single point of light from the left. The background is a solid block of muted color, providing a flat canvas that makes her form pop. Shadows are hard and distinct, cast directly beneath her feet and against the wall behind her. Her expression is neutral and direct, engaging the viewer with a steady gaze. The scene feels constructed from distinct planes rather than blended gradients, emphasizing the illustrative technique."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.723,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, safe, 1girl, Leysritt, Leysritt style, sharp lines, flat color palette, fitted bodice, clean seams, geometric skirt, stiff folds, bob hair, blunt fringe, point light, left lighting, solid background, muted background, hard shadows, distinct shadows, neutral expression, direct gaze, constructed planes, illustrative technique",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.726,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, leysritt (fate), fate (series), flat color, color guide, paint palette, bodice, clean, seams, skirt, fringe trim, light, shadow, expressionless, airplane",
+        "stats": {
+          "corrected": 0,
+          "dropped": 6,
+          "kept_invalid": 0,
+          "total": 19
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.053,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, leysritt (fate), fate (series), flat color, color guide, paint palette, bodice, clean, seams, skirt, fringe trim, light, shadow, expressionless, airplane, @yae (mono110)",
+        "slot_fill_trace": {
+          "artist": "yae_(mono110)"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, leysritt (fate), fate (series), flat color, color guide, paint palette, bodice, clean, seams, skirt, fringe trim, light, shadow, expressionless, airplane, @yae (mono110)",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist",
+  "seed": 137,
+  "modifiers": [
+    "🎲 Random Artist"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, leysritt (fate), fate (series), flat color, color guide, paint palette, bodice, clean, seams, skirt, fringe trim, light, shadow, expressionless, airplane, @yae (mono110)",
+  "prose": "A girl stands in the center of the composition in the style of Leysritt. Her face is rendered with sharp, precise lines and a flat, graphic color palette that defines the character. She wears a fitted bodice with clean seams and a skirt that falls in stiff, geometric folds. Her hair is cut into a sharp bob with a blunt fringe, catching a single point of light from the left. The background is a solid block of muted color, providing a flat canvas that makes her form pop. Shadows are hard and distinct, cast directly beneath her feet and against the wall behind her. Her expression is neutral and direct, engaging the viewer with a steady gaze. The scene feels constructed from distinct planes rather than blended gradients, emphasizing the illustrative technique.",
+  "draft": "masterpiece, best quality, score_7, safe, 1girl, Leysritt, Leysritt style, sharp lines, flat color palette, fitted bodice, clean seams, geometric skirt, stiff folds, bob hair, blunt fringe, point light, left lighting, solid background, muted background, hard shadows, distinct shadows, neutral expression, direct gaze, constructed planes, illustrative technique",
+  "shortlist": {
+    "artists": [
+      "nakagami takashi",
+      "murakami hisashi",
+      "murakami yuichi",
+      "takami ryou",
+      "fujiyama takashi",
+      "konno takashi"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

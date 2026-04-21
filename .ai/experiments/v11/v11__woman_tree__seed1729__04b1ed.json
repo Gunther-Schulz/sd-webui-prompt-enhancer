@@ -1,0 +1,267 @@
+{
+  "run_id": "v11__woman_tree__seed1729__04b1ed",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "a woman reading under a tree",
+    "mods": [],
+    "seed": 1729
+  },
+  "started_at": 1776799229.281161,
+  "ended_at": 1776799235.1138408,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.524,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['len (a 7)', 'ang', 'lowe (slow)', 'muse (rainforest)', 'aono3', 'had (had314)'], characters=['lady in red (ib)', 'female sensei (blue archive)', 'mountain (book reader) (arknights)', 'female professor (neural cloud)', 'ms. marvel', 'looks to the moon'], series=['woman with a para…"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: len (a 7), ang, lowe (slow), muse (rainforest), aono3, had (had314)\nCharacters: lady in red (ib), female sensei (blue archive), mountain (book reader) (arknights), female professor (neural cloud), ms. marvel, looks to the moon\nSeries: woman with a parasol, arakawa under the bridge, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.204,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "a woman reading under a tree, sunlight filtering through dense green leaves to cast dappled shadows on her face and hands, wearing a loose linen dress in a pale neutral tone, hair pulled back loosely with a few strands falling across her forehead, holding a thick hardcover book open with both hands, knees slightly bent in a relaxed pose, one leg tucked under the other, bare feet resting on soft mossy ground, a single fallen leaf drifting near her knee, warm overhead light creating a gentle glow, skin texture visible with subtle freckles, book spine showing worn leather or fabric, background of blurred bark and branches framing her silhouette",
+        "prose_samples": [
+          "A woman reading under a tree with sunlight filtering through the leaves to cast dappled shadows on her face. She holds a book open in both hands, her posture relaxed but focused. Her hair falls loosely around her shoulders, catching the warm overhead light. The fabric of her dress is a specific shade of muted blue, textured with a fine weave that ripples slightly in a gentle breeze. One leg is crossed over the other, anchoring her weight onto the soft, mossy ground beneath the branches. The tree above forms a natural canopy, its bark rough and textured, framing the scene like a living room. A single leaf drifts down near her knee, adding a sense of stillness and quiet time. The air feels thick with the scent of wood and turning pages, captured in a moment of suspended reading.",
+          "a woman reading under a tree, natural dappled sunlight filtering through green leaves above, white pages of an open book held steady in her hands, relaxed posture seated on grassy ground, wind gently rustling her hair and the book's cover, soft shadows cast by branches overhead, earthy tones of the tree trunk framing her silhouette, focused expression on her face, textured fabric of her clothing catching the light, single clear focus on the book and her interaction with the foliage, warm afternoon atmosphere, realistic depth of field, crisp details on the leaves and her skin",
+          "a woman reading under a tree, sunlight filtering through dense green leaves to cast dappled shadows on her face and hands, wearing a loose linen dress in a pale neutral tone, hair pulled back loosely with a few strands falling across her forehead, holding a thick hardcover book open with both hands, knees slightly bent in a relaxed pose, one leg tucked under the other, bare feet resting on soft mossy ground, a single fallen leaf drifting near her knee, warm overhead light creating a gentle glow, skin texture visible with subtle freckles, book spine showing worn leather or fabric, background of blurred bark and branches framing her silhouette"
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.92,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, 1girl, woman, reading, under a tree, dense green leaves, dappled shadows, loose linen dress, pale neutral tone, hair pulled back loosely, strands across forehead, holding book open, both hands, thick hardcover book, relaxed pose, knees slightly bent, one leg tucked, bare feet, soft mossy ground, single fallen leaf, warm overhead light, gentle glow, skin texture, subtle freckles, worn leather spine, fabric spine, blurred bark, framing silhouette, safe, sunny",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.184,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, reading, tree, leaf, shadow, dress, pale skin, hair pulled back, forehead, holding book, relaxing, pose, knees, bent, legs, barefoot, light, glowing, texture, freckles, leather, spine, fabric",
+        "stats": {
+          "corrected": 0,
+          "dropped": 5,
+          "kept_invalid": 0,
+          "total": 27
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, reading, tree, leaf, shadow, dress, pale skin, hair pulled back, forehead, holding book, relaxing, pose, knees, bent, legs, barefoot, light, glowing, texture, freckles, leather, spine, fabric",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, reading, tree, leaf, shadow, dress, pale skin, hair pulled back, forehead, holding book, relaxing, pose, knees, bent, legs, barefoot, light, glowing, texture, freckles, leather, spine, fabric",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "woman_tree",
+  "seed": 1729,
+  "modifiers": [],
+  "prompt_source": "a woman reading under a tree",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, reading, tree, leaf, shadow, dress, pale skin, hair pulled back, forehead, holding book, relaxing, pose, knees, bent, legs, barefoot, light, glowing, texture, freckles, leather, spine, fabric",
+  "prose": "a woman reading under a tree, sunlight filtering through dense green leaves to cast dappled shadows on her face and hands, wearing a loose linen dress in a pale neutral tone, hair pulled back loosely with a few strands falling across her forehead, holding a thick hardcover book open with both hands, knees slightly bent in a relaxed pose, one leg tucked under the other, bare feet resting on soft mossy ground, a single fallen leaf drifting near her knee, warm overhead light creating a gentle glow, skin texture visible with subtle freckles, book spine showing worn leather or fabric, background of blurred bark and branches framing her silhouette",
+  "draft": "masterpiece, best quality, score_7, 1girl, woman, reading, under a tree, dense green leaves, dappled shadows, loose linen dress, pale neutral tone, hair pulled back loosely, strands across forehead, holding book open, both hands, thick hardcover book, relaxed pose, knees slightly bent, one leg tucked, bare feet, soft mossy ground, single fallen leaf, warm overhead light, gentle glow, skin texture, subtle freckles, worn leather spine, fabric spine, blurred bark, framing silhouette, safe, sunny",
+  "shortlist": {
+    "artists": [
+      "len (a 7)",
+      "ang",
+      "lowe (slow)",
+      "muse (rainforest)",
+      "aono3",
+      "had (had314)"
+    ],
+    "characters": [
+      "lady in red (ib)",
+      "female sensei (blue archive)",
+      "mountain (book reader) (arknights)",
+      "female professor (neural cloud)",
+      "ms. marvel",
+      "looks to the moon"
+    ],
+    "series": [
+      "woman with a parasol",
+      "arakawa under the bridge",
+      "girl with a pearl earring"
+    ]
+  }
+}

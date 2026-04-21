@@ -1,0 +1,266 @@
+{
+  "run_id": "v11__girl_cafe__seed42__88e257",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "1girl, long hair, cafe",
+    "mods": [],
+    "seed": 42
+  },
+  "started_at": 1776799070.4924145,
+  "ended_at": 1776799091.2587388,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.477,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['cofepig', '01 0219', 'an2a', 'ken (coffee michikusa)', 'sora (efr)', 'aono3'], characters=['long haired girl (ishiyumi)', 'long haired girl (motto notto)', 'rococo (girl cafe gun)', 'kafei', 'cafe no zombi ko', 'girl dm'], series=['girl cafe gun', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: cofepig, 01 0219, an2a, ken (coffee michikusa), sora (efr), aono3\nCharacters: long haired girl (ishiyumi), long haired girl (motto notto), rococo (girl cafe gun), kafei, cafe no zombi ko, girl dm\nSeries: girl cafe gun, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 7.949,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "1girl, long hair, cafe, wearing a fitted apron with a visible pocket, seated at a round wooden table, holding a ceramic mug with both hands, dark brown hair cascading over one shoulder, soft overhead lighting casting gentle shadows on her face, textured linen tablecloth, steam rising from the mug, background filled with blurred bookshelves and hanging copper mugs, natural light filtering through a large window, skin tone glowing with a warm undertone, slight smile, relaxed posture, fabric of her dress showing fine weave, detailed lace trim at the neckline, depth of field focusing sharply on her eyes, surrounding air slightly hazy with scent of roasted beans, polished floor reflecting her feet, a single white napkin folded neatly beside the plate, ambient hum of conversation suggested by her attentive gaze, rich earth tones dominating the color palette, specific grain visible on the table surface, her hair catching a highlight from the window, a hint of gold jewelry at her earlobe, casual elegance in her stance, precise rendering of her long lashes, a low ceiling with exposed beams, a small potted plant on the windowsill, her fingers slightly stained with cocoa, a vintage-style chair with curved wooden legs, a second empty chair opposite her, a glass of water with condensation on the side, her long hair partially tied back with a silk ribbon, the cafe walls painted in a matte finish, a framed menu hanging nearby, the smell of fresh bread implied by her open mouth, a silver spoon resting in the mug, her legs crossed under the table, a leather satchel on the floor nearby, the room feeling cozy and intimate, her expression focused on the drink, a hint of red lipstick, the fabric of her top showing slight stretch, a chandelier hanging low above, her skin smooth and soft, the contrast between her dark hair and the lighter walls, a small clock ticking in the background, her shoulders slightly hunched forward, the rim of the mug catching the light, a hint of flour on her cheek, the acoustics of the room suggested by the tilt of her head, a warm rug under the table, her nails painted a neutral shade, the texture of the leather chair against her back, a framed black and white photo on the wall, her breath visible in the cooler air, a hint of a scarf draped around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long",
+        "prose_samples": [
+          "1girl, long hair, cafe, standing near a wooden counter, wearing a crisp white apron tied at the waist, long dark hair cascading past her shoulders, holding a ceramic mug in one hand, warm ambient light filtering through large glass windows, steam rising from the mug, a wicker chair visible behind her, textured linoleum floor beneath her feet, soft shadows cast by the overhead fixtures, a brass coffee pot on the shelf, her expression calm and focused, slight tilt of the head, natural skin tones, simple background elements, depth of field blurring the far corner of the room.",
+          "1girl with long hair stands inside a cafe, her hair flowing down her back, surrounded by wooden tables and hanging lamps.",
+          "1girl, long hair, cafe, wearing a fitted apron with a visible pocket, seated at a round wooden table, holding a ceramic mug with both hands, dark brown hair cascading over one shoulder, soft overhead lighting casting gentle shadows on her face, textured linen tablecloth, steam rising from the mug, background filled with blurred bookshelves and hanging copper mugs, natural light filtering through a large window, skin tone glowing with a warm undertone, slight smile, relaxed posture, fabric of her dress showing fine weave, detailed lace trim at the neckline, depth of field focusing sharply on her eyes, surrounding air slightly hazy with scent of roasted beans, polished floor reflecting her feet, a single white napkin folded neatly beside the plate, ambient hum of conversation suggested by her attentive gaze, rich earth tones dominating the color palette, specific grain visible on the table surface, her hair catching a highlight from the window, a hint of gold jewelry at her earlobe, casual elegance in her stance, precise rendering of her long lashes, a low ceiling with exposed beams, a small potted plant on the windowsill, her fingers slightly stained with cocoa, a vintage-style chair with curved wooden legs, a second empty chair opposite her, a glass of water with condensation on the side, her long hair partially tied back with a silk ribbon, the cafe walls painted in a matte finish, a framed menu hanging nearby, the smell of fresh bread implied by her open mouth, a silver spoon resting in the mug, her legs crossed under the table, a leather satchel on the floor nearby, the room feeling cozy and intimate, her expression focused on the drink, a hint of red lipstick, the fabric of her top showing slight stretch, a chandelier hanging low above, her skin smooth and soft, the contrast between her dark hair and the lighter walls, a small clock ticking in the background, her shoulders slightly hunched forward, the rim of the mug catching the light, a hint of flour on her cheek, the acoustics of the room suggested by the tilt of her head, a warm rug under the table, her nails painted a neutral shade, the texture of the leather chair against her back, a framed black and white photo on the wall, her breath visible in the cooler air, a hint of a scarf draped around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long"
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.773,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, 1girl, cafe, long hair, dark brown hair, wearing a fitted apron, seated, holding a ceramic mug, soft overhead lighting, textured linen tablecloth, steam rising, blurred bookshelves, natural light, glowing skin, slight smile, relaxed posture, detailed lace trim, depth of field, hazy air, polished floor, white napkin, rich earth tones, specific grain, hair highlight, gold jewelry, low ceiling, exposed beams, potted plant, matte walls, framed menu, crossed legs, leather satchel, cozy atmosphere, focused expression, red lipstick, fabric stretch, chandelier, smooth skin, cream ceiling, natural wave hair, espresso scent, ring, old paper scent, window silhouette, silk ribbon, neutral nails, leather texture, black and white photo, visible breath, deep cream ceiling, natural wave, closed eyes, open mouth, curved wooden legs, condensation, matte finish, round wooden table, visible pocket, copper mugs, deep cream ceiling, natural wave, espresso scent, closed eyes, ring, old paper, window silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 5.568,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, brown hair, dark, apron, holding, mug, tablecloth, steam, blurry, bookshelf, glowing skin, light smile, relaxing, lace trim, depth of field, floor, napkin, rich, earth (planet), gold jewelry, ceiling, potted plant",
+        "stats": {
+          "corrected": 0,
+          "dropped": 351,
+          "kept_invalid": 0,
+          "total": 28
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, brown hair, dark, apron, holding, mug, tablecloth, steam, blurry, bookshelf, glowing skin, light smile, relaxing, lace trim, depth of field, floor, napkin, rich, earth (planet), gold jewelry, ceiling, potted plant",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, brown hair, dark, apron, holding, mug, tablecloth, steam, blurry, bookshelf, glowing skin, light smile, relaxing, lace trim, depth of field, floor, napkin, rich, earth (planet), gold jewelry, ceiling, potted plant",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_cafe",
+  "seed": 42,
+  "modifiers": [],
+  "prompt_source": "1girl, long hair, cafe",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, brown hair, dark, apron, holding, mug, tablecloth, steam, blurry, bookshelf, glowing skin, light smile, relaxing, lace trim, depth of field, floor, napkin, rich, earth (planet), gold jewelry, ceiling, potted plant",
+  "prose": "1girl, long hair, cafe, wearing a fitted apron with a visible pocket, seated at a round wooden table, holding a ceramic mug with both hands, dark brown hair cascading over one shoulder, soft overhead lighting casting gentle shadows on her face, textured linen tablecloth, steam rising from the mug, background filled with blurred bookshelves and hanging copper mugs, natural light filtering through a large window, skin tone glowing with a warm undertone, slight smile, relaxed posture, fabric of her dress showing fine weave, detailed lace trim at the neckline, depth of field focusing sharply on her eyes, surrounding air slightly hazy with scent of roasted beans, polished floor reflecting her feet, a single white napkin folded neatly beside the plate, ambient hum of conversation suggested by her attentive gaze, rich earth tones dominating the color palette, specific grain visible on the table surface, her hair catching a highlight from the window, a hint of gold jewelry at her earlobe, casual elegance in her stance, precise rendering of her long lashes, a low ceiling with exposed beams, a small potted plant on the windowsill, her fingers slightly stained with cocoa, a vintage-style chair with curved wooden legs, a second empty chair opposite her, a glass of water with condensation on the side, her long hair partially tied back with a silk ribbon, the cafe walls painted in a matte finish, a framed menu hanging nearby, the smell of fresh bread implied by her open mouth, a silver spoon resting in the mug, her legs crossed under the table, a leather satchel on the floor nearby, the room feeling cozy and intimate, her expression focused on the drink, a hint of red lipstick, the fabric of her top showing slight stretch, a chandelier hanging low above, her skin smooth and soft, the contrast between her dark hair and the lighter walls, a small clock ticking in the background, her shoulders slightly hunched forward, the rim of the mug catching the light, a hint of flour on her cheek, the acoustics of the room suggested by the tilt of her head, a warm rug under the table, her nails painted a neutral shade, the texture of the leather chair against her back, a framed black and white photo on the wall, her breath visible in the cooler air, a hint of a scarf draped around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long hair having a natural wave, the scent of espresso implied by her closed eyes, a hint of a ring on her finger, the room smelling of old paper and vanilla, her silhouette framed by the window, a hint of a scarf around her neck, the ceiling painted a deep cream color, her long",
+  "draft": "masterpiece, best quality, score_7, 1girl, cafe, long hair, dark brown hair, wearing a fitted apron, seated, holding a ceramic mug, soft overhead lighting, textured linen tablecloth, steam rising, blurred bookshelves, natural light, glowing skin, slight smile, relaxed posture, detailed lace trim, depth of field, hazy air, polished floor, white napkin, rich earth tones, specific grain, hair highlight, gold jewelry, low ceiling, exposed beams, potted plant, matte walls, framed menu, crossed legs, leather satchel, cozy atmosphere, focused expression, red lipstick, fabric stretch, chandelier, smooth skin, cream ceiling, natural wave hair, espresso scent, ring, old paper scent, window silhouette, silk ribbon, neutral nails, leather texture, black and white photo, visible breath, deep cream ceiling, natural wave, closed eyes, open mouth, curved wooden legs, condensation, matte finish, round wooden table, visible pocket, copper mugs, deep cream ceiling, natural wave, espresso scent, closed eyes, ring, old paper, window silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed eyes, ring, old paper, window, silhouette, silk ribbon, deep cream, natural wave, espresso, closed",
+  "shortlist": {
+    "artists": [
+      "cofepig",
+      "01 0219",
+      "an2a",
+      "ken (coffee michikusa)",
+      "sora (efr)",
+      "aono3"
+    ],
+    "characters": [
+      "long haired girl (ishiyumi)",
+      "long haired girl (motto notto)",
+      "rococo (girl cafe gun)",
+      "kafei",
+      "cafe no zombi ko",
+      "girl dm"
+    ],
+    "series": [
+      "girl cafe gun",
+      "girl with a pearl earring"
+    ]
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "run_id": "v11__samurai_random_artist__seed1000003__de8887",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "a lone samurai at dusk with a sword",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ]
+    ],
+    "seed": 1000003
+  },
+  "started_at": 1776799470.839411,
+  "ended_at": 1776799478.0138783,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.551,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sumi keiichi', 'kusagami style', 'kunishige keiichi', 'watarai keiji', 'konayama kata', 'keisan'], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sumi keiichi, kusagami style, kunishige keiichi, watarai keiji, konayama kata, keisan"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.38,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A lone samurai stands at dusk with a sword, rendered in the style of Watarai Keiji. The figure wears a deep indigo hakama and a simple white haori, the fabric catching the fading light. His face is sharp and angular, framed by dark hair swept back from a high forehead. He holds a katana at his hip, the blade reflecting the orange glow of the horizon. The background is a wash of muted purples and burnt oranges, suggesting a vast, open plain. Shadows are long and soft, stretching from his boots toward the setting sun. The atmosphere feels heavy and still, capturing a quiet moment of anticipation. Watarai Keiji's characteristic sharp lines define the curve of his shoulder and the tension in his grip. The sword hilt is wrapped in dark leather, contrasting with the pale skin of his wrist. Dusk settles around him, blending the edges of his silhouette with the horizon. The scene balances a painterly softness with precise, almost calligraphic detail. Every element exists in a state of suspended motion, waiting for the next move.",
+        "prose_samples": [
+          "A lone samurai stands at dusk with a sword, rendered in the style of Watarai Keiji. The figure wears a deep indigo hakama and a simple white haori, the fabric catching the fading light. His face is sharp and angular, framed by dark hair swept back from a high forehead. He holds a katana at his hip, the blade reflecting the orange glow of the horizon. The background is a wash of muted purples and burnt oranges, suggesting a vast, open plain. Shadows are long and soft, stretching from his boots toward the setting sun. The atmosphere feels heavy and still, capturing a quiet moment of anticipation. Watarai Keiji's characteristic sharp lines define the curve of his shoulder and the tension in his grip. The sword hilt is wrapped in dark leather, contrasting with the pale skin of his wrist. Dusk settles around him, blending the edges of his silhouette with the horizon. The scene balances a painterly softness with precise, almost calligraphic detail. Every element exists in a state of suspended motion, waiting for the next move.",
+          "A lone samurai at dusk with a sword in the style of sumi keiichi. A solitary warrior stands against a deepening violet sky where the sun bleeds low on the horizon. He wears a heavy indigo kimono with wide sleeves that catch the fading light. His black topknot hair is swept back by a stiff wind. In his right hand, he grips a long katana with a curved blade reflecting the ambient glow. The ground is wet earth, mirroring his silhouette with a sharp, ink-wash clarity. Shadows stretch long and thin across the terrain. The air feels cool and still, captured with high contrast between the dark figure and the soft horizon. The composition balances negative space with the single, focused weight of the man and his weapon.",
+          "A lone samurai at dusk with a sword, rendered in the style of sumi keiichi. The figure stands alone against a fading twilight sky, his silhouette defined by sharp, ink-wash contrasts. He wears a kimono of heavy silk that catches the low, directional light, creating deep shadows and bright highlights. In his hand, a katana rests with a blade that reflects the ambient color of the evening. The background features layered mountains painted with soft, diffused edges typical of the artist's technique. Dust motes hang suspended in the air, catching the warm, amber glow from above. The samurai's face is partially hidden by a hood, his expression unreadable in the dimming light. A single drop of sweat beads on his temple, glistening like a pearl. The composition balances negative space with the dense, textured form of the warrior. The ground beneath him is uneven earth, textured with fine brushstrokes. The overall mood is quiet and contemplative, driven by the interplay of shadow and the specific, slightly grainy texture of the chosen medium."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.048,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_9,samurai,1boy,Watarai Keiji,deep indigo hakama,simple white haori,sharp face,angular face,high forehead,dark hair,swept back hair,hip katana,reflective blade,orange glow,horizon,muted purple background,orange background,open plain,long soft shadows,setting sun,heavy atmosphere,stillness,anticipation,sharp lines,curved shoulder,tense grip,dark leather hilt,pale skin,waist hilt,blending silhouette,calligraphic detail,suspended motion,soft focus,face details,dusk lighting",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.196,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1boy, @watarai keiji, samurai, hakama, white haori, forehead, dark, back hair, katana, blade, glowing, horizon, purple background, orange background, plain, shadow, sun, heavy, tense, leather, hilt, pale skin, blending, silhouette",
+        "stats": {
+          "corrected": 0,
+          "dropped": 9,
+          "kept_invalid": 0,
+          "total": 28
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1boy, @watarai keiji, samurai, hakama, white haori, forehead, dark, back hair, katana, blade, glowing, horizon, purple background, orange background, plain, shadow, sun, heavy, tense, leather, hilt, pale skin, blending, silhouette",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1boy, @watarai keiji, samurai, hakama, white haori, forehead, dark, back hair, katana, blade, glowing, horizon, purple background, orange background, plain, shadow, sun, heavy, tense, leather, hilt, pale skin, blending, silhouette",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "samurai_random_artist",
+  "seed": 1000003,
+  "modifiers": [
+    "🎲 Random Artist"
+  ],
+  "prompt_source": "a lone samurai at dusk with a sword",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1boy, @watarai keiji, samurai, hakama, white haori, forehead, dark, back hair, katana, blade, glowing, horizon, purple background, orange background, plain, shadow, sun, heavy, tense, leather, hilt, pale skin, blending, silhouette",
+  "prose": "A lone samurai stands at dusk with a sword, rendered in the style of Watarai Keiji. The figure wears a deep indigo hakama and a simple white haori, the fabric catching the fading light. His face is sharp and angular, framed by dark hair swept back from a high forehead. He holds a katana at his hip, the blade reflecting the orange glow of the horizon. The background is a wash of muted purples and burnt oranges, suggesting a vast, open plain. Shadows are long and soft, stretching from his boots toward the setting sun. The atmosphere feels heavy and still, capturing a quiet moment of anticipation. Watarai Keiji's characteristic sharp lines define the curve of his shoulder and the tension in his grip. The sword hilt is wrapped in dark leather, contrasting with the pale skin of his wrist. Dusk settles around him, blending the edges of his silhouette with the horizon. The scene balances a painterly softness with precise, almost calligraphic detail. Every element exists in a state of suspended motion, waiting for the next move.",
+  "draft": "masterpiece,best quality,score_9,samurai,1boy,Watarai Keiji,deep indigo hakama,simple white haori,sharp face,angular face,high forehead,dark hair,swept back hair,hip katana,reflective blade,orange glow,horizon,muted purple background,orange background,open plain,long soft shadows,setting sun,heavy atmosphere,stillness,anticipation,sharp lines,curved shoulder,tense grip,dark leather hilt,pale skin,waist hilt,blending silhouette,calligraphic detail,suspended motion,soft focus,face details,dusk lighting",
+  "shortlist": {
+    "artists": [
+      "sumi keiichi",
+      "kusagami style",
+      "kunishige keiichi",
+      "watarai keiji",
+      "konayama kata",
+      "keisan"
+    ],
+    "characters": [],
+    "series": []
+  }
+}

@@ -1,0 +1,269 @@
+{
+  "run_id": "v11__samurai_random_artist__seed10001__46b923",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "a lone samurai at dusk with a sword",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ]
+    ],
+    "seed": 10001
+  },
+  "started_at": 1776799433.4705255,
+  "ended_at": 1776799448.964955,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.542,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sumi keiichi', 'koyoi mitsuki', 'keisan', 'ai wa', 'sakumo (karatama)', 'nakamura tatsunori'], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sumi keiichi, koyoi mitsuki, keisan, ai wa, sakumo (karatama), nakamura tatsunori"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.75,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "a lone samurai at dusk with a sword in the style of sumi keiichi, a figure standing isolated against a fading sky where ink-wash clouds bleed into the horizon. The samurai wears a heavy indigo haori with a single slash of white fabric at the hem, his hair tied back in a tight topknot that catches the last amber light. A katana hangs at his hip, the blade reflecting the dimming world while the hilt remains wrapped in rough brown leather. The lighting is low and directional, casting long, sharp shadows that stretch across the damp ground. Sumi keiichi's technique renders the scene with high contrast, balancing the deep blacks of the night's approach against the warm, dusty tones of the evening. Dust motes hang suspended in the air, visible against the darker background. The samurai's expression is stoic, his gaze fixed on a point beyond the frame. The composition feels balanced yet slightly asymmetrical, giving the figure a sense of waiting motion. The ground beneath him is textured with fine raked lines suggesting wet earth or packed gravel.",
+        "prose_samples": [
+          "A lone samurai at dusk with a sword, rendered in the style of sumi keiichi. The figure stands alone in a dimming landscape, his posture rigid and focused. He wears a simple dark haori that catches the fading orange light. A single katana hangs from his obi, the blade gleaming with a sharp, metallic edge. The background dissolves into soft, ink-wash gradients of violet and deep blue. Heavy shadows stretch long across the ground, emphasizing the low angle of the sun. The samurai's face is partially obscured by a high forehead and a determined gaze. Fine brushstrokes define the folds of his fabric and the texture of his skin. The air feels still and heavy with the weight of the impending night. Dusk settles around him, blending the horizon into a hazy silhouette. The composition balances the sharp line of the sword against the fluid movement of the evening wind.",
+          "a lone samurai at dusk with a sword in the style of sumi keiichi, a figure standing isolated against a fading sky where ink-wash clouds bleed into the horizon. The samurai wears a heavy indigo haori with a single slash of white fabric at the hem, his hair tied back in a tight topknot that catches the last amber light. A katana hangs at his hip, the blade reflecting the dimming world while the hilt remains wrapped in rough brown leather. The lighting is low and directional, casting long, sharp shadows that stretch across the damp ground. Sumi keiichi's technique renders the scene with high contrast, balancing the deep blacks of the night's approach against the warm, dusty tones of the evening. Dust motes hang suspended in the air, visible against the darker background. The samurai's expression is stoic, his gaze fixed on a point beyond the frame. The composition feels balanced yet slightly asymmetrical, giving the figure a sense of waiting motion. The ground beneath him is textured with fine raked lines suggesting wet earth or packed gravel.",
+          "a lone samurai at dusk with a sword in the style of sumi keiichi. The figure stands solitary on a darkened path, silhouette defined by sharp ink edges against a fading purple sky. He wears a simple, slightly tattered hakama made of heavy cotton that catches the low light. In his right hand, he grips a katana with a straight, polished blade that reflects the horizon. The dusk is not a soft wash but a gradient of deep indigo to burnt orange, creating long, stretched shadows. His hair is swept back in a tight topknot, a few stray strands catching the wind. The atmosphere feels heavy and wet, as if the air has been saturated with mist. Sumi Keiichi's signature technique uses negative space to define the background, leaving the samurai's face in partial shadow. A single drop of water hangs from his earring, frozen in time. The ground beneath him is textured with fine cross-hatching, suggesting damp earth or moss. The sword hangs low, angled slightly forward as if mid-stride or paused in a sudden moment of stillness. The overall composition balances the vastness of the evening sky with the dense, concentrated form of the warrior."
+        ],
+        "prose_picker_choice": 2,
+        "prose_picker_raw": "2"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.642,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_7,1girl,1other,samurai,Sumi Keiichi,in the style of Sumi Keiichi,indigo haori,white fabric,hem detail,topknot,amber light,waist katana,brown leather hilt,low contrast lighting,long sharp shadows,damp ground,dust motes,stoic expression,distant gaze,asymmetrical composition,raked lines,evening sky,ink-wash clouds,hanging clouds,deep blacks,warm dusty tones,suspended air,waiting motion,ground texture,fine lines,waist,hip,face,gaze,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 3.559,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, 1other, @sumi keiichi, samurai, haori, fabric, topknot, light, katana, leather, hilt, contrast, shadow, dust, distant, evening, sky, ink, cloud, hanging, suspension, waiting, texture",
+        "stats": {
+          "corrected": 0,
+          "dropped": 307,
+          "kept_invalid": 0,
+          "total": 27
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, 1other, @sumi keiichi, samurai, haori, fabric, topknot, light, katana, leather, hilt, contrast, shadow, dust, distant, evening, sky, ink, cloud, hanging, suspension, waiting, texture",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, 1other, @sumi keiichi, samurai, haori, fabric, topknot, light, katana, leather, hilt, contrast, shadow, dust, distant, evening, sky, ink, cloud, hanging, suspension, waiting, texture",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "samurai_random_artist",
+  "seed": 10001,
+  "modifiers": [
+    "🎲 Random Artist"
+  ],
+  "prompt_source": "a lone samurai at dusk with a sword",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, 1other, @sumi keiichi, samurai, haori, fabric, topknot, light, katana, leather, hilt, contrast, shadow, dust, distant, evening, sky, ink, cloud, hanging, suspension, waiting, texture",
+  "prose": "a lone samurai at dusk with a sword in the style of sumi keiichi, a figure standing isolated against a fading sky where ink-wash clouds bleed into the horizon. The samurai wears a heavy indigo haori with a single slash of white fabric at the hem, his hair tied back in a tight topknot that catches the last amber light. A katana hangs at his hip, the blade reflecting the dimming world while the hilt remains wrapped in rough brown leather. The lighting is low and directional, casting long, sharp shadows that stretch across the damp ground. Sumi keiichi's technique renders the scene with high contrast, balancing the deep blacks of the night's approach against the warm, dusty tones of the evening. Dust motes hang suspended in the air, visible against the darker background. The samurai's expression is stoic, his gaze fixed on a point beyond the frame. The composition feels balanced yet slightly asymmetrical, giving the figure a sense of waiting motion. The ground beneath him is textured with fine raked lines suggesting wet earth or packed gravel.",
+  "draft": "masterpiece,best quality,score_7,1girl,1other,samurai,Sumi Keiichi,in the style of Sumi Keiichi,indigo haori,white fabric,hem detail,topknot,amber light,waist katana,brown leather hilt,low contrast lighting,long sharp shadows,damp ground,dust motes,stoic expression,distant gaze,asymmetrical composition,raked lines,evening sky,ink-wash clouds,hanging clouds,deep blacks,warm dusty tones,suspended air,waiting motion,ground texture,fine lines,waist,hip,face,gaze,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,waist,",
+  "shortlist": {
+    "artists": [
+      "sumi keiichi",
+      "koyoi mitsuki",
+      "keisan",
+      "ai wa",
+      "sakumo (karatama)",
+      "nakamura tatsunori"
+    ],
+    "characters": [],
+    "series": []
+  }
+}

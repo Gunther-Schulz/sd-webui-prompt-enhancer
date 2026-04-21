@@ -1,0 +1,271 @@
+{
+  "run_id": "v11__girl_random_artist__seed1729__2551c8",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ]
+    ],
+    "seed": 1729
+  },
+  "started_at": 1776799340.3776867,
+  "ended_at": 1776799346.953168,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.58,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['nakagami takashi', 'murakami hisashi', 'takami masahiro', 'takami ryou', 'tsukamoto takashi', 'konno takashi'], characters=['leysritt (fate)'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: nakagami takashi, murakami hisashi, takami masahiro, takami ryou, tsukamoto takashi, konno takashi\nCharacters: leysritt (fate)"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.342,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in the foreground, rendered in the style of Konno Takashi. Her form is defined by sharp, clean lines and a focus on the interplay of flat color blocks against a textured background. She wears a garment of solid deep crimson that sits flat against her skin, devoid of intricate embroidery but accented by a single white button at the collar. Her hair falls in a heavy, geometric bob with a precise, almost architectural parting that frames a face marked by a wide, expressive mouth and a nose drawn with a single confident stroke. The lighting is harsh and direct, casting hard shadows that emphasize the angularity of her shoulders and the curve of her hip. The scene feels composed rather than captured, with the girl's pose slightly tilted to create dynamic tension within the frame. Konno Takashi's influence is evident in the way the background elements blur into the subject, merging her silhouette with the environment in a seamless, painterly blur that retains the crispness of her features.",
+        "prose_samples": [
+          "A girl stands in the foreground, rendered in the style of Konno Takashi. Her form is defined by sharp, clean lines and a focus on the interplay of flat color blocks against a textured background. She wears a garment of solid deep crimson that sits flat against her skin, devoid of intricate embroidery but accented by a single white button at the collar. Her hair falls in a heavy, geometric bob with a precise, almost architectural parting that frames a face marked by a wide, expressive mouth and a nose drawn with a single confident stroke. The lighting is harsh and direct, casting hard shadows that emphasize the angularity of her shoulders and the curve of her hip. The scene feels composed rather than captured, with the girl's pose slightly tilted to create dynamic tension within the frame. Konno Takashi's influence is evident in the way the background elements blur into the subject, merging her silhouette with the environment in a seamless, painterly blur that retains the crispness of her features.",
+          "A girl stands in a quiet room, rendered in the style of Nakagami Takashi. Her skin possesses a flat, graphic texture with sharp, inked edges. She wears a simple garment made of matte fabric that clings loosely to her form. Her hair is a single, solid mass of color cut into a precise, geometric shape. One eye is slightly larger than the other, drawn with heavy, unblended black ink. A single, thick line defines the curve of her shoulder. The background is a wash of muted, uneven tones that sit behind her distinct silhouette. Light falls from above, casting a hard, defined shadow directly beneath her feet. Her expression is neutral, composed of small, deliberate strokes. The scene feels like a high-contrast illustration where every edge is intentional and every color block is distinct.",
+          "A girl stands in a quiet room, rendered in the distinct style of Nakagami Takashi. Her skin bears a pale, porcelain texture that contrasts with the heavy, saturated shadows surrounding her. She wears a simple garment made of thick, slightly wrinkled fabric that clings to her form. Her hair is rendered with sharp, ink-like strokes that seem to float independently of her head. The lighting is harsh and directional, casting deep, defined shadows that carve out the volume of her limbs. One eye catches the light while the other remains in deep contrast, a signature trait of the artist's technique. Her expression is neutral and direct, fixed on a point just beyond the viewer. The background dissolves into layers of translucent, overlapping planes that add depth without clutter. Fine lines define the edges of her features, creating a graphic quality against the softness of her form. The composition balances organic curves with rigid, almost architectural geometry. Every element feels deliberate, as if drawn with a single, confident hand. The color palette is rich yet grounded, avoiding the ethereal glow for something more tactile and immediate."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.826,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_9,safe,1girl,Konno Takashi,sharp lines,flat colors,textured background,solid deep crimson,white button,geometric bob,architectural parting,wide mouth,confident nose,harsh lighting,direct light,hard shadows,angular shoulders,curved hip,composed pose,tilted body,dynamic tension,seamless blur,painterly background,blurred silhouette,crisp features",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.828,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, @konno takashi, flat color, wide mouth, confident, nose, light, shadow, pose, painterly, blurry, silhouette",
+        "stats": {
+          "corrected": 0,
+          "dropped": 11,
+          "kept_invalid": 0,
+          "total": 16
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @konno takashi, flat color, wide mouth, confident, nose, light, shadow, pose, painterly, blurry, silhouette",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @konno takashi, flat color, wide mouth, confident, nose, light, shadow, pose, painterly, blurry, silhouette",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist",
+  "seed": 1729,
+  "modifiers": [
+    "🎲 Random Artist"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @konno takashi, flat color, wide mouth, confident, nose, light, shadow, pose, painterly, blurry, silhouette",
+  "prose": "A girl stands in the foreground, rendered in the style of Konno Takashi. Her form is defined by sharp, clean lines and a focus on the interplay of flat color blocks against a textured background. She wears a garment of solid deep crimson that sits flat against her skin, devoid of intricate embroidery but accented by a single white button at the collar. Her hair falls in a heavy, geometric bob with a precise, almost architectural parting that frames a face marked by a wide, expressive mouth and a nose drawn with a single confident stroke. The lighting is harsh and direct, casting hard shadows that emphasize the angularity of her shoulders and the curve of her hip. The scene feels composed rather than captured, with the girl's pose slightly tilted to create dynamic tension within the frame. Konno Takashi's influence is evident in the way the background elements blur into the subject, merging her silhouette with the environment in a seamless, painterly blur that retains the crispness of her features.",
+  "draft": "masterpiece,best quality,score_9,safe,1girl,Konno Takashi,sharp lines,flat colors,textured background,solid deep crimson,white button,geometric bob,architectural parting,wide mouth,confident nose,harsh lighting,direct light,hard shadows,angular shoulders,curved hip,composed pose,tilted body,dynamic tension,seamless blur,painterly background,blurred silhouette,crisp features",
+  "shortlist": {
+    "artists": [
+      "nakagami takashi",
+      "murakami hisashi",
+      "takami masahiro",
+      "takami ryou",
+      "tsukamoto takashi",
+      "konno takashi"
+    ],
+    "characters": [
+      "leysritt (fate)"
+    ],
+    "series": []
+  }
+}

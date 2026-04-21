@@ -1,0 +1,265 @@
+{
+  "run_id": "v11__rem_maid__seed7919__d473be",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "rem from re:zero in maid outfit",
+    "mods": [],
+    "seed": 7919
+  },
+  "started_at": 1776799032.9329753,
+  "ended_at": 1776799039.1118824,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.531,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['zero point', 'negativezero', 'sol fa soft', '1st mn', 'ang', 'cofepig'], characters=['rem (re:zero)', 'hakugei (re:zero)', 'emilia (re:zero)', 'echidna (re:zero)', 'satella (re:zero)', 'ram (re:zero)'], series=['ga rei zero'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: zero point, negativezero, sol fa soft, 1st mn, ang, cofepig\nCharacters: rem (re:zero), hakugei (re:zero), emilia (re:zero), echidna (re:zero), satella (re:zero), ram (re:zero)\nSeries: ga rei zero"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.027,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "rem from re:zero in maid outfit stands center stage under soft overhead lighting that casts gentle shadows against the background. He wears a crisp white bodice with a fitted waist and a black apron tied securely around his hips. The apron features a small, centered pocket and hangs straight down past the hem of the skirt. His signature black hair is swept back and slightly tousled, framing a face marked by a distinct scar running through his eyebrow. He wears a short black skirt that flares out slightly at the hips, revealing the tops of his knees. A white frill collar frames his neck, contrasting with the dark fabric of the bodice. His pose is relaxed yet alert, with one hand resting lightly on the apron and the other hanging by his side. The fabric of the outfit appears smooth and structured, catching the light to show subtle folds in the material. His expression is calm and focused, with a slight hint of a smile. The overall composition balances the sharp lines of the maid attire with the natural movement of his stance.",
+        "prose_samples": [
+          "rem from re:zero stands in the center of a dimly lit room wearing a crisp white maid outfit. The bodice is tight and structured with puffed sleeves that end at the elbow. A dark blue apron covers the front, tied securely at the waist with a long ribbon. Her long, straight silver hair falls past her shoulders, partially tucked behind her ears. She wears a small black bow at the nape of her neck and a matching black ribbon around her wrists. Her expression is neutral, eyes fixed forward with a hint of intensity. Soft overhead light casts gentle shadows under her chin and highlights the fabric texture of the collar. The hem of the skirt flares slightly at the knees, revealing her posture. The material of the dress appears smooth and slightly stiff, holding its shape against her frame.",
+          "Rem from re:zero in a maid outfit, long black hair falling past the shoulders, pale skin, dark eyes fixed forward, wearing a white apron with blue trim over a dark bodice, the apron strings tied behind the neck, hands resting gently at the sides, standing in a relaxed pose, soft ambient light catching the fabric of the dress, subtle shadows under the chin, the white linen of the apron showing fine weave texture, the bodice material appearing smooth and slightly glossy, background blurred to keep focus on the figure, slight tilt of the head, expression calm and composed, one eyebrow slightly raised, the maid outfit fitting snugly to the frame, hem of the skirt just brushing the floor, hair parted neatly down the center, a small ribbon detail at the waist, the overall scene grounded in a domestic interior setting.",
+          "rem from re:zero in maid outfit stands center stage under soft overhead lighting that casts gentle shadows against the background. He wears a crisp white bodice with a fitted waist and a black apron tied securely around his hips. The apron features a small, centered pocket and hangs straight down past the hem of the skirt. His signature black hair is swept back and slightly tousled, framing a face marked by a distinct scar running through his eyebrow. He wears a short black skirt that flares out slightly at the hips, revealing the tops of his knees. A white frill collar frames his neck, contrasting with the dark fabric of the bodice. His pose is relaxed yet alert, with one hand resting lightly on the apron and the other hanging by his side. The fabric of the outfit appears smooth and structured, catching the light to show subtle folds in the material. His expression is calm and focused, with a slight hint of a smile. The overall composition balances the sharp lines of the maid attire with the natural movement of his stance."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.865,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, safe, 1boy, re:zero, rem, maid, white bodice, fitted waist, black apron, apron pocket, black skirt, frill collar, black hair, swept back hair, tousled hair, eyebrow scar, white frill, relaxed pose, one hand on apron, side profile, smooth fabric, structured fabric, subtle folds, calm expression, slight smile, overhead lighting, soft shadows, sharp lines, natural movement, center stage",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.756,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1boy, rem (re:zero), re:zero kara hajimeru isekai seikatsu, maid, bodice, black apron, apron pocket, black skirt, frills, collar, black hair, back hair, scar, relaxing, pose, from side, profile, fabric, light smile, shadow, stage",
+        "stats": {
+          "corrected": 0,
+          "dropped": 7,
+          "kept_invalid": 0,
+          "total": 25
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, rem (re:zero), re:zero kara hajimeru isekai seikatsu, maid, bodice, black apron, apron pocket, black skirt, frills, collar, black hair, back hair, scar, relaxing, pose, from side, profile, fabric, light smile, shadow, stage",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, rem (re:zero), re:zero kara hajimeru isekai seikatsu, maid, bodice, black apron, apron pocket, black skirt, frills, collar, black hair, back hair, scar, relaxing, pose, from side, profile, fabric, light smile, shadow, stage",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "rem_maid",
+  "seed": 7919,
+  "modifiers": [],
+  "prompt_source": "rem from re:zero in maid outfit",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1boy, rem (re:zero), re:zero kara hajimeru isekai seikatsu, maid, bodice, black apron, apron pocket, black skirt, frills, collar, black hair, back hair, scar, relaxing, pose, from side, profile, fabric, light smile, shadow, stage",
+  "prose": "rem from re:zero in maid outfit stands center stage under soft overhead lighting that casts gentle shadows against the background. He wears a crisp white bodice with a fitted waist and a black apron tied securely around his hips. The apron features a small, centered pocket and hangs straight down past the hem of the skirt. His signature black hair is swept back and slightly tousled, framing a face marked by a distinct scar running through his eyebrow. He wears a short black skirt that flares out slightly at the hips, revealing the tops of his knees. A white frill collar frames his neck, contrasting with the dark fabric of the bodice. His pose is relaxed yet alert, with one hand resting lightly on the apron and the other hanging by his side. The fabric of the outfit appears smooth and structured, catching the light to show subtle folds in the material. His expression is calm and focused, with a slight hint of a smile. The overall composition balances the sharp lines of the maid attire with the natural movement of his stance.",
+  "draft": "masterpiece, best quality, score_7, safe, 1boy, re:zero, rem, maid, white bodice, fitted waist, black apron, apron pocket, black skirt, frill collar, black hair, swept back hair, tousled hair, eyebrow scar, white frill, relaxed pose, one hand on apron, side profile, smooth fabric, structured fabric, subtle folds, calm expression, slight smile, overhead lighting, soft shadows, sharp lines, natural movement, center stage",
+  "shortlist": {
+    "artists": [
+      "zero point",
+      "negativezero",
+      "sol fa soft",
+      "1st mn",
+      "ang",
+      "cofepig"
+    ],
+    "characters": [
+      "rem (re:zero)",
+      "hakugei (re:zero)",
+      "emilia (re:zero)",
+      "echidna (re:zero)",
+      "satella (re:zero)",
+      "ram (re:zero)"
+    ],
+    "series": [
+      "ga rei zero"
+    ]
+  }
+}

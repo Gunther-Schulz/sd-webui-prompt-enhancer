@@ -1,0 +1,266 @@
+{
+  "run_id": "v11__girl_cafe__seed2147483000__1627d6",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "1girl, long hair, cafe",
+    "mods": [],
+    "seed": 2147483000
+  },
+  "started_at": 1776799206.738859,
+  "ended_at": 1776799218.1678367,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.488,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['cofepig', 'coffee kizoku', '01 0219', 'an2a', 'char (2v 26)', 'ken (coffee michikusa)'], characters=['long haired girl (ishiyumi)', 'long haired girl (motto notto)', 'rococo (girl cafe gun)', 'kafei', 'cafe no zombi ko', 'girl dm'], series=['girl cafe gun', 'girl with a pearl ear…"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: cofepig, coffee kizoku, 01 0219, an2a, char (2v 26), ken (coffee michikusa)\nCharacters: long haired girl (ishiyumi), long haired girl (motto notto), rococo (girl cafe gun), kafei, cafe no zombi ko, girl dm\nSeries: girl cafe gun, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 8.818,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "1girl, long hair, cafe, standing behind a worn wooden counter, wearing a fitted apron tied at the waist, dark brown hair cascading past the shoulders, soft overhead pendant lights casting a warm glow, steam rising from a ceramic mug on the table, one hand resting on a hip, the other holding a silver spoon, background filled with stacked white china and hanging glassware, shallow depth of field blurring the back wall, skin glowing with a subtle sheen from the ambient light, a single red napkin tucked into a glass, concrete floor with scattered crumbs, natural daylight filtering through a large window on the left, texture of the fabric visible on the collar, slight tilt of the head, direct gaze forward.",
+        "prose_samples": [
+          "1girl, long hair, cafe, standing behind a worn wooden counter, wearing a fitted apron tied at the waist, dark brown hair cascading past the shoulders, soft overhead pendant lights casting a warm glow, steam rising from a ceramic mug on the table, one hand resting on a hip, the other holding a silver spoon, background filled with stacked white china and hanging glassware, shallow depth of field blurring the back wall, skin glowing with a subtle sheen from the ambient light, a single red napkin tucked into a glass, concrete floor with scattered crumbs, natural daylight filtering through a large window on the left, texture of the fabric visible on the collar, slight tilt of the head, direct gaze forward.",
+          "1girl, long hair, cafe, standing near a wooden counter, wearing a fitted apron, hair cascading past her shoulders, warm overhead lighting, soft shadows on her face, porcelain cup on the table, textured fabric of her blouse, one hand resting on a hip, deep brown coffee in a mug, background of exposed brick walls, natural daylight filtering through a glass window, polished floor reflecting her silhouette, simple silver earring, relaxed posture, steam rising from the cup, crisp linen texture, muted earth tones, focused gaze, gentle breeze moving her hair, rough stone table surface, ambient hum of the room, clear blue sky visible outside, delicate lace trim on her sleeves, rich velvet cushion on a nearby chair, subtle grain on the wood, diffused light from a hanging lamp, smooth skin texture, slight sheen on her lips, scattered sugar packets, frothy foam on the coffee, vintage metal pitcher, sheer curtain panels, polished copper accents, low ceiling beams, scattered magazine pages, fresh bread crust nearby, soft ambient noise, crisp morning air, delicate floral pattern on a napkin, slender fingers holding the cup, gentle curve of her spine, rounded shoulder line, smooth glass window pane, warm amber glow, cool slate-grey floor tiles, intricate wood grain, soft focus background, sharp foreground details, voluminous hair, neat bun at the nape, loose tendrils framing the face, brushed-back bangs, tapered waistline, gathered fabric at the hips, smooth ceramic mug handle, brushed metal spoon, frosted glass jar, woven basket on a shelf, hanging pendant light fixture, shadowed corner of the room, sun-drenched window ledge, textured plaster walls, smooth leather menu stand, rolled napkin rings, hanging herb bunches, copper wire curtain tiebacks, smooth stone hearth, polished brass doorknob, smooth white ceiling, rough timber beams, soft linen napkin, crisp cotton blouse, sleek black hair, golden-brown skin tone, smooth wooden stool, velvet chair cushion, smooth glass tabletop, brushed steel cutlery, smooth fabric napkin, crisp white collar, smooth skin tone, long flowing tresses, smooth cafe floor, smooth glass partition, smooth wooden doorframe, smooth plaster ceiling, smooth linen napkin, smooth ceramic plate, smooth copper pitcher, smooth velvet curtain, smooth glass window, smooth leather apron, smooth metal spoon, smooth fabric sleeve, smooth hair strands, smooth skin texture, smooth coffee surface, smooth air in the room, smooth light beams, smooth shadow edges, smooth fabric folds, smooth hair waves, smooth skin highlights, smooth glass reflections, smooth metal rims, smooth fabric hems, smooth wooden planks, smooth stone tiles, smooth plaster walls, smooth glass panes, smooth metal frames, smooth fabric ties, smooth leather straps, smooth fabric collars, smooth hair parts, smooth skin curves, smooth fabric gathers, smooth fabric pleats, smooth fabric ruffles, smooth fabric cuffs, smooth fabric waists, smooth fabric backs, smooth fabric fronts, smooth fabric sides, smooth fabric tops, smooth fabric bottoms, smooth fabric layers, smooth fabric textures, smooth fabric weaves, smooth fabric knits, smooth fabric denims, smooth fabric silks, smooth fabric velvets, smooth fabrics, smooth materials, smooth surfaces, smooth edges, smooth corners, smooth lines, smooth shapes, smooth forms, smooth contours, smooth silhouettes, smooth profiles, smooth angles, smooth curves, smooth arcs, smooth circles, smooth ovals, smooth rectangles, smooth squares, smooth triangles, smooth pentagons, smooth hexagons, smooth polygons, smooth spirals, smooth waves, smooth ripples, smooth folds, smooth creases, smooth wrinkles, smooth crests, smooth troughs, smooth peaks, smooth valleys, smooth ridges, smooth grooves, smooth grooves, smooth channels, smooth seams, smooth zippers, smooth buttons, smooth snaps, smooth hooks, smooth eyes, smooth noses, smooth lips, smooth chins, smooth cheeks, smooth foreheads, smooth necks, smooth shoulders, smooth backs, smooth arms, smooth legs, smooth calves, smooth ankles, smooth toes, smooth fingers, smooth palms, smooth wrists, smooth elbows, smooth knees, smooth hips, smooth thighs, smooth waists, smooth chests, smooth breasts, smooth stomachs, smooth bellies, smooth backs, smooth spines, smooth ribs, smooth collarbones, smooth clavicles, smooth sternums, smooth abdomens, smooth abdominals, smooth obliques, smooth glutes, smooth hamstrings, smooth calves, smooth shins, smooth insteps, smooth arches, smooth heels, smooth toes, smooth soles, smooth palms, smooth wrists, smooth elbows, smooth knuckles, smooth joints, smooth hips, smooth pelvis, smooth spines, smooth vertebrae, smooth ribs, smooth sternums, smooth clavicles, smooth shoulders, smooth scapulae, smooth traps, smooth delts, smooth biceps, smooth triceps, smooth forearms, smooth forearms,",
+          "1girl with long hair stands inside a cafe, her hair cascading down past her shoulders in a single dark mass. She wears a fitted top that hugs her frame and simple trousers made of soft cotton. Warm overhead light casts a gentle shadow behind her on the wooden floor. A ceramic cup rests on the table beside her hand, steam rising in a thin wisp. The air feels thick with the scent of roasted beans and fresh pastries. Her expression is neutral, eyes fixed on something just beyond the frame. The background blurs slightly, showing hints of hanging plants and a frosted window pane."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.916,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, 1girl, cafe, standing, fitted apron, tied at the waist, dark brown hair, cascading past the shoulders, soft overhead pendant lights, warm glow, steam rising, ceramic mug, one hand on hip, holding a silver spoon, stacked white china, hanging glassware, shallow depth of field, glowing skin, subtle sheen, red napkin, glass, concrete floor, scattered crumbs, natural daylight, large window, fabric texture, collar, slight tilt of the head, direct gaze",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.207,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, cafe, standing, apron, brown hair, dark, pendant, lights, steam, mug, hand on own hip, holding, spoon, china, hanging, glassware, depth of field, glowing skin, napkin, glass, concrete, floor, crumbs, window",
+        "stats": {
+          "corrected": 0,
+          "dropped": 3,
+          "kept_invalid": 0,
+          "total": 28
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, standing, apron, brown hair, dark, pendant, lights, steam, mug, hand on own hip, holding, spoon, china, hanging, glassware, depth of field, glowing skin, napkin, glass, concrete, floor, crumbs, window",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, standing, apron, brown hair, dark, pendant, lights, steam, mug, hand on own hip, holding, spoon, china, hanging, glassware, depth of field, glowing skin, napkin, glass, concrete, floor, crumbs, window",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_cafe",
+  "seed": 2147483000,
+  "modifiers": [],
+  "prompt_source": "1girl, long hair, cafe",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, standing, apron, brown hair, dark, pendant, lights, steam, mug, hand on own hip, holding, spoon, china, hanging, glassware, depth of field, glowing skin, napkin, glass, concrete, floor, crumbs, window",
+  "prose": "1girl, long hair, cafe, standing behind a worn wooden counter, wearing a fitted apron tied at the waist, dark brown hair cascading past the shoulders, soft overhead pendant lights casting a warm glow, steam rising from a ceramic mug on the table, one hand resting on a hip, the other holding a silver spoon, background filled with stacked white china and hanging glassware, shallow depth of field blurring the back wall, skin glowing with a subtle sheen from the ambient light, a single red napkin tucked into a glass, concrete floor with scattered crumbs, natural daylight filtering through a large window on the left, texture of the fabric visible on the collar, slight tilt of the head, direct gaze forward.",
+  "draft": "masterpiece, best quality, score_7, 1girl, cafe, standing, fitted apron, tied at the waist, dark brown hair, cascading past the shoulders, soft overhead pendant lights, warm glow, steam rising, ceramic mug, one hand on hip, holding a silver spoon, stacked white china, hanging glassware, shallow depth of field, glowing skin, subtle sheen, red napkin, glass, concrete floor, scattered crumbs, natural daylight, large window, fabric texture, collar, slight tilt of the head, direct gaze",
+  "shortlist": {
+    "artists": [
+      "cofepig",
+      "coffee kizoku",
+      "01 0219",
+      "an2a",
+      "char (2v 26)",
+      "ken (coffee michikusa)"
+    ],
+    "characters": [
+      "long haired girl (ishiyumi)",
+      "long haired girl (motto notto)",
+      "rococo (girl cafe gun)",
+      "kafei",
+      "cafe no zombi ko",
+      "girl dm"
+    ],
+    "series": [
+      "girl cafe gun",
+      "girl with a pearl earring"
+    ]
+  }
+}

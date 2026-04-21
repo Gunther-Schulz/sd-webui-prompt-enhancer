@@ -1,0 +1,269 @@
+{
+  "run_id": "v11__samurai_random_artist__seed42__2433bc",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "a lone samurai at dusk with a sword",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ]
+    ],
+    "seed": 42
+  },
+  "started_at": 1776799393.357334,
+  "ended_at": 1776799400.2267137,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.592,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['kusagami style', 'uki atsuya', 'hatsuko', 'hakuseki', 'kinosaki', 'higashiyama kazuko'], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: kusagami style, uki atsuya, hatsuko, hakuseki, kinosaki, higashiyama kazuko"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.706,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A lone samurai stands at dusk with a sword, rendered in the style of Hakuseki. The scene features a solitary warrior clad in dark lacquered armor, his face half-shrouded in shadow. He grips a long katana at his hip, the blade catching the fading orange glow. The setting is an open field where the sky transitions from deep violet to burnt amber. Hakuseki's technique brings a distinct woodblock texture to the skin and fabric, creating bold, clean lines against the soft gradient of the evening. The light source is low and directional, casting a sharp, elongated shadow from the figure onto the grass. The composition balances negative space with the heavy, detailed presence of the man. Every element remains concrete: the rough weave of the hakama, the smooth steel of the blade, and the crisp horizon line. The artist's name, Hakuseki, anchors the description, ensuring the specific ukiyo-e influence permeates the visual narrative without diluting the raw, singular focus of the subject.",
+        "prose_samples": [
+          "a lone samurai at dusk with a sword in the style of Kusagami style, where the scene is defined by jagged, ink-wash textures and high-contrast shadows. The samurai stands isolated on a mossy stone, his form rendered in deep indigo ink against a backdrop of fading violet and burnt orange sky. He wears a heavy, layered silk haori that ripples with a wet, heavy texture, catching the low light from the setting sun. A long katana hangs from his waist, its scabbard wrapped in rough hemp and the blade itself reflecting the horizon's glow. The air feels thick and humid, suggested by soft, blurred edges around his shoulders. His face is sharp and angular, caught in a moment of stillness, with a faint stubble visible under the directional light. The ground beneath him is uneven, detailed with tiny flecks of dirt and scattered pine needles. The lighting comes from a single, low source, casting long, distorted shadows that stretch toward the viewer. The composition feels slightly cropped, emphasizing the figure's solitude within a vast, atmospheric twilight. The ink bleeds slightly into the background, merging the figure with the encroaching evening. His hair is swept back, textured with fine lines that suggest movement frozen in time. The sword tip points downward, almost touching the earth, grounding the ethereal quality of the dusk. Every element feels precise yet painterly, balancing the sharpness of the ink with the softness of the dying light.",
+          "A lone samurai stands at dusk with a sword, rendered in the style of Hakuseki. The scene features a solitary warrior clad in dark lacquered armor, his face half-shrouded in shadow. He grips a long katana at his hip, the blade catching the fading orange glow. The setting is an open field where the sky transitions from deep violet to burnt amber. Hakuseki's technique brings a distinct woodblock texture to the skin and fabric, creating bold, clean lines against the soft gradient of the evening. The light source is low and directional, casting a sharp, elongated shadow from the figure onto the grass. The composition balances negative space with the heavy, detailed presence of the man. Every element remains concrete: the rough weave of the hakama, the smooth steel of the blade, and the crisp horizon line. The artist's name, Hakuseki, anchors the description, ensuring the specific ukiyo-e influence permeates the visual narrative without diluting the raw, singular focus of the subject.",
+          "a lone samurai at dusk with a sword in the style of kusagami style, a figure standing alone in low light, wearing dark layered armor with a single metallic pauldron, holding a katana with a long curved blade, the setting sun casting long sharp shadows on the ground, the air filled with floating dust motes and a hazy atmosphere, the composition feeling slightly asymmetrical and textured with ink-wash like details, the samurai's face partially hidden by a wide-brimmed hat, the ground appearing wet or mossy to catch the fading light, the overall mood quiet and focused, rendered with a mix of fine line work and soft washes of color"
+        ],
+        "prose_picker_choice": 2,
+        "prose_picker_raw": "2"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.815,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_8, 1girl, samurai, dark lacquered armor, half-shrouded face, long katana, open field, dusk, deep violet sky, burnt amber sky, woodblock texture, bold lines, soft gradient, low light, directional light, elongated shadow, grass, negative space, rough weave hakama, smooth steel blade, crisp horizon, ukiyo-e influence, @Hakuseki",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.756,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_8, safe, 1girl, @hakuseki, samurai, dark, armor, katana, field, dusk, sky, burnt, texture, gradient, light, shadow, grass, negative space, sketch, hakama, blade, horizon, ukiyo e",
+        "stats": {
+          "corrected": 0,
+          "dropped": 0,
+          "kept_invalid": 0,
+          "total": 25
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, @hakuseki, samurai, dark, armor, katana, field, dusk, sky, burnt, texture, gradient, light, shadow, grass, negative space, sketch, hakama, blade, horizon, ukiyo e",
+        "slot_fill_trace": {
+          "artist": "already_present"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, @hakuseki, samurai, dark, armor, katana, field, dusk, sky, burnt, texture, gradient, light, shadow, grass, negative space, sketch, hakama, blade, horizon, ukiyo e",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "samurai_random_artist",
+  "seed": 42,
+  "modifiers": [
+    "🎲 Random Artist"
+  ],
+  "prompt_source": "a lone samurai at dusk with a sword",
+  "final_tags": "masterpiece, best quality, score_8, safe, 1girl, @hakuseki, samurai, dark, armor, katana, field, dusk, sky, burnt, texture, gradient, light, shadow, grass, negative space, sketch, hakama, blade, horizon, ukiyo e",
+  "prose": "A lone samurai stands at dusk with a sword, rendered in the style of Hakuseki. The scene features a solitary warrior clad in dark lacquered armor, his face half-shrouded in shadow. He grips a long katana at his hip, the blade catching the fading orange glow. The setting is an open field where the sky transitions from deep violet to burnt amber. Hakuseki's technique brings a distinct woodblock texture to the skin and fabric, creating bold, clean lines against the soft gradient of the evening. The light source is low and directional, casting a sharp, elongated shadow from the figure onto the grass. The composition balances negative space with the heavy, detailed presence of the man. Every element remains concrete: the rough weave of the hakama, the smooth steel of the blade, and the crisp horizon line. The artist's name, Hakuseki, anchors the description, ensuring the specific ukiyo-e influence permeates the visual narrative without diluting the raw, singular focus of the subject.",
+  "draft": "masterpiece, best quality, score_8, 1girl, samurai, dark lacquered armor, half-shrouded face, long katana, open field, dusk, deep violet sky, burnt amber sky, woodblock texture, bold lines, soft gradient, low light, directional light, elongated shadow, grass, negative space, rough weave hakama, smooth steel blade, crisp horizon, ukiyo-e influence, @Hakuseki",
+  "shortlist": {
+    "artists": [
+      "kusagami style",
+      "uki atsuya",
+      "hatsuko",
+      "hakuseki",
+      "kinosaki",
+      "higashiyama kazuko"
+    ],
+    "characters": [],
+    "series": []
+  }
+}

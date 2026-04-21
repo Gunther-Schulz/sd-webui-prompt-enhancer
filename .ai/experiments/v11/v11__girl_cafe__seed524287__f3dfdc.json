@@ -1,0 +1,266 @@
+{
+  "run_id": "v11__girl_cafe__seed524287__f3dfdc",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "1girl, long hair, cafe",
+    "mods": [],
+    "seed": 524287
+  },
+  "started_at": 1776799170.2512522,
+  "ended_at": 1776799201.905057,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.496,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['cofepig', '01 0219', 'coffee kizoku', 'an2a', 'ken (coffee michikusa)', 'kgr'], characters=['long haired girl (ishiyumi)', 'long haired girl (motto notto)', 'rococo (girl cafe gun)', 'kafei', 'cafe no zombi ko', 'girl dm'], series=['girl cafe gun', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: cofepig, 01 0219, coffee kizoku, an2a, ken (coffee michikusa), kgr\nCharacters: long haired girl (ishiyumi), long haired girl (motto notto), rococo (girl cafe gun), kafei, cafe no zombi ko, girl dm\nSeries: girl cafe gun, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 8.27,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "1girl, long hair, cafe, standing near a wooden counter, wearing a dark apron, holding a ceramic mug, warm overhead light casting soft shadows on the floor, steam rising from the cup, background filled with blurred shelves of glass jars and hanging copper pots, one hand resting on her hip, the other gripping the handle of the mug, her hair cascading over one shoulder, skin glowing under the amber lamp, texture of the linen napkin on the table visible, polished wood floor reflecting the light, specific focus on the curve of her waist, natural expression, slightly tilted head, fabric of her skirt gathered at the hem, ambient hum of the room suggested by the open window, dust motes dancing in the light beam, precise framing of her face, detailed lace trim on her sleeve, depth of field blurring the back wall, rich brown tones dominating the scene, crisp definition of her long hair strands, subtle sheen on the porcelain, grounded stance, relaxed posture, intimate scale of the room, tactile feel of the environment, sharp contrast between her pale skin and the deep coffee hues of the interior, delicate features highlighted by the focused illumination, gentle breeze from the window ruffling her hair, textured brick wall behind her, smooth surface of the espresso machine, clear view of her long hair reaching past her waist, cohesive blend of cozy atmosphere and sharp detail, precise placement of her body in the frame, tangible weight of the setting, refined composition, immediate sense of place, distinct layers of light and shadow, organic flow of her long hair, grounded elegance in the cafe setting, clear distinction between foreground and background, specific grain of the paper or digital medium, balanced exposure, immediate engagement with the viewer, grounded in the details of a working cafe, textured fabric of her top, precise definition of her long hair, cohesive color palette, specific focus on her expression, tangible warmth of the room, sharp lines of the cafe architecture, delicate features of her face, rich textures of the interior, precise framing of her silhouette, natural movement of her long hair, grounded in the reality of the scene, specific play of light on her skin, cohesive blend of elements, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of",
+        "prose_samples": [
+          "1girl, long hair, cafe, standing behind a polished mahogany counter, wearing a crisp white apron tied at the waist, dark espresso stains on her cuffs, voluminous chestnut hair cascading over one shoulder, holding a ceramic mug with both hands, warm ambient light filtering through a nearby window, soft shadows cast on the floor tiles, steam rising gently from the cup, a brass coffee pot sitting nearby, smooth fabric of her skirt, focused expression, depth of field blurring the background tables",
+          "1girl with long hair standing inside a cafe. The girl has a single, distinct feature in her hair. She wears clothing made of a specific fabric. A warm overhead light casts a shadow behind her. The cafe interior is detailed with wooden textures. Her expression is neutral. One hand rests on a table. The scene is tight and focused on her form.",
+          "1girl, long hair, cafe, standing near a wooden counter, wearing a dark apron, holding a ceramic mug, warm overhead light casting soft shadows on the floor, steam rising from the cup, background filled with blurred shelves of glass jars and hanging copper pots, one hand resting on her hip, the other gripping the handle of the mug, her hair cascading over one shoulder, skin glowing under the amber lamp, texture of the linen napkin on the table visible, polished wood floor reflecting the light, specific focus on the curve of her waist, natural expression, slightly tilted head, fabric of her skirt gathered at the hem, ambient hum of the room suggested by the open window, dust motes dancing in the light beam, precise framing of her face, detailed lace trim on her sleeve, depth of field blurring the back wall, rich brown tones dominating the scene, crisp definition of her long hair strands, subtle sheen on the porcelain, grounded stance, relaxed posture, intimate scale of the room, tactile feel of the environment, sharp contrast between her pale skin and the deep coffee hues of the interior, delicate features highlighted by the focused illumination, gentle breeze from the window ruffling her hair, textured brick wall behind her, smooth surface of the espresso machine, clear view of her long hair reaching past her waist, cohesive blend of cozy atmosphere and sharp detail, precise placement of her body in the frame, tangible weight of the setting, refined composition, immediate sense of place, distinct layers of light and shadow, organic flow of her long hair, grounded elegance in the cafe setting, clear distinction between foreground and background, specific grain of the paper or digital medium, balanced exposure, immediate engagement with the viewer, grounded in the details of a working cafe, textured fabric of her top, precise definition of her long hair, cohesive color palette, specific focus on her expression, tangible warmth of the room, sharp lines of the cafe architecture, delicate features of her face, rich textures of the interior, precise framing of her silhouette, natural movement of her long hair, grounded in the reality of the scene, specific play of light on her skin, cohesive blend of elements, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of"
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.862,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "1girl, cafe, long hair, standing, wooden counter, dark apron, ceramic mug, warm overhead light, soft shadows, steam, blurred shelves, glass jars, hanging copper pots, hand on hip, gripping mug handle, hair cascading, glowing skin, amber light, linen napkin, polished wood floor, waist curve, natural expression, tilted head, gathered skirt, open window, dust motes, detailed lace trim, depth of field, rich brown tones, crisp definition, relaxed posture, cozy atmosphere, sharp detail, textured brick wall, espresso machine, pale skin, deep coffee hues, focused illumination, gentle breeze, fabric top, specific grain, balanced exposure, intimate scale, tactile environment, sharp contrast, delicate features, textured fabric, cohesive palette, specific focus, tangible warmth, sharp lines, delicate face, rich textures, precise silhouette, natural movement, grounded elegance, clear foreground, organic flow, grounded reality, specific play of light, cohesive elements, immediate depth, tangible air, precise rendering, specific pose, natural flow, grounded setting, specific light, cohesive blend, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose,",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 16.025,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, standing, counter, dark, apron, mug, light, shadow, steam, blurry, shelf, glass, hanging, hand on own hip, handle, glowing skin, napkin, wood, floor, skirt, open window, dust, lace trim",
+        "stats": {
+          "corrected": 0,
+          "dropped": 308,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, standing, counter, dark, apron, mug, light, shadow, steam, blurry, shelf, glass, hanging, hand on own hip, handle, glowing skin, napkin, wood, floor, skirt, open window, dust, lace trim",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, standing, counter, dark, apron, mug, light, shadow, steam, blurry, shelf, glass, hanging, hand on own hip, handle, glowing skin, napkin, wood, floor, skirt, open window, dust, lace trim",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_cafe",
+  "seed": 524287,
+  "modifiers": [],
+  "prompt_source": "1girl, long hair, cafe",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, cafe, long hair, standing, counter, dark, apron, mug, light, shadow, steam, blurry, shelf, glass, hanging, hand on own hip, handle, glowing skin, napkin, wood, floor, skirt, open window, dust, lace trim",
+  "prose": "1girl, long hair, cafe, standing near a wooden counter, wearing a dark apron, holding a ceramic mug, warm overhead light casting soft shadows on the floor, steam rising from the cup, background filled with blurred shelves of glass jars and hanging copper pots, one hand resting on her hip, the other gripping the handle of the mug, her hair cascading over one shoulder, skin glowing under the amber lamp, texture of the linen napkin on the table visible, polished wood floor reflecting the light, specific focus on the curve of her waist, natural expression, slightly tilted head, fabric of her skirt gathered at the hem, ambient hum of the room suggested by the open window, dust motes dancing in the light beam, precise framing of her face, detailed lace trim on her sleeve, depth of field blurring the back wall, rich brown tones dominating the scene, crisp definition of her long hair strands, subtle sheen on the porcelain, grounded stance, relaxed posture, intimate scale of the room, tactile feel of the environment, sharp contrast between her pale skin and the deep coffee hues of the interior, delicate features highlighted by the focused illumination, gentle breeze from the window ruffling her hair, textured brick wall behind her, smooth surface of the espresso machine, clear view of her long hair reaching past her waist, cohesive blend of cozy atmosphere and sharp detail, precise placement of her body in the frame, tangible weight of the setting, refined composition, immediate sense of place, distinct layers of light and shadow, organic flow of her long hair, grounded elegance in the cafe setting, clear distinction between foreground and background, specific grain of the paper or digital medium, balanced exposure, immediate engagement with the viewer, grounded in the details of a working cafe, textured fabric of her top, precise definition of her long hair, cohesive color palette, specific focus on her expression, tangible warmth of the room, sharp lines of the cafe architecture, delicate features of her face, rich textures of the interior, precise framing of her silhouette, natural movement of her long hair, grounded in the reality of the scene, specific play of light on her skin, cohesive blend of elements, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of her long hair, grounded in the details of the setting, specific play of light on her skin, cohesive color palette, immediate sense of depth, tangible quality of the air, precise rendering of her long hair, specific focus on her pose, natural flow of",
+  "draft": "1girl, cafe, long hair, standing, wooden counter, dark apron, ceramic mug, warm overhead light, soft shadows, steam, blurred shelves, glass jars, hanging copper pots, hand on hip, gripping mug handle, hair cascading, glowing skin, amber light, linen napkin, polished wood floor, waist curve, natural expression, tilted head, gathered skirt, open window, dust motes, detailed lace trim, depth of field, rich brown tones, crisp definition, relaxed posture, cozy atmosphere, sharp detail, textured brick wall, espresso machine, pale skin, deep coffee hues, focused illumination, gentle breeze, fabric top, specific grain, balanced exposure, intimate scale, tactile environment, sharp contrast, delicate features, textured fabric, cohesive palette, specific focus, tangible warmth, sharp lines, delicate face, rich textures, precise silhouette, natural movement, grounded elegance, clear foreground, organic flow, grounded reality, specific play of light, cohesive elements, immediate depth, tangible air, precise rendering, specific pose, natural flow, grounded setting, specific light, cohesive blend, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific focus, natural flow, grounded details, specific light, cohesive palette, immediate depth, tangible air, precise hair, specific pose,",
+  "shortlist": {
+    "artists": [
+      "cofepig",
+      "01 0219",
+      "coffee kizoku",
+      "an2a",
+      "ken (coffee michikusa)",
+      "kgr"
+    ],
+    "characters": [
+      "long haired girl (ishiyumi)",
+      "long haired girl (motto notto)",
+      "rococo (girl cafe gun)",
+      "kafei",
+      "cafe no zombi ko",
+      "girl dm"
+    ],
+    "series": [
+      "girl cafe gun",
+      "girl with a pearl earring"
+    ]
+  }
+}

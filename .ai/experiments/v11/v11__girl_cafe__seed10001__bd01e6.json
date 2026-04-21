@@ -1,0 +1,266 @@
+{
+  "run_id": "v11__girl_cafe__seed10001__bd01e6",
+  "variant": "v11",
+  "pipeline_input": {
+    "source": "1girl, long hair, cafe",
+    "mods": [],
+    "seed": 10001
+  },
+  "started_at": 1776799133.5810847,
+  "ended_at": 1776799137.1037214,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.526,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['cofepig', '01 0219', 'coffee kizoku', 'an2a', 'ken (coffee michikusa)', 'kgr'], characters=['long haired girl (ishiyumi)', 'long haired girl (motto notto)', 'rococo (girl cafe gun)', 'kafei', 'cafe no zombi ko', 'girl dm'], series=['girl cafe gun', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: cofepig, 01 0219, coffee kizoku, an2a, ken (coffee michikusa), kgr\nCharacters: long haired girl (ishiyumi), long haired girl (motto notto), rococo (girl cafe gun), kafei, cafe no zombi ko, girl dm\nSeries: girl cafe gun, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 2.017,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "1girl with long hair stands in a cafe setting. Her hair flows past her shoulders in a single, solid mass. She wears a fitted garment made of smooth fabric. The cafe interior features a wooden table surface directly beneath her. Warm overhead light casts a distinct shadow behind her. The air holds a faint scent of roasted beans. Her expression remains neutral and focused. A single cup of dark liquid sits near her hand. The background contains soft-focus shelves holding ceramic mugs.",
+        "prose_samples": [
+          "1girl with long hair standing in a cafe. Her hair falls past her shoulders and frames her face. She wears a simple outfit suitable for a cafe setting. Warm ambient light fills the room. A wooden table sits near her. The background features soft cafe textures.",
+          "1girl with long hair standing in a cafe setting. Her hair flows past her shoulders and catches the light. She wears a fitted garment made of textured fabric. The cafe interior features wooden surfaces and warm ambient lighting. Shadows fall softly across her face and clothes. The air feels still and quiet. A single distinct object rests near her hand. Her expression remains neutral and focused.",
+          "1girl with long hair stands in a cafe setting. Her hair flows past her shoulders in a single, solid mass. She wears a fitted garment made of smooth fabric. The cafe interior features a wooden table surface directly beneath her. Warm overhead light casts a distinct shadow behind her. The air holds a faint scent of roasted beans. Her expression remains neutral and focused. A single cup of dark liquid sits near her hand. The background contains soft-focus shelves holding ceramic mugs."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.592,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, 1girl, long hair, hair past shoulders, single mass of hair, fitted garment, smooth fabric, cafe, wooden table, overhead light, shadow behind, neutral expression, focused, cup, dark liquid, near hand, background, soft focus, shelves, ceramic mugs",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.388,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, long hair, hair half over shoulder, fabric, cafe, wooden table, light, shadow, expressionless, cup, dark, liquid, soft focus, shelf",
+        "stats": {
+          "corrected": 0,
+          "dropped": 3,
+          "kept_invalid": 0,
+          "total": 18
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, long hair, hair half over shoulder, fabric, cafe, wooden table, light, shadow, expressionless, cup, dark, liquid, soft focus, shelf",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, long hair, hair half over shoulder, fabric, cafe, wooden table, light, shadow, expressionless, cup, dark, liquid, soft focus, shelf",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_cafe",
+  "seed": 10001,
+  "modifiers": [],
+  "prompt_source": "1girl, long hair, cafe",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, long hair, hair half over shoulder, fabric, cafe, wooden table, light, shadow, expressionless, cup, dark, liquid, soft focus, shelf",
+  "prose": "1girl with long hair stands in a cafe setting. Her hair flows past her shoulders in a single, solid mass. She wears a fitted garment made of smooth fabric. The cafe interior features a wooden table surface directly beneath her. Warm overhead light casts a distinct shadow behind her. The air holds a faint scent of roasted beans. Her expression remains neutral and focused. A single cup of dark liquid sits near her hand. The background contains soft-focus shelves holding ceramic mugs.",
+  "draft": "masterpiece, best quality, 1girl, long hair, hair past shoulders, single mass of hair, fitted garment, smooth fabric, cafe, wooden table, overhead light, shadow behind, neutral expression, focused, cup, dark liquid, near hand, background, soft focus, shelves, ceramic mugs",
+  "shortlist": {
+    "artists": [
+      "cofepig",
+      "01 0219",
+      "coffee kizoku",
+      "an2a",
+      "ken (coffee michikusa)",
+      "kgr"
+    ],
+    "characters": [
+      "long haired girl (ishiyumi)",
+      "long haired girl (motto notto)",
+      "rococo (girl cafe gun)",
+      "kafei",
+      "cafe no zombi ko",
+      "girl dm"
+    ],
+    "series": [
+      "girl cafe gun",
+      "girl with a pearl earring"
+    ]
+  }
+}
