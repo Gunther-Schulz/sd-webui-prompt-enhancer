@@ -500,15 +500,41 @@ def _general_tag_candidates(stack, prose: str, k: int = 60,
     candidates lets it SELECT from scene-relevant vocabulary instead of
     emitting arbitrary compounds. Returns underscore-form names (DB
     canonical), caller converts to space form for display.
+
+    Implementation note: bypasses the default stack.retriever.retrieve()
+    path because that path's reranker + default retrieve_k=300 tends to
+    return only a handful of general tags when the top-300 dense hits
+    are dominated by thematic artist/character/series entries. For V13
+    grounding we want BROAD general-tag coverage: dense search with
+    large retrieve_k, filter to category=0 + min_post_count, sort by
+    dense score, take top-k. No reranker (its query-pair scoring is
+    designed for shorter queries than a multi-sentence prose).
     """
     if stack is None or getattr(stack, "retriever", None) is None:
         return []
     try:
-        hits = stack.retriever.retrieve(
-            prose, retrieve_k=300, final_k=k,
-            category=0, min_post_count=min_post_count,
-        )
-        return [h.name for h in hits]
+        r = stack.retriever
+        q_vec = r.embedder.encode_one(prose)
+        # retrieve_k=3000 gives plenty of headroom — FAISS is fast, and
+        # we need enough hits that the category=0 filter leaves ≥k.
+        scores, ids = r.index.search(q_vec, 3000)
+        dense_ids = [int(i) for i in ids[0] if i >= 0]
+        tags = r.db.get_by_ids(dense_ids)
+        score_by_id = {int(i): float(s) for i, s in zip(ids[0], scores[0]) if i >= 0}
+        # Filter to general (cat=0) + popularity floor + dedupe
+        seen: set[int] = set()
+        pool: list[dict] = []
+        for t in tags:
+            if t["id"] in seen:
+                continue
+            seen.add(t["id"])
+            if t["category"] != 0:
+                continue
+            if t["post_count"] < min_post_count:
+                continue
+            pool.append(t)
+        pool.sort(key=lambda t: (score_by_id.get(t["id"], 0.0), t["post_count"]), reverse=True)
+        return [t["name"] for t in pool[:k]]
     except Exception as e:
         logger.warning(f"_general_tag_candidates: retrieval failed: {e}")
         return []
