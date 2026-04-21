@@ -3,7 +3,7 @@ _label: Setting
 
 setting:
   🎲 Random Setting:
-    behavioral: "Choose a specific, unexpected location or setting for this scene. Be surprising — avoid obvious defaults. Describe it with concrete details."
+    behavioral: "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
     keywords: ""
   🎲 Random Weather:
     behavioral: "Choose specific weather conditions (be surprising). State how they affect visibility, surfaces, and mood."

@@ -739,15 +739,19 @@ def _build_style_string(mod_list, mode="prose"):
     if mode == "tags":
         parts = []
         for name, entry in mod_list:
+            # Strip 🎲 emoji marker from random-entry names
+            clean_name = name.replace("\U0001F3B2", "").strip()
             kw = entry.get("keywords") or ""
             if not kw:
-                kw = entry.get("behavioral") or ""
-                if not kw:
-                    continue
-            # Strip 🎲 emoji marker from random-entry names before using
-            clean_name = name.replace("\U0001F3B2", "").strip()
-            if clean_name.lower() not in kw.lower():
-                kw = f"{clean_name.lower()}, {kw}"
+                # Random entry (empty keywords). Don't leak the full behavioral
+                # prose as tag soup — emit a compact directive instead.
+                subject = clean_name.lower()
+                if subject.startswith("random "):
+                    subject = subject[len("random "):]
+                kw = f"pick a surprising {subject} and include its tags"
+            else:
+                if clean_name.lower() not in kw.lower():
+                    kw = f"{clean_name.lower()}, {kw}"
             parts.append(kw)
         return f"Apply these styles: {', '.join(parts)}." if parts else ""
     # Prose/Hybrid: short behaviorals concatenate into a compact directive.
