@@ -98,6 +98,44 @@ def _use_anima_pipeline(tag_fmt: str) -> bool:
     return _get_anima_stack() is not None
 
 
+def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, seed=-1):
+    """Build a query-expander callable backed by _call_llm for shortlist retrieval.
+
+    Expansion is a cheap LLM pass (~1 s on 9b) that converts the raw
+    source prompt into a tag-style concept list, so the shortlist
+    retriever embeds a denser, thematically-aligned query instead of
+    a sparse source with name-collision risk.
+
+    Returns None if disabled via setting.
+    """
+    if not bool(_anima_opt("anima_tagger_query_expansion", True)):
+        return None
+    try:
+        from anima_tagger.query_expansion import expand_query, EXPANSION_SYSTEM_PROMPT
+    except ImportError:
+        return None
+
+    def _expander(source: str, modifier_keywords: str | None) -> str:
+        def _oneshot(sys_prompt: str, user_msg: str) -> str:
+            # _call_llm is a generator yielding progress dicts then the
+            # final content string. We only need the content.
+            content = ""
+            try:
+                for chunk in _call_llm(
+                    user_msg, api_url, model, sys_prompt, temperature,
+                    think=think, timeout=30, seed=seed,
+                ):
+                    if isinstance(chunk, str):
+                        content = chunk
+            except Exception:
+                return ""
+            return content
+
+        return expand_query(source, _oneshot, modifier_keywords=modifier_keywords)
+
+    return _expander
+
+
 def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
                           use_underscores: bool = False,
                           shortlist=None) -> tuple[str, dict]:
@@ -1636,9 +1674,14 @@ class PromptEnhancer(scripts.Script):
                             _anima_cm = _s.models()
                             _anima_cm.__enter__()
                             _anima = _s
+                            _expander = _make_anima_query_expander(
+                                api_url, model, temperature=0.3,
+                                think=False, seed=int(sd),
+                            )
                             _anima_shortlist = _s.build_shortlist(
                                 source_prompt=source,
                                 modifier_keywords=style_str,
+                                query_expander=_expander,
                             )
                             _sl_frag = _anima_shortlist.as_system_prompt_fragment()
                             if _sl_frag:
@@ -2003,8 +2046,13 @@ class PromptEnhancer(scripts.Script):
                             _anima_t_cm = _s.models()
                             _anima_t_cm.__enter__()
                             _anima_t = _s
+                            _expander_t = _make_anima_query_expander(
+                                api_url, model, temperature=0.3,
+                                think=False, seed=int(sd),
+                            )
                             _anima_t_shortlist = _s.build_shortlist(
                                 source_prompt=source, modifier_keywords=style_str,
+                                query_expander=_expander_t,
                             )
                             _frag = _anima_t_shortlist.as_system_prompt_fragment()
                             if _frag:
@@ -2325,6 +2373,20 @@ def _on_ui_settings():
         ).info(
             "Auto-adds the originating series tag when a character tag "
             "fires (e.g. hatsune_miku → vocaloid)."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_query_expansion",
+        OptionInfo(
+            True,
+            "Expand source to tag concepts before shortlist retrieval",
+            section=section,
+        ).info(
+            "Short LLM pass converts vague source prompts into richer "
+            "tag-style queries so the retriever surfaces thematically-"
+            "fitting artists/characters instead of name-overlap matches. "
+            "Adds ~1 s per click. Disable for sparse-source workflows or "
+            "when LLM latency matters more than shortlist quality."
         ),
     )
 

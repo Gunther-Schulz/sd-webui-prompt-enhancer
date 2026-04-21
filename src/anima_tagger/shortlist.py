@@ -8,7 +8,7 @@ only these".
 """
 
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from . import config
 from .retriever import Retriever
@@ -42,16 +42,33 @@ def build_shortlist(retriever: Retriever,
                     source_prompt: str,
                     modifier_keywords: Optional[str] = None,
                     per_category_k: int = 6,
-                    min_post_count: int = 50) -> Shortlist:
-    """Query the retriever once per category and assemble the shortlist.
+                    min_post_count: int = 50,
+                    query_expander: Optional[Callable[[str, Optional[str]], str]] = None) -> Shortlist:
+    """Query the retriever per category and assemble the shortlist.
 
-    Using the same query text (source + modifier hints) per category
-    lets the cross-encoder pick the best-matching entities without us
-    having to craft category-specific prompts.
+    Per-category query strategy:
+      - Artists: use the LLM-expanded tag-concept query when available.
+        Artist tags have ~0 wiki coverage in the DB, so literal-name
+        overlap dominates without expansion; expansion gives the
+        embedder thematic signal (mood, lighting, activity) to match.
+      - Characters / Series: use the raw source. The user naming a
+        character or franchise IS the literal-name signal we want;
+        expansion dilutes it. Character tags also have ~0 wiki so
+        the embedder can only see the name itself either way.
     """
-    query = source_prompt if not modifier_keywords else f"{source_prompt}. {modifier_keywords}"
+    raw_query = (
+        source_prompt if not modifier_keywords
+        else f"{source_prompt}. {modifier_keywords}"
+    )
+    if query_expander is not None:
+        try:
+            expanded_query = query_expander(source_prompt, modifier_keywords)
+        except Exception:
+            expanded_query = raw_query
+    else:
+        expanded_query = raw_query
 
-    def _names(cat: int) -> List[str]:
+    def _names(query: str, cat: int) -> List[str]:
         cands = retriever.retrieve(
             query,
             retrieve_k=config.DEFAULT_RETRIEVE_K,
@@ -62,7 +79,7 @@ def build_shortlist(retriever: Retriever,
         return [c.name.replace("_", " ") for c in cands]
 
     return Shortlist(
-        artists=_names(config.CAT_ARTIST),
-        characters=_names(config.CAT_CHARACTER),
-        series=_names(config.CAT_COPYRIGHT),
+        artists=_names(expanded_query, config.CAT_ARTIST),
+        characters=_names(raw_query, config.CAT_CHARACTER),
+        series=_names(raw_query, config.CAT_COPYRIGHT),
     )

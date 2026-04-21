@@ -96,8 +96,13 @@ class AnimaStack:
             except ImportError:
                 pass
 
-    def build_shortlist(self, source_prompt: str, modifier_keywords: str = "") -> Shortlist:
-        """Must be called inside a `models()` block."""
+    def build_shortlist(self, source_prompt: str, modifier_keywords: str = "",
+                        query_expander=None) -> Shortlist:
+        """Must be called inside a `models()` block.
+
+        `query_expander(source, modifier_keywords) -> str` is an optional
+        LLM-driven expansion step; see query_expansion.expand_query.
+        """
         if self.retriever is None:
             raise RuntimeError(
                 "build_shortlist requires models loaded — use `with stack.models(): ...`"
@@ -105,6 +110,7 @@ class AnimaStack:
         return build_shortlist(
             self.retriever, source_prompt=source_prompt,
             modifier_keywords=modifier_keywords,
+            query_expander=query_expander,
         )
 
 
