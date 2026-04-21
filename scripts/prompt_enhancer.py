@@ -487,6 +487,61 @@ def _resolve_source(source_spec: dict, seed: int,
     }
 
 
+def _general_tag_candidates(stack, prose: str, k: int = 60,
+                            min_post_count: int = 100) -> list[str]:
+    """Retrieve top-k general-category Danbooru tags semantically matching
+    the prose. Used by Pass 2 grounding to constrain the LLM's tag output
+    to scene-relevant real Danbooru vocabulary.
+
+    Root-cause fix for the weird-tag problem observed in production:
+    Pass 2 LLM freely invents tokens like `sparse_leg_hair`,
+    `overhead_lights`, `simple_fish` that ARE real Danbooru tags but
+    don't belong in the scene. Grounding Pass 2 in FAISS-retrieved
+    candidates lets it SELECT from scene-relevant vocabulary instead of
+    emitting arbitrary compounds. Returns underscore-form names (DB
+    canonical), caller converts to space form for display.
+    """
+    if stack is None or getattr(stack, "retriever", None) is None:
+        return []
+    try:
+        hits = stack.retriever.retrieve(
+            prose, retrieve_k=300, final_k=k,
+            category=0, min_post_count=min_post_count,
+        )
+        return [h.name for h in hits]
+    except Exception as e:
+        logger.warning(f"_general_tag_candidates: retrieval failed: {e}")
+        return []
+
+
+def _candidate_fragment_for_tag_sp(candidates: list[str]) -> str:
+    """Format the candidate tag list as a fragment appended to the Pass 2
+    system prompt. Prose-friendly phrasing — tells the LLM the list is
+    a pre-curated scene-relevant vocabulary and how to deviate safely
+    (named subjects, required format tokens).
+    """
+    if not candidates:
+        return ""
+    # Space-form for readability matching anima convention
+    display = ", ".join(n.replace("_", " ") for n in candidates)
+    return (
+        "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru "
+        "DB against the prose). Strongly prefer tags from this list — "
+        "they are scene-relevant and real:\n\n"
+        f"  {display}\n\n"
+        "You may emit tags OUTSIDE this list ONLY when:\n"
+        "  (a) the tag is required by the format (masterpiece, best quality, "
+        "score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n"
+        "  (b) the prose explicitly names a character, series, or artist not "
+        "in the list;\n"
+        "  (c) a concept is literally named in the prose but happens to be "
+        "missing from the list.\n"
+        "For any other concept, pick the closest match from the candidate "
+        "list instead of inventing a novel compound tag. If no candidate "
+        "fits a concept, omit it rather than inventing.\n"
+    )
+
+
 def _resolve_deferred_sources(mods, seed: int, stack, query: str):
     """Second-pass source resolution for entries that needed the anima
     stack (db_retrieve). Mutates `mods` in place. Called by handlers after
@@ -2465,6 +2520,17 @@ class PromptEnhancer(scripts.Script):
                         return
                     if style_str:
                         tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                    # V13: Pass 2 grounding — prepend a scene-relevant candidate
+                    # tag list retrieved from the DB against the prose. Constrains
+                    # the LLM to pick from real scene-matching vocabulary instead
+                    # of inventing niche compounds (sparse_leg_hair,
+                    # overhead_lights, simple_fish). Only active with RAG + Anima.
+                    if _anima is not None and bool(_anima_opt("anima_tagger_pass2_grounding", False)):
+                        _cand = _general_tag_candidates(_anima, prose, k=int(_anima_opt("anima_tagger_pass2_grounding_k", 60)), min_post_count=int(_anima_opt("anima_tagger_pass2_grounding_min_pc", 100)))
+                        _frag = _candidate_fragment_for_tag_sp(_cand)
+                        if _frag:
+                            tag_sp = f"{tag_sp}\n{_frag}"
+                            print(f"[PromptEnhancer] Pass 2 grounding: {len(_cand)} candidate tags injected")
                     tags_raw = None
                     for chunk in _call_llm_progress(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)):
                         if isinstance(chunk, dict):
@@ -2951,6 +3017,13 @@ class PromptEnhancer(scripts.Script):
                         return
                     if style_str:
                         tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                    # V13: Pass 2 grounding — see _hybrid for rationale.
+                    if _anima_t is not None and bool(_anima_opt("anima_tagger_pass2_grounding", False)):
+                        _cand = _general_tag_candidates(_anima_t, prose, k=int(_anima_opt("anima_tagger_pass2_grounding_k", 60)), min_post_count=int(_anima_opt("anima_tagger_pass2_grounding_min_pc", 100)))
+                        _frag = _candidate_fragment_for_tag_sp(_cand)
+                        if _frag:
+                            tag_sp = f"{tag_sp}\n{_frag}"
+                            print(f"[PromptEnhancer] Pass 2 grounding: {len(_cand)} candidate tags injected")
                     tags_raw = None
                     for chunk in _call_llm_progress(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)):
                         if isinstance(chunk, dict):
@@ -3298,6 +3371,50 @@ def _on_ui_settings():
             "no tag of that Danbooru category, retrieve the best-matching real "
             "tag from the prose and inject it. Fixes the 'Random Artist produces "
             "no artist' failure; extensible via target_slot in modifier YAML."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_pass2_grounding",
+        OptionInfo(
+            False,
+            "Pass 2 grounding: inject DB-retrieved candidate tags into Pass 2 system prompt (V13 — not yet rated)",
+            section=section,
+        ).info(
+            "Root-cause fix for weird-tag generation (sparse_leg_hair, "
+            "overhead_lights, simple_fish on unrelated scenes). Before Pass 2 "
+            "tag-extraction, FAISS-retrieve the top-K general-category "
+            "Danbooru tags semantically matching the prose and inject as a "
+            "'prefer these' candidate list. Constrains the LLM to pick from "
+            "real scene-relevant vocabulary instead of inventing niche "
+            "compounds. Increases Pass 2 system prompt by ~600 tokens."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_pass2_grounding_k",
+        OptionInfo(
+            60,
+            "Pass 2 grounding: candidate pool size (top-K)",
+            _gr.Slider if _gr else None,
+            {"minimum": 20, "maximum": 150, "step": 10} if _gr else None,
+            section=section,
+        ).info(
+            "Number of FAISS-retrieved candidate tags injected into Pass 2 "
+            "system prompt. Smaller = tighter constraint (may miss concepts); "
+            "larger = more vocabulary (more room for noise). 60 is a starting "
+            "value; titrate variant V13 to measure."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_pass2_grounding_min_pc",
+        OptionInfo(
+            100,
+            "Pass 2 grounding: minimum post_count for candidates",
+            _gr.Slider if _gr else None,
+            {"minimum": 0, "maximum": 1000, "step": 50} if _gr else None,
+            section=section,
+        ).info(
+            "Floor on popularity for candidate tags. 100 excludes ultra-niche "
+            "tags like overhead_lights (pc=59). Higher = stricter."
         ),
     )
     shared.opts.add_option(

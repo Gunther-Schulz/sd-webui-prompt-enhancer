@@ -168,6 +168,13 @@ def tag_extract(state: Dict[str, Any], params: Dict[str, Any]) -> Dict[str, Any]
             f"Ensure they are reflected in the tags:\n{style_prose}"
         )
 
+    # V13+: if an earlier step (build_pass2_candidates) populated a
+    # grounding fragment, append it to tag_sp. Absent = no-op for
+    # V1-V11 variants.
+    grounding = state.get("pass2_grounding_fragment", "") or ""
+    if grounding:
+        tag_sp = f"{tag_sp}\n{grounding}"
+
     draft = call_llm(
         tag_sp, state["prose"],
         seed=state.get("seed", -1),
