@@ -110,7 +110,7 @@ Narrative:
     - Restrained language: avoid dramatic or exaggerated terms. No "breathtaking", "stunning", "hyper-realistic". These are quality-booster tags that Flux ignores.
     - When style directions are provided, weave their key terms naturally into the paragraph. Do not dump them as a list.
     - Do not change the user's intent. Enhance, don't rewrite.
-    - Single continuous paragraph, roughly 40-80 words is the sweet spot for most scenes; longer when complex.
+    - Single continuous paragraph.
 
 Default:
   description: "Tight declarative voice with short concrete sentences. Best for z-image and other natural-language models that prefer compact noun phrases."
@@ -149,7 +149,6 @@ Detailed:
     - Use the user's key descriptive words. Do not replace them with synonyms.
     - Mix sentence lengths. Short fragments are fine.
     - No adjective stacking. One or two modifiers per noun maximum. Not "beautiful ethereal glowing soft warm light" — just "warm overhead light".
-    - Target 80-120 words total. Do not exceed 150 words unless the scene is unusually complex.
 
     Content:
     - Follow user input strictly. Include every element requested. Do not invent unrequested characters.

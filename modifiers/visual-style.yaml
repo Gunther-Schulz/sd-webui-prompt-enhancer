@@ -49,11 +49,17 @@ art style:
 
 style influence:
   🎲 Random Artist:
-    behavioral: "Choose a specific artist or illustrator (be surprising — not the most famous). Apply their characteristic techniques and style."
+    behavioral: "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
     keywords: ""
+    # Anima RAG: after validation, if no CAT_ARTIST tag survived, inject
+    # the best-matching real artist for the generated prose as an @-tag.
+    target_slot: artist
   🎲 Random Franchise:
-    behavioral: "Choose a specific franchise or visual IP (be surprising). Apply its distinctive visual style and aesthetic."
+    behavioral: "Choose ONE specific franchise or visual IP (be surprising). Explicitly NAME the franchise in the prose — e.g. 'in the visual language of <franchise>' — then describe its distinctive style and how it shapes this scene. The franchise name must appear in the prose."
     keywords: ""
+    # Anima RAG: after validation, if no CAT_COPYRIGHT tag survived, inject
+    # the best-matching real franchise/series for the generated prose.
+    target_slot: copyright
   🎲 Random Art Movement:
     behavioral: "Choose a specific art movement (be surprising). Apply its principles throughout."
     keywords: ""

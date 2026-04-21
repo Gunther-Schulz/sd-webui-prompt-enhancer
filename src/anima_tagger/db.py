@@ -39,7 +39,12 @@ class TagDB:
         if create:
             os.makedirs(os.path.dirname(path), exist_ok=True)
         self.path = path
-        self.conn = sqlite3.connect(path)
+        # check_same_thread=False: Gradio serves each request on a fresh
+        # worker thread, and the AnimaStack (including this connection)
+        # is cached across requests. Runtime access is read-only — writes
+        # only happen during offline index build — so SQLite's own
+        # serialized threading mode is sufficient.
+        self.conn = sqlite3.connect(path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         if create:
             self.conn.executescript(SCHEMA)

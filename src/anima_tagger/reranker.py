@@ -42,3 +42,12 @@ class Reranker:
             reverse=True,
         )
         return ranked[:top_k]
+
+    def score_pairs(self, query: str, texts: Sequence[str]) -> List[float]:
+        """Return a raw cross-encoder score for each (query, text) pair,
+        in input order. Used for coherence filtering: score each validated
+        tag against the prose, drop those below a threshold."""
+        if not texts:
+            return []
+        pairs = [(query, t) for t in texts]
+        return [float(s) for s in self.model.predict(pairs, show_progress_bar=False)]

@@ -99,15 +99,38 @@ def apply_anima_rules(records: List[Dict],
         out.append(_format_out(raw_name, use_underscores))
         return True
 
-    # Quality prefix. Always emit the canonical Anima default, then
-    # append any extra quality tokens from the LLM draft (e.g. if the
-    # user asked for score_9 specifically, include both score_7 default
-    # and score_9). Anima's card explicitly allows mixing scales.
+    # Quality prefix. Emit masterpiece + best_quality always, then
+    # exactly ONE score_N tag:
+    #   - If the LLM draft contains a score_N, use that (highest if multiple)
+    #   - Otherwise use score_7 (the default)
+    # Non-score quality tokens from the draft (masterpiece, best_quality,
+    # highres, absurdres) are deduped via _add.
+    import re as _re
+    _SCORE_RE = _re.compile(r"^score_(\d+)(_up)?$")
     draft_quality = [r["name"] for r in records if r["name"] in _QUALITY_TOKENS]
+    draft_scores = [q for q in draft_quality if _SCORE_RE.match(q)]
+    draft_non_score = [q for q in draft_quality if not _SCORE_RE.match(q)]
     if include_quality_prefix:
+        # Emit masterpiece + best_quality from the canonical prefix
         for q in _QUALITY_PREFIX:
+            if _SCORE_RE.match(q):
+                continue   # handled below — exactly one score tag
             _add(q)
-        for q in draft_quality:
+        # Exactly one score tag: highest from draft, or default score_7
+        if draft_scores:
+            # Pick the highest score_N (score_9 > score_7 > score_1)
+            chosen_score = max(
+                draft_scores,
+                key=lambda s: int(_SCORE_RE.match(s).group(1)),
+            )
+        else:
+            chosen_score = next(
+                (q for q in _QUALITY_PREFIX if _SCORE_RE.match(q)),
+                "score_7",
+            )
+        _add(chosen_score)
+        # Non-score draft quality tokens (masterpiece, absurdres, etc.)
+        for q in draft_non_score:
             _add(q)
 
     # Safety — exactly one. If the LLM draft already included a safety
@@ -147,4 +170,43 @@ def apply_anima_rules(records: List[Dict],
         if len(out) >= max_tags:
             break
 
+    out = _dedup_redundant_subset_tags(out, use_underscores)
     return out[:max_tags]
+
+
+def _dedup_redundant_subset_tags(tags: List[str], use_underscores: bool) -> List[str]:
+    """Drop tags whose words are a strict subset of another tag's words,
+    keeping the more specific one. Catches common LLM redundancy where
+    it emits both the parent concept and a specific variant:
+
+        cake / holding_cake       → keep holding_cake
+        coat / trench_coat        → keep trench_coat
+        floor / wooden_floor      → keep wooden_floor
+        apron / black_apron       → keep black_apron
+        boot / leather_boots      → keep leather_boots (plural match is OK)
+
+    Does NOT drop @-prefixed tags (artists), score_N (quality), or
+    subject-count tags — those are semantically atomic regardless of
+    word overlap.
+    """
+    sep = "_" if use_underscores else " "
+    PROTECT_PREFIXES = ("@",)
+    def _words(t: str) -> set[str]:
+        return set(t.replace("_", sep).split(sep))
+    pairs_by_idx = [(i, t, _words(t)) for i, t in enumerate(tags)]
+    drop_idx: set[int] = set()
+    for i, ti, wi in pairs_by_idx:
+        if ti.startswith(PROTECT_PREFIXES):
+            continue
+        if _PRESERVE_UNDERSCORE_RE.match(ti.replace(" ", "_")):
+            continue
+        if ti in _SUBJECT_TAGS or ti.replace(" ", "_") in _SUBJECT_TAGS:
+            continue
+        for j, tj, wj in pairs_by_idx:
+            if i == j or j in drop_idx:
+                continue
+            # ti's words are strict subset of tj's → ti is less specific
+            if wi and wi < wj:
+                drop_idx.add(i)
+                break
+    return [t for i, t in enumerate(tags) if i not in drop_idx]

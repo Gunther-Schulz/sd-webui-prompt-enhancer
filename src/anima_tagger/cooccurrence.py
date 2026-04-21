@@ -39,7 +39,10 @@ class CoOccurrence:
             return
         if create:
             os.makedirs(os.path.dirname(path), exist_ok=True)
-        self.conn = sqlite3.connect(path)
+        # check_same_thread=False: shared across Gradio worker threads
+        # via the cached AnimaStack; runtime access is read-only (writes
+        # happen offline in scripts/build_cooccurrence.py).
+        self.conn = sqlite3.connect(path, check_same_thread=False)
         if create:
             self.conn.executescript(SCHEMA)
 

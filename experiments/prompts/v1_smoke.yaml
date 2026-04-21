@@ -1,0 +1,18 @@
+# Smoke-test prompt set — minimum viable to validate runner wiring.
+# Broader, curated prompt set for rating goes in a separate file once
+# the runner is verified end-to-end.
+
+- id: miku
+  source: "hatsune miku holding a cake, chibi"
+  modifiers: []
+  note: "named character + simple scene — expect character + series tags"
+
+- id: girl_random_artist
+  source: "girl"
+  modifiers: ["🎲 Random Artist"]
+  note: "terse source + modifier — expect artist tag from slot_fill"
+
+- id: woman_sex
+  source: "girl, sex"
+  modifiers: []
+  note: "explicit source, no NSFW modifier — expect nsfw/explicit tag"

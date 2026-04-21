@@ -1,0 +1,134 @@
+# Quality rubric for tagging system outputs — v0.
+#
+# Each dimension is scored 1-5 with concrete anchors. Anchors are
+# examples from actual observed outputs so ratings stay grounded.
+#
+# REVISION DISCIPLINE (see CLAUDE.md "Quality standards are
+# coarse-to-fine and revisable"):
+#   * While rating, log any case where the rubric felt forced,
+#     ambiguous, or failed to capture a real failure mode.
+#   * Between rounds, amend this file based on those notes. Always
+#     record what changed and why (keep the version history).
+#   * After amending, re-rate prior outputs so rounds stay comparable.
+#
+# Version: v0 (initial — coarse first pass, will refine in practice).
+
+version: 1
+
+# Changelog:
+#   v0 → v1: Coverage anchor clarified — thin source is not an excuse
+#     for thin output. Triggered by V5/V8 girl_ra_re regression that
+#     wasn't explicitly captured by v0 anchors. Per CLAUDE.md rubric
+#     revision discipline (concrete-anchors + re-rate prior runs).
+
+dimensions:
+
+  - id: faithfulness
+    title: "Faithfulness to source + modifiers"
+    description: >
+      Does the output reflect every element of the source prompt AND
+      every active modifier's directive?
+    anchors:
+      1: |
+        Core intent lost: NSFW source → "safe" output; Random Artist
+        modifier active → no @artist tag; named character in source
+        → character tag absent; explicit act in source → softened
+        or omitted.
+      3: |
+        Mostly reflects source and modifiers, but 1-2 elements missed
+        or softened. E.g. modifier partially honored; one named
+        entity absent.
+      5: |
+        Every element of source appears in output as a tag. Every
+        active modifier's promise is visibly fulfilled — Random
+        Artist produces an @artist, Random Era produces era/clothing
+        cues, source "sex" produces explicit/nsfw rating.
+
+  - id: groundedness
+    title: "Groundedness — real tags, no invention"
+    description: >
+      Is every tag a real Danbooru tag, format-whitelist token
+      (score_N, masterpiece, safe/nsfw/etc.), or recognized quality
+      prefix? No malformed tokens, no made-up compound names.
+    anchors:
+      1: |
+        Multiple invented or malformed tokens (e.g. "@qp:flapper
+        stil" truncated mid-word, "penetration_while_penetrated"
+        that isn't in DB, compound phrases like "heavy silk golden
+        cape" as one tag).
+      3: |
+        One iffy token survived (a rare / questionable tag). Most
+        output is real.
+      5: |
+        Every tag resolves to a real DB entry or a known format
+        whitelist token. No malformations.
+
+  - id: coherence
+    title: "Scene coherence"
+    description: >
+      Are the tags internally consistent — no contradictions, no
+      off-theme hallucinations? Would the tags, read together,
+      describe a single plausible image?
+    anchors:
+      1: |
+        Contradictions or clearly off-theme tags: "airplane" in a
+        speakeasy scene, "blonde hair" + "brown hair", "indoors" +
+        "outdoors" without qualifier.
+      3: |
+        Mostly coherent with 1-2 off-theme or weakly-related tags.
+      5: |
+        All tags form a single plausible scene. If the source hints
+        at era/setting, every tag fits that era/setting.
+
+  - id: coverage
+    title: "Compositional coverage"
+    description: >
+      Does the tag list describe the scene richly enough for a good
+      image? Subject count, pose, clothing, setting, lighting,
+      expression, mood all represented where applicable.
+
+      Importantly: this dimension judges ACTUAL output richness, NOT
+      proportionality to source length. A thin source that produces
+      a thin output scores low on coverage — the LLM's job is to
+      expand. A thin source that produces a rich, coherent scene
+      scores high, even though the source was thin. "Source was
+      terse" is not a valid excuse for thin output.
+    anchors:
+      1: |
+        Only quality defaults + subject count + 1-2 descriptors.
+        Missing pose, clothing, setting, lighting. Sparse — regardless
+        of source length.
+      3: |
+        Most composition dimensions present but some thin
+        (e.g. scene has clothing + pose but no lighting or mood).
+      5: |
+        Subject, pose, clothing layers, setting, lighting,
+        expression, mood all represented. Rich without bloat.
+        Thin sources filled in creatively and coherently.
+
+  - id: structure
+    title: "Structural correctness"
+    description: >
+      Does the output follow the tag format's conventions —
+      exactly-one safety tag, exactly-one score, @ prefix on
+      artists, correct tag ordering (quality → safety → subject →
+      character → series → artist → general), no duplicate tags?
+    anchors:
+      1: |
+        Multiple safety tags, duplicate score_N, no @ on artist,
+        tags in wrong order, visible duplicates.
+      3: |
+        Minor structural glitch (one ordering oddity or a single
+        redundant subset tag).
+      5: |
+        Exactly one safety tag, one score, @ on all artists,
+        canonical ordering, no dupes or subset overlaps.
+
+# Overall score is NOT a computed aggregate — it's my subjective gut
+# call after rating all 5 dimensions, capturing whether the output
+# would be useful for image gen. A dimension-weighted average can
+# hide that a grounding-3 + coherence-3 output is actually unusable.
+overall_anchors:
+  1: "Unusable. Would produce a bad or wrong image."
+  3: "Usable with light manual cleanup."
+  5: "Ship-quality. Would feed directly to image gen with no edits."

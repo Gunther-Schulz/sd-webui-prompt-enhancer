@@ -42,9 +42,11 @@ _tag_databases = {}  # db_filename -> set of valid tags
 #   - the data artefacts aren't built yet (user hasn't run build_index.py),
 #   - tag_fmt is not "Anima",
 #   - or the "Anima Tagger" Forge setting is disabled.
+# Forge's script loader (modules/scripts.py) snapshots sys.path before
+# loading each extension script and restores it afterward, so a
+# module-level sys.path.insert here would be wiped out before the lazy
+# import runs. The path is inserted inside _get_anima_stack() instead.
 _ANIMA_SRC_PATH = os.path.join(_EXT_DIR, "src")
-if _ANIMA_SRC_PATH not in sys.path:
-    sys.path.insert(0, _ANIMA_SRC_PATH)
 
 _anima_stack = None                # cached AnimaStack (db + index open)
 _anima_load_attempted = False      # set True once we've tried to avoid repeat failures
@@ -59,19 +61,24 @@ def _anima_opt(key: str, default):
         return default
 
 
+_anima_load_error: str | None = None
+
+
 def _get_anima_stack():
     """Return a loaded AnimaStack or None if artefacts missing / disabled.
 
     DB + faiss index open on first call and stay cached. Models (bge-m3
     + reranker) still load on-demand via `stack.models()`.
     """
-    global _anima_stack, _anima_load_attempted
+    global _anima_stack, _anima_load_attempted, _anima_load_error
     if _anima_stack is not None:
         return _anima_stack
     if _anima_load_attempted:
         return None
     _anima_load_attempted = True
     try:
+        if _ANIMA_SRC_PATH not in sys.path:
+            sys.path.insert(0, _ANIMA_SRC_PATH)
         from anima_tagger import load_all
         _anima_stack = load_all(
             semantic_threshold=float(_anima_opt("anima_tagger_semantic_threshold", 0.80)),
@@ -82,11 +89,19 @@ def _get_anima_stack():
         )
         logger.info("anima_tagger loaded (DB + FAISS ready)")
         return _anima_stack
-    except FileNotFoundError as e:
-        logger.info(f"anima_tagger unavailable: {e}")
-        return None
     except Exception as e:
-        logger.warning(f"anima_tagger failed to load: {e}")
+        import traceback
+        tb = traceback.format_exc()
+        _anima_load_error = f"{type(e).__name__}: {e}"
+        # Print the full traceback prominently so the user can diagnose
+        # instead of seeing a generic "artefacts not loaded" message.
+        print("\n" + "!" * 72, file=sys.stderr)
+        print("  sd-webui-prompt-enhancer — anima_tagger load failed", file=sys.stderr)
+        print(f"  {type(e).__name__}: {e}", file=sys.stderr)
+        for line in tb.rstrip().splitlines():
+            print(f"  {line}", file=sys.stderr)
+        print("!" * 72 + "\n", file=sys.stderr)
+        logger.error(f"anima_tagger failed to load: {_anima_load_error}")
         return None
 
 
@@ -182,23 +197,72 @@ _ANIMA_NSFW_PRODUCTION_NAMES = {
 }
 
 
-def _anima_safety_from_modifiers(mod_list) -> str:
-    """Map active NSFW modifier selections to an Anima safety tag.
+# Source-content keywords that imply a non-safe rating. Ordered by
+# strength — higher-tier match wins. Used as a last-resort override
+# when no NSFW modifier is active but the user's own source prompt
+# clearly implies adult content (the LLM should not downgrade the
+# rating to "safe" against user intent).
+_SOURCE_EXPLICIT_KEYWORDS = {
+    "explicit": {
+        "sex", "penetration", "fucking", "penis", "vagina", "pussy",
+        "cock", "cum", "ejaculation", "orgasm", "oral sex", "blowjob",
+        "handjob", "footjob", "titfuck", "anal", "vaginal",
+    },
+    "nsfw": {
+        "nude", "naked", "topless", "bottomless", "exposed",
+        "pantsless", "nsfw", "nipples", "breasts out",
+    },
+    "sensitive": {
+        "bikini", "lingerie", "underwear", "panties", "swimsuit",
+        "sensual", "suggestive", "revealing",
+    },
+}
 
-    Takes the list of (name, entry) pairs from _collect_modifiers.
-    When multiple intensity levels are somehow active (shouldn't happen
-    via the UI), the most permissive wins. When only production-style
-    modifiers are active without an intensity, defaults to nsfw.
+
+def _safety_from_source(source: str) -> str | None:
+    """Scan the user's source prompt for explicit keywords. Returns the
+    strongest matching safety tier, or None if no match. Case-insensitive,
+    word-boundary-aware so "sexual" matches "sex" but "essex" doesn't
+    match spuriously."""
+    if not source:
+        return None
+    import re as _re
+    s = source.lower()
+    for tier in ("explicit", "nsfw", "sensitive"):
+        for kw in _SOURCE_EXPLICIT_KEYWORDS[tier]:
+            # word-boundary match so "sex" matches "sex," "sex." etc.
+            if _re.search(r"\b" + _re.escape(kw) + r"\b", s):
+                return tier
+    return None
+
+
+def _anima_safety_from_modifiers(mod_list, source: str = "") -> str:
+    """Map active NSFW modifier selections AND source content to a safety tag.
+
+    Precedence:
+      1. Active intensity modifier (highest signal, explicit user choice)
+      2. Production-style modifier without intensity → nsfw
+      3. Explicit keywords found in source text → derived tier
+      4. Default → safe
+
+    `source` argument is optional for back-compat; callers should pass it
+    so that typing "girl, sex" in the source still yields nsfw even
+    without the user selecting an intensity modifier.
     """
     names = {name for name, _ in mod_list}
-    # Intensity levels — most permissive wins (reflects user intent)
+    # 1. Intensity levels — most permissive wins (reflects user intent)
     for lvl in ("Hardcore", "Explicit", "Erotic", "🎲 Random Intensity",
                 "Sensual", "Suggestive", "Modest"):
         if lvl in names:
             return _ANIMA_NSFW_INTENSITY_TO_SAFETY[lvl]
-    # No intensity, but a production-style modifier implies NSFW
+    # 2. Production-style implies NSFW
     if names & _ANIMA_NSFW_PRODUCTION_NAMES:
         return "nsfw"
+    # 3. Source keyword fallback — prevents "girl, sex" → "safe"
+    src_tier = _safety_from_source(source)
+    if src_tier:
+        return src_tier
+    # 4. Default
     return "safe"
 
 
@@ -211,18 +275,123 @@ def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
     active. Passes the shortlist (if any) to the validator for
     category-aware alias resolution.
     """
+    compound_split = bool(_anima_opt("anima_tagger_compound_split", True))
+    # Diagnostic: surface draft and validator outcome so integration
+    # issues (short prose, validator dropping too much, compound_split
+    # not helping) are visible in the Forge console. Cheap.
+    draft_tokens_preview = [t.strip() for t in draft_str.split(",") if t.strip()]
+    print(f"[PromptEnhancer] Anima validate: draft_tokens={len(draft_tokens_preview)}, "
+          f"compound_split={compound_split}, shortlist="
+          f"{len(shortlist.artists) if shortlist else 0}a/"
+          f"{len(shortlist.characters) if shortlist else 0}c/"
+          f"{len(shortlist.series) if shortlist else 0}s")
+    if len(draft_tokens_preview) <= 25:
+        print(f"[PromptEnhancer]   draft: {draft_tokens_preview}")
     tags_list = stack.tagger.tag_from_draft(
         draft_str, safety=safety, use_underscores=use_underscores,
-        shortlist=shortlist,
+        shortlist=shortlist, compound_split=compound_split,
     )
-    draft_token_count = len([t for t in draft_str.split(",") if t.strip()])
+    draft_token_count = len(draft_tokens_preview)
     stats = {
         "corrected": 0,
         "dropped": max(0, draft_token_count - len(tags_list)),
         "kept_invalid": 0,
         "total": len(tags_list),
     }
+    print(f"[PromptEnhancer]   → {len(tags_list)} kept, raw dropped={stats['dropped']}")
     return ", ".join(tags_list), stats
+
+
+# Map of target_slot → (category_code, min_post_count, prefer_popularity).
+# Matches the category IDs in anima_tagger.config. Slots without a
+# category entry here aren't eligible for retrieval fill (e.g. general-
+# concept slots like "pose" or "setting" — those live in CAT_GENERAL
+# and are already covered by the LLM draft + compound_split).
+#
+# prefer_popularity = True means "among semantically-relevant candidates,
+# pick the most-popular one" — useful for copyright/franchise where we
+# usually want the mainstream series name (vocaloid, pokemon), not a
+# niche long-title reranker favorite.
+_SLOT_TO_CATEGORY = {
+    "artist":    {"category": 1, "min_post": 500,  "prefer_popularity": False},
+    "copyright": {"category": 3, "min_post": 500,  "prefer_popularity": True},
+}
+
+
+def _retrieve_prose_slot(stack, prose: str, slot: str, seed: int = 0):
+    """Pick ONE DB tag for the given slot from semantically-closest
+    candidates to the prose. Requires an open models() context.
+
+    Determinism: retrieval is always deterministic for a given prose.
+    For artist (and similar random-X slots), we pull top-K candidates
+    and pick one using the user's seed — so the same seed gives the
+    same artist (reproducible runs), but different seeds give genuine
+    variation. Without this step, `@e.o.` dominates every NSFW prompt
+    because it's always the top reranker pick.
+
+    For slots flagged `prefer_popularity` (copyright/franchise), we
+    prefer the mainstream option rather than the random pick — users
+    usually want `vocaloid` over a niche reranker-favorite series.
+    """
+    entry = _SLOT_TO_CATEGORY.get(slot)
+    if not entry or stack.retriever is None:
+        return None
+    category = entry["category"]
+    min_post = entry["min_post"]
+    prefer_pop = entry.get("prefer_popularity", False)
+    try:
+        # Pull a wider pool for variety; we'll pick one from it.
+        final_k = 10
+        cands = stack.retriever.retrieve(
+            prose, retrieve_k=200, final_k=final_k,
+            category=category, min_post_count=min_post,
+        )
+        if not cands:
+            return None
+        if prefer_pop:
+            return max(cands, key=lambda c: c.post_count).name
+        # Seed-driven pick from top-K — same seed reproducible,
+        # different seeds yield different artists.
+        import random as _random
+        rng = _random.Random(int(seed) if seed not in (None, -1) else _random.randint(0, 2**31 - 1))
+        return rng.choice(cands).name
+    except Exception as e:
+        logger.warning(f"prose slot retrieval failed ({slot}): {e}")
+        return None
+
+
+def _active_target_slots(mods) -> list[str]:
+    """Collect the set of target_slot values from active modifiers.
+
+    `mods` is the list of (name, entry) pairs produced by
+    _collect_modifiers. Reads `target_slot` from each entry. Dedupes
+    while preserving discovery order so injection is stable.
+    """
+    seen: set[str] = set()
+    out: list[str] = []
+    for _name, entry in mods or []:
+        if not isinstance(entry, dict):
+            continue
+        slot = entry.get("target_slot")
+        if slot and slot not in seen:
+            seen.add(slot)
+            out.append(slot)
+    return out
+
+
+def _tags_have_category(tag_csv: str, stack, category: int) -> bool:
+    """True if any tag in the comma-separated list resolves to a DB record
+    of the given category. Trims '@' prefix since artist tokens carry it."""
+    if not tag_csv or not stack or not stack.db:
+        return False
+    for t in tag_csv.split(","):
+        norm = t.strip().lstrip("@").lower().replace(" ", "_").replace("-", "_")
+        if not norm:
+            continue
+        rec = stack.db.get_by_name(norm)
+        if rec and rec.get("category") == category:
+            return True
+    return False
 
 def _load_tag_formats():
     """Load tag format definitions from tag-formats/ directory."""
@@ -388,6 +557,12 @@ def _normalize_modifier(entry):
         "behavioral": (entry.get("behavioral") or "").strip(),
         "keywords": (entry.get("keywords") or "").strip(),
     }
+    # Optional: target_slot lets the Anima slot-coverage pass (see
+    # _active_target_slots) force-fill a category tag from prose when
+    # the LLM didn't produce one. Currently used by 🎲 Random Artist
+    # (target_slot: artist) and 🎲 Random Franchise (target_slot: copyright).
+    if isinstance(entry.get("target_slot"), str) and entry["target_slot"].strip():
+        norm["target_slot"] = entry["target_slot"].strip()
     if not norm["behavioral"] and norm["keywords"]:
         norm["behavioral"] = f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {norm['keywords']}."
     if not norm["behavioral"] and not norm["keywords"]:
@@ -830,18 +1005,19 @@ def _get_word_target(detail, preset="sd"):
 
 
 def _build_detail_instruction(detail, mode="enhance", preset="sd"):
-    """Build detail instruction for enhance or tags."""
+    """Build detail instruction for enhance or tags.
+
+    Returns a style-descriptor only ("detailed, vivid") — no word or
+    tag count targets. Historical versions injected "Aim for around N
+    words" / "around N tags"; those are removed since they made the
+    LLM stingy and suppressed real coverage.
+    """
     if detail == 0:
-        if mode == "tags":
-            return "Generate a good set of tags with reasonable coverage."
-        return "Write a moderately detailed description."
+        return None
     label = _DETAIL_LABELS.get(detail, "moderate")
     if mode == "tags":
-        count = _TAG_COUNTS.get(detail, 20)
-        return f"Generate a {label} set of tags. Aim for around {count} tags."
-    else:
-        words = _get_word_target(detail, preset)
-        return f"Write a {label} description. Aim for around {words} words."
+        return f"Generate a {label} set of tags. Cover every distinct concept."
+    return f"Write a {label} description."
 
 
 
@@ -1147,8 +1323,14 @@ def _postprocess_tags(tag_str, tag_fmt, validation_mode):
 
 
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
-_MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "1000"))
-_MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "60"))
+# Max Ollama stream chunks (≈ tokens) before we cap and treat as
+# truncation. Historical 1000 was too low once word limits were removed
+# from base prompts — rich Detailed prose can reach ~1500 chunks. 4000
+# leaves ample headroom without opening the door to actual runaways.
+_MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "4000"))
+# Total wall time cap. 60s was tight on slower models and rich prose;
+# 180s catches genuine runaway loops without truncating legitimate calls.
+_MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "180"))
 
 
 def _detect_repetition(text):
@@ -1209,7 +1391,99 @@ class _TruncatedError(Exception):
     pass
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None, seed=-1, _progress=None):
+# ── V5 conditional adherence directive ──────────────────────────────
+# Appended to the prose-pass system prompt ONLY when the user's source
+# is non-empty. Keeps the LLM from softening source content (explicit,
+# adult, concrete) while leaving dice-roll (empty-source) cases alone.
+# Experiment-validated: gains +0.9 on girl_sex, no regression on empty-
+# source cases. See experiments/variants/v5.py and LOG.md.
+_PROSE_ADHERENCE_DIRECTIVE = (
+    "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. "
+    "Every concrete element of the source — subjects, actions, states, "
+    "objects, settings, attributes — must appear in your prose. Do not "
+    "drop any element. Do not substitute with a softer or more abstract "
+    "equivalent. Do not re-interpret. If the source uses a specific word "
+    "(including explicit, adult, violent, or otherwise mature words), "
+    "your prose uses that word or its direct concrete equivalent — never "
+    "a euphemism and never a sanitized rephrasing. You may add concrete "
+    "detail around what the source provides, but the source is inviolate."
+)
+
+
+# ── V8 multi-sample picker ──────────────────────────────────────────
+# When anima_tagger_prose_samples > 1, generate N prose samples at
+# the normal temperature and have a small "picker" LLM call select the
+# best one for source fidelity. Experiment-validated: +0.5 on
+# girl_sex mean (from V5 3.7 to V8 4.2), +0.2 on empty_ra_rs, zero
+# regression. See experiments/variants/v8.py.
+_PICKER_SP = (
+    "You are a prose quality picker. You will see:\n"
+    "  - a user SOURCE prompt (may be terse or contain explicit/adult content)\n"
+    "  - N candidate PROSE passages, each an attempt to expand the source\n\n"
+    "Your job: choose the prose that most faithfully preserves the "
+    "source's concrete content. In particular:\n"
+    "  - If the source contains explicit, mature, or adult content "
+    "(sex, nudity, specific acts, named adult scenarios), choose the "
+    "prose that preserves that content literally.\n"
+    "  - If the source names specific subjects, choose the prose that "
+    "features those exact subjects.\n"
+    "  - Penalize proses that sanitize, euphemize, or redirect the source.\n"
+    "  - All else equal, prefer the prose with richer concrete detail.\n\n"
+    "Output format: respond with ONLY the number of the best prose "
+    "(1, 2, 3, …). No explanation. No other text."
+)
+
+
+def _multi_sample_prose(user_msg, sp, api_url, model, temperature,
+                         seed, n_samples, think=False, num_predict=1024):
+    """Generate n_samples prose passages and return the picker-chosen one.
+
+    Each sample uses seed+i to derive distinct trajectories. The
+    picker call runs at temp 0.1 (near-deterministic) and is asked to
+    pick a single number 1..n_samples.
+
+    Returns: (picked_prose, all_samples, choice_index_1based).
+
+    Raises ValueError if picker doesn't return a parsable digit —
+    fail-loud per CLAUDE.md, no silent fallback to sample #0.
+    """
+    samples = []
+    for i in range(n_samples):
+        sample_seed = seed + i if seed != -1 else -1
+        content = _call_llm(
+            user_msg, api_url, model, sp, temperature,
+            think=think, seed=sample_seed, num_predict=num_predict,
+        )
+        samples.append(content)
+
+    # Picker call: build user message with numbered samples
+    picker_parts = [f"SOURCE: {user_msg!r}"]
+    for i, s in enumerate(samples, 1):
+        s_trim = s if len(s) < 800 else s[:800] + "…"
+        picker_parts.append(f"\n--- Prose {i} ---\n{s_trim}")
+    picker_parts.append("\nWhich is best? Respond with only the number.")
+    picker_msg = "\n".join(picker_parts)
+
+    pick_raw = _call_llm(
+        picker_msg, api_url, model, _PICKER_SP, 0.1,
+        think=False, seed=seed, num_predict=10,
+    )
+    # Parse first digit in 1..n_samples
+    choice = None
+    for ch in pick_raw:
+        if ch.isdigit() and 1 <= int(ch) <= n_samples:
+            choice = int(ch)
+            break
+    if choice is None:
+        raise ValueError(
+            f"multi-sample picker returned no valid choice. "
+            f"raw={pick_raw!r} n_samples={n_samples}"
+        )
+    print(f"[PromptEnhancer] Multi-sample prose: picker chose {choice}/{n_samples}")
+    return samples[choice - 1], samples, choice
+
+
+def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None, seed=-1, _progress=None, num_predict=1024):
     global _last_seed
     import random as _random
     if seed == -1:
@@ -1232,6 +1506,13 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             "top_p": 0.95 if think else 0.8,
             "repeat_penalty": 1.5,
             "presence_penalty": 1.5,
+            # Explicit output cap. Without this, Ollama falls back to
+            # whatever the model's Modelfile specifies (often 128 for
+            # instruct variants) — which produces ~60 words of prose,
+            # then a truncated tag draft of ~15 tokens, then ~7 final
+            # tags after validator + rule-layer dedup. 1024 gives room
+            # for rich prose + multi-dozen-tag drafts.
+            "num_predict": int(num_predict),
         },
         "think": bool(think),
         "stream": True,
@@ -1535,10 +1816,15 @@ class PromptEnhancer(scripts.Script):
                     for _ in range(3 - len(row_labels)):
                         gr.HTML(value="", visible=True, scale=1)
 
-            # ── Detail Level + Temperature + Think + Seed ──
+            # ── Temperature + Think + Seed ──
+            # detail_level is kept as a hidden-valued component (always 0)
+            # so input positions in .click handlers stay stable without
+            # requiring all four generator signatures to be refactored.
+            # detail=0 routes through _build_detail_instruction → None,
+            # so no word/tag count is ever injected into system prompts.
+            detail_level = gr.Number(value=0, visible=False)
+            detail_level.do_not_save_to_config = True
             with gr.Row():
-                detail_level = gr.Slider(label="Detail", minimum=0, maximum=10, value=0, step=1, scale=2, info="0=auto, 1=minimal ... 10=extensive, scales to model")
-                detail_level.do_not_save_to_config = True
                 temperature = gr.Slider(label="Temperature", minimum=0.0, maximum=2.0, value=0.8, step=0.05, scale=2, info="0 = deterministic, 2 = creative")
                 seed = gr.Number(label="Seed", value=-1, minimum=-1, step=1, scale=1, info="-1 = random", precision=0, elem_id=f"{tab}_pe_seed")
                 seed.do_not_save_to_config = True
@@ -1758,6 +2044,11 @@ class PromptEnhancer(scripts.Script):
                         _sl_frag = _anima_shortlist.as_system_prompt_fragment()
                         if _sl_frag:
                             sp = f"{sp}\n\n{_sl_frag}"
+                        # V5 conditional adherence directive — only when
+                        # source is non-empty, so dice-roll creativity
+                        # stays free.
+                        if source:
+                            sp = f"{sp}\n\n{_PROSE_ADHERENCE_DIRECTIVE}"
                         print(f"[PromptEnhancer] RAG shortlist: "
                               f"{len(_anima_shortlist.artists)} artists, "
                               f"{len(_anima_shortlist.characters)} characters, "
@@ -1774,17 +2065,27 @@ class PromptEnhancer(scripts.Script):
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
                 print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
-                    # Pass 1: generate prose (uses base + modifiers + detail level)
+                    # Pass 1: generate prose. V8 multi-sample mode when
+                    # anima_tagger_prose_samples > 1 (RAG path only).
+                    n_samples = int(_anima_opt("anima_tagger_prose_samples", 3)) if _anima is not None else 1
                     prose_raw = None
-                    for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
-                        if isinstance(chunk, dict):
-                            p = chunk
-                            if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>Hybrid 1/3 prose: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                    if n_samples > 1:
+                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>Hybrid 1/3 prose (multi-sample {n_samples})...</span>"
+                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(
+                            user_msg, sp, api_url, model, temp,
+                            seed=int(sd), n_samples=n_samples,
+                            think=th, num_predict=1024,
+                        )
+                    else:
+                        for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                            if isinstance(chunk, dict):
+                                p = chunk
+                                if p["tokens"] > 0:
+                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>Hybrid 1/3 prose: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                                else:
+                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>Hybrid 1/3 prose: {p['elapsed']:.1f}s...</span>"
                             else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>Hybrid 1/3 prose: {p['elapsed']:.1f}s...</span>"
-                        else:
-                            prose_raw = chunk
+                                prose_raw = chunk
                     prose_raw = _clean_output(prose_raw)
                     if not prose_raw:
                         yield "", "", "<span style='color:#c66'>Prose generation returned empty.</span>"
@@ -1840,7 +2141,7 @@ class PromptEnhancer(scripts.Script):
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
 
                     # Route safety tag from any active NSFW modifier selection
-                    _anima_safety = _anima_safety_from_modifiers(mods)
+                    _anima_safety = _anima_safety_from_modifiers(mods, source)
 
                     # Post-process negative tags through tag pipeline when applicable
                     if neg_cb and negative:
@@ -1860,6 +2161,32 @@ class PromptEnhancer(scripts.Script):
                             _anima, tags_raw, safety=_anima_safety,
                             shortlist=_anima_shortlist,
                         )
+                        # Slot-coverage pass: for each active modifier with a
+                        # target_slot (e.g. Random Artist → artist), if no
+                        # tag of that category survived validation, retrieve
+                        # a top-1 from prose and inject it. Keeps "🎲 Random
+                        # X" promises actually reflected in the output.
+                        if bool(_anima_opt("anima_tagger_slot_fill", True)):
+                            slots = _active_target_slots(mods)
+                            for slot in slots:
+                                cat_info = _SLOT_TO_CATEGORY.get(slot)
+                                if not cat_info:
+                                    continue
+                                cat_code = cat_info["category"]
+                                if _tags_have_category(tags_raw, _anima, cat_code):
+                                    continue
+                                picked = _retrieve_prose_slot(_anima, prose, slot, seed=int(sd))
+                                if not picked:
+                                    continue
+                                # Format artist picks with @ prefix (Anima convention);
+                                # other categories go in bare.
+                                tag_out = picked.replace("_", " ")
+                                if slot == "artist":
+                                    tag_out = "@" + tag_out
+                                tags_raw = f"{tags_raw}, {tag_out}" if tags_raw else tag_out
+                                print(f"[PromptEnhancer] Slot fill ({slot}): injected '{tag_out}' from prose")
+                                if stats:
+                                    stats["total"] = stats.get("total", 0) + 1
                     else:
                         tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
@@ -2027,7 +2354,7 @@ class PromptEnhancer(scripts.Script):
                             logger.error(f"RAG setup failed in remix: {_e}")
                             yield "", "", f"<span style='color:#c66'>RAG setup failed: {type(_e).__name__}: {_e}</span>"
                             return
-                    _anima_r_safety = _anima_safety_from_modifiers(mods)
+                    _anima_r_safety = _anima_safety_from_modifiers(mods, source)
 
                     def _validate_tag_str(tag_str: str) -> tuple[str, dict | None]:
                         if _anima_r is not None:
@@ -2103,7 +2430,12 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Tags ──
-            def _tags(source, api_url, model, tag_fmt, validation_mode, *args):
+            # Tags is Hybrid minus the NL-summary pass. Same prose → tag-extract
+            # flow, same validator + slot-fill, same RAG shortlist injection.
+            # Only the Hybrid 3/3 summarize step is skipped and the output is
+            # tags alone (no "\n\n{nl_supplement}" suffix).
+            def _tags(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
+                      *args):
                 motion_cb = args[-1]
                 neg_cb, temp = args[-2], args[-3]
                 prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
@@ -2114,36 +2446,29 @@ class PromptEnhancer(scripts.Script):
 
                 source = (source or "").strip()
 
-                fmt_config = _tag_formats.get(tag_fmt, {})
-                sp = fmt_config.get("system_prompt", "")
+                mods = _collect_modifiers(dd_vals)
+                sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
-                    yield "", "", "<span style='color:#c66'>No tag format configured.</span>"
+                    yield "", "", "<span style='color:#c66'>No system prompt configured.</span>"
                     return
 
                 if motion_cb:
                     sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
+                    fmt_config = _tag_formats.get(tag_fmt, {})
                     neg_quality = fmt_config.get("negative_quality_tags", [])
                     neg_hint = ""
                     if neg_quality:
                         neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
 
-                # Build user message with everything explicit
-                mods = _collect_modifiers(dd_vals)
                 user_msg = f"SOURCE PROMPT: {source}" if source else _EMPTY_SOURCE_SIGNAL
-                style_str = _build_style_string(mods, mode="tags")
+                style_str = _build_style_string(mods)
                 if style_str:
                     user_msg = f"{user_msg}\n\n{style_str}"
                 inline_text = _build_inline_wildcard_text(source)
                 if inline_text:
                     user_msg = f"{user_msg}\n\n{inline_text}"
-                detail = int(dl) if dl else 0
-                tag_instruction = _build_detail_instruction(detail, "tags")
-                if tag_instruction:
-                    user_msg = f"{user_msg}\n\n{tag_instruction} Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
-                else:
-                    user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
                 # User-chosen RAG path. No fallback — abort with a clear
                 # error when RAG is picked but unavailable.
@@ -2172,6 +2497,10 @@ class PromptEnhancer(scripts.Script):
                         _frag = _anima_t_shortlist.as_system_prompt_fragment()
                         if _frag:
                             sp = f"{sp}\n\n{_frag}"
+                        # V5 conditional adherence directive — only when
+                        # source is non-empty.
+                        if source:
+                            sp = f"{sp}\n\n{_PROSE_ADHERENCE_DIRECTIVE}"
                         print(f"[PromptEnhancer] RAG shortlist: "
                               f"{len(_anima_t_shortlist.artists)} artists, "
                               f"{len(_anima_t_shortlist.characters)} characters, "
@@ -2185,25 +2514,69 @@ class PromptEnhancer(scripts.Script):
                         return
 
                 if not source:
-                    yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags)...</span>"
-                print(f"[PromptEnhancer] Tags: model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
+                    yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags 1/2 prose)...</span>"
+                print(f"[PromptEnhancer] Tags pass 1/2 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
-                    raw = None
-                    for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                    # Pass 1: generate prose (same as Hybrid). V8
+                    # multi-sample mode when anima_tagger_prose_samples > 1.
+                    n_samples = int(_anima_opt("anima_tagger_prose_samples", 3)) if _anima_t is not None else 1
+                    prose_raw = None
+                    if n_samples > 1:
+                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags 1/2 prose (multi-sample {n_samples})...</span>"
+                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(
+                            user_msg, sp, api_url, model, temp,
+                            seed=int(sd), n_samples=n_samples,
+                            think=th, num_predict=1024,
+                        )
+                    else:
+                        for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                            if isinstance(chunk, dict):
+                                p = chunk
+                                if p["tokens"] > 0:
+                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags 1/2 prose: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                                else:
+                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags 1/2 prose: {p['elapsed']:.1f}s...</span>"
+                            else:
+                                prose_raw = chunk
+                    prose_raw = _clean_output(prose_raw)
+                    if not prose_raw:
+                        yield "", "", "<span style='color:#c66'>Prose generation returned empty.</span>"
+                        return
+
+                    if neg_cb:
+                        prose, negative = _split_positive_negative(prose_raw)
+                    else:
+                        prose, negative = prose_raw, ""
+
+                    print(f"[PromptEnhancer] Tags pass 2/2 (tags): {len(prose.split())} words → tags")
+
+                    # Pass 2: extract tags from prose
+                    fmt_config = _tag_formats.get(tag_fmt, {})
+                    tag_sp = fmt_config.get("system_prompt", "")
+                    if not tag_sp:
+                        yield "", "", "<span style='color:#c66'>No tag format configured.</span>"
+                        return
+                    if style_str:
+                        tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                    tags_raw = None
+                    for chunk in _call_llm_progress(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags 2/2 tags: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
                             else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags: {p['elapsed']:.1f}s...</span>"
+                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>Tags 2/2 tags: {p['elapsed']:.1f}s...</span>"
                         else:
-                            raw = chunk
-                    raw = _clean_output(raw, strip_underscores=False)
+                            tags_raw = chunk
+                    tags_raw = _clean_output(tags_raw, strip_underscores=False)
+
                     if validation_mode != "Off":
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
-                    _anima_t_safety = _anima_safety_from_modifiers(mods)
-                    if neg_cb:
-                        tags, negative = _split_positive_negative(raw)
+
+                    _anima_t_safety = _anima_safety_from_modifiers(mods, source)
+
+                    # Post-process negative tags through tag pipeline
+                    if neg_cb and negative:
                         if _anima_t is not None:
                             negative, _ = _anima_tag_from_draft(
                                 _anima_t, negative, safety=_anima_t_safety,
@@ -2211,16 +2584,37 @@ class PromptEnhancer(scripts.Script):
                             )
                         else:
                             negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
-                    else:
-                        tags, negative = raw, ""
+
+                    # Run tags through validator + rule layer
                     if _anima_t is not None:
-                        tags, stats = _anima_tag_from_draft(
-                            _anima_t, tags, safety=_anima_t_safety,
+                        tags_raw, stats = _anima_tag_from_draft(
+                            _anima_t, tags_raw, safety=_anima_t_safety,
                             shortlist=_anima_t_shortlist,
                         )
+                        # Slot-fill — same as Hybrid
+                        if bool(_anima_opt("anima_tagger_slot_fill", True)):
+                            slots = _active_target_slots(mods)
+                            for slot in slots:
+                                cat_info = _SLOT_TO_CATEGORY.get(slot)
+                                if not cat_info:
+                                    continue
+                                cat_code = cat_info["category"]
+                                if _tags_have_category(tags_raw, _anima_t, cat_code):
+                                    continue
+                                picked = _retrieve_prose_slot(_anima_t, prose, slot, seed=int(sd))
+                                if not picked:
+                                    continue
+                                tag_out = picked.replace("_", " ")
+                                if slot == "artist":
+                                    tag_out = "@" + tag_out
+                                tags_raw = f"{tags_raw}, {tag_out}" if tags_raw else tag_out
+                                print(f"[PromptEnhancer] Slot fill ({slot}): injected '{tag_out}' from prose")
+                                if stats:
+                                    stats["total"] = stats.get("total", 0) + 1
                     else:
-                        tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
-                    tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
+                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
+
+                    tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
                     if stats:
                         if stats.get("corrected"):
@@ -2233,11 +2627,15 @@ class PromptEnhancer(scripts.Script):
                             status_parts.append(stats["error"])
 
                     if prepend and source:
-                        tags = f"{source}\n\n{tags}"
+                        tags_raw = f"{source}\n\n{tags_raw}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield tags, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
-                except InterruptedError:
-                    yield "", "", "<span style='color:#c66'>Cancelled</span>"
+                    yield tags_raw, negative, f"<span style='color:#6c6'>OK - {', '.join(status_parts)}, {elapsed}</span>"
+                except InterruptedError as e:
+                    partial = _clean_output(str(e))
+                    if partial:
+                        yield partial, "", f"<span style='color:#c66'>Cancelled (partial)</span>"
+                    else:
+                        yield "", "", "<span style='color:#c66'>Cancelled</span>"
                 except _TruncatedError as e:
                     yield _clean_output(str(e), strip_underscores=False), "", "<span style='color:#ca6'>Truncated</span>"
                 except urllib.error.URLError as e:
@@ -2253,7 +2651,8 @@ class PromptEnhancer(scripts.Script):
 
             tags_event = tags_btn.click(
                 fn=_tags,
-                inputs=[source_prompt, api_url, model, tag_format, tag_validation]
+                inputs=[source_prompt, api_url, model, base, custom_system_prompt,
+                        tag_format, tag_validation]
                        + dd_components
                        + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
@@ -2431,20 +2830,21 @@ def _on_ui_settings():
     shared.opts.add_option(
         "anima_tagger_semantic_threshold",
         OptionInfo(
-            0.80,
+            0.70,
             "Semantic match threshold",
             _gr.Slider if _gr else None,
             {"minimum": 0.50, "maximum": 0.99, "step": 0.01} if _gr else None,
             section=section,
         ).info(
             "Minimum cosine similarity to accept a semantic tag substitution. "
-            "Higher = stricter (more drops, fewer wrong substitutions)."
+            "Higher = stricter (more drops, fewer wrong substitutions). "
+            "Default 0.70 tuned against bge-m3 behaviour on multi-word LLM drafts."
         ),
     )
     shared.opts.add_option(
         "anima_tagger_semantic_min_post_count",
         OptionInfo(
-            100,
+            50,
             "Minimum post_count for semantic matches",
             _gr.Slider if _gr else None,
             {"minimum": 0, "maximum": 10000, "step": 10} if _gr else None,
@@ -2452,6 +2852,50 @@ def _on_ui_settings():
         ).info(
             "Niche tags below this popularity can't win semantic ties "
             "(kills noise like cozy_glow matching 'cozy')."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_compound_split",
+        OptionInfo(
+            True,
+            "Split multi-word LLM drafts into sub-tag hits",
+            section=section,
+        ).info(
+            "If the LLM emits a phrase like 'long silver hair' that isn't "
+            "itself a tag, try 2- and 1-word sub-spans (long_hair, silver_hair) "
+            "before falling back to semantic match. Roughly triples usable "
+            "tag output on free-text drafts."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_prose_samples",
+        OptionInfo(
+            3,
+            "Prose samples per generation (multi-sample picker)",
+            _gr.Slider if _gr else None,
+            {"minimum": 1, "maximum": 5, "step": 1} if _gr else None,
+            section=section,
+        ).info(
+            "Number of prose candidates to generate per click. A small "
+            "LLM picker selects the one that best preserves source "
+            "intent. 1 = off (single-sample, fastest). 3 = default, "
+            "validated in experiments to give +0.5 mean on explicit-"
+            "content prompts vs single-sample without regressing other "
+            "prompts. Higher = slower but more variance reduction."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_slot_fill",
+        OptionInfo(
+            True,
+            "Slot-fill: retrieve a category tag from prose for 🎲 target_slot modifiers",
+            section=section,
+        ).info(
+            "When a 🎲 modifier declares a target_slot (e.g. Random Artist → "
+            "artist, Random Franchise → copyright) and the LLM output contains "
+            "no tag of that Danbooru category, retrieve the best-matching real "
+            "tag from the prose and inject it. Fixes the 'Random Artist produces "
+            "no artist' failure; extensible via target_slot in modifier YAML."
         ),
     )
     shared.opts.add_option(

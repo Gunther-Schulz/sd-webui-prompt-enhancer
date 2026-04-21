@@ -46,10 +46,18 @@ ANIMA_WHITELIST: Set[str] = {
 }
 
 # Categories that are "named entities" — niche name collisions are
-# dangerous here (e.g. `animedia` the magazine, `rococo` the artist).
-# For these we require either shortlist membership or a popularity
-# floor on exact matches.
-_ENTITY_CATEGORIES = {config.CAT_ARTIST, config.CAT_COPYRIGHT}
+# dangerous here. Without popularity gating, a user-typed common phrase
+# can accidentally pin to an obscure entity:
+#   "dark shadow" (darkness concept) → dark_shadow character (96 posts)
+#   "rococo"      (art style)        → toeri_(rococo) artist (niche)
+#   "animedia"    (generic)          → magazine tag
+# For these categories we require either shortlist membership or a
+# popularity floor on exact matches.
+_ENTITY_CATEGORIES = {
+    config.CAT_ARTIST,
+    config.CAT_COPYRIGHT,
+    config.CAT_CHARACTER,
+}
 
 
 @dataclass
@@ -70,7 +78,16 @@ class ValidationResult:
     original: str
     canonical: Optional[str]
     confidence: float
-    match_type: str   # "whitelist" | "exact" | "alias" | "semantic" | "drop"
+    match_type: str   # "whitelist" | "exact" | "alias" | "shortlist_stem" | "semantic" | "drop"
+    drop_reason: Optional[str] = None
+    # Populated only when match_type == "drop". One of:
+    #   "too_short"            — token shorter than min_len after normalization
+    #   "exact_entity_gate"    — direct DB hit but artist/copyright with low post_count
+    #   "alias_entity_gate"    — alias resolved but target has low post_count
+    #   "semantic_below_thr"   — top cosine score under semantic_threshold
+    #   "semantic_low_popularity" — semantic match but matched tag under semantic_min_post_count
+    #   "semantic_entity_gate" — semantic match but entity popularity gate failed
+    #   "no_candidate"         — FAISS returned no result (top_id < 0)
 
 
 class TagValidator:
@@ -157,7 +174,7 @@ class TagValidator:
         for i, tok in enumerate(tokens):
             norm = self._normalize(tok)
             if not norm or len(norm) < self.min_len:
-                results[i] = ValidationResult(tok, None, 0.0, "drop")
+                results[i] = ValidationResult(tok, None, 0.0, "drop", "too_short")
                 continue
             if norm in self.whitelist:
                 results[i] = ValidationResult(tok, norm, 1.0, "whitelist")
@@ -168,7 +185,7 @@ class TagValidator:
                     results[i] = ValidationResult(tok, direct["name"], 1.0, "exact")
                     continue
                 # Niche entity collision — drop silently
-                results[i] = ValidationResult(tok, None, 0.0, "drop")
+                results[i] = ValidationResult(tok, None, 0.0, "drop", "exact_entity_gate")
                 continue
             # Shortlist stem match: Danbooru encodes characters as
             #   character_(series)
@@ -193,7 +210,7 @@ class TagValidator:
                 if self._is_trusted_entity(aliased, norm, context):
                     results[i] = ValidationResult(tok, aliased["name"], 1.0, "alias")
                     continue
-                results[i] = ValidationResult(tok, None, 0.0, "drop")
+                results[i] = ValidationResult(tok, None, 0.0, "drop", "alias_entity_gate")
                 continue
             need_embed.append((i, tok, norm))
 
@@ -204,16 +221,19 @@ class TagValidator:
             for (i, orig, norm), row_scores, row_ids in zip(need_embed, scores, ids):
                 top_id = int(row_ids[0])
                 top_score = float(row_scores[0])
-                if top_id < 0 or top_score < self.semantic_threshold:
-                    results[i] = ValidationResult(orig, None, top_score, "drop")
+                if top_id < 0:
+                    results[i] = ValidationResult(orig, None, top_score, "drop", "no_candidate")
+                    continue
+                if top_score < self.semantic_threshold:
+                    results[i] = ValidationResult(orig, None, top_score, "drop", "semantic_below_thr")
                     continue
                 match = self.db.get_by_id(top_id)
                 if not match or match["post_count"] < self.semantic_min_post_count:
-                    results[i] = ValidationResult(orig, None, top_score, "drop")
+                    results[i] = ValidationResult(orig, None, top_score, "drop", "semantic_low_popularity")
                     continue
                 # Apply the same entity trust gate to semantic matches
                 if not self._is_trusted_entity(match, norm, context):
-                    results[i] = ValidationResult(orig, None, top_score, "drop")
+                    results[i] = ValidationResult(orig, None, top_score, "drop", "semantic_entity_gate")
                     continue
                 results[i] = ValidationResult(
                     orig, match["name"], top_score, "semantic",
@@ -224,3 +244,78 @@ class TagValidator:
     def validate_one(self, token: str,
                      context: Optional[ValidationContext] = None) -> ValidationResult:
         return self.validate([token], context=context)[0]
+
+    def _sub_spans(self, token: str, min_parts: int = 1, max_parts: int = 3) -> List[str]:
+        """Return longest-first contiguous sub-spans of a normalized token.
+        'long_silver_hair' → ['long_silver', 'silver_hair', 'long', 'silver', 'hair']
+        (The full phrase is excluded — caller already tried exact match on it.)
+        """
+        norm = self._normalize(token)
+        parts = norm.split("_")
+        if len(parts) < 2:
+            return []
+        out: List[str] = []
+        # Longest → shortest; skip the full phrase length
+        for length in range(min(len(parts) - 1, max_parts), min_parts - 1, -1):
+            for i in range(len(parts) - length + 1):
+                out.append("_".join(parts[i:i + length]))
+        return out
+
+    def validate_with_compound_split(
+        self,
+        tokens: List[str],
+        context: Optional[ValidationContext] = None,
+        max_splits_per_token: int = 3,
+    ) -> List[ValidationResult]:
+        """Variant of validate() that, when a draft token fails to match
+        exact/alias/stem/semantic, retries with 2- and 1-word sub-spans
+        and keeps any that DB-resolve. Lets 'long silver hair' recover
+        as {'long_hair', 'silver_hair'} instead of getting dropped.
+
+        One source token may produce multiple results when splits hit.
+        """
+        base = self.validate(tokens, context=context)
+        expanded: List[ValidationResult] = []
+        for r in base:
+            if r.match_type != "drop":
+                expanded.append(r)
+                continue
+            subs = self._sub_spans(r.original)
+            if not subs:
+                expanded.append(r)
+                continue
+            # Dedup while preserving longest-first order
+            seen_sub: set[str] = set()
+            ordered: List[str] = []
+            for s in subs:
+                if s not in seen_sub:
+                    seen_sub.add(s)
+                    ordered.append(s)
+            sub_results = self.validate(ordered, context=context)
+            # Cover every character position of the original with the first
+            # match that claims it; keep up to max_splits_per_token hits.
+            # Simpler: just take any non-drop hits, in longest-first order,
+            # capped.
+            hits = [sr for sr in sub_results
+                    if sr.match_type in ("exact", "alias", "shortlist_stem")]
+            if not hits:
+                expanded.append(r)
+                continue
+            seen_canon: set[str] = set()
+            kept = 0
+            for sr in hits:
+                if sr.canonical in seen_canon:
+                    continue
+                seen_canon.add(sr.canonical)
+                expanded.append(ValidationResult(
+                    original=r.original,
+                    canonical=sr.canonical,
+                    confidence=0.9,
+                    match_type="compound_split",
+                ))
+                kept += 1
+                if kept >= max_splits_per_token:
+                    break
+            if kept == 0:
+                expanded.append(r)
+        return expanded

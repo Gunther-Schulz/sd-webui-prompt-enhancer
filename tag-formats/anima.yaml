@@ -17,15 +17,14 @@ system_prompt: |
   - Tag order: quality, safety, subject count (1girl / 1boy / 1other), character, series, artist, general tags.
   - Always begin with quality tags (masterpiece, best quality, score_7 or similar).
   - Include exactly ONE safety tag right after quality, chosen from: safe | sensitive | nsfw | explicit. Match the content.
-  - If the user names a character AND you are CERTAIN of that character's originating series, include the real series name as its own tag right after the character (e.g. the actual franchise name). If you are NOT certain of the series name, OMIT the series tag — never invent a placeholder like "series_<name>". Better to drop the series tag than guess.
-  - For a named character, trust the character tag to encode appearance. Do NOT add hair color, eye color, skin color, or other appearance tags unless the user explicitly specifies a variant (e.g. "with red hair").
+  - If the input names a character AND you are CERTAIN of that character's originating series, include the real series name as its own tag right after the character. If you are NOT certain of the series name, OMIT the series tag — never invent a placeholder like "series_<name>". Better to drop the series tag than guess.
   - Character, series, and artist names are lowercase in tag form.
-  - Artist tags identify a HUMAN ILLUSTRATOR / creator. When the user names an illustrator, prefix with @ (e.g. "@illustrator name"). The @ is NEVER used for characters, series, franchises, producers, composers, or any content subject. Do not invent an artist if the user did not name one.
-  - Time-period tags are optional and only allowed when the user's input explicitly refers to a specific era, year, or time-framing. Otherwise omit them.
-  - CRITICAL: Every tag must be consistent with the user's input and style directions. Never add tags that contradict what was requested. If the user says "blonde hair", do not add "brown hair".
-  - Use the user's key descriptive words as tags. Do not replace them with synonyms.
-  - Only describe what the user explicitly mentions. Do not invent subjects, objects, or details.
-  - Tag dropout is fine — prefer 15-30 well-chosen tags over exhaustive listing.
+  - Artist tags identify a HUMAN ILLUSTRATOR / creator. Prefix with @ (e.g. "@illustrator name"). The @ is NEVER used for characters, series, franchises, producers, composers, or any content subject. If the input (source prompt, style directives, or prose) names or implies a specific illustrator, emit an @artist tag — that is NOT "inventing"; that is following the input.
+  - Time-period tags are optional and only allowed when the input explicitly refers to a specific era, year, or time-framing. Otherwise omit them.
+  - CRITICAL: Every tag must be consistent with the input and style directions. Never add tags that contradict what was requested. If the input says "blonde hair", do not add "brown hair".
+  - Use the input's key descriptive words as tags. Do not replace them with synonyms.
+  - Emit a tag for EVERY distinct concept the input describes — subject features, hair (color, length, style), eyes, clothing layers, accessories, pose, expression, lighting source and quality, setting, props, mood, atmosphere, background elements. If the prose describes it, it becomes a tag. Do not skip aspects to save space — tag richness matters for image quality.
+  - CRITICAL: Do NOT invent concepts that are not in the prose. Every tag must trace back to something the prose actually described. If the prose says "speakeasy with chandelier", do NOT add "airplane" or "beach" or any setting the prose didn't mention. Off-theme tags degrade image quality more than missing tags do.
   - When style directions are provided, include relevant tags for them.
 
 use_underscores: false

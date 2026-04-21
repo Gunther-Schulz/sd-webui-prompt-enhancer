@@ -62,16 +62,23 @@ class AnimaTagger:
                        safety: str = "safe",
                        use_underscores: bool = False,
                        max_tags: int = 30,
-                       shortlist: Optional[Shortlist] = None) -> List[str]:
+                       shortlist: Optional[Shortlist] = None,
+                       compound_split: bool = True) -> List[str]:
         """Validate + transform LLM draft into final Anima tag list.
 
         `shortlist`, if provided, gives the validator category context
         to disambiguate aliases (e.g. `rococo` → character vs artist).
+        `compound_split` (default True) lets multi-word drafts like
+        'long silver hair' recover as {'long_hair', 'silver_hair'}
+        instead of getting dropped when no direct tag matches.
         """
         tokens = _split_tokens(draft) if isinstance(draft, str) else list(draft)
 
         ctx = _context_from_shortlist(shortlist, self.db)
-        results = self.validator.validate(tokens, context=ctx)
+        if compound_split:
+            results = self.validator.validate_with_compound_split(tokens, context=ctx)
+        else:
+            results = self.validator.validate(tokens, context=ctx)
 
         from . import config
         records: list[dict] = []
