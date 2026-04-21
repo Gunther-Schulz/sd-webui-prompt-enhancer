@@ -67,6 +67,25 @@ style influence:
     behavioral: "Choose a specific art medium (be surprising). Make the image look like it was created with it."
     keywords: ""
 
+symbol:
+  # Data-driven (◆) randoms: picked from Danbooru's disambiguation-suffix
+  # pools. The `_(X)` suffix is Danbooru's own human curation, so these
+  # lists require zero allowlist from us — pure pattern against DB.
+  🎲 Random Tarot Card:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(tarot\\)$"
+      min_post_count: 50
+      template: "Weave {display} as a thematic element — reflected in pose, composition, symbolism, or mood. The card's meaning shapes the scene."
+  🎲 Random Symbol:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(symbol\\)$"
+      min_post_count: 100
+      template: "Incorporate a {display} motif in the scene — as an ornament, pattern, or compositional anchor."
+
 anime:
   🎲 Random Anime Style:
     behavioral: "Choose a specific anime visual style (be surprising) — a distinctive illustrator, franchise, or character archetype — and apply its hallmarks."

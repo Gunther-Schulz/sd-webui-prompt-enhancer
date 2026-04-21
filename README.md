@@ -108,6 +108,59 @@ Already have an enhanced prompt and want to tweak it?
 3. The LLM reads the current prompt from the main textarea and integrates the changes without rewriting everything
 4. Remix auto-detects whether the existing prompt is prose, tags, or hybrid format and applies the appropriate system prompt and post-processing
 
+### Random wildcards — how the 🎲 modifiers work
+
+Random modifiers come in three flavors. The dropdown label shows which flavor via the badge after the name:
+
+| label | guarantee | when it decides | how it decides |
+|---|---|---|---|
+| `🎲 Random X` | LLM-driven | during generation | the LLM picks; relies on model's creativity; **collapses onto priors** for small models (e.g. qwen3 picks 1920s for Random Era 81% of the time) |
+| `🎲 Random X ◆` | pre-picked from DB | before generation | seed-picked from a Danbooru pattern-filtered pool; LLM just **renders** the chosen value |
+| `🎲 Random X ◇` | post-filled if dropped | after generation | LLM generates freely; if the expected category is missing from the output, scene-aware retrieval (FAISS on the generated prose) + seed pick injects a real tag |
+| `🎲 Random X ◆◇` | both | pre-pick **and** safety-net | strongest — pre-picked value steers prose, and if LLM ignores the directive, post-fill still injects the category |
+
+**Mnemonic:** filled diamond ◆ = **committed upfront** (pre-pick). Hollow diamond ◇ = **fills a gap after** (post-fill).
+
+**Two randomization mechanisms side-by-side:**
+
+- **`source:`** (pre-pick, ◆) — resolves before the LLM runs. The wildcard turns into a concrete Danbooru tag via regex against the DB (`^\d{4}s_\(style\)$` for Random Era, `_(flower)$` for Random Flower, etc.). The picked value is injected into the system prompt as if you had selected it directly. The LLM's job is to *render* the chosen thing, not to *choose*.
+
+- **`target_slot:`** (post-fill, ◇) — runs after the LLM's output. Checks whether the expected Danbooru category (artist, copyright, character) was covered by the LLM. If missing, `_retrieve_prose_slot` does a FAISS search of the **generated prose** against that DB category, reranks to top-10, and seed-picks one to inject as a tag. Deterministic for a given prose + seed.
+
+**Data-driven randoms currently shipped:**
+
+| modifier | mechanism | DB pool | dropdown |
+|---|---|---|---|
+| Random Era | `source:` | decade styles (`^\d{4}s_\(style\)$`) — 7 | Setting |
+| Random Flower | `source:` | `_(flower)$` — 73 | Setting |
+| Random Food | `source:` | `_(food)$` — 79 | Setting |
+| Random Animal | `source:` | `_(animal)$` — 31 | Setting |
+| Random Constellation | `source:` | `_(constellation)$` — 52 | Setting |
+| Random Tarot Card | `source:` | `_(tarot)$` — 23 | Visual Style |
+| Random Symbol | `source:` | `_(symbol)$` — 38 | Visual Style |
+| Random Artist | `target_slot: artist` | category=1 (Danbooru artists) | Visual Style |
+| Random Franchise | `target_slot: copyright` | category=3 | Visual Style |
+
+Other 🎲 modifiers are LLM-driven — they work, but can exhibit collapse bias toward training-data priors.
+
+**Adding your own data-driven random in a local override:**
+
+```yaml
+# PROMPT_ENHANCER_LOCAL/my.yaml
+decor:
+  🎲 Random Gem:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(gemstone\\)$"   # any regex against category=general tags
+      min_post_count: 50                # popularity floor; blocks niche/junk
+      template: "Include {display} as a prop or ornament in the scene."
+```
+
+The UI auto-detects the `source:` key and appends the ◆ badge. No Python changes needed.
+
+**Console trace:** when a `source:`-driven random fires, the Forge console logs `[PromptEnhancer] Random pick (Random Era): 1970s_(style) (pool=7, post_count=992)` so you can see what was chosen and how big the pool was.
+
 ### Inline wildcards
 
 Use `{name?}` placeholders in your source prompt for the LLM to fill creatively:

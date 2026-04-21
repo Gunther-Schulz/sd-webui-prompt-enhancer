@@ -50,8 +50,17 @@ setting:
 
 time period:
   🎲 Random Era:
-    behavioral: "Place the scene in a specific decade or historical era. Be surprising. Reflect it authentically in clothing, surroundings, and light."
-    keywords: ""
+    # Data-driven (◆): seed-picked from Danbooru's decade-style tags.
+    # Pool: real DB tags matching ^\d{4}s_(style)$ with post_count >= 50.
+    # Breaks the qwen3 LLM bias that collapses 81% of "random era" generations
+    # onto 1920s (flapper/art-deco training prior) — that tag doesn't even
+    # exist in Danbooru. The 7-member pool spans 1930s through 2000s.
+    behavioral: ""   # filled at runtime from picked DB tag
+    keywords: ""    # filled at runtime
+    source:
+      db_pattern: "^\\d{4}s_\\(style\\)$"
+      min_post_count: 50
+      template: "Set this scene in the {display} aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light."
   🎲 Random Time of Day:
     behavioral: "Choose a specific time of day. Be surprising. State the resulting lighting conditions."
     keywords: ""
@@ -79,6 +88,40 @@ time period:
   Ancient:
     behavioral: "Ancient era."
     keywords: "ancient era, stone temples, draped fabric, torchlight, weathered surfaces, mythic scale"
+
+detail:
+  # Data-driven (◆) randoms: picked from Danbooru's disambiguation-suffix
+  # categories. The `_(X)` suffix is Danbooru's own human curation to
+  # distinguish real-world concepts from same-name characters/franchises,
+  # so these pools are semantically pure without any allowlist from us.
+  🎲 Random Flower:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(flower\\)$"
+      min_post_count: 50
+      template: "Place a {display} somewhere in the scene — as a prop, detail, or motif. Describe its color and texture."
+  🎲 Random Food:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(food\\)$"
+      min_post_count: 50
+      template: "Include {display} in the scene — as a prop, meal, or detail. Describe how it looks and where it is."
+  🎲 Random Animal:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(animal\\)$"
+      min_post_count: 100
+      template: "Include a {display} somewhere in the scene — as companion, background life, or detail. Describe its presence."
+  🎲 Random Constellation:
+    behavioral: ""
+    keywords: ""
+    source:
+      db_pattern: "_\\(constellation\\)$"
+      min_post_count: 50
+      template: "Incorporate the {display} constellation as a thematic element — visible in the sky, depicted as a motif, or implied through symbolism and color."
 
 aesthetic:
   Japanese:

@@ -360,6 +360,83 @@ def _retrieve_prose_slot(stack, prose: str, slot: str, seed: int = 0):
         return None
 
 
+# UI badges for data-driven random mechanisms. Defined here (before
+# _build_dropdown_data and _collect_modifiers use them at module load).
+_BADGE_SOURCE = "\u25c6"      # ◆ filled diamond: source: pre-pick
+_BADGE_TARGET_SLOT = "\u25c7" # ◇ hollow diamond: target_slot: post-fill
+
+
+def _resolve_source(source_spec: dict, seed: int) -> dict | None:
+    """Seed-pick a real Danbooru tag from the DB based on `source_spec`.
+
+    YAML schema under a modifier's `source:` key:
+        db_pattern:     python regex matched against category=general names
+        min_post_count: int, default 50
+        template:       format string with {display}; default "Apply {display}."
+
+    Returns a dict {name, display, behavioral, keywords} or None on any
+    failure (DB missing, empty pool, bad pattern). Callers treat None as
+    "pool empty — fall through to LLM defaults" so a missing DB doesn't
+    break the extension.
+
+    Fully data-driven: the pattern is structural, the pool is whatever
+    Danbooru has. Zero curated values here.
+    """
+    import re as _re
+    import sqlite3 as _sqlite3
+    try:
+        from anima_tagger.config import TAG_DB_PATH as _TAG_DB_PATH
+    except Exception:
+        return None
+    if not os.path.isfile(_TAG_DB_PATH):
+        return None
+    pattern = source_spec.get("db_pattern")
+    if not pattern:
+        return None
+    min_pc = int(source_spec.get("min_post_count", 50))
+    template = source_spec.get("template") or "Apply {display}."
+    try:
+        rx = _re.compile(pattern)
+    except _re.error as e:
+        logger.warning(f"_resolve_source: bad regex {pattern!r}: {e}")
+        return None
+    try:
+        conn = _sqlite3.connect(_TAG_DB_PATH)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT name, post_count FROM tags WHERE category=0 AND post_count >= ?",
+            (min_pc,),
+        )
+        # search() not match(): suffix patterns like `_\(flower\)$` need
+        # to match anywhere; fully-anchored patterns (`^...$`) still work.
+        pool = [(n, pc) for n, pc in cur.fetchall() if rx.search(n)]
+        conn.close()
+    except Exception as e:
+        logger.warning(f"_resolve_source: DB query failed: {e}")
+        return None
+    if not pool:
+        return None
+    import random as _random
+    rng = _random.Random(int(seed) if seed not in (None, -1) else _random.randint(0, 2**31 - 1))
+    picked_name, picked_pc = rng.choice(pool)
+    # display = human form: underscores→spaces, strip Danbooru _(X) disambiguator
+    display = _re.sub(r"_\([^)]+\)$", "", picked_name).replace("_", " ")
+    keywords = picked_name.replace("_", " ")
+    try:
+        behavioral = template.format(name=picked_name, display=display)
+    except Exception as e:
+        logger.warning(f"_resolve_source: bad template {template!r}: {e}")
+        behavioral = f"Apply {display}."
+    return {
+        "name": picked_name,
+        "display": display,
+        "behavioral": behavioral,
+        "keywords": keywords,
+        "post_count": picked_pc,
+        "pool_size": len(pool),
+    }
+
+
 def _active_target_slots(mods) -> list[str]:
     """Collect the set of target_slot values from active modifiers.
 
@@ -563,6 +640,12 @@ def _normalize_modifier(entry):
     # (target_slot: artist) and 🎲 Random Franchise (target_slot: copyright).
     if isinstance(entry.get("target_slot"), str) and entry["target_slot"].strip():
         norm["target_slot"] = entry["target_slot"].strip()
+    # Optional: source lets _collect_modifiers resolve a concrete Danbooru
+    # tag BEFORE the LLM runs, eliminating LLM-collapse bias on "random"
+    # wildcards (see _resolve_source). Combines with target_slot for
+    # strongest guarantee — pre-pick + post-fill safety net.
+    if isinstance(entry.get("source"), dict):
+        norm["source"] = entry["source"]
     if not norm["behavioral"] and norm["keywords"]:
         norm["behavioral"] = f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {norm['keywords']}."
     if not norm["behavioral"] and not norm["keywords"]:
@@ -575,6 +658,15 @@ def _build_dropdown_data(categories_dict):
 
     Values in the returned flat dict are normalized modifier dicts (see
     _normalize_modifier) — callers select behavioral vs keywords based on mode.
+
+    Display labels carry mechanism badges so the user can see at a glance
+    which randoms have DB guarantees:
+        ◆  — `source:`       pre-picked from DB, LLM renders chosen value
+        ◇  — `target_slot:`  post-fills a category tag if LLM dropped it
+        ◆◇ — both            strongest (pre-pick + post-fill safety net)
+    Badges are appended to choice labels only; the flat lookup stays
+    keyed on the raw YAML name. _collect_modifiers strips badges before
+    looking up.
     """
     flat = {}
     choices = []
@@ -585,9 +677,15 @@ def _build_dropdown_data(categories_dict):
         choices.append(separator)
         for name, entry in items.items():
             norm = _normalize_modifier(entry)
-            if norm is not None:
-                flat[name] = norm
-                choices.append(name)
+            if norm is None:
+                continue
+            flat[name] = norm
+            badge = ""
+            if norm.get("source"):
+                badge += _BADGE_SOURCE
+            if norm.get("target_slot"):
+                badge += _BADGE_TARGET_SLOT
+            choices.append(f"{name} {badge}" if badge else name)
     return flat, choices
 
 
@@ -1072,18 +1170,57 @@ def _base_names():
     return result
 
 
-def _collect_modifiers(dropdown_selections):
+def _strip_mechanism_badges(name: str) -> str:
+    """Drop any trailing ◆/◇ badge chars + whitespace that the UI appended
+    to the display label. Keeps the YAML-side name canonical for lookup.
+    """
+    if not isinstance(name, str):
+        return name
+    return name.rstrip(f" {_BADGE_SOURCE}{_BADGE_TARGET_SLOT}")
+
+
+def _collect_modifiers(dropdown_selections, seed: int | None = None):
     """Collect all selected modifiers into a list of (name, normalized_entry) tuples.
 
-    Each normalized_entry is a dict with 'type', 'behavioral', 'keywords'
-    fields. The caller decides which fields to use based on the mode.
+    Each normalized_entry is a dict with 'behavioral', 'keywords' and
+    optional 'source' / 'target_slot' fields. The caller decides which
+    fields to use based on the mode.
+
+    When a modifier has a `source:` entry AND a seed is provided, the
+    pick is resolved HERE (before the LLM sees any system prompt): the
+    returned entry has `behavioral` and `keywords` rewritten from the
+    picked real Danbooru tag. This is the `source:` mechanism — see
+    _resolve_source for how the pool is built.
+
+    Names may arrive with UI-appended ◆/◇ badges (see _build_dropdown_data);
+    strip those before looking up the canonical YAML entry.
     """
     result = []
     for selections in dropdown_selections:
-        for name in (selections or []):
+        for raw_name in (selections or []):
+            name = _strip_mechanism_badges(raw_name)
             entry = _all_modifiers.get(name)
-            if entry:
-                result.append((name, entry))
+            if not entry:
+                continue
+            source = entry.get("source") if isinstance(entry, dict) else None
+            if source and seed is not None:
+                picked = _resolve_source(source, seed)
+                if picked:
+                    # Materialize a per-run entry with picked values baked
+                    # in. Preserve target_slot / other keys so the post-fill
+                    # safety net still fires when combined with source.
+                    resolved = dict(entry)
+                    resolved["behavioral"] = picked["behavioral"]
+                    resolved["keywords"] = picked["keywords"]
+                    resolved["_resolved_from_source"] = picked["name"]
+                    print(f"[PromptEnhancer] Random pick ({name}): "
+                          f"{picked['name']} (pool={picked['pool_size']}, "
+                          f"post_count={picked['post_count']})")
+                    entry = resolved
+                else:
+                    print(f"[PromptEnhancer] Random pick ({name}): "
+                          f"pool empty, falling back to LLM behavioral")
+            result.append((name, entry))
     return result
 
 
@@ -1955,7 +2092,7 @@ class PromptEnhancer(scripts.Script):
                 t0 = time.monotonic()
                 source = (source or "").strip()
 
-                mods = _collect_modifiers(dd_vals)
+                mods = _collect_modifiers(dd_vals, seed=int(sd))
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
                     yield "", "", "<span style='color:#c66'>No system prompt configured.</span>"
@@ -2037,7 +2174,7 @@ class PromptEnhancer(scripts.Script):
 
                 source = (source or "").strip()
 
-                mods = _collect_modifiers(dd_vals)
+                mods = _collect_modifiers(dd_vals, seed=int(sd))
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
                     yield "", "", "<span style='color:#c66'>No system prompt configured.</span>"
@@ -2327,7 +2464,7 @@ class PromptEnhancer(scripts.Script):
                     return
 
                 source = (source or "").strip()
-                mods = _collect_modifiers(dd_vals)
+                mods = _collect_modifiers(dd_vals, seed=int(sd))
                 print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
 
                 if not mods and not source:
@@ -2505,7 +2642,7 @@ class PromptEnhancer(scripts.Script):
 
                 source = (source or "").strip()
 
-                mods = _collect_modifiers(dd_vals)
+                mods = _collect_modifiers(dd_vals, seed=int(sd))
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
                     yield "", "", "<span style='color:#c66'>No system prompt configured.</span>"
