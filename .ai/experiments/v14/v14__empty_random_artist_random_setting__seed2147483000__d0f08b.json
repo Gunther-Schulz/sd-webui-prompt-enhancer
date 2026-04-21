@@ -1,0 +1,359 @@
+{
+  "run_id": "v14__empty_random_artist_random_setting__seed2147483000__d0f08b",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 2147483000
+  },
+  "started_at": 1776806305.4606302,
+  "ended_at": 1776806325.8732595,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.122,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.761,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in the center of a cluttered, sun-drenched kitchen, rendered in the style of Jean-Baptiste-Camille Corot. The room is filled with warm, hazy afternoon light that filters through a single window, casting long, soft shadows across the floor. The subject wears a simple linen shirt with rolled-up sleeves and dark trousers that catch the ambient glow. Their hair is tousled and catches the light in a way that suggests fine, loose brushstrokes. A wooden table holds a silver teapot and a ceramic cup, both painted with loose, visible edges. The walls are painted a muted cream, textured with visible impasto in places. Dust motes float in the air, appearing as tiny flecks of gold against the deeper shadows. The floorboards are worn oak, showing the grain and scuff marks of daily life. Corot's signature atmospheric perspective blurs the background slightly, making the far corner of the room feel distant and dreamlike. The air feels thick and humid, as if the light itself has a physical weight. A single potted plant sits in the corner, its leaves rendered with dappled light and shadow. The composition is balanced but not perfectly symmetrical, giving the space a natural, unposed feel.",
+        "prose_samples": [
+          "A solitary figure stands in a cramped, industrial attic space with exposed brick walls and a single skylight. The scene is rendered in the style of Egon Schiele, characterized by angular, elongated limbs and jagged outlines that define the human form. The central character is a young woman with pale skin and hair pulled back in a severe, thin braid that hangs down her back. She wears a loose, knee-length dress made of rough linen in a muted sage green, with one sleeve rolled up to reveal a slender wrist. Her pose is dynamic and twisted, one leg kicked back as if caught mid-step, while her torso leans forward aggressively. The lighting is sharp and directional, coming from the high skylight above to cast deep, hard shadows that stretch across the uneven floorboards. Dust motes hang suspended in the warm, amber beam of the light. The background features a leaning wooden ladder and a draped, heavy curtain that mirrors the angular lines of the figure. The texture of the skin appears taut and almost stretched over the bone structure, while the fabric of the dress shows fine wrinkles and folds. The overall composition feels contained and slightly chaotic, with the edges of the room dissolving into dark, heavy outlines.",
+          "A solitary figure stands in the center of a bustling Tokyo subway platform, captured in the style of Egon Schiele. The man wears a loose, charcoal-grey linen coat with sleeves rolled up to the elbows, revealing pale skin stretched taut over his wrists. His hair is a messy, dark brown mass cut at a jagged angle, falling unevenly across a face tilted upward toward the fluorescent ceiling lights. The platform tiles are cold, cracked ceramic in shades of dusty beige and slate grey, reflecting the harsh, overhead glow that casts long, distorted shadows behind him. A single, deep red scarf is wrapped loosely around his neck, its frayed edges catching the light. The background is a blur of motion, suggesting commuters rushing past with indistinct forms and muted colors. The air feels thick and heavy, rendered with visible, almost scratchy brushstrokes that define every contour of the scene.",
+          "A solitary figure stands in the center of a cluttered, sun-drenched kitchen, rendered in the style of Jean-Baptiste-Camille Corot. The room is filled with warm, hazy afternoon light that filters through a single window, casting long, soft shadows across the floor. The subject wears a simple linen shirt with rolled-up sleeves and dark trousers that catch the ambient glow. Their hair is tousled and catches the light in a way that suggests fine, loose brushstrokes. A wooden table holds a silver teapot and a ceramic cup, both painted with loose, visible edges. The walls are painted a muted cream, textured with visible impasto in places. Dust motes float in the air, appearing as tiny flecks of gold against the deeper shadows. The floorboards are worn oak, showing the grain and scuff marks of daily life. Corot's signature atmospheric perspective blurs the background slightly, making the far corner of the room feel distant and dreamlike. The air feels thick and humid, as if the light itself has a physical weight. A single potted plant sits in the corner, its leaves rendered with dappled light and shadow. The composition is balanced but not perfectly symmetrical, giving the space a natural, unposed feel."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.251,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_9,1girl,Corot style,cluttered kitchen,sun-drenched,afternoon light,window,long soft shadows,linen shirt,rolled up sleeves,dark trousers,ambient glow,tousled hair,loose brushstrokes,wooden table,silver teapot,ceramic cup,loose edges,muted cream walls,impasto,dust motes,golden flecks,worn oak floorboards,grain,scuff marks,atmospheric perspective,dreamlike,thick humid air,heavy light,potted plant,dappled light,unposed composition,visible texture,deep shadows,cream walls,sculptural light,sculptural form,sculptural depth,sculptural lighting,sculptural composition,sculptural detail,sculptural rendering,sculptural texture,sculptural atmosphere,sculptural mood,sculptural drama,sculptural warmth,sculptural richness,sculptural vibrancy,sculptural color,sculptural contrast,sculptural harmony,sculptural balance,sculptural flow,sculptural grace,sculptural elegance,sculptural charm,sculptural beauty,sculptural allure,sculptural magnetism,sculptural presence,sculptural weight,sculptural volume,sculptural depth,sculptural layering,sculptural nuance,sculptural subtlety,sculptural finesse,sculptural precision,sculptural accuracy,sculptural fidelity,sculptural clarity,sculptural definition,sculptural edge,sculptural outline,sculptural contour,sculptural form,sculptural shape,sculptural mass,sculptural silhouette,sculptural shadow,sculptural highlight,sculptural gradient,sculptural transition,sculptural blend,sculptural stroke,sculptural brushwork,sculptural texture,sculptural pattern,sculptural rhythm,sculptural cadence,sculptural tempo,sculptural pace,sculptural movement,sculptural flow,sculptural gesture,sculptural pose,sculptural stance,sculptural stance,sculptural position,sculptural arrangement,sculptural composition,sculptural layout,sculptural design,sculptural structure,sculptural framework,sculptural grid,sculptural perspective,sculptural vanishing point,sculptural focal point,sculptural center,sculptural balance,sculptural symmetry,sculptural asymmetry,sculptural tension,sculptural release,sculptural energy,sculptural dynamism,sculptural stillness,sculptural calm,sculptural serenity,sculptural tranquility,sculptural peace,sculptural harmony,sculptural unity,sculptural coherence,sculptural logic,sculptural order,sculptural chaos,sculptural contrast,sculptural interplay,sculptural dialogue,sculptural narrative,sculptural story,sculptural mood,sculptural atmosphere,sculptural ambiance,sculptural vibe,sculptural feel,sculptural essence,sculptural spirit,sculptural soul,sculptural heart,sculptural life,sculptural breath,sculptural pulse,sculptural rhythm,sculptural dance,sculptural waltz,sculptural serenade,sculptural ode,sculptural symphony,sculptural concerto,sculptural fugue,sculptural etude,sculptural sketch,sculptural study,sculptural draft,sculptural study,sculptural exploration,sculptural discovery,sculptural revelation,sculptural insight,sculptural vision,sculptural gaze,sculptural sight,sculptural perception,sculptural observation,sculptural contemplation,sculptural meditation,sculptural reverie,sculptural dream,sculptural fantasy,sculptural illusion,sculptural reality,sculptural truth,sculptural essence,sculptural core,sculptural nucleus,sculptural center,sculptual anchor,sculptural weight,sculptural gravity,sculptural pull,sculptural magnet,sculptural lure,sculptural bait,sculptural hook,sculptural line,sculptural curve,sculptural arc,sculptural spiral,sculptural loop,sculptural circle,sculptural oval,sculptural ellipse,sculptual sphere,sculptural cube,sculptural prism,sculptural plane,sculptural surface,sculptural depth,sculptural layer,sculptual stack,sculptural pile,sculptural heap,sculptural mound",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 9.222,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, kitchen, sun, light, window, shadow, shirt, sleeve rolled up, dark, pants, glowing, wooden table, teapot, cup, cream, impasto, dust, atmospheric perspective, heavy, potted plant, texture, contrast, balancing, magnetism, weight, outline",
+        "stats": {
+          "corrected": 0,
+          "dropped": 179,
+          "kept_invalid": 0,
+          "total": 30
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.056,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, kitchen, sun, light, window, shadow, shirt, sleeve rolled up, dark, pants, glowing, wooden table, teapot, cup, cream, impasto, dust, atmospheric perspective, heavy, potted plant, texture, contrast, balancing, magnetism, weight, outline, @matsuda (matsukichi)",
+        "slot_fill_trace": {
+          "artist": "matsuda_(matsukichi)"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, kitchen, sun, light, window, shadow, shirt, sleeve rolled up, dark, pants, glowing, wooden table, teapot, cup, cream, impasto, dust, atmospheric perspective, heavy, potted plant, texture, contrast, balancing, magnetism, weight, outline, @matsuda (matsukichi)",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_9, safe, 1girl, @matsuda (matsukichi)",
+        "v14_dropped_general": [
+          "kitchen",
+          "sun",
+          "light",
+          "window",
+          "shadow",
+          "shirt",
+          "sleeve rolled up",
+          "dark",
+          "pants",
+          "glowing",
+          "wooden table",
+          "teapot",
+          "cup",
+          "cream",
+          "impasto",
+          "dust",
+          "atmospheric perspective",
+          "heavy",
+          "potted plant",
+          "texture",
+          "contrast",
+          "balancing",
+          "magnetism",
+          "weight",
+          "outline"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @matsuda (matsukichi)\n\nA solitary figure stands in the center of a cluttered, sun-drenched kitchen, rendered in the style of Jean-Baptiste-Camille Corot. The room is filled with warm, hazy afternoon light that filters through a single window, casting long, soft shadows across the floor. The subject wears a simple linen shirt with rolled-up sleeves and dark trousers that catch the ambient glow. Their hair is tousled and catches the light in a way that suggests fine, loose brushstrokes. A wooden table holds a silver teapot and a ceramic cup, both painted with loose, visible edges. The walls are painted a muted cream, textured with visible impasto in places. Dust motes float in the air, appearing as tiny flecks of gold against the deeper shadows. The floorboards are worn oak, showing the grain and scuff marks of daily life. Corot's signature atmospheric perspective blurs the background slightly, making the far corner of the room feel distant and dreamlike. The air feels thick and humid, as if the light itself has a physical weight. A single potted plant sits in the corner, its leaves rendered with dappled light and shadow. The composition is balanced but not perfectly symmetrical, giving the space a natural, unposed feel.",
+        "final_structural_tags": "masterpiece, best quality, score_9, safe, 1girl, @matsuda (matsukichi)",
+        "final_prose": "A solitary figure stands in the center of a cluttered, sun-drenched kitchen, rendered in the style of Jean-Baptiste-Camille Corot. The room is filled with warm, hazy afternoon light that filters through a single window, casting long, soft shadows across the floor. The subject wears a simple linen shirt with rolled-up sleeves and dark trousers that catch the ambient glow. Their hair is tousled and catches the light in a way that suggests fine, loose brushstrokes. A wooden table holds a silver teapot and a ceramic cup, both painted with loose, visible edges. The walls are painted a muted cream, textured with visible impasto in places. Dust motes float in the air, appearing as tiny flecks of gold against the deeper shadows. The floorboards are worn oak, showing the grain and scuff marks of daily life. Corot's signature atmospheric perspective blurs the background slightly, making the far corner of the room feel distant and dreamlike. The air feels thick and humid, as if the light itself has a physical weight. A single potted plant sits in the corner, its leaves rendered with dappled light and shadow. The composition is balanced but not perfectly symmetrical, giving the space a natural, unposed feel."
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 2147483000,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @matsuda (matsukichi)\n\nA solitary figure stands in the center of a cluttered, sun-drenched kitchen, rendered in the style of Jean-Baptiste-Camille Corot. The room is filled with warm, hazy afternoon light that filters through a single window, casting long, soft shadows across the floor. The subject wears a simple linen shirt with rolled-up sleeves and dark trousers that catch the ambient glow. Their hair is tousled and catches the light in a way that suggests fine, loose brushstrokes. A wooden table holds a silver teapot and a ceramic cup, both painted with loose, visible edges. The walls are painted a muted cream, textured with visible impasto in places. Dust motes float in the air, appearing as tiny flecks of gold against the deeper shadows. The floorboards are worn oak, showing the grain and scuff marks of daily life. Corot's signature atmospheric perspective blurs the background slightly, making the far corner of the room feel distant and dreamlike. The air feels thick and humid, as if the light itself has a physical weight. A single potted plant sits in the corner, its leaves rendered with dappled light and shadow. The composition is balanced but not perfectly symmetrical, giving the space a natural, unposed feel.",
+  "prose": "A solitary figure stands in the center of a cluttered, sun-drenched kitchen, rendered in the style of Jean-Baptiste-Camille Corot. The room is filled with warm, hazy afternoon light that filters through a single window, casting long, soft shadows across the floor. The subject wears a simple linen shirt with rolled-up sleeves and dark trousers that catch the ambient glow. Their hair is tousled and catches the light in a way that suggests fine, loose brushstrokes. A wooden table holds a silver teapot and a ceramic cup, both painted with loose, visible edges. The walls are painted a muted cream, textured with visible impasto in places. Dust motes float in the air, appearing as tiny flecks of gold against the deeper shadows. The floorboards are worn oak, showing the grain and scuff marks of daily life. Corot's signature atmospheric perspective blurs the background slightly, making the far corner of the room feel distant and dreamlike. The air feels thick and humid, as if the light itself has a physical weight. A single potted plant sits in the corner, its leaves rendered with dappled light and shadow. The composition is balanced but not perfectly symmetrical, giving the space a natural, unposed feel.",
+  "draft": "masterpiece,best quality,score_9,1girl,Corot style,cluttered kitchen,sun-drenched,afternoon light,window,long soft shadows,linen shirt,rolled up sleeves,dark trousers,ambient glow,tousled hair,loose brushstrokes,wooden table,silver teapot,ceramic cup,loose edges,muted cream walls,impasto,dust motes,golden flecks,worn oak floorboards,grain,scuff marks,atmospheric perspective,dreamlike,thick humid air,heavy light,potted plant,dappled light,unposed composition,visible texture,deep shadows,cream walls,sculptural light,sculptural form,sculptural depth,sculptural lighting,sculptural composition,sculptural detail,sculptural rendering,sculptural texture,sculptural atmosphere,sculptural mood,sculptural drama,sculptural warmth,sculptural richness,sculptural vibrancy,sculptural color,sculptural contrast,sculptural harmony,sculptural balance,sculptural flow,sculptural grace,sculptural elegance,sculptural charm,sculptural beauty,sculptural allure,sculptural magnetism,sculptural presence,sculptural weight,sculptural volume,sculptural depth,sculptural layering,sculptural nuance,sculptural subtlety,sculptural finesse,sculptural precision,sculptural accuracy,sculptural fidelity,sculptural clarity,sculptural definition,sculptural edge,sculptural outline,sculptural contour,sculptural form,sculptural shape,sculptural mass,sculptural silhouette,sculptural shadow,sculptural highlight,sculptural gradient,sculptural transition,sculptural blend,sculptural stroke,sculptural brushwork,sculptural texture,sculptural pattern,sculptural rhythm,sculptural cadence,sculptural tempo,sculptural pace,sculptural movement,sculptural flow,sculptural gesture,sculptural pose,sculptural stance,sculptural stance,sculptural position,sculptural arrangement,sculptural composition,sculptural layout,sculptural design,sculptural structure,sculptural framework,sculptural grid,sculptural perspective,sculptural vanishing point,sculptural focal point,sculptural center,sculptural balance,sculptural symmetry,sculptural asymmetry,sculptural tension,sculptural release,sculptural energy,sculptural dynamism,sculptural stillness,sculptural calm,sculptural serenity,sculptural tranquility,sculptural peace,sculptural harmony,sculptural unity,sculptural coherence,sculptural logic,sculptural order,sculptural chaos,sculptural contrast,sculptural interplay,sculptural dialogue,sculptural narrative,sculptural story,sculptural mood,sculptural atmosphere,sculptural ambiance,sculptural vibe,sculptural feel,sculptural essence,sculptural spirit,sculptural soul,sculptural heart,sculptural life,sculptural breath,sculptural pulse,sculptural rhythm,sculptural dance,sculptural waltz,sculptural serenade,sculptural ode,sculptural symphony,sculptural concerto,sculptural fugue,sculptural etude,sculptural sketch,sculptural study,sculptural draft,sculptural study,sculptural exploration,sculptural discovery,sculptural revelation,sculptural insight,sculptural vision,sculptural gaze,sculptural sight,sculptural perception,sculptural observation,sculptural contemplation,sculptural meditation,sculptural reverie,sculptural dream,sculptural fantasy,sculptural illusion,sculptural reality,sculptural truth,sculptural essence,sculptural core,sculptural nucleus,sculptural center,sculptual anchor,sculptural weight,sculptural gravity,sculptural pull,sculptural magnet,sculptural lure,sculptural bait,sculptural hook,sculptural line,sculptural curve,sculptural arc,sculptural spiral,sculptural loop,sculptural circle,sculptural oval,sculptural ellipse,sculptual sphere,sculptural cube,sculptural prism,sculptural plane,sculptural surface,sculptural depth,sculptural layer,sculptual stack,sculptural pile,sculptural heap,sculptural mound",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

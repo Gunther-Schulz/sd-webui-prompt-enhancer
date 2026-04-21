@@ -1,0 +1,343 @@
+{
+  "run_id": "v14__girl_bare__seed2147483000__9ecbc2",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [],
+    "seed": 2147483000
+  },
+  "started_at": 1776806521.109306,
+  "ended_at": 1776806526.3657396,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.537,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['ang', 'yae (mono110)', 'yu 65026', 'lowe (slow)', 'hal360', 'lilac (p f easy)'], characters=['girl (mokufuu)', 'girl dm', 'gotcha! girl (pokemon)', 'acfun girl', 'lofi girl', 'vault girl'], series=['girl arms', 'high score girl', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: ang, yae (mono110), yu 65026, lowe (slow), hal360, lilac (p f easy)\nCharacters: girl (mokufuu), girl dm, gotcha! girl (pokemon), acfun girl, lofi girl, vault girl\nSeries: girl arms, high score girl, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 2.962,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands in a neutral pose with a focused expression. Her skin is smooth and her hair falls to her shoulders. She wears a fitted garment made of fabric that clings to her form. The lighting is even and natural, casting soft shadows behind her. The background remains uncluttered to keep attention on her figure. Her stance is relaxed yet grounded. One hand rests lightly at her side. Her eyes are directed forward with a calm intensity. The air around her feels still and quiet. She occupies the center of the frame with confidence. Her features are clearly defined by the ambient light. A single strand of hair catches the illumination near her cheek. The texture of her clothing shows subtle folds from her movement. Her silhouette is sharp against the softer backdrop.",
+        "prose_samples": [
+          "A girl stands in a neutral pose with a focused expression. Her skin is smooth and her hair falls to her shoulders. She wears a fitted garment made of fabric that clings to her form. The lighting is even and natural, casting soft shadows behind her. The background remains uncluttered to keep attention on her figure. Her stance is relaxed yet grounded. One hand rests lightly at her side. Her eyes are directed forward with a calm intensity. The air around her feels still and quiet. She occupies the center of the frame with confidence. Her features are clearly defined by the ambient light. A single strand of hair catches the illumination near her cheek. The texture of her clothing shows subtle folds from her movement. Her silhouette is sharp against the softer backdrop.",
+          "A girl stands in a simple, open space. She has a distinct face and a clear body shape. Her hair falls in a specific length and style. She wears a single garment made of a named fabric in one solid color. Her pose is relaxed yet defined, with limbs positioned naturally. One hand rests gently near her side or holds a small object. Her expression is direct, looking forward with focused eyes. Soft, directional light hits her skin, casting a gentle shadow behind her. The air feels still and quiet around her. Her skin shows a natural texture, slightly warm under the light. She occupies the center of the frame, drawing all attention.",
+          "A girl with long hair standing in a warm, overhead light. She wears a simple garment made of soft fabric that drapes loosely over her shoulders. Her pose is relaxed, one arm slightly bent at the elbow. Her expression is calm and direct, eyes focused forward. The background is a muted, neutral tone that lets her figure stand out. Subtle shadows fall across her face from a single light source. Her skin has a natural, smooth texture visible in the clear illumination. She occupies the center of the frame with a confident stance."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.713,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, 1girl, focused expression, smooth skin, shoulder length hair, fitted garment, fabric, even lighting, natural lighting, soft shadows, uncluttered background, relaxed pose, grounded stance, hand at side, forward gaze, calm intensity, still air, center frame, defined features, strand of hair, illuminated cheek, subtle folds, sharp silhouette, softer backdrop, neutral pose, ambient light",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.045,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, medium hair, fabric, shadow, relaxing, pose, stance, from side, silhouette, backdrop, light",
+        "stats": {
+          "corrected": 0,
+          "dropped": 12,
+          "kept_invalid": 0,
+          "total": 15
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, medium hair, fabric, shadow, relaxing, pose, stance, from side, silhouette, backdrop, light",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, medium hair, fabric, shadow, relaxing, pose, stance, from side, silhouette, backdrop, light",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_7, safe, 1girl",
+        "v14_dropped_general": [
+          "medium hair",
+          "fabric",
+          "shadow",
+          "relaxing",
+          "pose",
+          "stance",
+          "from side",
+          "silhouette",
+          "backdrop",
+          "light"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl\n\nA girl stands in a neutral pose with a focused expression. Her skin is smooth and her hair falls to her shoulders. She wears a fitted garment made of fabric that clings to her form. The lighting is even and natural, casting soft shadows behind her. The background remains uncluttered to keep attention on her figure. Her stance is relaxed yet grounded. One hand rests lightly at her side. Her eyes are directed forward with a calm intensity. The air around her feels still and quiet. She occupies the center of the frame with confidence. Her features are clearly defined by the ambient light. A single strand of hair catches the illumination near her cheek. The texture of her clothing shows subtle folds from her movement. Her silhouette is sharp against the softer backdrop.",
+        "final_structural_tags": "masterpiece, best quality, score_7, safe, 1girl",
+        "final_prose": "A girl stands in a neutral pose with a focused expression. Her skin is smooth and her hair falls to her shoulders. She wears a fitted garment made of fabric that clings to her form. The lighting is even and natural, casting soft shadows behind her. The background remains uncluttered to keep attention on her figure. Her stance is relaxed yet grounded. One hand rests lightly at her side. Her eyes are directed forward with a calm intensity. The air around her feels still and quiet. She occupies the center of the frame with confidence. Her features are clearly defined by the ambient light. A single strand of hair catches the illumination near her cheek. The texture of her clothing shows subtle folds from her movement. Her silhouette is sharp against the softer backdrop."
+      }
+    }
+  ],
+  "prompt_id": "girl_bare",
+  "seed": 2147483000,
+  "modifiers": [],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl\n\nA girl stands in a neutral pose with a focused expression. Her skin is smooth and her hair falls to her shoulders. She wears a fitted garment made of fabric that clings to her form. The lighting is even and natural, casting soft shadows behind her. The background remains uncluttered to keep attention on her figure. Her stance is relaxed yet grounded. One hand rests lightly at her side. Her eyes are directed forward with a calm intensity. The air around her feels still and quiet. She occupies the center of the frame with confidence. Her features are clearly defined by the ambient light. A single strand of hair catches the illumination near her cheek. The texture of her clothing shows subtle folds from her movement. Her silhouette is sharp against the softer backdrop.",
+  "prose": "A girl stands in a neutral pose with a focused expression. Her skin is smooth and her hair falls to her shoulders. She wears a fitted garment made of fabric that clings to her form. The lighting is even and natural, casting soft shadows behind her. The background remains uncluttered to keep attention on her figure. Her stance is relaxed yet grounded. One hand rests lightly at her side. Her eyes are directed forward with a calm intensity. The air around her feels still and quiet. She occupies the center of the frame with confidence. Her features are clearly defined by the ambient light. A single strand of hair catches the illumination near her cheek. The texture of her clothing shows subtle folds from her movement. Her silhouette is sharp against the softer backdrop.",
+  "draft": "masterpiece, best quality, 1girl, focused expression, smooth skin, shoulder length hair, fitted garment, fabric, even lighting, natural lighting, soft shadows, uncluttered background, relaxed pose, grounded stance, hand at side, forward gaze, calm intensity, still air, center frame, defined features, strand of hair, illuminated cheek, subtle folds, sharp silhouette, softer backdrop, neutral pose, ambient light",
+  "shortlist": {
+    "artists": [
+      "ang",
+      "yae (mono110)",
+      "yu 65026",
+      "lowe (slow)",
+      "hal360",
+      "lilac (p f easy)"
+    ],
+    "characters": [
+      "girl (mokufuu)",
+      "girl dm",
+      "gotcha! girl (pokemon)",
+      "acfun girl",
+      "lofi girl",
+      "vault girl"
+    ],
+    "series": [
+      "girl arms",
+      "high score girl",
+      "girl with a pearl earring"
+    ]
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "run_id": "v14__girl_bare__seed137__e5213f",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [],
+    "seed": 137
+  },
+  "started_at": 1776806482.488498,
+  "ended_at": 1776806488.371352,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.548,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['ang', 'lowe (slow)', 'yu 65026', 'yae (mono110)', 'hal360', 'kima'], characters=['girl (mokufuu)', 'girl dm', 'gotcha! girl (pokemon)', 'acfun girl', 'lofi girl', 'vault girl'], series=['girl arms', 'high score girl', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: ang, lowe (slow), yu 65026, yae (mono110), hal360, kima\nCharacters: girl (mokufuu), girl dm, gotcha! girl (pokemon), acfun girl, lofi girl, vault girl\nSeries: girl arms, high score girl, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.417,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl with pale skin and a focused expression standing in the center of a softly lit room, wearing a simple white cotton blouse with sleeves rolled to the elbow, her dark hair falling loosely over her shoulders, one hand resting lightly on her hip while the other hangs by her side, warm overhead light casting a gentle shadow behind her, standing on a textured wooden floor that reflects the ambient glow, a calm and composed demeanor, natural skin texture visible under the direct light, slight movement in her stance suggesting a moment captured in time, background slightly blurred to emphasize her form, concrete details grounding the ethereal presence, a single strand of hair escaping her parting, the fabric of her shirt showing subtle folds around the waist, a neutral expression with lips slightly parted, standing upright with weight distributed evenly on her feet, the air feeling still and quiet around her, a distinct silhouette cut against the brightness of the room, a girl who commands attention through her grounded posture and clear features.",
+        "prose_samples": [
+          "A girl stands in the center of the frame. She has a youthful face with a direct gaze. Her hair is long and falls past her shoulders. She wears a fitted top made of soft fabric that clings to her torso. Her pose is relaxed yet confident, with one hand resting on her hip. The lighting is even and bright, casting minimal shadows on her skin. The background is simple and uncluttered to keep the focus entirely on her form. Her skin tone is natural and unblemished. A single earring catches the light on her left ear. The composition frames her from the waist up, highlighting the curve of her collarbone. She looks directly at the viewer with a calm expression. The air around her feels still and quiet. Her nails are short and painted a neutral shade. The fabric of her clothing shows a subtle weave pattern under the light. She occupies the majority of the visual space. Her stance is balanced with weight distributed evenly. A faint smile plays on her lips. The scene captures a moment of simple, unadorned presence.",
+          "girl with pale skin and a focused expression standing in the center of a softly lit room, wearing a simple white cotton blouse with sleeves rolled to the elbow, her dark hair falling loosely over her shoulders, one hand resting lightly on her hip while the other hangs by her side, warm overhead light casting a gentle shadow behind her, standing on a textured wooden floor that reflects the ambient glow, a calm and composed demeanor, natural skin texture visible under the direct light, slight movement in her stance suggesting a moment captured in time, background slightly blurred to emphasize her form, concrete details grounding the ethereal presence, a single strand of hair escaping her parting, the fabric of her shirt showing subtle folds around the waist, a neutral expression with lips slightly parted, standing upright with weight distributed evenly on her feet, the air feeling still and quiet around her, a distinct silhouette cut against the brightness of the room, a girl who commands attention through her grounded posture and clear features.",
+          "A girl stands in a neutral pose. Her hair falls over one shoulder. She wears a single layer of clothing made of smooth fabric. Her skin is evenly toned. One hand rests near her hip. The background remains uncluttered. Soft overhead light casts a gentle shadow beneath her chin."
+        ],
+        "prose_picker_choice": 2,
+        "prose_picker_raw": "2"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.855,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "best quality, 1girl, pale skin, focused expression, white cotton blouse, rolled sleeves, dark hair, shoulder length hair, hand on hip, hand by side, warm overhead light, shadow, textured wooden floor, wooden floor, direct light, natural skin texture, slight movement, blurred background, concrete details, single strand of hair, parting, waist folds, neutral expression, slightly parted lips, upright posture, even weight distribution, still air, distinct silhouette, clear features, softly lit room, center composition, grounded, ethereal",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.062,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, pale skin, blouse, sleeves rolled up, dark, medium hair, hand on own hip, from side, light, shadow, wooden floor, texture, blurry foreground, concrete, expressionless, parted lips, weight, silhouette",
+        "stats": {
+          "corrected": 0,
+          "dropped": 11,
+          "kept_invalid": 0,
+          "total": 22
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, pale skin, blouse, sleeves rolled up, dark, medium hair, hand on own hip, from side, light, shadow, wooden floor, texture, blurry foreground, concrete, expressionless, parted lips, weight, silhouette",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, pale skin, blouse, sleeves rolled up, dark, medium hair, hand on own hip, from side, light, shadow, wooden floor, texture, blurry foreground, concrete, expressionless, parted lips, weight, silhouette",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_7, safe, 1girl",
+        "v14_dropped_general": [
+          "pale skin",
+          "blouse",
+          "sleeves rolled up",
+          "dark",
+          "medium hair",
+          "hand on own hip",
+          "from side",
+          "light",
+          "shadow",
+          "wooden floor",
+          "texture",
+          "blurry foreground",
+          "concrete",
+          "expressionless",
+          "parted lips",
+          "weight",
+          "silhouette"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl\n\ngirl with pale skin and a focused expression standing in the center of a softly lit room, wearing a simple white cotton blouse with sleeves rolled to the elbow, her dark hair falling loosely over her shoulders, one hand resting lightly on her hip while the other hangs by her side, warm overhead light casting a gentle shadow behind her, standing on a textured wooden floor that reflects the ambient glow, a calm and composed demeanor, natural skin texture visible under the direct light, slight movement in her stance suggesting a moment captured in time, background slightly blurred to emphasize her form, concrete details grounding the ethereal presence, a single strand of hair escaping her parting, the fabric of her shirt showing subtle folds around the waist, a neutral expression with lips slightly parted, standing upright with weight distributed evenly on her feet, the air feeling still and quiet around her, a distinct silhouette cut against the brightness of the room, a girl who commands attention through her grounded posture and clear features.",
+        "final_structural_tags": "masterpiece, best quality, score_7, safe, 1girl",
+        "final_prose": "girl with pale skin and a focused expression standing in the center of a softly lit room, wearing a simple white cotton blouse with sleeves rolled to the elbow, her dark hair falling loosely over her shoulders, one hand resting lightly on her hip while the other hangs by her side, warm overhead light casting a gentle shadow behind her, standing on a textured wooden floor that reflects the ambient glow, a calm and composed demeanor, natural skin texture visible under the direct light, slight movement in her stance suggesting a moment captured in time, background slightly blurred to emphasize her form, concrete details grounding the ethereal presence, a single strand of hair escaping her parting, the fabric of her shirt showing subtle folds around the waist, a neutral expression with lips slightly parted, standing upright with weight distributed evenly on her feet, the air feeling still and quiet around her, a distinct silhouette cut against the brightness of the room, a girl who commands attention through her grounded posture and clear features."
+      }
+    }
+  ],
+  "prompt_id": "girl_bare",
+  "seed": 137,
+  "modifiers": [],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl\n\ngirl with pale skin and a focused expression standing in the center of a softly lit room, wearing a simple white cotton blouse with sleeves rolled to the elbow, her dark hair falling loosely over her shoulders, one hand resting lightly on her hip while the other hangs by her side, warm overhead light casting a gentle shadow behind her, standing on a textured wooden floor that reflects the ambient glow, a calm and composed demeanor, natural skin texture visible under the direct light, slight movement in her stance suggesting a moment captured in time, background slightly blurred to emphasize her form, concrete details grounding the ethereal presence, a single strand of hair escaping her parting, the fabric of her shirt showing subtle folds around the waist, a neutral expression with lips slightly parted, standing upright with weight distributed evenly on her feet, the air feeling still and quiet around her, a distinct silhouette cut against the brightness of the room, a girl who commands attention through her grounded posture and clear features.",
+  "prose": "girl with pale skin and a focused expression standing in the center of a softly lit room, wearing a simple white cotton blouse with sleeves rolled to the elbow, her dark hair falling loosely over her shoulders, one hand resting lightly on her hip while the other hangs by her side, warm overhead light casting a gentle shadow behind her, standing on a textured wooden floor that reflects the ambient glow, a calm and composed demeanor, natural skin texture visible under the direct light, slight movement in her stance suggesting a moment captured in time, background slightly blurred to emphasize her form, concrete details grounding the ethereal presence, a single strand of hair escaping her parting, the fabric of her shirt showing subtle folds around the waist, a neutral expression with lips slightly parted, standing upright with weight distributed evenly on her feet, the air feeling still and quiet around her, a distinct silhouette cut against the brightness of the room, a girl who commands attention through her grounded posture and clear features.",
+  "draft": "best quality, 1girl, pale skin, focused expression, white cotton blouse, rolled sleeves, dark hair, shoulder length hair, hand on hip, hand by side, warm overhead light, shadow, textured wooden floor, wooden floor, direct light, natural skin texture, slight movement, blurred background, concrete details, single strand of hair, parting, waist folds, neutral expression, slightly parted lips, upright posture, even weight distribution, still air, distinct silhouette, clear features, softly lit room, center composition, grounded, ethereal",
+  "shortlist": {
+    "artists": [
+      "ang",
+      "lowe (slow)",
+      "yu 65026",
+      "yae (mono110)",
+      "hal360",
+      "kima"
+    ],
+    "characters": [
+      "girl (mokufuu)",
+      "girl dm",
+      "gotcha! girl (pokemon)",
+      "acfun girl",
+      "lofi girl",
+      "vault girl"
+    ],
+    "series": [
+      "girl arms",
+      "high score girl",
+      "girl with a pearl earring"
+    ]
+  }
+}

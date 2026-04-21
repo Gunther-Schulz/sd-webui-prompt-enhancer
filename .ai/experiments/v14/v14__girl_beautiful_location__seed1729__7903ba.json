@@ -1,0 +1,358 @@
+{
+  "run_id": "v14__girl_beautiful_location__seed1729__7903ba",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl, beautiful location",
+    "mods": [],
+    "seed": 1729
+  },
+  "started_at": 1776806340.5313058,
+  "ended_at": 1776806352.773272,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.507,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sch', 'ang', 'len (a 7)', 'yu 65026', 'delica', 'cota'], characters=['sweetie belle', 'girl (mokufuu)', 'girl dm', 'acfun girl', 'chica', 'octoling girl'], series=[\"girl's avenue\", 'high score girl', 'woman with a parasol', 'girl with a pearl earring', 'boy meets girl'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sch, ang, len (a 7), yu 65026, delica, cota\nCharacters: sweetie belle, girl (mokufuu), girl dm, acfun girl, chica, octoling girl\nSeries: girl's avenue, high score girl, woman with a parasol, girl with a pearl earring, boy meets girl"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.653,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl, beautiful location, woman with a parasol, sweetie belle, standing center frame, wearing a crisp white blouse with puffed sleeves, skirt reaching mid-calf, hair pulled back in a loose ponytail, holding a long wooden parasol above her head, face turned slightly right, soft expression, lush green meadow stretching behind her, wildflowers scattered in the grass, tall blades of grass bending in a gentle breeze, sunlight filtering through leaves to create dappled shadows on the ground, warm overhead light casting a soft glow on her skin, dew drops clinging to petals, distant tree line forming a dark green horizon, air thick with pollen and warmth, one hand resting on her hip, the other gripping the parasol handle, fabric of her skirt rustling in the wind, a single butterfly hovering near her shoulder, clear blue sky above, slight tilt to her posture suggesting ease, concrete texture of the grass visible under her boots, specific depth of field blurring the far background while keeping her sharp, natural movement frozen in time, earthy tones of brown and green surrounding her pale complexion, a single red poppy standing out against the greenery, wind blowing strands of hair across her cheek, a breeze carrying the scent of rain and blooming jasmine, her lips slightly parted, eyes focused on something just beyond the frame, the parasol casting a cool shadow over her left shoulder, the rest of her skin warmed by the sun, a mix of long and short sentences describing the scene, no abstract adjectives, just the physical reality of a girl in a beautiful location.",
+        "prose_samples": [
+          "girl, beautiful location, woman with a parasol, sweetie belle, standing center frame, wearing a crisp white blouse with puffed sleeves, skirt reaching mid-calf, hair pulled back in a loose ponytail, holding a long wooden parasol above her head, face turned slightly right, soft expression, lush green meadow stretching behind her, wildflowers scattered in the grass, tall blades of grass bending in a gentle breeze, sunlight filtering through leaves to create dappled shadows on the ground, warm overhead light casting a soft glow on her skin, dew drops clinging to petals, distant tree line forming a dark green horizon, air thick with pollen and warmth, one hand resting on her hip, the other gripping the parasol handle, fabric of her skirt rustling in the wind, a single butterfly hovering near her shoulder, clear blue sky above, slight tilt to her posture suggesting ease, concrete texture of the grass visible under her boots, specific depth of field blurring the far background while keeping her sharp, natural movement frozen in time, earthy tones of brown and green surrounding her pale complexion, a single red poppy standing out against the greenery, wind blowing strands of hair across her cheek, a breeze carrying the scent of rain and blooming jasmine, her lips slightly parted, eyes focused on something just beyond the frame, the parasol casting a cool shadow over her left shoulder, the rest of her skin warmed by the sun, a mix of long and short sentences describing the scene, no abstract adjectives, just the physical reality of a girl in a beautiful location.",
+          "A girl stands in a beautiful location. She wears a simple outfit with a defined texture. Her hair flows naturally. The setting features a specific background element with clear material. Soft overhead light casts gentle shadows. The ground beneath her feet has a distinct surface texture. One hand rests at her side while the other interacts with the environment. A breeze moves the fabric of her clothing. The composition balances her figure against the expansive, beautiful scenery. Her expression remains focused on the surroundings.",
+          "A girl stands in a beautiful location. She wears a garment made of fabric that falls to her mid-calf. Her hair flows loosely around her shoulders. The setting features a background with deep, saturated color. Natural light hits her from one side, casting a soft shadow behind her. The ground beneath her feet has a smooth, polished texture. The air feels still and quiet around her. Her expression remains neutral and focused. The composition centers her within the frame."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.498,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, 1girl, sweetie_belle, standing, center_frame, holding_parasol, long_wooden_parasol, above_head, white_blouse, puffed_sleeves, mid_calf_skirt, loose_ponytail, face_turned_right, soft_expression, lush_green_meadow, wildflowers, tall_blades_of_grass, gentle_breeze, dappled_shadows, warm_overhead_light, soft_glow, dew_drops, scattered_petals, distant_tree_line, dark_green_horizon, pollen, warmth, hand_on_hip, gripping_handle, rustling_fabric, single_butterfly, shoulder, clear_blue_sky, slight_tilt, ease, concrete_texture, boots, specific_depth_of_field, sharp, natural_movement, earthy_tones, brown_skin, green_surroundings, pale_complexion, red_poppy, wind_blown_hair, breeze, blooming_jasmine, lips_parted, focused_eyes, left_shoulder, sun_warmed_skin, mixed_sentences, physical_reality, girl, beautiful_location, woman, sweetie_belle, standing_center_frame, wearing_crisp_white_blouse, puffed_sleeves, skirt_reaching_mid_calf, hair_pulled_back, loose_ponytail, holding_long_wooden_parasol, face_turned_slightly_right, soft_expression, lush_green_meadow, stretching_behind, wildflowers_scattered, tall_blades_of_grass, bending_in_gentle_breeze, sunlight_filtering_through_leaves, dappled_shadows_on_ground, warm_overhead_light, casting_soft_glow, dew_drops_clinging, petals, distant_tree_line, dark_green_horizon, air_thick_with_pollen, warmth, one_hand_resting_on_hip, other_gripping_parasol_handle, fabric_rustling, single_butterfly_hoovering, shoulder, clear_blue_sky, slight_tilt_to_posture, ease, concrete_texture_of_grass, visible_under_boots, specific_depth_of_field, blurring_far_background, sharp, natural_movement_frozen, earthy_tones, brown_and_green, surrounding_pale_complexion, single_red_poppy, wind_blowing_hair, breeze_carrying_scent, blooming_jasmine, lips_slightly_parted, eyes_focused, parasol_casting_shadow, cool_shadow, left_shoulder, rest_of_skin_warmed, sun, mix_of_long_and_short_sentences, no_abstract_adjectives, physical_reality, girl_in_beautiful_location",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 4.584,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu), standing, holding umbrella, parasol, white shirt, skirt, ponytail, meadow, grass, shadow, light, glowing, dew drop, petals, distant, tree, dark, horizon, pollen, hand on own hip, handle, fabric, butterfly, clear sky",
+        "stats": {
+          "corrected": 0,
+          "dropped": 86,
+          "kept_invalid": 0,
+          "total": 30
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu), standing, holding umbrella, parasol, white shirt, skirt, ponytail, meadow, grass, shadow, light, glowing, dew drop, petals, distant, tree, dark, horizon, pollen, hand on own hip, handle, fabric, butterfly, clear sky",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu), standing, holding umbrella, parasol, white shirt, skirt, ponytail, meadow, grass, shadow, light, glowing, dew drop, petals, distant, tree, dark, horizon, pollen, hand on own hip, handle, fabric, butterfly, clear sky",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu)",
+        "v14_dropped_general": [
+          "standing",
+          "holding umbrella",
+          "parasol",
+          "white shirt",
+          "skirt",
+          "ponytail",
+          "meadow",
+          "grass",
+          "shadow",
+          "light",
+          "glowing",
+          "dew drop",
+          "petals",
+          "distant",
+          "tree",
+          "dark",
+          "horizon",
+          "pollen",
+          "hand on own hip",
+          "handle",
+          "fabric",
+          "butterfly",
+          "clear sky"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu)\n\ngirl, beautiful location, woman with a parasol, sweetie belle, standing center frame, wearing a crisp white blouse with puffed sleeves, skirt reaching mid-calf, hair pulled back in a loose ponytail, holding a long wooden parasol above her head, face turned slightly right, soft expression, lush green meadow stretching behind her, wildflowers scattered in the grass, tall blades of grass bending in a gentle breeze, sunlight filtering through leaves to create dappled shadows on the ground, warm overhead light casting a soft glow on her skin, dew drops clinging to petals, distant tree line forming a dark green horizon, air thick with pollen and warmth, one hand resting on her hip, the other gripping the parasol handle, fabric of her skirt rustling in the wind, a single butterfly hovering near her shoulder, clear blue sky above, slight tilt to her posture suggesting ease, concrete texture of the grass visible under her boots, specific depth of field blurring the far background while keeping her sharp, natural movement frozen in time, earthy tones of brown and green surrounding her pale complexion, a single red poppy standing out against the greenery, wind blowing strands of hair across her cheek, a breeze carrying the scent of rain and blooming jasmine, her lips slightly parted, eyes focused on something just beyond the frame, the parasol casting a cool shadow over her left shoulder, the rest of her skin warmed by the sun, a mix of long and short sentences describing the scene, no abstract adjectives, just the physical reality of a girl in a beautiful location.",
+        "final_structural_tags": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu)",
+        "final_prose": "girl, beautiful location, woman with a parasol, sweetie belle, standing center frame, wearing a crisp white blouse with puffed sleeves, skirt reaching mid-calf, hair pulled back in a loose ponytail, holding a long wooden parasol above her head, face turned slightly right, soft expression, lush green meadow stretching behind her, wildflowers scattered in the grass, tall blades of grass bending in a gentle breeze, sunlight filtering through leaves to create dappled shadows on the ground, warm overhead light casting a soft glow on her skin, dew drops clinging to petals, distant tree line forming a dark green horizon, air thick with pollen and warmth, one hand resting on her hip, the other gripping the parasol handle, fabric of her skirt rustling in the wind, a single butterfly hovering near her shoulder, clear blue sky above, slight tilt to her posture suggesting ease, concrete texture of the grass visible under her boots, specific depth of field blurring the far background while keeping her sharp, natural movement frozen in time, earthy tones of brown and green surrounding her pale complexion, a single red poppy standing out against the greenery, wind blowing strands of hair across her cheek, a breeze carrying the scent of rain and blooming jasmine, her lips slightly parted, eyes focused on something just beyond the frame, the parasol casting a cool shadow over her left shoulder, the rest of her skin warmed by the sun, a mix of long and short sentences describing the scene, no abstract adjectives, just the physical reality of a girl in a beautiful location."
+      }
+    }
+  ],
+  "prompt_id": "girl_beautiful_location",
+  "seed": 1729,
+  "modifiers": [],
+  "prompt_source": "girl, beautiful location",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, sweetie belle, girl (mokufuu)\n\ngirl, beautiful location, woman with a parasol, sweetie belle, standing center frame, wearing a crisp white blouse with puffed sleeves, skirt reaching mid-calf, hair pulled back in a loose ponytail, holding a long wooden parasol above her head, face turned slightly right, soft expression, lush green meadow stretching behind her, wildflowers scattered in the grass, tall blades of grass bending in a gentle breeze, sunlight filtering through leaves to create dappled shadows on the ground, warm overhead light casting a soft glow on her skin, dew drops clinging to petals, distant tree line forming a dark green horizon, air thick with pollen and warmth, one hand resting on her hip, the other gripping the parasol handle, fabric of her skirt rustling in the wind, a single butterfly hovering near her shoulder, clear blue sky above, slight tilt to her posture suggesting ease, concrete texture of the grass visible under her boots, specific depth of field blurring the far background while keeping her sharp, natural movement frozen in time, earthy tones of brown and green surrounding her pale complexion, a single red poppy standing out against the greenery, wind blowing strands of hair across her cheek, a breeze carrying the scent of rain and blooming jasmine, her lips slightly parted, eyes focused on something just beyond the frame, the parasol casting a cool shadow over her left shoulder, the rest of her skin warmed by the sun, a mix of long and short sentences describing the scene, no abstract adjectives, just the physical reality of a girl in a beautiful location.",
+  "prose": "girl, beautiful location, woman with a parasol, sweetie belle, standing center frame, wearing a crisp white blouse with puffed sleeves, skirt reaching mid-calf, hair pulled back in a loose ponytail, holding a long wooden parasol above her head, face turned slightly right, soft expression, lush green meadow stretching behind her, wildflowers scattered in the grass, tall blades of grass bending in a gentle breeze, sunlight filtering through leaves to create dappled shadows on the ground, warm overhead light casting a soft glow on her skin, dew drops clinging to petals, distant tree line forming a dark green horizon, air thick with pollen and warmth, one hand resting on her hip, the other gripping the parasol handle, fabric of her skirt rustling in the wind, a single butterfly hovering near her shoulder, clear blue sky above, slight tilt to her posture suggesting ease, concrete texture of the grass visible under her boots, specific depth of field blurring the far background while keeping her sharp, natural movement frozen in time, earthy tones of brown and green surrounding her pale complexion, a single red poppy standing out against the greenery, wind blowing strands of hair across her cheek, a breeze carrying the scent of rain and blooming jasmine, her lips slightly parted, eyes focused on something just beyond the frame, the parasol casting a cool shadow over her left shoulder, the rest of her skin warmed by the sun, a mix of long and short sentences describing the scene, no abstract adjectives, just the physical reality of a girl in a beautiful location.",
+  "draft": "masterpiece, best quality, score_7, 1girl, sweetie_belle, standing, center_frame, holding_parasol, long_wooden_parasol, above_head, white_blouse, puffed_sleeves, mid_calf_skirt, loose_ponytail, face_turned_right, soft_expression, lush_green_meadow, wildflowers, tall_blades_of_grass, gentle_breeze, dappled_shadows, warm_overhead_light, soft_glow, dew_drops, scattered_petals, distant_tree_line, dark_green_horizon, pollen, warmth, hand_on_hip, gripping_handle, rustling_fabric, single_butterfly, shoulder, clear_blue_sky, slight_tilt, ease, concrete_texture, boots, specific_depth_of_field, sharp, natural_movement, earthy_tones, brown_skin, green_surroundings, pale_complexion, red_poppy, wind_blown_hair, breeze, blooming_jasmine, lips_parted, focused_eyes, left_shoulder, sun_warmed_skin, mixed_sentences, physical_reality, girl, beautiful_location, woman, sweetie_belle, standing_center_frame, wearing_crisp_white_blouse, puffed_sleeves, skirt_reaching_mid_calf, hair_pulled_back, loose_ponytail, holding_long_wooden_parasol, face_turned_slightly_right, soft_expression, lush_green_meadow, stretching_behind, wildflowers_scattered, tall_blades_of_grass, bending_in_gentle_breeze, sunlight_filtering_through_leaves, dappled_shadows_on_ground, warm_overhead_light, casting_soft_glow, dew_drops_clinging, petals, distant_tree_line, dark_green_horizon, air_thick_with_pollen, warmth, one_hand_resting_on_hip, other_gripping_parasol_handle, fabric_rustling, single_butterfly_hoovering, shoulder, clear_blue_sky, slight_tilt_to_posture, ease, concrete_texture_of_grass, visible_under_boots, specific_depth_of_field, blurring_far_background, sharp, natural_movement_frozen, earthy_tones, brown_and_green, surrounding_pale_complexion, single_red_poppy, wind_blowing_hair, breeze_carrying_scent, blooming_jasmine, lips_slightly_parted, eyes_focused, parasol_casting_shadow, cool_shadow, left_shoulder, rest_of_skin_warmed, sun, mix_of_long_and_short_sentences, no_abstract_adjectives, physical_reality, girl_in_beautiful_location",
+  "shortlist": {
+    "artists": [
+      "sch",
+      "ang",
+      "len (a 7)",
+      "yu 65026",
+      "delica",
+      "cota"
+    ],
+    "characters": [
+      "sweetie belle",
+      "girl (mokufuu)",
+      "girl dm",
+      "acfun girl",
+      "chica",
+      "octoling girl"
+    ],
+    "series": [
+      "girl's avenue",
+      "high score girl",
+      "woman with a parasol",
+      "girl with a pearl earring",
+      "boy meets girl"
+    ]
+  }
+}

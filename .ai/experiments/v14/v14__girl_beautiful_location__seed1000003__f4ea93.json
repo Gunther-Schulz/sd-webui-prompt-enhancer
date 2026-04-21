@@ -1,0 +1,359 @@
+{
+  "run_id": "v14__girl_beautiful_location__seed1000003__f4ea93",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl, beautiful location",
+    "mods": [],
+    "seed": 1000003
+  },
+  "started_at": 1776806374.34922,
+  "ended_at": 1776806385.4633203,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.479,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sch', 'len (a 7)', 'ang', 'yu 65026', 'kgr', 'aono3'], characters=['sweetie belle', 'girl (mokufuu)', 'girl dm', 'acfun girl', 'chica', 'octoling girl'], series=[\"girl's avenue\", 'high score girl', 'woman with a parasol', 'girl with a pearl earring', 'boy meets girl'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sch, len (a 7), ang, yu 65026, kgr, aono3\nCharacters: sweetie belle, girl (mokufuu), girl dm, acfun girl, chica, octoling girl\nSeries: girl's avenue, high score girl, woman with a parasol, girl with a pearl earring, boy meets girl"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 7.997,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl standing in a beautiful location, lush green grass underfoot, warm overhead sunlight casting soft shadows, flowing wind blowing her hair, clear blue sky above, vibrant wildflowers scattered around her feet, natural stone path winding behind her, detailed texture on her skin, slight sheen on her lips, one hand resting on her hip, gaze directed forward, depth of field blurring the distant trees, crisp focus on her face, rich saturation in the background foliage, specific hue of emerald in the leaves, golden hour glow hitting her shoulder, concrete details of the setting surrounding her form.",
+        "prose_samples": [
+          "girl standing in a beautiful location, golden hour sunlight hitting her face, soft breeze ruffling her hair, lush green grass beneath her feet, distant mountains framing the horizon, clear blue sky above, natural shadows stretching long on the ground, slight sheen on her skin from the warm light, relaxed posture with a subtle smile, wind blowing through her hair, vibrant colors in the background, crisp focus on her figure, gentle depth of field blurring the scenery behind her, textured fabric on her clothing catching the light, specific angle capturing both her form and the expansive setting, high contrast between her silhouette and the bright backdrop, detailed environment surrounding her, one main subject dominating the frame, clear distinction between foreground and background, tangible sense of place, precise lighting direction from one side, sharp details on her features, immersive atmosphere of the beautiful location, balanced composition of figure and scene, rich texture in the air and on the ground, defined edges of her silhouette against the landscape, cohesive color palette blending her with the environment, specific moment frozen in time, tangible weight of the air, clear visibility of every element requested, grounded reality of the scene, focused gaze directed forward, natural movement in her stance, intricate details of the location's flora or architecture, harmonious blend of human form and vast space, exacting attention to the beautiful location's specific qualities, unified visual language, singular focal point on the girl, expansive view of the location's grandeur, intimate yet wide shot, perfect exposure of the scene, nuanced interplay of light and shadow, concrete details anchoring the beauty of the setting, immediate presence of the girl, sharp definition of her outline, layered elements of the location, specific hue of the light, textural richness of the surroundings, dynamic tension between her stillness and the moving air, complete immersion in the beautiful location, distinct separation of subject from setting, polished finish to the entire image, specific texture of her skin and clothes, clear definition of the location's boundaries, focused intensity of the beautiful location, seamless integration of girl and place, specific grain or resolution hinting at high quality, distinct color temperature of the beautiful location, crisp clarity of the girl's features, expansive depth of the location, specific mood conveyed by the light, textural contrast between her hair and the smooth sky, balanced exposure of the entire scene, specific angle of the beautiful location, grounded weight of her presence, specific quality of the light source, distinct texture of the ground beneath her, focused gaze meeting the viewer's eye, expansive sweep of the beautiful location, specific definition of her hair strands, crisp edges of the location's features, specific tone of the beautiful location, distinct texture of her clothing, focused light on her face, expansive view of the location's horizon, specific color of her outfit, crisp definition of the location's trees or buildings, specific angle of her stance, distinct texture of the location's sky, focused light on her shoulder, expansive view of the location's clouds, specific color of the location's grass, crisp definition of the location's shadows, specific angle of her gaze, distinct texture of the location's air, focused light on her chest, expansive view of the location's depth, specific color of her lips, crisp definition of the location's details, specific angle of her body, distinct texture of the location's light, focused light on her neck, expansive view of the location's width, specific color of her eyes, crisp definition of the location's curve, specific angle of her hand, distinct texture of the location's edge, focused light on her jawline, expansive view of the location's breadth, specific color of her eyebrows, crisp definition of the location's peak, specific angle of her knee, distinct texture of the location's base, focused light on her collarbone, expansive view of the location's span, specific color of her lashes, crisp definition of the location's rim, specific angle of her ankle, distinct texture of the location's core, focused light on her wrist, expansive view of the location's center, specific color of her iris, crisp definition of the location's heart, specific angle of her elbow, distinct texture of the location's soul, focused light on her thumb, expansive view of the location's mind, specific color of her pupil, crisp definition of the location's spirit, specific angle of her hip, distinct texture of the location's breath, focused light on her finger, expansive view of the location's voice, specific color of her ear, crisp definition of the location's song, specific angle of her chin, distinct texture of the location's echo, focused light on her nose, expansive view of the location's rhythm, specific color of her earlobe, crisp definition of the location's pulse, specific angle of her cheek, distinct texture of the location's heartbeat, focused light on her temple, expansive view of the location's memory, specific color of her eyelid, crisp definition of the location's dream, specific angle of her forehead, distinct texture of the location's hope, focused light on her brow, expansive view of the location's love,",
+          "girl stands in a beautiful location. She has long hair and wears a fitted dress made of silk. The fabric catches the light with a smooth sheen. Her pose is relaxed, one hand resting on her hip. Around her, the setting features tall trees with green leaves and a stone path winding through grass. Warm sunlight filters down from above, casting soft shadows on the ground. The air feels still and quiet. Every element of the beautiful location frames her figure clearly.",
+          "girl standing in a beautiful location, lush green grass underfoot, warm overhead sunlight casting soft shadows, flowing wind blowing her hair, clear blue sky above, vibrant wildflowers scattered around her feet, natural stone path winding behind her, detailed texture on her skin, slight sheen on her lips, one hand resting on her hip, gaze directed forward, depth of field blurring the distant trees, crisp focus on her face, rich saturation in the background foliage, specific hue of emerald in the leaves, golden hour glow hitting her shoulder, concrete details of the setting surrounding her form."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.229,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_9,1girl,standing,beautiful location,lush green grass,underfoot,warm overhead sunlight,soft shadows,flowing wind,blowing hair,clear blue sky,above,vibrant wildflowers,scattered feet,natural stone path,winding behind,detailed texture,skin,slight sheen,lips,one hand,resting hip,gaze directed forward,depth of field,blurring distant trees,crisp focus,face,rich saturation,background foliage,emerald leaves,golden hour glow,hitting shoulder,concrete details,surrounding form,green_hair,blue_eyes,waist-length_hair,side_part,open_mouth,slight_smile,confident_pose,short_skirt,spring_season,bright_lighting,daytime,foreground,background",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.408,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, standing, grass, sunlight, shadow, wind, blowing, clear sky, feet, stone walkway, path, winding, texture, lips, resting, depth of field, distant, tree, rich, foliage, leaf, golden hour, glowing, hitting, concrete",
+        "stats": {
+          "corrected": 0,
+          "dropped": 20,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, standing, grass, sunlight, shadow, wind, blowing, clear sky, feet, stone walkway, path, winding, texture, lips, resting, depth of field, distant, tree, rich, foliage, leaf, golden hour, glowing, hitting, concrete",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, standing, grass, sunlight, shadow, wind, blowing, clear sky, feet, stone walkway, path, winding, texture, lips, resting, depth of field, distant, tree, rich, foliage, leaf, golden hour, glowing, hitting, concrete",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_9, safe, 1girl",
+        "v14_dropped_general": [
+          "standing",
+          "grass",
+          "sunlight",
+          "shadow",
+          "wind",
+          "blowing",
+          "clear sky",
+          "feet",
+          "stone walkway",
+          "path",
+          "winding",
+          "texture",
+          "lips",
+          "resting",
+          "depth of field",
+          "distant",
+          "tree",
+          "rich",
+          "foliage",
+          "leaf",
+          "golden hour",
+          "glowing",
+          "hitting",
+          "concrete"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl\n\ngirl standing in a beautiful location, lush green grass underfoot, warm overhead sunlight casting soft shadows, flowing wind blowing her hair, clear blue sky above, vibrant wildflowers scattered around her feet, natural stone path winding behind her, detailed texture on her skin, slight sheen on her lips, one hand resting on her hip, gaze directed forward, depth of field blurring the distant trees, crisp focus on her face, rich saturation in the background foliage, specific hue of emerald in the leaves, golden hour glow hitting her shoulder, concrete details of the setting surrounding her form.",
+        "final_structural_tags": "masterpiece, best quality, score_9, safe, 1girl",
+        "final_prose": "girl standing in a beautiful location, lush green grass underfoot, warm overhead sunlight casting soft shadows, flowing wind blowing her hair, clear blue sky above, vibrant wildflowers scattered around her feet, natural stone path winding behind her, detailed texture on her skin, slight sheen on her lips, one hand resting on her hip, gaze directed forward, depth of field blurring the distant trees, crisp focus on her face, rich saturation in the background foliage, specific hue of emerald in the leaves, golden hour glow hitting her shoulder, concrete details of the setting surrounding her form."
+      }
+    }
+  ],
+  "prompt_id": "girl_beautiful_location",
+  "seed": 1000003,
+  "modifiers": [],
+  "prompt_source": "girl, beautiful location",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl\n\ngirl standing in a beautiful location, lush green grass underfoot, warm overhead sunlight casting soft shadows, flowing wind blowing her hair, clear blue sky above, vibrant wildflowers scattered around her feet, natural stone path winding behind her, detailed texture on her skin, slight sheen on her lips, one hand resting on her hip, gaze directed forward, depth of field blurring the distant trees, crisp focus on her face, rich saturation in the background foliage, specific hue of emerald in the leaves, golden hour glow hitting her shoulder, concrete details of the setting surrounding her form.",
+  "prose": "girl standing in a beautiful location, lush green grass underfoot, warm overhead sunlight casting soft shadows, flowing wind blowing her hair, clear blue sky above, vibrant wildflowers scattered around her feet, natural stone path winding behind her, detailed texture on her skin, slight sheen on her lips, one hand resting on her hip, gaze directed forward, depth of field blurring the distant trees, crisp focus on her face, rich saturation in the background foliage, specific hue of emerald in the leaves, golden hour glow hitting her shoulder, concrete details of the setting surrounding her form.",
+  "draft": "masterpiece,best quality,score_9,1girl,standing,beautiful location,lush green grass,underfoot,warm overhead sunlight,soft shadows,flowing wind,blowing hair,clear blue sky,above,vibrant wildflowers,scattered feet,natural stone path,winding behind,detailed texture,skin,slight sheen,lips,one hand,resting hip,gaze directed forward,depth of field,blurring distant trees,crisp focus,face,rich saturation,background foliage,emerald leaves,golden hour glow,hitting shoulder,concrete details,surrounding form,green_hair,blue_eyes,waist-length_hair,side_part,open_mouth,slight_smile,confident_pose,short_skirt,spring_season,bright_lighting,daytime,foreground,background",
+  "shortlist": {
+    "artists": [
+      "sch",
+      "len (a 7)",
+      "ang",
+      "yu 65026",
+      "kgr",
+      "aono3"
+    ],
+    "characters": [
+      "sweetie belle",
+      "girl (mokufuu)",
+      "girl dm",
+      "acfun girl",
+      "chica",
+      "octoling girl"
+    ],
+    "series": [
+      "girl's avenue",
+      "high score girl",
+      "woman with a parasol",
+      "girl with a pearl earring",
+      "boy meets girl"
+    ]
+  }
+}

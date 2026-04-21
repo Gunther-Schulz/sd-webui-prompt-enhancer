@@ -1,0 +1,375 @@
+{
+  "run_id": "v14__girl_random_artist_random_era__seed2147483000__f5e23e",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Set this scene in the 1980s aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light.",
+          "keywords": "1980s (style)",
+          "source": {
+            "db_pattern": "^\\d{4}s_\\(style\\)$",
+            "min_post_count": 50,
+            "template": "Set this scene in the {display} aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light."
+          },
+          "_resolved_from_source": "1980s_(style)"
+        }
+      ]
+    ],
+    "seed": 2147483000
+  },
+  "started_at": 1776806118.0879443,
+  "ended_at": 1776806126.0474327,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.606,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['murata taichi', 'murata yuusuke', 'obata takeshi', 'takahashi rumiko', 'murasaki atsushi', 'takani yoshiyuki'], characters=['iczer 1', 'mia alice', 'anice farm', 'roy focker', 'sakurai tomo', 'magami eiko'], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Set this scene in the 1980s aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: murata taichi, murata yuusuke, obata takeshi, takahashi rumiko, murasaki atsushi, takani yoshiyuki\nCharacters: iczer 1, mia alice, anice farm, roy focker, sakurai tomo, magami eiko"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.717,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands center frame in the style of Murata Taichi, her silhouette sharp and ink-heavy against a backdrop of 1980s nostalgia. She wears a high-collared white blouse with puffed sleeves and a pleated miniskirt, the fabric rendered with heavy, wet ink strokes that suggest cotton and wool. Her hair is a voluminous, gravity-defying mass of black waves, drawn with thick, confident lines that catch a warm, overhead fluorescent glow. The lighting is flat and directional, casting distinct, hard shadows that anchor her to the scene. Surroundings feature a checkerboard floor pattern and a blurred background of geometric shapes, all colored in a limited palette of cyan, magenta, and deep violet. Her pose is dynamic, one leg slightly bent, arms held out as if balancing, capturing the kinetic energy of the decade. The image feels like a high-contrast photocopy, textured with grain and fine cross-hatching that defines her skin and the folds of her clothing. Every edge is crisp, defined by the artist's signature use of bold outlines that separate form from shadow. The 1980s aesthetic permeates the air, smelling of ink and ozone, while the girl remains the focal point of this graphic, stylized moment.",
+        "prose_samples": [
+          "A girl stands in a 1980s aesthetic setting, rendered in the style of Obata Takeshi. Her outfit features oversized shoulders and synthetic fabric that catches the era's specific color grading. The lighting is flat and directional, casting sharp shadows against a backdrop of bold geometric patterns. Her hair is cut in a precise, layered bob with a deep parting, framing a face marked by confident, heavy-lidded eyes. The surrounding environment includes chrome accents and a low-slung vehicle in the background, all treated with the clean, illustrative lines characteristic of Obata Takeshi. The scene balances a retro-futuristic vibe with grounded, concrete details like a textured denim jacket and a high-top sneaker. Every element feels anchored in the decade, from the wide-leg trousers to the slightly oversized sunglasses resting on her nose.",
+          "A girl stands in a scene rendered by the hand of Obata Takeshi, her form defined by sharp, clean lines and a sense of fluid motion. She wears a voluminous, pleated miniskirt in a muted pastel pink that sways as if caught in a breeze. Her top is a fitted, off-shoulder crop in a contrasting deep teal, revealing a sliver of collarbone. Her hair is a cascade of layered, gravity-defying bangs that frame a face tilted upward, eyes wide with a specific, wide-eyed wonder characteristic of the era. The setting is a sun-drenched street corner from the 1980s, where sunlight hits the pavement at a low angle, casting long, stretched shadows and creating a warm, golden color grading over the whole image. The background features a brick wall with peeling paint and a bicycle leaning against it, rendered with the same crisp detail as the girl. The light is hard and direct, bouncing off the glossy fabric of her skirt and highlighting the texture of her skin. Around her, the air feels thick with the energy of the decade, her pose dynamic and slightly exaggerated, as if she is mid-stride or mid-laugh. The composition balances the softness of her hair against the geometric shapes of her clothing and the surrounding architecture.",
+          "A girl stands center frame in the style of Murata Taichi, her silhouette sharp and ink-heavy against a backdrop of 1980s nostalgia. She wears a high-collared white blouse with puffed sleeves and a pleated miniskirt, the fabric rendered with heavy, wet ink strokes that suggest cotton and wool. Her hair is a voluminous, gravity-defying mass of black waves, drawn with thick, confident lines that catch a warm, overhead fluorescent glow. The lighting is flat and directional, casting distinct, hard shadows that anchor her to the scene. Surroundings feature a checkerboard floor pattern and a blurred background of geometric shapes, all colored in a limited palette of cyan, magenta, and deep violet. Her pose is dynamic, one leg slightly bent, arms held out as if balancing, capturing the kinetic energy of the decade. The image feels like a high-contrast photocopy, textured with grain and fine cross-hatching that defines her skin and the folds of her clothing. Every edge is crisp, defined by the artist's signature use of bold outlines that separate form from shadow. The 1980s aesthetic permeates the air, smelling of ink and ozone, while the girl remains the focal point of this graphic, stylized moment."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.182,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best quality,score_9,1girl,taichi_murata,1980s,high_collar,white_blouse,puffed_sleeves,pleated_miniskirt,black_wavy_hair,voluminous_hair,waist_length_hair,fluorescent_lighting,flat_lighting,hard_shadows,checkerboard_floor,geometric_background,limited_palette,cyan_eyes,magenta_accents,deep_violet_hair,graphic_novel_style,high_contrast,photocopy_effect,grain,ink_strokes,wet_ink,thick_lines,confident_pose,dynamic_leg,arms_out,crisp_edges,bold_outlines,graphic_art,stylized,kinetic_energy,cool_tone,graphic_design",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.385,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, high collar, white shirt, miniskirt, wavy hair, shadow, floor, limited palette, high contrast, ink, wet, confident, pose, legs, outline, energy",
+        "stats": {
+          "corrected": 0,
+          "dropped": 19,
+          "kept_invalid": 0,
+          "total": 20
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.069,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, high collar, white shirt, miniskirt, wavy hair, shadow, floor, limited palette, high contrast, ink, wet, confident, pose, legs, outline, energy, @mashuu masaki",
+        "slot_fill_trace": {
+          "artist": "mashuu_masaki"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, high collar, white shirt, miniskirt, wavy hair, shadow, floor, limited palette, high contrast, ink, wet, confident, pose, legs, outline, energy, @mashuu masaki, 1980s (style)",
+        "source_inject_stats": {
+          "total": 1,
+          "source_injected": 1
+        }
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.001,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_9, safe, 1girl, @mashuu masaki",
+        "v14_dropped_general": [
+          "high collar",
+          "white shirt",
+          "miniskirt",
+          "wavy hair",
+          "shadow",
+          "floor",
+          "limited palette",
+          "high contrast",
+          "ink",
+          "wet",
+          "confident",
+          "pose",
+          "legs",
+          "outline",
+          "energy",
+          "1980s (style)"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @mashuu masaki\n\nA girl stands center frame in the style of Murata Taichi, her silhouette sharp and ink-heavy against a backdrop of 1980s nostalgia. She wears a high-collared white blouse with puffed sleeves and a pleated miniskirt, the fabric rendered with heavy, wet ink strokes that suggest cotton and wool. Her hair is a voluminous, gravity-defying mass of black waves, drawn with thick, confident lines that catch a warm, overhead fluorescent glow. The lighting is flat and directional, casting distinct, hard shadows that anchor her to the scene. Surroundings feature a checkerboard floor pattern and a blurred background of geometric shapes, all colored in a limited palette of cyan, magenta, and deep violet. Her pose is dynamic, one leg slightly bent, arms held out as if balancing, capturing the kinetic energy of the decade. The image feels like a high-contrast photocopy, textured with grain and fine cross-hatching that defines her skin and the folds of her clothing. Every edge is crisp, defined by the artist's signature use of bold outlines that separate form from shadow. The 1980s aesthetic permeates the air, smelling of ink and ozone, while the girl remains the focal point of this graphic, stylized moment.",
+        "final_structural_tags": "masterpiece, best quality, score_9, safe, 1girl, @mashuu masaki",
+        "final_prose": "A girl stands center frame in the style of Murata Taichi, her silhouette sharp and ink-heavy against a backdrop of 1980s nostalgia. She wears a high-collared white blouse with puffed sleeves and a pleated miniskirt, the fabric rendered with heavy, wet ink strokes that suggest cotton and wool. Her hair is a voluminous, gravity-defying mass of black waves, drawn with thick, confident lines that catch a warm, overhead fluorescent glow. The lighting is flat and directional, casting distinct, hard shadows that anchor her to the scene. Surroundings feature a checkerboard floor pattern and a blurred background of geometric shapes, all colored in a limited palette of cyan, magenta, and deep violet. Her pose is dynamic, one leg slightly bent, arms held out as if balancing, capturing the kinetic energy of the decade. The image feels like a high-contrast photocopy, textured with grain and fine cross-hatching that defines her skin and the folds of her clothing. Every edge is crisp, defined by the artist's signature use of bold outlines that separate form from shadow. The 1980s aesthetic permeates the air, smelling of ink and ozone, while the girl remains the focal point of this graphic, stylized moment."
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 2147483000,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl, @mashuu masaki\n\nA girl stands center frame in the style of Murata Taichi, her silhouette sharp and ink-heavy against a backdrop of 1980s nostalgia. She wears a high-collared white blouse with puffed sleeves and a pleated miniskirt, the fabric rendered with heavy, wet ink strokes that suggest cotton and wool. Her hair is a voluminous, gravity-defying mass of black waves, drawn with thick, confident lines that catch a warm, overhead fluorescent glow. The lighting is flat and directional, casting distinct, hard shadows that anchor her to the scene. Surroundings feature a checkerboard floor pattern and a blurred background of geometric shapes, all colored in a limited palette of cyan, magenta, and deep violet. Her pose is dynamic, one leg slightly bent, arms held out as if balancing, capturing the kinetic energy of the decade. The image feels like a high-contrast photocopy, textured with grain and fine cross-hatching that defines her skin and the folds of her clothing. Every edge is crisp, defined by the artist's signature use of bold outlines that separate form from shadow. The 1980s aesthetic permeates the air, smelling of ink and ozone, while the girl remains the focal point of this graphic, stylized moment.",
+  "prose": "A girl stands center frame in the style of Murata Taichi, her silhouette sharp and ink-heavy against a backdrop of 1980s nostalgia. She wears a high-collared white blouse with puffed sleeves and a pleated miniskirt, the fabric rendered with heavy, wet ink strokes that suggest cotton and wool. Her hair is a voluminous, gravity-defying mass of black waves, drawn with thick, confident lines that catch a warm, overhead fluorescent glow. The lighting is flat and directional, casting distinct, hard shadows that anchor her to the scene. Surroundings feature a checkerboard floor pattern and a blurred background of geometric shapes, all colored in a limited palette of cyan, magenta, and deep violet. Her pose is dynamic, one leg slightly bent, arms held out as if balancing, capturing the kinetic energy of the decade. The image feels like a high-contrast photocopy, textured with grain and fine cross-hatching that defines her skin and the folds of her clothing. Every edge is crisp, defined by the artist's signature use of bold outlines that separate form from shadow. The 1980s aesthetic permeates the air, smelling of ink and ozone, while the girl remains the focal point of this graphic, stylized moment.",
+  "draft": "masterpiece,best quality,score_9,1girl,taichi_murata,1980s,high_collar,white_blouse,puffed_sleeves,pleated_miniskirt,black_wavy_hair,voluminous_hair,waist_length_hair,fluorescent_lighting,flat_lighting,hard_shadows,checkerboard_floor,geometric_background,limited_palette,cyan_eyes,magenta_accents,deep_violet_hair,graphic_novel_style,high_contrast,photocopy_effect,grain,ink_strokes,wet_ink,thick_lines,confident_pose,dynamic_leg,arms_out,crisp_edges,bold_outlines,graphic_art,stylized,kinetic_energy,cool_tone,graphic_design",
+  "shortlist": {
+    "artists": [
+      "murata taichi",
+      "murata yuusuke",
+      "obata takeshi",
+      "takahashi rumiko",
+      "murasaki atsushi",
+      "takani yoshiyuki"
+    ],
+    "characters": [
+      "iczer 1",
+      "mia alice",
+      "anice farm",
+      "roy focker",
+      "sakurai tomo",
+      "magami eiko"
+    ],
+    "series": []
+  }
+}

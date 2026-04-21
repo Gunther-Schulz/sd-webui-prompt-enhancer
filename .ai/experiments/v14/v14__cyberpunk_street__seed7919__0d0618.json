@@ -1,0 +1,355 @@
+{
+  "run_id": "v14__cyberpunk_street__seed7919__0d0618",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "a cyberpunk street scene with holograms",
+    "mods": [],
+    "seed": 7919
+  },
+  "started_at": 1776806018.4754295,
+  "ended_at": 1776806023.5639753,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.495,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sch', 'chaotic unknown', 'asgr', 'lrk', 'eou', 'aono3'], characters=[], series=['a nightmare on elm street', 'helltaker', \"girl's avenue\", 'sword art online: hollow fragment', 'summertime render', 'sentimental graffiti'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sch, chaotic unknown, asgr, lrk, eou, aono3\nSeries: a nightmare on elm street, helltaker, girl's avenue, sword art online: hollow fragment, summertime render, sentimental graffiti"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.487,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A cyberpunk street scene with holograms. A narrow, rain-slicked alleyway where neon signs reflect off wet pavement. Holographic advertisements float mid-air, casting shifting shadows on the brick walls. A lone figure walks through the center, wearing a high-collared trench coat and dark, reflective boots. The air hums with electricity, visible as faint arcs near the overhead wires. Cool blue light from a distant streetlamp mixes with the warm pink glow of a floating data stream. Guttering steam rises from a manhole cover near the figure's feet. The background blurs slightly, showing stacked metal crates and a towering skyscraper piercing the smog.",
+        "prose_samples": [
+          "A cyberpunk street scene with holograms. A narrow, rain-slicked alleyway where neon signs reflect off wet pavement. Holographic advertisements float mid-air, casting shifting shadows on the brick walls. A lone figure walks through the center, wearing a high-collared trench coat and dark, reflective boots. The air hums with electricity, visible as faint arcs near the overhead wires. Cool blue light from a distant streetlamp mixes with the warm pink glow of a floating data stream. Guttering steam rises from a manhole cover near the figure's feet. The background blurs slightly, showing stacked metal crates and a towering skyscraper piercing the smog.",
+          "A cyberpunk street scene with holograms. Wet asphalt reflects the cool blue of overhead neon signs. A towering skyscraper looms in the background, its glass facade streaked with vertical rain. Three distinct holographic advertisements float in mid-air, their edges shimmering and slightly transparent. One hologram depicts a giant red apple, another shows a swirling galaxy, and the third displays a floating mechanical eye. Streetlamps cast a warm, yellow glow that mixes with the electric cyan of the digital projections. Steam rises from a grating in the foreground, curling upward to distort the lower half of the holograms. Pedestrians walk beneath the digital canopy, their forms slightly blurred by motion and the heavy humidity. Gutter water drips from the awnings above, landing in small, dark puddles. The air feels thick and heavy, catching the light of the signs and the projections alike. Sharp shadows stretch across the pavement from the passing figures.",
+          "A cyberpunk street scene with holograms. Wet asphalt reflects the neon glow of towering advertisements. A massive blue hologram of a floating face hovers above a crowded sidewalk. Rain slicks the shoulders of a passerby in a short trench coat. Neon signs cast sharp, colored shadows against brick walls. Steam rises from a vent near a flickering yellow streetlamp. Distant traffic blurs into streaks of red and white light. A second, smaller hologram of a dancing figure swirls near a food stall. The air feels thick with ozone and humidity. Graffiti tags the lower half of a storefront window."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.92,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_9, cyberpunk, street, alleyway, rain-slicked, wet, pavement, neon, signs, holograms, advertisements, floating, shadows, brick, walls, lone, figure, high-collared, trench, coat, dark, reflective, boots, electricity, arcs, wires, cool, blue, streetlamp, warm, pink, data, stream, steam, manhole, cover, background, blurred, stacked, metal, crates, towering, skyscraper, smog",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.185,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, cyberpunk, street, rain, wet, pavement, sign, floating, shadow, brick, figure, trench, coat, dark, boots, electricity, wire, lamppost, stream, steam, manhole, cover, blurry, metal, crate, skyscraper, smog",
+        "stats": {
+          "corrected": 0,
+          "dropped": 16,
+          "kept_invalid": 0,
+          "total": 30
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, cyberpunk, street, rain, wet, pavement, sign, floating, shadow, brick, figure, trench, coat, dark, boots, electricity, wire, lamppost, stream, steam, manhole, cover, blurry, metal, crate, skyscraper, smog",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, cyberpunk, street, rain, wet, pavement, sign, floating, shadow, brick, figure, trench, coat, dark, boots, electricity, wire, lamppost, stream, steam, manhole, cover, blurry, metal, crate, skyscraper, smog",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_9, safe",
+        "v14_dropped_general": [
+          "cyberpunk",
+          "street",
+          "rain",
+          "wet",
+          "pavement",
+          "sign",
+          "floating",
+          "shadow",
+          "brick",
+          "figure",
+          "trench",
+          "coat",
+          "dark",
+          "boots",
+          "electricity",
+          "wire",
+          "lamppost",
+          "stream",
+          "steam",
+          "manhole",
+          "cover",
+          "blurry",
+          "metal",
+          "crate",
+          "skyscraper",
+          "smog"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe\n\nA cyberpunk street scene with holograms. A narrow, rain-slicked alleyway where neon signs reflect off wet pavement. Holographic advertisements float mid-air, casting shifting shadows on the brick walls. A lone figure walks through the center, wearing a high-collared trench coat and dark, reflective boots. The air hums with electricity, visible as faint arcs near the overhead wires. Cool blue light from a distant streetlamp mixes with the warm pink glow of a floating data stream. Guttering steam rises from a manhole cover near the figure's feet. The background blurs slightly, showing stacked metal crates and a towering skyscraper piercing the smog.",
+        "final_structural_tags": "masterpiece, best quality, score_9, safe",
+        "final_prose": "A cyberpunk street scene with holograms. A narrow, rain-slicked alleyway where neon signs reflect off wet pavement. Holographic advertisements float mid-air, casting shifting shadows on the brick walls. A lone figure walks through the center, wearing a high-collared trench coat and dark, reflective boots. The air hums with electricity, visible as faint arcs near the overhead wires. Cool blue light from a distant streetlamp mixes with the warm pink glow of a floating data stream. Guttering steam rises from a manhole cover near the figure's feet. The background blurs slightly, showing stacked metal crates and a towering skyscraper piercing the smog."
+      }
+    }
+  ],
+  "prompt_id": "cyberpunk_street",
+  "seed": 7919,
+  "modifiers": [],
+  "prompt_source": "a cyberpunk street scene with holograms",
+  "final_tags": "masterpiece, best quality, score_9, safe\n\nA cyberpunk street scene with holograms. A narrow, rain-slicked alleyway where neon signs reflect off wet pavement. Holographic advertisements float mid-air, casting shifting shadows on the brick walls. A lone figure walks through the center, wearing a high-collared trench coat and dark, reflective boots. The air hums with electricity, visible as faint arcs near the overhead wires. Cool blue light from a distant streetlamp mixes with the warm pink glow of a floating data stream. Guttering steam rises from a manhole cover near the figure's feet. The background blurs slightly, showing stacked metal crates and a towering skyscraper piercing the smog.",
+  "prose": "A cyberpunk street scene with holograms. A narrow, rain-slicked alleyway where neon signs reflect off wet pavement. Holographic advertisements float mid-air, casting shifting shadows on the brick walls. A lone figure walks through the center, wearing a high-collared trench coat and dark, reflective boots. The air hums with electricity, visible as faint arcs near the overhead wires. Cool blue light from a distant streetlamp mixes with the warm pink glow of a floating data stream. Guttering steam rises from a manhole cover near the figure's feet. The background blurs slightly, showing stacked metal crates and a towering skyscraper piercing the smog.",
+  "draft": "masterpiece, best quality, score_9, cyberpunk, street, alleyway, rain-slicked, wet, pavement, neon, signs, holograms, advertisements, floating, shadows, brick, walls, lone, figure, high-collared, trench, coat, dark, reflective, boots, electricity, arcs, wires, cool, blue, streetlamp, warm, pink, data, stream, steam, manhole, cover, background, blurred, stacked, metal, crates, towering, skyscraper, smog",
+  "shortlist": {
+    "artists": [
+      "sch",
+      "chaotic unknown",
+      "asgr",
+      "lrk",
+      "eou",
+      "aono3"
+    ],
+    "characters": [],
+    "series": [
+      "a nightmare on elm street",
+      "helltaker",
+      "girl's avenue",
+      "sword art online: hollow fragment",
+      "summertime render",
+      "sentimental graffiti"
+    ]
+  }
+}

@@ -679,6 +679,60 @@ def _tags_have_category(tag_csv: str, stack, category: int) -> bool:
             return True
     return False
 
+
+_SUBJECT_COUNT_RE = re.compile(r"^\d+(girl|boy|other)s?$")
+
+# Structural Danbooru categories (artist/character/copyright). CAT_GENERAL=0
+# and CAT_META=5 are the ones V14 drops — that's where "sparse leg hair" /
+# "simple fish" / "overhead lights" live after FAISS retrieval.
+_STRUCTURAL_CATEGORIES = {1, 3, 4}
+
+
+def _filter_to_structural_tags(tag_csv: str, stack, tag_fmt: str) -> str:
+    """V14 Hybrid filter: keep only structural tags.
+
+    Structural = format whitelist (quality/safety/rating) + subject-count
+    (1girl, 1boy, 2girls, 1other) + Danbooru categories {artist, character,
+    copyright}. Everything else (general body/pose/clothing/setting/lighting,
+    meta) is dropped — the Hybrid prose carries those concepts natively since
+    Anima's Qwen3 text encoder handles natural language.
+
+    Rationale: general-category tags are the exclusive origin of FAISS
+    mis-retrievals on terse sources ('sparse leg hair' for 'loose hair',
+    'simple fish' for a garden scene, 'overhead lights' for 'warm light').
+    By dropping the category entirely, that failure class is eliminated by
+    construction — no threshold-tuning required.
+
+    Must be called with a stack that has an active DB (Anima format + RAG).
+    """
+    if not tag_csv:
+        return tag_csv
+    fmt = _tag_formats.get(tag_fmt, {})
+    whitelist: set = set()
+    whitelist |= {str(t).lower() for t in (fmt.get("quality_tags") or set())}
+    whitelist |= {str(t).lower() for t in (fmt.get("leading_tags") or set())}
+    whitelist |= {str(t).lower() for t in (fmt.get("rating_tags") or set())}
+    kept = []
+    for t in tag_csv.split(","):
+        t = t.strip()
+        if not t:
+            continue
+        norm = t.lstrip("@").lower().replace(" ", "_").replace("-", "_")
+        if not norm:
+            continue
+        if norm in whitelist:
+            kept.append(t)
+            continue
+        if _SUBJECT_COUNT_RE.match(norm):
+            kept.append(t)
+            continue
+        if stack is not None and stack.db is not None:
+            rec = stack.db.get_by_name(norm)
+            if rec and rec.get("category") in _STRUCTURAL_CATEGORIES:
+                kept.append(t)
+    return ", ".join(kept)
+
+
 def _load_tag_formats():
     """Load tag format definitions from tag-formats/ directory."""
     global _tag_formats
@@ -2570,24 +2624,37 @@ class PromptEnhancer(scripts.Script):
                         else:
                             tags_raw = chunk
                     tags_raw = _clean_output(tags_raw, strip_underscores=False)
-                    print(f"[PromptEnhancer] Hybrid pass 3/3 (summarize): → NL supplement")
 
-                    # Pass 3: summarize prose to 1-2 compositional sentences
-                    summarize_sp = _prompts.get("summarize", "")
-                    style_str = _build_style_string(mods)
-                    if style_str:
-                        summarize_sp = f"{summarize_sp}\n\nThe following styles were applied: {style_str} Ensure these stylistic choices are reflected in the compositional summary."
-                    nl_supplement = None
-                    for chunk in _call_llm_progress(prose, api_url, model, summarize_sp, temp, think=th, seed=int(sd)):
-                        if isinstance(chunk, dict):
-                            p = chunk
-                            if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 3/3 summarize: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                    # V14 path: on Anima + RAG we skip Pass 3 summarize and use
+                    # full prose as the Hybrid body. The structural-tag filter
+                    # applied below drops general-category tags (where FAISS
+                    # mis-retrievals live), leaving only quality/safety/subject-
+                    # count/@artist/character/series in the tag prefix. Anima's
+                    # Qwen3 text encoder handles the prose natively, so the
+                    # concepts that used to be general tags (pose, clothing,
+                    # body, setting, lighting, atmosphere) are carried by prose.
+                    v14_path = (_anima is not None and tag_fmt == "Anima"
+                                and validation_mode == "RAG")
+                    if v14_path:
+                        nl_supplement = None
+                    else:
+                        print(f"[PromptEnhancer] Hybrid pass 3/3 (summarize): → NL supplement")
+                        # Pass 3: summarize prose to 1-2 compositional sentences
+                        summarize_sp = _prompts.get("summarize", "")
+                        style_str = _build_style_string(mods)
+                        if style_str:
+                            summarize_sp = f"{summarize_sp}\n\nThe following styles were applied: {style_str} Ensure these stylistic choices are reflected in the compositional summary."
+                        nl_supplement = None
+                        for chunk in _call_llm_progress(prose, api_url, model, summarize_sp, temp, think=th, seed=int(sd)):
+                            if isinstance(chunk, dict):
+                                p = chunk
+                                if p["tokens"] > 0:
+                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 3/3 summarize: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                                else:
+                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 3/3 summarize: {p['elapsed']:.1f}s...</span>"
                             else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 3/3 summarize: {p['elapsed']:.1f}s...</span>"
-                        else:
-                            nl_supplement = chunk
-                    nl_supplement = _clean_output(nl_supplement)
+                                nl_supplement = chunk
+                        nl_supplement = _clean_output(nl_supplement)
 
                     if validation_mode != "Off":
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: Validating tags ({validation_mode})...</span>"
@@ -2646,8 +2713,22 @@ class PromptEnhancer(scripts.Script):
                     # shaped the prose; this makes sure the picked tag
                     # actually appears in the output list.
                     tags_raw, stats = _inject_source_picks(tags_raw, mods, stats)
-                    tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
-                    status_parts = [f"{tag_count} tags + NL"]
+
+                    # V14: drop general+meta tags, emit {structural_tags}\n\n{prose}.
+                    # The FAISS validator force-maps every draft tag to a nearest
+                    # neighbor; on terse/mundane sources the neighbors are weird
+                    # ("sparse leg hair" for "loose hair", "simple fish" for a
+                    # garden scene, "overhead lights" for "warm light"). Anima's
+                    # Qwen3 text encoder handles those concepts as prose natively,
+                    # so we drop general tags by construction and let prose carry
+                    # them. See experiments/variants/v14.py for rating data.
+                    if v14_path:
+                        tags_raw = _filter_to_structural_tags(tags_raw, _anima, tag_fmt)
+                        tag_count = len([t for t in tags_raw.split(",") if t.strip()])
+                        status_parts = [f"{tag_count} tags + prose"]
+                    else:
+                        tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
+                        status_parts = [f"{tag_count} tags + NL"]
                     if stats:
                         if stats.get("corrected"):
                             status_parts.append(f"{stats['corrected']} corrected")
@@ -2656,7 +2737,10 @@ class PromptEnhancer(scripts.Script):
                         if stats.get("kept_invalid"):
                             status_parts.append(f"{stats['kept_invalid']} unverified")
 
-                    final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
+                    if v14_path:
+                        final = f"{tags_raw}\n\n{prose}" if prose else tags_raw
+                    else:
+                        final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
                     if prepend and source:
                         final = f"{source}\n\n{final}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"

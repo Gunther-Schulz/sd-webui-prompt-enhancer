@@ -1,0 +1,358 @@
+{
+  "run_id": "v14__empty_random_artist_random_setting__seed99991__c4db56",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 99991
+  },
+  "started_at": 1776806271.2413979,
+  "ended_at": 1776806289.670462,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.115,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.452,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in the center of a cramped, industrial boiler room filled with steam and rusted pipes, rendered in the style of Egon Schiele. The subject is a gaunt man with elongated limbs and angular shoulders, wearing a tattered charcoal vest over a white linen shirt that strains against his frame. His hair is a wild, unkempt mass of dark brown strands sticking out at sharp angles. He grips a heavy iron wrench with a twisted grip, his fingers long and claw-like. The room around him is defined by exposed brick walls painted a deep, uneven crimson and a ceiling lost in the haze of condensation. Light filters in from a high, narrow window, casting long, distorted shadows that stretch across the floorboards. The texture of the scene is rough and scratchy, with visible charcoal smudges and thin ink lines defining every curve and crease. A single drop of sweat beads on his temple before sliding down his cheek. The perspective is slightly skewed, tilting the entire composition to create a sense of unease and movement.",
+        "prose_samples": [
+          "A lone figure stands on a weathered cobblestone street in Prague at dusk, rendered in the style of Egon Schiele. The man wears a loose, charcoal-grey linen tunic with jagged, uneven hemlines that expose pale skin. His hair is a messy shock of unruly chestnut, cut short and framing a gaunt, angular face. He holds a sketchbook open in one hand, the paper stiff and cream-colored against the dark background. Behind him, a crooked wooden fence leans precariously, its planks warped and stained with deep, dripping shadows. The lighting comes from a single hanging lantern, casting long, distorted silhouettes that stretch across the wet pavement. The air feels cool and crisp, suggested by the way the fabric clings to the figure's frame. In the distance, a spire pierces the hazy sky, its lines sharp and tilted. The ground is uneven, with puddles reflecting the warm, amber glow of the lantern. Every edge is defined with a bold, dark contour line, giving the scene a raw, vibrating energy. The background blurs slightly, pushing the foreground subject into sharp, immediate focus.",
+          "A solitary figure stands on a weathered wooden pier in the early morning mist, wearing a heavy oilskin coat and a wide-brimmed hat that casts a deep shadow over the face. The scene is rendered in the style of Max Ernst, utilizing his signature frottage texture where the wood grain of the pier seems to bleed into the fabric of the coat. A single, sharp raven lands on the figure's shoulder, its feathers rendered with the same grainy, collaged precision as the background. The sky above is a fractured tapestry of slate grey and bruised purple, suggesting a cloud layer torn apart by unseen pressure. Light comes from a low, diffuse source, creating soft, elongated shadows that stretch across the wet planks. The water below reflects the fractured sky in broken shards, not a clear mirror image. Fine details like a rusted lantern post and tangled seaweed add gritty realism to the composition. The air feels thick and damp, caught in a moment of quiet, slightly surreal stillness.",
+          "A solitary figure stands in the center of a cramped, industrial boiler room filled with steam and rusted pipes, rendered in the style of Egon Schiele. The subject is a gaunt man with elongated limbs and angular shoulders, wearing a tattered charcoal vest over a white linen shirt that strains against his frame. His hair is a wild, unkempt mass of dark brown strands sticking out at sharp angles. He grips a heavy iron wrench with a twisted grip, his fingers long and claw-like. The room around him is defined by exposed brick walls painted a deep, uneven crimson and a ceiling lost in the haze of condensation. Light filters in from a high, narrow window, casting long, distorted shadows that stretch across the floorboards. The texture of the scene is rough and scratchy, with visible charcoal smudges and thin ink lines defining every curve and crease. A single drop of sweat beads on his temple before sliding down his cheek. The perspective is slightly skewed, tilting the entire composition to create a sense of unease and movement."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.245,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best_quality,1boy,man,gaunt,elongated_limbs,angular_shoulders,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt_man,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 7.555,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1boy, male focus, limbs, boiler, steam, industrial pipe, brown hair, dark, vest, charcoal, shirt, wrench, heavy, twisted, long fingers, claws, brick, wall, haze, condensation, window, shadow, perspective, sketch, texture",
+        "stats": {
+          "corrected": 0,
+          "dropped": 227,
+          "kept_invalid": 0,
+          "total": 29
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.053,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, male focus, limbs, boiler, steam, industrial pipe, brown hair, dark, vest, charcoal, shirt, wrench, heavy, twisted, long fingers, claws, brick, wall, haze, condensation, window, shadow, perspective, sketch, texture, @kozaki yuusuke",
+        "slot_fill_trace": {
+          "artist": "kozaki_yuusuke"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, male focus, limbs, boiler, steam, industrial pipe, brown hair, dark, vest, charcoal, shirt, wrench, heavy, twisted, long fingers, claws, brick, wall, haze, condensation, window, shadow, perspective, sketch, texture, @kozaki yuusuke",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.01,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_7, safe, 1boy, @kozaki yuusuke",
+        "v14_dropped_general": [
+          "male focus",
+          "limbs",
+          "boiler",
+          "steam",
+          "industrial pipe",
+          "brown hair",
+          "dark",
+          "vest",
+          "charcoal",
+          "shirt",
+          "wrench",
+          "heavy",
+          "twisted",
+          "long fingers",
+          "claws",
+          "brick",
+          "wall",
+          "haze",
+          "condensation",
+          "window",
+          "shadow",
+          "perspective",
+          "sketch",
+          "texture"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, @kozaki yuusuke\n\nA solitary figure stands in the center of a cramped, industrial boiler room filled with steam and rusted pipes, rendered in the style of Egon Schiele. The subject is a gaunt man with elongated limbs and angular shoulders, wearing a tattered charcoal vest over a white linen shirt that strains against his frame. His hair is a wild, unkempt mass of dark brown strands sticking out at sharp angles. He grips a heavy iron wrench with a twisted grip, his fingers long and claw-like. The room around him is defined by exposed brick walls painted a deep, uneven crimson and a ceiling lost in the haze of condensation. Light filters in from a high, narrow window, casting long, distorted shadows that stretch across the floorboards. The texture of the scene is rough and scratchy, with visible charcoal smudges and thin ink lines defining every curve and crease. A single drop of sweat beads on his temple before sliding down his cheek. The perspective is slightly skewed, tilting the entire composition to create a sense of unease and movement.",
+        "final_structural_tags": "masterpiece, best quality, score_7, safe, 1boy, @kozaki yuusuke",
+        "final_prose": "A solitary figure stands in the center of a cramped, industrial boiler room filled with steam and rusted pipes, rendered in the style of Egon Schiele. The subject is a gaunt man with elongated limbs and angular shoulders, wearing a tattered charcoal vest over a white linen shirt that strains against his frame. His hair is a wild, unkempt mass of dark brown strands sticking out at sharp angles. He grips a heavy iron wrench with a twisted grip, his fingers long and claw-like. The room around him is defined by exposed brick walls painted a deep, uneven crimson and a ceiling lost in the haze of condensation. Light filters in from a high, narrow window, casting long, distorted shadows that stretch across the floorboards. The texture of the scene is rough and scratchy, with visible charcoal smudges and thin ink lines defining every curve and crease. A single drop of sweat beads on his temple before sliding down his cheek. The perspective is slightly skewed, tilting the entire composition to create a sense of unease and movement."
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 99991,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1boy, @kozaki yuusuke\n\nA solitary figure stands in the center of a cramped, industrial boiler room filled with steam and rusted pipes, rendered in the style of Egon Schiele. The subject is a gaunt man with elongated limbs and angular shoulders, wearing a tattered charcoal vest over a white linen shirt that strains against his frame. His hair is a wild, unkempt mass of dark brown strands sticking out at sharp angles. He grips a heavy iron wrench with a twisted grip, his fingers long and claw-like. The room around him is defined by exposed brick walls painted a deep, uneven crimson and a ceiling lost in the haze of condensation. Light filters in from a high, narrow window, casting long, distorted shadows that stretch across the floorboards. The texture of the scene is rough and scratchy, with visible charcoal smudges and thin ink lines defining every curve and crease. A single drop of sweat beads on his temple before sliding down his cheek. The perspective is slightly skewed, tilting the entire composition to create a sense of unease and movement.",
+  "prose": "A solitary figure stands in the center of a cramped, industrial boiler room filled with steam and rusted pipes, rendered in the style of Egon Schiele. The subject is a gaunt man with elongated limbs and angular shoulders, wearing a tattered charcoal vest over a white linen shirt that strains against his frame. His hair is a wild, unkempt mass of dark brown strands sticking out at sharp angles. He grips a heavy iron wrench with a twisted grip, his fingers long and claw-like. The room around him is defined by exposed brick walls painted a deep, uneven crimson and a ceiling lost in the haze of condensation. Light filters in from a high, narrow window, casting long, distorted shadows that stretch across the floorboards. The texture of the scene is rough and scratchy, with visible charcoal smudges and thin ink lines defining every curve and crease. A single drop of sweat beads on his temple before sliding down his cheek. The perspective is slightly skewed, tilting the entire composition to create a sense of unease and movement.",
+  "draft": "masterpiece,best_quality,1boy,man,gaunt,elongated_limbs,angular_shoulders,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt_man,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped,center,1boy,man,boiler_room,industrial,steam,rusted_pipes,style_of_ego_n_schiele,gaunt,elongated_limbs,angular_shoulders,unkept_hair,dark_brown_hair,wild_hair,sharp_angles,tattered_vest,charcoal_vest,white_linen_shirt,straining_shirt,iron_wrench,heavy_wrench,twisted_grip,long_fingers,claw_like_fingers,exposed_brick,deep_crimson_wall,haze,condensation,high_window,narrow_window,long_shadows,tilted_perspective,skewed_perspective,rough_texture,scratchy,charcoal_smudges,thin_ink_lines,sweat_drop,beaded_sweat,unease,movement,cramped",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

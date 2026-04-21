@@ -1,0 +1,184 @@
+{
+  "_meta": {
+    "rubric_version": 1,
+    "rated_by": "claude-opus-4-7",
+    "seeds_used": [42, 137, 1729, 7919, 10001, 65537, 99991, 524287, 1000003, 2147483000],
+    "variant_delta_from_v11": "V11 pipeline + terminal filter keeping only structural tags (quality/safety/subject-count/@artist/character/series) + Hybrid-format output (structural_tags + '\\n\\n' + prose). Motivated by Anima model card: Qwen3 0.6B text encoder handles prose natively; general-category tags add no encoder signal that prose doesn't already carry, AND are the exclusive origin of 'sparse leg hair / simple fish / overhead lights' FAISS mis-retrievals on terse-source prompts.",
+    "rubric_note": "Overall rubric score reflects 'would this produce a good Anima image?' For V14 the input to the image model is the combined {structural_tags}\\n\\n{prose} string, not just the tag prefix. Ratings reflect the whole string as a prompt."
+  },
+
+  "miku_cake": {
+    "by_seed": {
+      "42":        {"score": 4, "note": "@hatsune miku + vocaloid tags clean. Rich chibi prose with cake, frilly dress, overhead light. Truncated at 124 words but still coherent."},
+      "137":       {"score": 1, "note": "Prose SEVERELY truncated — only 6 words ('hatsune miku holding a cake, chibi'). Structural tags present but prose carries nothing. Unusable as Anima input."},
+      "1729":      {"score": 4, "note": "@hatsune miku + vocaloid. Prose references 'Kotomi' style, specific cake details. Coherent chibi scene."},
+      "7919":      {"score": 4, "note": "Rich 140-word chibi prose. Clean tag prefix. Well-described."},
+      "10001":     {"score": 3, "note": "Tag prefix MISSING '1girl' (structural gap — only 'masterpiece, best quality, score_7, safe, hatsune miku, vocaloid'). Rich prose but subject-count signal absent."},
+      "65537":     {"score": 4, "note": "Rich 108-word chibi prose. Clean structural prefix."},
+      "99991":     {"score": 4, "note": "Dense 96-word chibi description. Good."},
+      "524287":    {"score": 3, "note": "Tag has 'hatsune miku expo' (subseries misfire — should be just vocaloid). Prose solid."},
+      "1000003":   {"score": 4, "note": "Good 121-word chibi scene. Clean tags, specific details (frosting, cherry, teal twintails)."},
+      "2147483000":{"score": 4, "note": "Good. Specific chibi pose, teal twintails, green frilled top."}
+    },
+    "v11_mean": 3.2,
+    "v14_mean": 3.5,
+    "delta_v14_v11": 0.3,
+    "notes": "+0.3 vs V11. Seed 137 is a truncation failure (6-word prose — prose LLM bailed early). 10001 missing 1girl is a filter gap (miku's 1girl tag dropped because not matched by format whitelist or regex at the DB level — 'hatsune miku' carries subject implicitly via character but structurally that's a miss). V11 scored 3.2 because its tags were thin for chibi; V14's prose body fills in the scene description."
+  },
+
+  "girl_sex": {
+    "by_seed": {
+      "42":         {"score": 4, "note": "nsfw + explicit prose (801 words, likely hit num_predict cap but still usable)."},
+      "137":        {"score": 4, "note": "nsfw + clear explicit prose. Good coverage."},
+      "1729":       {"score": 4, "note": "nsfw + highres. Explicit, concrete. 'heavy thighs spread wide', 'sweat beading'."},
+      "7919":       {"score": 3, "note": "sensitive — prose sanitized to 'raw physical intensity' without explicit content. LLM-level sanitization, same as V11 on this seed."},
+      "10001":      {"score": 3, "note": "sensitive — prose euphemistic ('caught mid-thrust'). Sanitization same as V11."},
+      "65537":      {"score": 4, "note": "explicit. 831-word prose (hit cap). Coverage rich."},
+      "99991":      {"score": 4, "note": "explicit. Concrete pose, clothing, light."},
+      "524287":     {"score": 4, "note": "explicit. Vivid scene."},
+      "1000003":    {"score": 3, "note": "sensitive — prose describes 'raw physical energy' but avoids explicit. Sanitized."},
+      "2147483000": {"score": 2, "note": "safe tag!! Prose also sanitized to 'raw motion' without explicit. Worst sanitization outcome."}
+    },
+    "v11_mean": 4.1,
+    "v14_mean": 3.5,
+    "delta_v14_v11": -0.6,
+    "notes": "-0.6 vs V11. Regression on this prompt. Root cause is NOT the V14 filter — it's the same LLM-level prose sanitization rate that affects V11 too (see V5/V8 LOG entries). V14's tag output is thinner (no 'thighs, spread legs, nude, sweat' retained) so the safety tag carries more weight alone. Where V11 general-tags 'sweat, thighs, explicit-act-ish' partially compensated for euphemistic prose, V14 drops them and prose must stand alone. For NSFW source, V11's general-tag retention was doing some work. Consider: V14.1 could keep category-1 (NSFW-signal) general tags via a carve-out."
+  },
+
+  "girl_random_artist_random_era": {
+    "by_seed": {
+      "42":        {"score": 4, "note": "@shinkawa youji + 1990s. Clean 90s denim/grunge prose."},
+      "137":       {"score": 4, "note": "@sch + 1930s. Specific salon-period details."},
+      "1729":      {"score": 4, "note": "@yoshikawa tatsuya + 1990s. Cassette tapes, denim, grunge."},
+      "7919":      {"score": 4, "note": "@amano yoshitaka + 1990s. Amano skews fantasy, V11 also noted."},
+      "10001":     {"score": 4, "note": "@eku + 1960s. Clean 60s specifics."},
+      "65537":     {"score": 4, "note": "@murata taichi + 2000s. Y2K CRT/static aesthetic."},
+      "99991":     {"score": 4, "note": "@takani yoshiyuki + 1980s. Geometric bob, denim."},
+      "524287":    {"score": 4, "note": "@himura kiseki injected correctly; prose mentions 'Takahashi Rumiko' (prose-tag artist mismatch — text contradiction). Tag is load-bearing via @ prefix, image likely respects tag."},
+      "1000003":   {"score": 4, "note": "@asahikawa hiyori + 1980s. V11 rated 5 here; V14 same output, light downgrade for lack of general-tag supporting detail."},
+      "2147483000":{"score": 4, "note": "@mashuu masaki tag; prose names 'Murata Taichi' style. Same prose-tag contradiction class as 524287. Image should follow @mashuu via tag weight."}
+    },
+    "v11_mean": 4.1,
+    "v14_mean": 4.0,
+    "delta_v14_v11": -0.1,
+    "notes": "-0.1 vs V11 (noise level). Every @artist + era survives V14's filter correctly (artist is CAT_ARTIST, era tags are format whitelist). The 2 prose-tag artist-name mismatches (524287, 2147483000) existed in V11 too at prose level but V11 didn't rate prose; V14 exposes them. Essentially break-even."
+  },
+
+  "empty_random_artist_random_setting": {
+    "by_seed": {
+      "42":        {"score": 4, "note": "@gofu + Nara-style alleyway with raincoat/umbrella. Concrete."},
+      "137":       {"score": 4, "note": "@ittokyu + Tokyo train station Nara-style. Specific details."},
+      "1729":      {"score": 4, "note": "@lack + Winslow Homer workshop. 1other subject-count, consistent."},
+      "7919":      {"score": 4, "note": "@oso (toolate) + Schiele apothecary. Specific."},
+      "10001":     {"score": 4, "note": "@gofu + Giger Kowloon biomechanical. Distinct."},
+      "65537":     {"score": 4, "note": "@meimaru inuchiyo + Schiele Parisian market."},
+      "99991":     {"score": 4, "note": "@kozaki yuusuke + Schiele boiler room."},
+      "524287":    {"score": 4, "note": "@matsuda (matsukichi) + Schiele Victorian port city."},
+      "1000003":   {"score": 4, "note": "@hamada yoshikazu + industrial laundromat. Specific, gritty."},
+      "2147483000":{"score": 4, "note": "@matsuda + Corot kitchen. Warm light, specific."}
+    },
+    "v11_mean": 4.3,
+    "v14_mean": 4.0,
+    "delta_v14_v11": -0.3,
+    "notes": "-0.3 vs V11. All @artist tags survive filter. Prose rich per seed. V11 rated 4.3 probably because its tags included scene-specific general tags (stone, cobblestone, lamp, umbrella); V14 strips those but prose carries them. Effective information is equivalent for image gen; rubric score gap likely reflects rater preference for richer tag lists."
+  },
+
+  "girl_bare": {
+    "by_seed": {
+      "42":        {"score": 3, "note": "Generic neutral pose. Adequate. Clean tags."},
+      "137":       {"score": 4, "note": "Specific — white cotton blouse, sleeves rolled, dark hair. Concrete."},
+      "1729":      {"score": 3, "note": "96-word generic prose; 'specific fabric' is vague."},
+      "7919":      {"score": 3, "note": "91-word generic. 'Fitted top' vague."},
+      "10001":     {"score": 4, "note": "Specific — smooth skin, dark hair knot, white cotton t-shirt."},
+      "65537":     {"score": 4, "note": "Character name 'girl (mokufuu)' leaked from shortlist into prose. Clean otherwise; specific fabric/light."},
+      "99991":     {"score": 3, "note": "Generic. 'Simple garment' vague."},
+      "524287":    {"score": 4, "note": "Pearl-earring detail (Vermeer-ish). Concrete, dimly lit room."},
+      "1000003":   {"score": 3, "note": "Vague: 'single solid color covers entire body' is odd phrasing."},
+      "2147483000":{"score": 3, "note": "Generic neutral-pose prose."}
+    },
+    "v11_mean": null,
+    "v14_mean": 3.4,
+    "notes": "No V11 rating available for this prompt. V14 3.4 on ultra-terse source ('girl'). Terse source is hard — LLM fills with priors. Zero weird DB tags (by construction — general tags dropped)."
+  },
+
+  "girl_serene": {
+    "by_seed": {
+      "42":        {"score": 4, "note": "Specific pose + ambient light. Good."},
+      "137":       {"score": 4, "note": "Peaceful scene, calm expression, consistent."},
+      "1729":      {"score": 3, "note": "Odd detail 'one eye slightly more open than the other' distracts."},
+      "7919":      {"score": 4, "note": "Tranquil, specific."},
+      "10001":     {"score": 3, "note": "827-word prose — way over cap, rambling."},
+      "65537":     {"score": 4, "note": "102-word clean peaceful scene."},
+      "99991":     {"score": 4, "note": "85-word clean serene scene."},
+      "524287":    {"score": 3, "note": "60 words — thin prose. Pearl-earring detail but otherwise list-like."},
+      "1000003":   {"score": 3, "note": "147 words but repetitive ('smooth skin', 'calm', 'peaceful' many times)."},
+      "2147483000":{"score": 4, "note": "90 words, clean, coherent."}
+    },
+    "v11_mean": null,
+    "v14_mean": 3.6,
+    "notes": "No V11 rating available. V14 3.6 on 'girl, serene'. Zero weird DB tags."
+  },
+
+  "girl_beautiful_location": {
+    "by_seed": {
+      "42":        {"score": 3, "note": "71 words — thin, list-like."},
+      "137":       {"score": 4, "note": "Waterfall, granite moss, golden hour. Rich."},
+      "1729":      {"score": 2, "note": "Character contamination: 'sweetie belle, girl (mokufuu)' in tag AND prose — the shortlist bled into output. Structural pollution."},
+      "7919":      {"score": 4, "note": "Oak tree, stone path, dappled shadows. Clean."},
+      "10001":     {"score": 4, "note": "Green grass, wildflowers, hills. Coherent."},
+      "65537":     {"score": 3, "note": "Lush green, wildflowers but scent-of-jasmine detail invented."},
+      "99991":     {"score": 3, "note": "62 words — thin, archway ref vague."},
+      "524287":    {"score": 3, "note": "Vague: 'specific fabric', 'distinct architectural element' — prose reads like meta-description."},
+      "1000003":   {"score": 3, "note": "Emerald leaves, wildflowers. 'Concrete details of the setting surrounding her form' is meta-narration."},
+      "2147483000":{"score": 4, "note": "Plaza, stone fountain, cobblestones. Concrete."}
+    },
+    "v11_mean": null,
+    "v14_mean": 3.3,
+    "notes": "No V11 rating available. V14 3.3. Seed 1729's character contamination ('sweetie belle, girl (mokufuu)') is the shortlist-injection sometimes over-firing — independent of V14. Zero weird-tag mis-retrievals."
+  },
+
+  "cyberpunk_street": {
+    "by_seed": {
+      "42":        {"score": 4, "note": "Rich cyberpunk: neon trench, holographic ads, data-chip reader."},
+      "137":       {"score": 4, "note": "1girl+1boy+1other tag combo works for crowd scene. Trench coat, combat boots."},
+      "1729":      {"score": 4, "note": "Rain + neon + data streams. Coherent."},
+      "7919":      {"score": 4, "note": "Rain-slicked alley, trench coat, goggles. Missing 1girl/1boy subject tag."},
+      "10001":     {"score": 3, "note": "nsfw safety tag but prose has NO nsfw content — misclassification. Scene otherwise rich."},
+      "65537":     {"score": 4, "note": "138 words, rich cyberpunk with ozone smell, steam, grating."},
+      "99991":     {"score": 4, "note": "131 words, synthetic beer ad, trench coat, kanji sign."},
+      "524287":    {"score": 3, "note": "Tag has 'holo, spice and wolf' — character/series leaked from shortlist. Prose clean cyberpunk."},
+      "1000003":   {"score": 4, "note": "Holographic ads, wet pavement, humming lamps. Rich."},
+      "2147483000":{"score": 4, "note": "Trench coat figure, ozone smell, holograms. Rich."}
+    },
+    "v11_mean": null,
+    "v14_mean": 3.8,
+    "notes": "No V11 rating available. V14 3.8 — strongest of the trigger prompts. Zero weird DB tags. Two shortlist-leaked entity tags on 524287 (holo, spice and wolf). Seed 10001 has wrong 'nsfw' safety tag from LLM misclassification (not a V14 bug)."
+  },
+
+  "_summary": {
+    "rated_prompts": {
+      "miku_cake":                         {"v11": 3.2, "v14": 3.5, "delta": 0.3},
+      "girl_sex":                          {"v11": 4.1, "v14": 3.5, "delta": -0.6},
+      "girl_random_artist_random_era":     {"v11": 4.1, "v14": 4.0, "delta": -0.1},
+      "empty_random_artist_random_setting":{"v11": 4.3, "v14": 4.0, "delta": -0.3}
+    },
+    "rated_mean": {"v11": 3.925, "v14": 3.75, "delta": -0.175},
+    "trigger_prompts_v14_only": {
+      "girl_bare":                3.4,
+      "girl_serene":              3.6,
+      "girl_beautiful_location":  3.3,
+      "cyberpunk_street":         3.8,
+      "mean":                     3.525
+    },
+    "weird_tag_contamination": {
+      "v14_hits_across_80_traces": 0,
+      "note": "By construction, V14 cannot emit 'sparse leg hair / simple fish / overhead lights' as structural tags — general-category tags are all filtered. Prose may still use those phrases narratively, but they carry as sentence context, not as tag-weighted structural signal."
+    },
+    "verdict": "V14 shows -0.175 on the 4-prompt rubric mean vs V11. Regression is concentrated on girl_sex (-0.6) where V11's retention of general tags ('sweat', 'thighs', 'explicit-act-ish') partially compensated for LLM prose sanitization. On other rated prompts delta is noise (-0.1 / -0.3 / +0.3). Trigger prompts (girl_bare, girl_serene, girl_beautiful_location, cyberpunk_street) score 3.525 mean with ZERO weird-tag class failures — the exact failure mode V14 was designed to eliminate is eliminated. Rubric caveat: V11 ratings were of tag-only strings; V14 ratings are of {structural_tags}\\n\\n{prose} strings. Rubric was designed for tag output and may understate V14's effective image-gen information (prose carries what was previously in general tags).",
+    "recommendation": "NUANCED. V14 is the right shape for terse/mundane sources (where weird tags plague V11) but loses on explicit content (where V11 general tags carried signal). Two paths: (A) promote V14 as the new Hybrid output shape and accept the girl_sex regression as a separate problem to solve via prose-SP tuning; (B) V14.1 = V14 + carve-out for NSFW-signal general tags (keep tags that resolve to a shortlist of explicit-content DB tags OR are flagged by the anima safety module). User-stated observation: Prose produces good images, Hybrid produces bad. V14 is closer to Prose shape and should test well in live image gen. Recommend: promote V14 to Hybrid handler now (user authorized), treat girl_sex as a follow-up investigation.",
+    "next_variants": [
+      "V14.1 — V14 + NSFW carve-out: when safety is nsfw/explicit, retain a small set of explicit-signal general tags from the validated list (e.g. top-5 tags that co-occur with nsfw in the DB co-occurrence graph).",
+      "V14.2 — tighten the Detailed base SP with a directive: 'this prose will be fed directly to an image model — cover every visual element a tag list would' (now that one-factor is done)."
+    ]
+  }
+}

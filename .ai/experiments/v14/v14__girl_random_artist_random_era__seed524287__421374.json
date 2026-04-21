@@ -1,0 +1,380 @@
+{
+  "run_id": "v14__girl_random_artist_random_era__seed524287__421374",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Era",
+        {
+          "behavioral": "Set this scene in the 2000s aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light.",
+          "keywords": "2000s (style)",
+          "source": {
+            "db_pattern": "^\\d{4}s_\\(style\\)$",
+            "min_post_count": 50,
+            "template": "Set this scene in the {display} aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light."
+          },
+          "_resolved_from_source": "2000s_(style)"
+        }
+      ]
+    ],
+    "seed": 524287
+  },
+  "started_at": 1776806103.6162095,
+  "ended_at": 1776806110.9302263,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.616,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['nakamura kusata', 'murata taichi', 'tsukamoto takashi', 'murata yuusuke', 'mikage takashi', 'takahashi rumiko'], characters=['noel (mermaid melody pichi pichi pitch)', 'ren (dears)', 'caren (mermaid melody pichi pichi pitch)', 'coco (mermaid melody pichi pichi pitch)', 'nanami lu…"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Set this scene in the 2000s aesthetic. Reflect the era authentically in clothing, surroundings, color grading, and light."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: nakamura kusata, murata taichi, tsukamoto takashi, murata yuusuke, mikage takashi, takahashi rumiko\nCharacters: noel (mermaid melody pichi pichi pitch), ren (dears), caren (mermaid melody pichi pichi pitch), coco (mermaid melody pichi pichi pitch), nanami lucia (idol), yuuki mizuho"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.304,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl stands alone in the 2000s, rendered in the style of Takahashi Rumiko. She wears a cropped, boxy tank top in solid white cotton with raw, hemmed edges. Her skirt is a high-waisted, pleated miniskirt in electric blue denim, stiff and structured. A thick, chunky plastic necklace rests against her collarbone. Her hair is a gravity-defying mass of bleached blonde, tied back in a messy, asymmetrical knot. She wears oversized sunglasses with thick black frames that hide her expression. The lighting is flat and even, mimicking the harsh fluorescent glow of a late 2000s department store. Background details are slightly grainy and soft-focused, creating a hazy, nostalgic atmosphere. The color palette is muted but punchy, dominated by washed-out pastels and deep shadows. She poses with one hand in her pocket, leaning slightly forward as if caught mid-conversation.",
+        "prose_samples": [
+          "A girl stands alone in the 2000s, rendered in the style of Takahashi Rumiko. She wears a cropped, boxy tank top in solid white cotton with raw, hemmed edges. Her skirt is a high-waisted, pleated miniskirt in electric blue denim, stiff and structured. A thick, chunky plastic necklace rests against her collarbone. Her hair is a gravity-defying mass of bleached blonde, tied back in a messy, asymmetrical knot. She wears oversized sunglasses with thick black frames that hide her expression. The lighting is flat and even, mimicking the harsh fluorescent glow of a late 2000s department store. Background details are slightly grainy and soft-focused, creating a hazy, nostalgic atmosphere. The color palette is muted but punchy, dominated by washed-out pastels and deep shadows. She poses with one hand in her pocket, leaning slightly forward as if caught mid-conversation.",
+          "A girl stands in a 2000s setting, rendered in the style of Takahashi Rumiko. She wears a simple garment made of thin, slightly sheer fabric that catches the era's specific color grading. Her hair falls in a casual, layered cut that frames her face. The lighting is flat and even, mimicking the soft, diffused glow of early digital screens or a single overhead tube light. Surroundings feature rounded corners and plastic textures common to the decade. Her pose is relaxed but centered, filling the frame with a directness typical of mid-century illustration. The composition feels slightly cropped, as if viewed through a small camera lens. Shadows are soft and indistinct, blending into the background rather than defining it sharply. One hand rests near her hip, fingers slightly curled. The color palette is muted, relying on desaturated pastels and earth tones. A small accessory, perhaps a plastic hair clip or a thin belt, adds a single point of interest. The girl's expression is neutral, neither smiling nor frowning, embodying the cool detachment of early 2000s portraiture. Fine lines define her features, with ink-like edges that suggest a hand-drawn origin. The scene balances digital clarity with the nostalgic feel of analog printing.",
+          "A girl stands in the 2000s aesthetic, rendered in the style of Tsukamoto Takashi. She wears a cropped denim jacket with silver buttons and a simple white t-shirt underneath. Her hair is choppy and layered, cut with jagged edges that catch the light. The scene features high-contrast lighting with deep, sharp shadows cast by a single overhead fluorescent bulb. A grainy film texture overlays the image, giving it a raw, analog feel. Her pose is dynamic, caught mid-motion with one leg lifted. The color palette is desaturated with cool blues and muted grays. She wears chunky platform sneakers with thick white soles. The background is a slightly blurred urban alleyway with peeling paint. Her expression is intense and slightly distant. The composition is framed tightly around her torso."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.035,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, safe, 1girl, Rumiko Takahashi, 2000s, cropped boxy tank top, solid white cotton, raw hemmed edges, high-waisted pleated miniskirt, electric blue denim, stiff structured skirt, thick chunky plastic necklace, collarbone, gravity-defying bleached blonde hair, messy asymmetrical knot, oversized sunglasses, thick black frames, flat even lighting, harsh fluorescent glow, department store, slightly grainy, soft-focused background, hazy nostalgic atmosphere, muted punchy color palette, washed-out pastels, deep shadows, hand in pocket, leaning forward, mid-conversation",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.292,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, tank top, cropped, miniskirt, denim, skirt, necklace, collarbone, blonde hair, messy, knot, sunglasses, glowing, shop, film grain, color guide, paint palette, pastels, shadow, hand in pocket, leaning forward",
+        "stats": {
+          "corrected": 0,
+          "dropped": 6,
+          "kept_invalid": 0,
+          "total": 25
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.058,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, tank top, cropped, miniskirt, denim, skirt, necklace, collarbone, blonde hair, messy, knot, sunglasses, glowing, shop, film grain, color guide, paint palette, pastels, shadow, hand in pocket, leaning forward, @himura kiseki",
+        "slot_fill_trace": {
+          "artist": "himura_kiseki"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, tank top, cropped, miniskirt, denim, skirt, necklace, collarbone, blonde hair, messy, knot, sunglasses, glowing, shop, film grain, color guide, paint palette, pastels, shadow, hand in pocket, leaning forward, @himura kiseki, 2000s (style)",
+        "source_inject_stats": {
+          "total": 1,
+          "source_injected": 1
+        }
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.01,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_7, safe, 1girl, @himura kiseki",
+        "v14_dropped_general": [
+          "tank top",
+          "cropped",
+          "miniskirt",
+          "denim",
+          "skirt",
+          "necklace",
+          "collarbone",
+          "blonde hair",
+          "messy",
+          "knot",
+          "sunglasses",
+          "glowing",
+          "shop",
+          "film grain",
+          "color guide",
+          "paint palette",
+          "pastels",
+          "shadow",
+          "hand in pocket",
+          "leaning forward",
+          "2000s (style)"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @himura kiseki\n\nA girl stands alone in the 2000s, rendered in the style of Takahashi Rumiko. She wears a cropped, boxy tank top in solid white cotton with raw, hemmed edges. Her skirt is a high-waisted, pleated miniskirt in electric blue denim, stiff and structured. A thick, chunky plastic necklace rests against her collarbone. Her hair is a gravity-defying mass of bleached blonde, tied back in a messy, asymmetrical knot. She wears oversized sunglasses with thick black frames that hide her expression. The lighting is flat and even, mimicking the harsh fluorescent glow of a late 2000s department store. Background details are slightly grainy and soft-focused, creating a hazy, nostalgic atmosphere. The color palette is muted but punchy, dominated by washed-out pastels and deep shadows. She poses with one hand in her pocket, leaning slightly forward as if caught mid-conversation.",
+        "final_structural_tags": "masterpiece, best quality, score_7, safe, 1girl, @himura kiseki",
+        "final_prose": "A girl stands alone in the 2000s, rendered in the style of Takahashi Rumiko. She wears a cropped, boxy tank top in solid white cotton with raw, hemmed edges. Her skirt is a high-waisted, pleated miniskirt in electric blue denim, stiff and structured. A thick, chunky plastic necklace rests against her collarbone. Her hair is a gravity-defying mass of bleached blonde, tied back in a messy, asymmetrical knot. She wears oversized sunglasses with thick black frames that hide her expression. The lighting is flat and even, mimicking the harsh fluorescent glow of a late 2000s department store. Background details are slightly grainy and soft-focused, creating a hazy, nostalgic atmosphere. The color palette is muted but punchy, dominated by washed-out pastels and deep shadows. She poses with one hand in her pocket, leaning slightly forward as if caught mid-conversation."
+      }
+    }
+  ],
+  "prompt_id": "girl_random_artist_random_era",
+  "seed": 524287,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Era"
+  ],
+  "prompt_source": "girl",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl, @himura kiseki\n\nA girl stands alone in the 2000s, rendered in the style of Takahashi Rumiko. She wears a cropped, boxy tank top in solid white cotton with raw, hemmed edges. Her skirt is a high-waisted, pleated miniskirt in electric blue denim, stiff and structured. A thick, chunky plastic necklace rests against her collarbone. Her hair is a gravity-defying mass of bleached blonde, tied back in a messy, asymmetrical knot. She wears oversized sunglasses with thick black frames that hide her expression. The lighting is flat and even, mimicking the harsh fluorescent glow of a late 2000s department store. Background details are slightly grainy and soft-focused, creating a hazy, nostalgic atmosphere. The color palette is muted but punchy, dominated by washed-out pastels and deep shadows. She poses with one hand in her pocket, leaning slightly forward as if caught mid-conversation.",
+  "prose": "A girl stands alone in the 2000s, rendered in the style of Takahashi Rumiko. She wears a cropped, boxy tank top in solid white cotton with raw, hemmed edges. Her skirt is a high-waisted, pleated miniskirt in electric blue denim, stiff and structured. A thick, chunky plastic necklace rests against her collarbone. Her hair is a gravity-defying mass of bleached blonde, tied back in a messy, asymmetrical knot. She wears oversized sunglasses with thick black frames that hide her expression. The lighting is flat and even, mimicking the harsh fluorescent glow of a late 2000s department store. Background details are slightly grainy and soft-focused, creating a hazy, nostalgic atmosphere. The color palette is muted but punchy, dominated by washed-out pastels and deep shadows. She poses with one hand in her pocket, leaning slightly forward as if caught mid-conversation.",
+  "draft": "masterpiece, best quality, score_7, safe, 1girl, Rumiko Takahashi, 2000s, cropped boxy tank top, solid white cotton, raw hemmed edges, high-waisted pleated miniskirt, electric blue denim, stiff structured skirt, thick chunky plastic necklace, collarbone, gravity-defying bleached blonde hair, messy asymmetrical knot, oversized sunglasses, thick black frames, flat even lighting, harsh fluorescent glow, department store, slightly grainy, soft-focused background, hazy nostalgic atmosphere, muted punchy color palette, washed-out pastels, deep shadows, hand in pocket, leaning forward, mid-conversation",
+  "shortlist": {
+    "artists": [
+      "nakamura kusata",
+      "murata taichi",
+      "tsukamoto takashi",
+      "murata yuusuke",
+      "mikage takashi",
+      "takahashi rumiko"
+    ],
+    "characters": [
+      "noel (mermaid melody pichi pichi pitch)",
+      "ren (dears)",
+      "caren (mermaid melody pichi pichi pitch)",
+      "coco (mermaid melody pichi pichi pitch)",
+      "nanami lucia (idol)",
+      "yuuki mizuho"
+    ],
+    "series": []
+  }
+}

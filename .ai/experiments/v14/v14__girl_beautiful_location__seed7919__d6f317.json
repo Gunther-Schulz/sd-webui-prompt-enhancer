@@ -1,0 +1,344 @@
+{
+  "run_id": "v14__girl_beautiful_location__seed7919__d6f317",
+  "variant": "v14",
+  "pipeline_input": {
+    "source": "girl, beautiful location",
+    "mods": [],
+    "seed": 7919
+  },
+  "started_at": 1776806352.7737467,
+  "ended_at": 1776806357.6480117,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.596,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sch', 'sol fa soft', 'ang', 'yu 65026', 'len (a 7)', 'aono3'], characters=['sweetie belle', 'girl (mokufuu)', 'girl dm', 'acfun girl', 'chica', 'octoling girl'], series=[\"girl's avenue\", 'high score girl', 'woman with a parasol', 'girl with a pearl earring', 'boy meets girl'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sch, sol fa soft, ang, yu 65026, len (a 7), aono3\nCharacters: sweetie belle, girl (mokufuu), girl dm, acfun girl, chica, octoling girl\nSeries: girl's avenue, high score girl, woman with a parasol, girl with a pearl earring, boy meets girl"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 3.356,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl with flowing hair stands in a location defined by a lush green lawn and a clear blue sky. Sunlight filters through the canopy of a large oak tree above, casting dappled shadows on her shoulders. She wears a dress made of smooth fabric that catches the light, with a hemline that brushes the grass. Her pose is relaxed, one hand resting lightly on her hip while the other holds a small, round object. The background features a winding path made of gray stone that leads toward a distant hill covered in wildflowers. A gentle breeze moves the leaves of the tree, creating a sense of calm movement in the air.",
+        "prose_samples": [
+          "girl with flowing hair stands in a location defined by a lush green lawn and a clear blue sky. Sunlight filters through the canopy of a large oak tree above, casting dappled shadows on her shoulders. She wears a dress made of smooth fabric that catches the light, with a hemline that brushes the grass. Her pose is relaxed, one hand resting lightly on her hip while the other holds a small, round object. The background features a winding path made of gray stone that leads toward a distant hill covered in wildflowers. A gentle breeze moves the leaves of the tree, creating a sense of calm movement in the air.",
+          "girl stands in a beautiful location where sunlight filters through tall trees. Her hair flows over her shoulders while she looks toward a distant horizon. The ground beneath her feet is covered in soft grass mixed with fallen leaves. A clear blue sky stretches above, casting dappled shadows across her face. Her skin catches the warm glow of the midday sun. Around her, the air feels thick with the scent of blooming flowers and fresh earth. The location features rolling hills that curve gently into the background.",
+          "girl standing in a beautiful location, sunlight filtering through tall trees to cast dappled shadows on her skin, green grass beneath her feet, soft breeze ruffling her hair, clear blue sky overhead, distant rolling hills visible in the background, natural earth tones surrounding her form, one hand resting lightly on her hip, relaxed posture, vibrant flora blooming around her, gentle depth of field blurring the far distance, specific texture of fabric on her body, warm golden hour lighting defining her silhouette, crisp focus on her facial expression, lush vegetation framing the scene, a single bright flower near her shoulder, open space allowing the setting to breathe, subtle interplay of light and shadow across her features, rich color palette enhancing the environment, grounded weight in the composition, precise details of the landscape matching the grandeur of the spot, harmonious blend of organic shapes and her figure, sharp contrast between her form and the vast surroundings, tactile quality to the air around her, specific hue to the foliage, defined edge to her hair against the bright backdrop, cohesive atmosphere where every element supports the beauty of the place, immediate presence of the location enveloping her completely."
+        ],
+        "prose_picker_choice": 1,
+        "prose_picker_raw": "1"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 0.555,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece,best_quality,1girl,green_lawn,blue_sky,flowing_hair,oak_tree,dappled_shadows,smooth_dress,hip_hand,small_round_object,gray_stone_path,distant_hill,wildflowers,gentle_breeze,calm",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 0.367,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1girl, lawn, blue sky, tree, shadow, dress, stone walkway, path, distant, hill",
+        "stats": {
+          "corrected": 0,
+          "dropped": 2,
+          "kept_invalid": 0,
+          "total": 14
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, lawn, blue sky, tree, shadow, dress, stone walkway, path, distant, hill",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl, lawn, blue sky, tree, shadow, dress, stone walkway, path, distant, hill",
+        "source_inject_stats": {}
+      }
+    },
+    {
+      "step": "strip_to_structural",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "structural_tags": "masterpiece, best quality, score_7, safe, 1girl",
+        "v14_dropped_general": [
+          "lawn",
+          "blue sky",
+          "tree",
+          "shadow",
+          "dress",
+          "stone walkway",
+          "path",
+          "distant",
+          "hill"
+        ]
+      }
+    },
+    {
+      "step": "assemble_hybrid_output",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "source_inject_stats",
+        "sp",
+        "stats",
+        "structural_tags",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate",
+        "v14_dropped_general"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1girl\n\ngirl with flowing hair stands in a location defined by a lush green lawn and a clear blue sky. Sunlight filters through the canopy of a large oak tree above, casting dappled shadows on her shoulders. She wears a dress made of smooth fabric that catches the light, with a hemline that brushes the grass. Her pose is relaxed, one hand resting lightly on her hip while the other holds a small, round object. The background features a winding path made of gray stone that leads toward a distant hill covered in wildflowers. A gentle breeze moves the leaves of the tree, creating a sense of calm movement in the air.",
+        "final_structural_tags": "masterpiece, best quality, score_7, safe, 1girl",
+        "final_prose": "girl with flowing hair stands in a location defined by a lush green lawn and a clear blue sky. Sunlight filters through the canopy of a large oak tree above, casting dappled shadows on her shoulders. She wears a dress made of smooth fabric that catches the light, with a hemline that brushes the grass. Her pose is relaxed, one hand resting lightly on her hip while the other holds a small, round object. The background features a winding path made of gray stone that leads toward a distant hill covered in wildflowers. A gentle breeze moves the leaves of the tree, creating a sense of calm movement in the air."
+      }
+    }
+  ],
+  "prompt_id": "girl_beautiful_location",
+  "seed": 7919,
+  "modifiers": [],
+  "prompt_source": "girl, beautiful location",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1girl\n\ngirl with flowing hair stands in a location defined by a lush green lawn and a clear blue sky. Sunlight filters through the canopy of a large oak tree above, casting dappled shadows on her shoulders. She wears a dress made of smooth fabric that catches the light, with a hemline that brushes the grass. Her pose is relaxed, one hand resting lightly on her hip while the other holds a small, round object. The background features a winding path made of gray stone that leads toward a distant hill covered in wildflowers. A gentle breeze moves the leaves of the tree, creating a sense of calm movement in the air.",
+  "prose": "girl with flowing hair stands in a location defined by a lush green lawn and a clear blue sky. Sunlight filters through the canopy of a large oak tree above, casting dappled shadows on her shoulders. She wears a dress made of smooth fabric that catches the light, with a hemline that brushes the grass. Her pose is relaxed, one hand resting lightly on her hip while the other holds a small, round object. The background features a winding path made of gray stone that leads toward a distant hill covered in wildflowers. A gentle breeze moves the leaves of the tree, creating a sense of calm movement in the air.",
+  "draft": "masterpiece,best_quality,1girl,green_lawn,blue_sky,flowing_hair,oak_tree,dappled_shadows,smooth_dress,hip_hand,small_round_object,gray_stone_path,distant_hill,wildflowers,gentle_breeze,calm",
+  "shortlist": {
+    "artists": [
+      "sch",
+      "sol fa soft",
+      "ang",
+      "yu 65026",
+      "len (a 7)",
+      "aono3"
+    ],
+    "characters": [
+      "sweetie belle",
+      "girl (mokufuu)",
+      "girl dm",
+      "acfun girl",
+      "chica",
+      "octoling girl"
+    ],
+    "series": [
+      "girl's avenue",
+      "high score girl",
+      "woman with a parasol",
+      "girl with a pearl earring",
+      "boy meets girl"
+    ]
+  }
+}
