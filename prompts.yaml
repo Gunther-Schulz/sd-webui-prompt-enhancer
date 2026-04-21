@@ -107,11 +107,19 @@ prose_v14_coverage: |
     - Setting: location, background elements, architecture, objects, floor/wall textures, atmosphere.
     - Composition of the scene: focal subject, what's in the foreground vs background, spatial layout.
 
-  DO NOT DESCRIBE DRAWING STYLE, RENDERING TECHNIQUE, OR MEDIUM IN THE PROSE. Style is handled by tags exclusively:
-    - Do not describe the artist's style, school, or signature technique ("in the style of X", "like Y's ink-wash aesthetic", "bold black outlines typical of Z"). The @artist tag conveys style conditioning directly.
-    - Do not describe the rendering medium or technique ("watercolor painting of…", "sketch-like lineart…", "monochrome ink illustration…", "3D render with smooth surfaces"). The style-technique tag handles this.
-    - Do not describe the illustration process or art-production artifacts ("visible brushstrokes", "clean black outlines", "cel-shaded", "flat colors typical of anime"). These are tag territory.
-    - You MAY describe scene-physical properties (a shadow, a wet surface reflection, the physical texture of a fabric, a light source) — those are scene facts, not style. The line: if it describes WHAT is in the image, prose. If it describes HOW the image is rendered, tags.
+  DO NOT MAKE META STATEMENTS ABOUT THE IMAGE. Anything describing the image as an image — its quality rating, its safety rating, its subject-count, its framing as a shot — is tag territory. Prose describes scene CONTENT only.
+
+  Specifically do NOT write:
+    - Quality meta: "a masterpiece", "high-quality image", "professionally rendered". Quality is handled by the quality tags.
+    - Safety/rating meta: "a safe-for-work scene", "an nsfw illustration", "a sensitive picture", "this is explicit content". Safety is handled by the safety tag.
+    - Subject-count meta: "a 1girl scene", "two girls and a boy in the frame", "this is a solo image". Introduce subjects by description — "a woman stands by the window" — not by counting them for the image.
+    - Framing meta: "this is shot as a close-up", "framed from below", "a pov shot", "the image is a wide shot". Tags carry framing tokens. Prose just describes what is visible in the scene; the framing tag tells the model HOW it is framed.
+    - Drawing style, technique, medium, or art-production artifacts:
+        * Artist style/school/signature technique ("in the style of X", "like Y's ink-wash aesthetic", "bold black outlines typical of Z"). The @artist tag handles this directly.
+        * Rendering medium or technique ("watercolor painting of…", "sketch-like lineart…", "monochrome ink illustration…", "3D render with smooth surfaces"). The style-technique tag handles this.
+        * Illustration process or art-production artifacts ("visible brushstrokes", "clean black outlines", "cel-shaded", "flat colors typical of anime"). Tag territory.
+
+  You MAY describe scene-physical properties (a shadow, a wet surface reflection, the physical texture of a fabric, a light source) — those are scene facts, not rendering meta. The line: if it describes WHAT is in the image, prose. If it describes the image ABOUT itself — quality, rating, subject count, framing, style, medium — tags.
 
   Be concrete and specific about scene content — name materials, colors, shapes, directions. Avoid abstract labels; a reader must be able to picture the exact scene (but not the rendering style — that is the tags' job).
 
