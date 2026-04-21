@@ -78,6 +78,7 @@ def _get_anima_stack():
             semantic_min_post_count=int(_anima_opt("anima_tagger_semantic_min_post_count", 100)),
             enable_reranker=bool(_anima_opt("anima_tagger_enable_reranker", True)),
             enable_cooccurrence=bool(_anima_opt("anima_tagger_enable_cooccurrence", True)),
+            device=str(_anima_opt("anima_tagger_device", "auto")),
         )
         logger.info("anima_tagger loaded (DB + FAISS ready)")
         return _anima_stack
@@ -2459,6 +2460,22 @@ def _on_ui_settings():
             "fitting artists/characters instead of name-overlap matches. "
             "Adds ~1 s per click. Disable for sparse-source workflows or "
             "when LLM latency matters more than shortlist quality."
+        ),
+    )
+    shared.opts.add_option(
+        "anima_tagger_device",
+        OptionInfo(
+            "auto",
+            "RAG device (bge-m3 + reranker)",
+            _gr.Radio if _gr else None,
+            {"choices": ["auto", "cuda", "cpu"]} if _gr else None,
+            section=section,
+        ).info(
+            "Where to load the embedder + reranker. 'auto' picks GPU when "
+            "CUDA is available, else CPU. 'cpu' saves ~2 GB VRAM for image "
+            "generation but adds ~3–5 s per Anima click (CPU encoding is "
+            "noticeably slower than GPU for bge-m3). Takes effect on next "
+            "load — disable/re-enable the extension or restart Forge."
         ),
     )
 

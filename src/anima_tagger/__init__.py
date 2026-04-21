@@ -53,6 +53,7 @@ class AnimaStack:
     semantic_threshold: float = 0.80
     semantic_min_post_count: int = 100
     enable_reranker: bool = True
+    device: str = "cuda"   # resolved by load_all() from auto/cuda/cpu
 
     # Populated only inside .models():
     embedder: Optional[Embedder] = field(default=None, init=False)
@@ -63,10 +64,10 @@ class AnimaStack:
 
     @contextmanager
     def models(self) -> Iterator["AnimaStack"]:
-        """Load bge-m3 (+ reranker) onto GPU; free on exit."""
+        """Load bge-m3 (+ reranker) onto the configured device; free on exit."""
         try:
-            self.embedder = Embedder()
-            self.reranker = Reranker() if self.enable_reranker else None
+            self.embedder = Embedder(device=self.device)
+            self.reranker = Reranker(device=self.device) if self.enable_reranker else None
             self.validator = TagValidator(
                 db=self.db, index=self.index, embedder=self.embedder,
                 semantic_threshold=self.semantic_threshold,
@@ -114,10 +115,30 @@ class AnimaStack:
         )
 
 
+def _resolve_device(device: str) -> str:
+    """Resolve 'auto' / 'cuda' / 'cpu' to an actual device string.
+
+    'auto' → 'cuda' when available, else 'cpu'. Invalid inputs
+    also fall back gracefully.
+    """
+    d = (device or "auto").lower()
+    if d == "cpu":
+        return "cpu"
+    # cuda or auto — verify availability
+    try:
+        import torch
+        if torch.cuda.is_available():
+            return "cuda"
+    except Exception:
+        pass
+    return "cpu"
+
+
 def load_all(semantic_threshold: float = 0.80,
              semantic_min_post_count: int = 100,
              enable_reranker: bool = True,
-             enable_cooccurrence: bool = True) -> AnimaStack:
+             enable_cooccurrence: bool = True,
+             device: str = "auto") -> AnimaStack:
     """Open DB + index + cooccurrence (cheap). Models load on .models()."""
     _require(config.TAG_DB_PATH, "Tag DB")
     _require(config.FAISS_INDEX_PATH, "FAISS index")
@@ -132,6 +153,7 @@ def load_all(semantic_threshold: float = 0.80,
         semantic_threshold=semantic_threshold,
         semantic_min_post_count=semantic_min_post_count,
         enable_reranker=enable_reranker,
+        device=_resolve_device(device),
     )
 
 

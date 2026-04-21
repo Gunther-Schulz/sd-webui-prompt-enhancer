@@ -50,6 +50,91 @@ def _sha256(path: str) -> str:
     return h.hexdigest()
 
 
+def _build_dataset_card() -> str:
+    """Return the Markdown README.md for the HF dataset repo."""
+    return """---
+license: cc0-1.0
+task_categories:
+  - text-retrieval
+  - feature-extraction
+language:
+  - en
+tags:
+  - danbooru
+  - anime
+  - rag
+  - tag-retrieval
+  - anima
+size_categories:
+  - 100K<n<1M
+---
+
+# anima-tagger-artifacts
+
+Pre-built retrieval artefacts for the **Anima** tag format of the
+[`sd-webui-prompt-enhancer`](https://github.com/Gunther-Schulz/sd-webui-prompt-enhancer)
+Stable Diffusion WebUI extension. Lets the extension's Anima pipeline
+do real-time embedding-based tag validation and shortlist retrieval
+without users needing to rebuild a 270k+ entry FAISS index locally.
+
+## Contents
+
+| File | Size | Description |
+|---|---|---|
+| `tags.sqlite` | ~30 MB | 273,025 Danbooru tags (name, category, post count, aliases, wiki). Post-count floor 10. |
+| `tags.faiss` | ~1.1 GB | FAISS FlatIP index of bge-m3 embeddings (1024-dim) for every tag. Artist and character embeddings include co-occurrence signatures (top-12 general tags from their actual Danbooru posts). |
+| `cooccurrence.sqlite` | ~10 MB | Pointwise-mutual-information table for character↔series, character↔artist, series↔character pairs. Enables automatic series-pairing (e.g. `hatsune_miku` → `vocaloid`) at query time. |
+| `VERSION` | <1 kB | JSON manifest with per-file sha256 + size + build date. |
+
+## Usage
+
+Automatic — the extension's `install.py` downloads these on Forge
+startup, verifies sha256 against `VERSION`, and re-downloads when the
+upstream hash changes.
+
+Manual (e.g. for other projects):
+
+```python
+from huggingface_hub import hf_hub_download
+
+for fname in ("tags.sqlite", "tags.faiss", "cooccurrence.sqlite", "VERSION"):
+    hf_hub_download(
+        repo_id="freedumb2000/anima-tagger-artifacts",
+        filename=fname, repo_type="dataset",
+        local_dir="./data",
+    )
+```
+
+## How it was built
+
+1. Tag metadata + wiki from
+   [`NSFW-API/DanBooruTagsAndWikiDumpSept2025`](https://huggingface.co/datasets/NSFW-API/DanBooruTagsAndWikiDumpSept2025)
+   (1.59M tags; filtered to post_count ≥ 10 → 273,025 tags).
+2. Post-level tag sets from
+   [`isek-ai/danbooru-tags-2024`](https://huggingface.co/datasets/isek-ai/danbooru-tags-2024)
+   (streamed first 500k posts).
+3. For each artist/character, compute top-12 co-occurring general tags
+   across their posts → "style signature".
+4. Format each tag as `"<name> (<category>) | aliases: ... | <wiki excerpt>
+   | associated with: <top co-occurring tags>"` and embed with
+   [`BAAI/bge-m3`](https://huggingface.co/BAAI/bge-m3) (fp16 on GPU,
+   normalized, 1024-dim).
+5. FAISS FlatIP index over all 273k vectors.
+6. PMI table over the same post sample for character↔series pairing.
+
+Full rebuild: ~10 minutes on a modern GPU.
+
+## License
+
+The artefacts themselves are released under CC0-1.0. The upstream
+Danbooru tag data is public-domain by convention. Refer to the
+linked source datasets for their own attribution requirements.
+
+The underlying embedding model ([`BAAI/bge-m3`](https://huggingface.co/BAAI/bge-m3))
+is MIT-licensed.
+"""
+
+
 def _build_version_file() -> str:
     """Return the text content of a VERSION file listing each artefact
     with size + sha256. Used by the end-user client to verify integrity
@@ -91,12 +176,18 @@ def main() -> int:
     version_text = _build_version_file()
     print("\nVERSION metadata:\n" + version_text)
 
-    # Write VERSION locally first so we can upload it as a file
+    # Write VERSION + README locally so we can upload them
     version_path = os.path.join(config.DATA_DIR, "VERSION")
     with open(version_path, "w") as f:
         f.write(version_text)
+    readme_path = os.path.join(config.DATA_DIR, "README.md")
+    with open(readme_path, "w") as f:
+        f.write(_build_dataset_card())
 
-    targets = [(version_path, "VERSION")]
+    targets = [
+        (readme_path,  "README.md"),
+        (version_path, "VERSION"),
+    ]
     for local_path, hf_name, required in ARTEFACTS:
         if not os.path.exists(local_path):
             if required:
