@@ -437,6 +437,46 @@ def _resolve_source(source_spec: dict, seed: int) -> dict | None:
     }
 
 
+def _inject_source_picks(tags_csv: str, mods, stats: dict | None = None):
+    """Post-fill safety net for `source:`-driven modifiers.
+
+    After tag validation + slot_fill, ensure every `source:`-picked tag
+    actually survives in the final tag list. The pre-pick already shapes
+    the prose (the LLM writes a 1970s scene if we said 1970s), but the
+    tag-extraction pass can fail to emit the literal decade tag if the
+    LLM described the era in concrete terms without naming it.
+
+    Mirrors `target_slot:`'s category-coverage pass — the pick was made
+    with a seed for reproducibility; this just makes sure the picked
+    value survives into the output. Together the two passes give
+    source+target_slot modifiers a strictly-stronger guarantee than
+    either alone (hence the ◆◇ double-badge convention).
+
+    Tags are converted underscore→space to match the anima output form
+    (other formats apply their own transforms downstream).
+    """
+    tags = [t.strip() for t in (tags_csv or "").split(",") if t.strip()]
+    existing = {t.lower().replace("_", " ").strip() for t in tags}
+    added = 0
+    for name, entry in mods or []:
+        if not isinstance(entry, dict):
+            continue
+        pick = entry.get("_resolved_from_source")
+        if not pick:
+            continue
+        pick_spaced = pick.replace("_", " ")
+        if pick_spaced.lower() in existing:
+            continue
+        tags.append(pick_spaced)
+        existing.add(pick_spaced.lower())
+        added += 1
+        print(f"[PromptEnhancer] Source inject ({name}): appended '{pick_spaced}'")
+    if added and stats is not None:
+        stats["total"] = stats.get("total", 0) + added
+        stats["source_injected"] = stats.get("source_injected", 0) + added
+    return ", ".join(tags), (stats or {})
+
+
 def _active_target_slots(mods) -> list[str]:
     """Collect the set of target_slot values from active modifiers.
 
@@ -2385,6 +2425,11 @@ class PromptEnhancer(scripts.Script):
                                     stats["total"] = stats.get("total", 0) + 1
                     else:
                         tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
+                    # Source post-inject: ensure every source:-picked tag
+                    # survives the validator+slot_fill path. The pre-pick
+                    # shaped the prose; this makes sure the picked tag
+                    # actually appears in the output list.
+                    tags_raw, stats = _inject_source_picks(tags_raw, mods, stats)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags + NL"]
                     if stats:
@@ -2567,12 +2612,14 @@ class PromptEnhancer(scripts.Script):
                         tag_str = parts[0].strip()
                         nl_supplement = parts[1].strip() if len(parts) > 1 else ""
                         tag_str, stats = _validate_tag_str(tag_str)
+                        tag_str, stats = _inject_source_picks(tag_str, mods, stats)
                         tag_count = stats.get("total", 0) if stats else len([t for t in tag_str.split(",") if t.strip()])
                         final = f"{tag_str}\n\n{nl_supplement}" if nl_supplement else tag_str
                         status_parts = [f"remixed {tag_count} tags + NL"]
                     else:
                         # Pure tags
                         result, stats = _validate_tag_str(result)
+                        result, stats = _inject_source_picks(result, mods, stats)
                         tag_count = stats.get("total", 0) if stats else len([t for t in result.split(",") if t.strip()])
                         final = result
                         status_parts = [f"remixed {tag_count} tags"]
@@ -2818,6 +2865,9 @@ class PromptEnhancer(scripts.Script):
                     else:
                         tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
 
+                    # Source post-inject: ensure every source:-picked tag
+                    # survives through to the final output.
+                    tags_raw, stats = _inject_source_picks(tags_raw, mods, stats)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
                     if stats:
