@@ -1,20 +1,30 @@
 """Forge install hook.
 
-Installs deps on-demand the first time the extension is loaded.
-Heavy one-time setup (Danbooru dataset download + faiss index build)
-is NOT done here — it would add ~10 minutes and ~500 MB to first boot.
-Users run that manually when they want Anima retrieval:
+Runs on extension load:
+  1. Installs Python deps on first use (rapidfuzz, sentence-transformers, …).
+  2. Downloads the pre-built anima_tagger artefacts from HuggingFace
+     so the Anima retrieval pipeline just works out of the box —
+     no separate manual scripts for the end user.
 
-    python src/anima_tagger/scripts/download_data.py
-    python src/anima_tagger/scripts/build_index.py
-
-The extension still works without those artefacts — the anima_tagger
-module only activates when Tag Format = Anima AND the index is built.
+Everything under src/anima_tagger/scripts/ is DEV-only (maintainer
+workflow: rebuild index, upload to HF). End users never touch it.
 """
+
+import hashlib
+import json
+import os
+import sys
+import urllib.request
 
 import launch
 
 
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+_DATA_DIR = os.path.join(_THIS_DIR, "data")
+HF_REPO = "freedumb2000/anima-tagger-artifacts"
+
+
+# ── 1. Python dependencies ────────────────────────────────────────────
 _DEPS = [
     # (import name, pip spec, purpose)
     ("rapidfuzz",             "rapidfuzz>=3.0",
@@ -24,16 +34,131 @@ _DEPS = [
     ("faiss",                 "faiss-cpu>=1.8",
      "vector index for Anima tag retrieval"),
     ("huggingface_hub",       "huggingface_hub>=0.24",
-     "Danbooru dataset download (Anima retrieval)"),
-    ("datasets",              "datasets>=4.0",
-     "Danbooru post stream for co-occurrence (Anima retrieval)"),
+     "Danbooru dataset + artefact download"),
     ("pyarrow",               "pyarrow>=15.0",
      "parquet I/O for downloaded datasets"),
 ]
 
 
-for import_name, pip_spec, purpose in _DEPS:
-    if not launch.is_installed(import_name):
-        launch.run_pip(f"install {pip_spec}",
-                       f"{pip_spec.split('>=')[0]} for sd-webui-prompt-enhancer "
-                       f"({purpose})")
+def _install_deps():
+    for import_name, pip_spec, purpose in _DEPS:
+        if not launch.is_installed(import_name):
+            launch.run_pip(
+                f"install {pip_spec}",
+                f"{pip_spec.split('>=')[0]} for sd-webui-prompt-enhancer ({purpose})",
+            )
+
+
+# ── 2. Pre-built artefacts auto-download ──────────────────────────────
+# Remote layout:
+#   https://huggingface.co/datasets/<HF_REPO>/resolve/main/<filename>
+#
+# Flow:
+#   - Read /resolve/main/VERSION (small JSON with per-file sha256).
+#   - For each artefact, check local sha256; skip if it matches.
+#   - Otherwise download the file and verify.
+#
+# Gracefully no-ops when anything fails — the extension still works in
+# rapidfuzz mode; Anima retrieval just stays unavailable until the
+# next successful install.py run.
+
+_ARTEFACTS = [
+    "tags.sqlite",           # ~25 MB
+    "tags.faiss",             # ~1.1 GB
+    "cooccurrence.sqlite",   # ~3 MB
+]
+
+
+def _sha256(path: str) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _download(url: str, dest: str) -> None:
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
+    with urllib.request.urlopen(url, timeout=120) as resp:
+        total = int(resp.headers.get("Content-Length", 0))
+        downloaded = 0
+        with open(dest + ".part", "wb") as f:
+            for chunk in iter(lambda: resp.read(1 << 20), b""):
+                f.write(chunk)
+                downloaded += len(chunk)
+                if total and downloaded % (16 * 1024 * 1024) < (1 << 20):
+                    pct = 100.0 * downloaded / total
+                    print(f"    {downloaded/1024/1024:>6.0f} / "
+                          f"{total/1024/1024:>6.0f} MB ({pct:.0f}%)", flush=True)
+    os.replace(dest + ".part", dest)
+
+
+def _fetch_artefacts():
+    """Ensure data/ has the current pre-built artefacts from HF.
+
+    Called on every extension load. Fast when files are already fresh
+    (just reads VERSION to compare hashes). Skips silently on any
+    error — extension still works, Anima RAG just won't activate
+    until the next successful run.
+    """
+    base = f"https://huggingface.co/datasets/{HF_REPO}/resolve/main"
+    ver_url = f"{base}/VERSION"
+    try:
+        with urllib.request.urlopen(ver_url, timeout=15) as r:
+            manifest = json.loads(r.read())
+    except Exception as e:
+        print(f"[sd-webui-prompt-enhancer] anima artefacts: could not reach "
+              f"{ver_url} ({type(e).__name__}: {e}) — skipping download")
+        return
+
+    expected = manifest.get("files", {})
+    os.makedirs(_DATA_DIR, exist_ok=True)
+    needed = []
+    for fname in _ARTEFACTS:
+        info = expected.get(fname)
+        if not info:
+            continue
+        local = os.path.join(_DATA_DIR, fname)
+        if os.path.exists(local) and os.path.getsize(local) == info.get("size", 0):
+            try:
+                if _sha256(local) == info.get("sha256", ""):
+                    continue  # already current
+            except Exception:
+                pass
+        needed.append((fname, info))
+
+    if not needed:
+        return
+
+    print(f"[sd-webui-prompt-enhancer] anima artefacts: downloading "
+          f"{len(needed)} file(s) from HuggingFace ({HF_REPO}) …")
+    for fname, info in needed:
+        dest = os.path.join(_DATA_DIR, fname)
+        size_mb = info.get("size", 0) / 1024 / 1024
+        print(f"  [{size_mb:>7.1f} MB] {fname}")
+        try:
+            _download(f"{base}/{fname}", dest)
+            if info.get("sha256"):
+                got = _sha256(dest)
+                if got != info["sha256"]:
+                    os.remove(dest)
+                    raise RuntimeError(f"sha256 mismatch on {fname}")
+            print(f"    ✓ {fname}")
+        except Exception as e:
+            print(f"    ✗ {fname}: {type(e).__name__}: {e}")
+            if os.path.exists(dest + ".part"):
+                try:
+                    os.remove(dest + ".part")
+                except Exception:
+                    pass
+    print("[sd-webui-prompt-enhancer] anima artefacts done.")
+
+
+# ── entry ────────────────────────────────────────────────────────────
+_install_deps()
+try:
+    _fetch_artefacts()
+except Exception as e:
+    print(f"[sd-webui-prompt-enhancer] anima artefacts: unexpected error "
+          f"({type(e).__name__}: {e}) — extension will still work in "
+          f"rapidfuzz mode.")

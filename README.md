@@ -173,6 +173,56 @@ tag_db_url: https://...
 
 Add support for new models by dropping a YAML file — no code changes needed.
 
+### Anima — retrieval-augmented tag pipeline
+
+The **Anima** tag format uses a richer pipeline than the rapidfuzz-based
+validation of the other formats:
+
+- **Shortlist retrieval**: before prose generation, real Danbooru
+  artists / characters / series that match the source prompt are
+  pre-retrieved and injected into the LLM's system prompt. Prevents
+  hallucinated names like `@takashi_murowo` at the source.
+- **Embedding-based validator**: every LLM-drafted tag is checked
+  against a 273k-entry FAISS index using bge-m3 embeddings. Real
+  Danbooru tags pass through; phrase-shape hallucinations (`4k`,
+  `detailed_background`, `animedia`) are dropped.
+- **Character → series pairing** via pre-computed co-occurrence table
+  (e.g. `hatsune_miku` → `vocaloid` added automatically).
+- **Artist/character signatures**: artist embeddings include their
+  top co-occurring general tags from 500k real Danbooru posts, so the
+  retriever can match on style/theme rather than just name.
+
+Zero setup needed — the extension's `install.py` downloads ~1.1 GB of
+pre-built index artefacts from HuggingFace on first load
+([dataset](https://huggingface.co/datasets/freedumb2000/anima-tagger-artifacts)).
+The bge-m3 embedder and bge-reranker models auto-download via
+`sentence-transformers` (~3.4 GB total) on first Anima click.
+
+Settings live under **Settings → Anima Tagger** — threshold, reranker
+toggle, co-occurrence pairing toggle, query expansion toggle.
+
+### Developer pipeline (not for end users)
+
+Scripts under `src/anima_tagger/scripts/` are the maintainer workflow
+for (re)building the artefacts when Danbooru data updates:
+
+```bash
+# 1. Pull latest Danbooru tag dump + post dataset from HF
+python src/anima_tagger/scripts/download_data.py
+
+# 2. Rebuild sqlite + FAISS index + co-occurrence (~10 min on GPU)
+python src/anima_tagger/scripts/build_index.py
+
+# 3. Upload fresh artefacts to HF (auth via `hf auth login` first)
+python src/anima_tagger/scripts/package_artifacts.py
+
+# 4. (Optional) verify retrieval quality
+python src/anima_tagger/scripts/verify.py
+python src/anima_tagger/scripts/full_pipeline_test.py
+```
+
+End users never run these.
+
 ## Local overrides
 
 Extend the extension with your own modifiers and base prompts. Each YAML file in a local directory becomes its own dropdown in the UI.
