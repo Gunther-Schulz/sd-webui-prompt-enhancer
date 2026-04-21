@@ -1,1 +1,7 @@
 rapidfuzz>=3.0
+sentence-transformers>=5.0
+faiss-cpu>=1.8
+huggingface_hub>=0.24
+datasets>=4.0
+pyarrow>=15.0
+
