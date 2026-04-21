@@ -1,0 +1,342 @@
+{
+  "run_id": "v13__empty_random_artist_random_setting__seed65537__f263b4",
+  "variant": "v13",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 65537
+  },
+  "started_at": 1776802458.378803,
+  "ended_at": 1776802477.503644,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.118,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.045,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A solitary figure stands in a bustling Parisian marketplace under the shadow of a towering wrought-iron archway. The scene is rendered in the style of Egon Schiele with his signature angular, elongated limbs and expressive, almost raw poses. The central character wears a loose, unbuttoned linen shirt over a dark waistcoat, their hair cut short and uneven, framing a face that turns sharply toward the viewer. Sunlight filters through the dense canopy of trees above, casting sharp, high-contrast beams that slice across the cobblestones and highlight the texture of the rough stone. In the background, blurred market stalls offer hints of red and yellow fabric, while the ground reflects a mix of deep shadows and bright patches of gold. The air feels thick and heavy, captured through the artist's use of thick, impasto-like brushstrokes that emphasize the tactile reality of the setting. Every element bends and stretches to fit the artist's unique, slightly distorted perspective of the world.",
+        "prose_samples": [
+          "A solitary figure stands in a cramped, drafty attic room filled with loose floorboards and stacks of old paper, rendered in the style of Jean-Baptiste-Camille Corot. Soft, hazy daylight filters through a high dormer window, casting long, diffuse shadows that stretch across the uneven wooden floor. The subject wears a loose, cream-colored linen shirt with rolled sleeves and dark trousers that pool around the ankles. Their hair is a tousled mass of light brown, catching the ambient glow with a soft, atmospheric edge. The walls are covered in textured, pale plaster, while a heavy oak chest sits against the far wall, its surface worn smooth by age. Dust motes hang suspended in the warm, golden air, creating a sense of quiet stillness. The artist's characteristic blending of sharp architectural lines with soft, misty backgrounds unifies the room, making the wood grain and fabric textures appear to breathe within the semi-transparent light.",
+          "A solitary figure stands in a cluttered, sun-drenched attic in the style of Egon Schiele. The room is filled with slanting angles and exposed joints, rendered in thin, black ink lines that cut across the composition. A large, irregular window floods the space with harsh, directional daylight that casts long, sharp shadows against rough plaster walls. The figure wears a tattered, loose-fitting shirt with sleeves rolled up to the elbows, revealing pale skin and prominent veins. Their hair is a messy, dark mane that frames a face with a sharp, angular jawline and intense, staring eyes. The floor is covered in scattered, crumpled sheets of paper and a single, worn wooden chair tilted on its back legs. Dust motes hang suspended in the bright beam of light, catching the texture of the heavy fabric and the tension of the stretched canvas-like air.",
+          "A solitary figure stands in a bustling Parisian marketplace under the shadow of a towering wrought-iron archway. The scene is rendered in the style of Egon Schiele with his signature angular, elongated limbs and expressive, almost raw poses. The central character wears a loose, unbuttoned linen shirt over a dark waistcoat, their hair cut short and uneven, framing a face that turns sharply toward the viewer. Sunlight filters through the dense canopy of trees above, casting sharp, high-contrast beams that slice across the cobblestones and highlight the texture of the rough stone. In the background, blurred market stalls offer hints of red and yellow fabric, while the ground reflects a mix of deep shadows and bright patches of gold. The air feels thick and heavy, captured through the artist's use of thick, impasto-like brushstrokes that emphasize the tactile reality of the setting. Every element bends and stretches to fit the artist's unique, slightly distorted perspective of the world."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "build_pass2_candidates",
+      "params": {
+        "k": 60,
+        "min_post_count": 100
+      },
+      "elapsed_s": 0.044,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "pass2_candidates": [
+          "artist's_hand_in_frame",
+          "one_eye_in_shadow",
+          "ligne_claire",
+          "solo_focus",
+          "scene_fashion",
+          "praise_the_sun",
+          "scenery",
+          "shirt_partially_removed",
+          "partially_shaded_face",
+          "gendou_pose",
+          "standing",
+          "leaning_on_object",
+          "outline",
+          "holding_unworn_skirt",
+          "a_pose",
+          "penis_shadow",
+          "light_skinned_soles",
+          "eyes_in_shadow",
+          "zun_(style)",
+          "french_girly",
+          "face_in_shadow",
+          "art_tools_in_frame",
+          "blurry_edges",
+          "holding_unworn_clothes",
+          "hatching_(texture)",
+          "sitting_on_object",
+          "window_shadow",
+          "still_life",
+          "minimalism",
+          "draw_this_in_your_style_challenge",
+          "object_in_clothes",
+          "backlighting",
+          "holding_spring_onion",
+          "lonely",
+          "partially_undressed",
+          "cardigan_partially_removed",
+          "balancing",
+          "jacket_partially_removed",
+          "hand_on_goggles"
+        ],
+        "pass2_grounding_fragment": "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru DB against the prose). Strongly prefer tags from this list — they are scene-relevant and real:\n\n  artist's hand in frame, one eye in shadow, ligne claire, solo focus, scene fashion, praise the sun, scenery, shirt partially removed, partially shaded face, gendou pose, standing, leaning on object, outline, holding unworn skirt, a pose, penis shadow, light skinned soles, eyes in shadow, zun (style), french girly, face in shadow, art tools in frame, blurry edges, holding unworn clothes, hatching (texture), sitting on object, window shadow, still life, minimalism, draw this in your style challenge, object in clothes, backlighting, holding spring onion, lonely, partially undressed, cardigan partially removed, balancing, jacket partially removed, hand on goggles\n\nYou may emit tags OUTSIDE this list ONLY when:\n  (a) the tag is required by the format (masterpiece, best quality, score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n  (b) the prose explicitly names a character, series, or artist not in the list;\n  (c) a concept is literally named in the prose but happens to be missing from the list.\nFor any other concept, pick the closest match from the candidate list instead of inventing a novel compound tag. If no candidate fits a concept, omit it rather than inventing.\n"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.495,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_8, safe, 1girl, egon schiele (style), paris, bustling marketplace, towering wrought-iron archway, angular limbs, elongated limbs, expressive pose, loose unbuttoned linen shirt, dark waistcoat, short uneven hair, face turned sharply, sunlight filtering, dense canopy, sharp high-contrast beams, cobblestones, rough stone, blurred market stalls, red and yellow fabric, deep shadows, bright gold patches, thick impasto-like brushstrokes, tactile reality, distorted perspective, artist's hand in frame, scene fashion, standing, one eye in shadow, partially shaded face, hatching (texture), window shadow, light skinned soles, outline, holding unworn clothes, still life, balcony shadow, holding spring onion, art tools in frame, solo focus, gendou pose, leaning on object, face in shadow, object in clothes, holding unworn skirt, shirt partially removed, balancing, scene setting, standing pose, light skinned, sharp angles, raw pose, dense foliage, high contrast, beam of light, sun drenched, cobblestone ground, market stalls, fabric swatches, uneven hair, sharp features, elongated body, raw expression, thick strokes, textured background, golden hour, sharp shadows, distinct outline, angular composition, expressive eyes, distinct lines, elongated neck, loose clothing, waistcoat unbuttoned, linen texture, dark waistcoat, short hair, tousled hair, sharp gaze, viewer focus, architectural shadow, canopy overhead, market bustle, red fabric, yellow fabric, gold light, deep shadows, bright patches, impasto texture, tactile setting, distorted world, unique perspective, sharp beams, heavy air, thick paint, elongated torso, expressive pose, angular stance, sharp jawline, distinct silhouette, market atmosphere, iron archway, towering structure, dense trees, filtered light, high contrast, rough stone, fabric folds, distinct edges, angular features, raw emotion, expressive face, sharp gaze, loose fit, unbuttoned shirt, dark waistcoat, short hair, tousled locks, sharp beams, heavy light, thick strokes, textured skin, distinct outline, angular limbs, elongated neck, expressive pose, sharp angles, raw pose, face in shadow, one eye in shadow, partially shaded face, light skinned soles, artist's hand in frame, art tools in frame, still life, scene fashion, standing, gendou pose, leaning on object, holding unworn clothes, object in clothes, jacket partially removed, cardigan partially removed, holding spring onion, balancing, outline, hatching (texture), window shadow, solitary figure, bustling market, towering arch, wrought-iron, short hair, uneven hair, loose linen, dark waistcoat, sharp beams, dense canopy, cobblestones, rough stone, blurred stalls, red fabric, yellow fabric, deep shadows, gold patches, thick impasto, tactile reality, distorted perspective, unique world, sharp features, raw expression, elongated body, angular composition, expressive eyes, distinct lines, elongated torso, expressive stance, sharp jawline, distinct silhouette, market atmosphere, iron archway, towering structure, dense trees, filtered light, high contrast, rough stone, fabric folds, distinct edges, angular features, raw emotion, expressive face, sharp gaze, loose fit, unbuttoned shirt, dark waistcoat, short hair, tousled locks, sharp beams, heavy light, thick strokes, textured skin, distinct outline, angular limbs, elongated neck, expressive pose, sharp angles, raw pose, face in shadow, one eye in shadow, partially shaded face, light skinned soles, artist's hand in frame, art tools in frame, still life, scene fashion, standing, gendou pose, leaning on object, holding unworn clothes, object in clothes, jacket partially removed, cardigan partially removed, holding spring onion, balancing, outline, hatching (texture), window shadow, solitary figure, bustling market, towering arch, wrought-iron, short hair, uneven hair, loose linen, dark waistcoat, sharp beams, dense canopy, cobblestones, rough stone, blurred stalls, red fabric, yellow fabric, deep shadows, gold patches, thick impasto, tactile reality, distorted perspective, unique world, sharp features, raw expression, elongated body, angular composition, expressive eyes, distinct lines, elongated torso, expressive stance, sharp jawline, distinct silhouette, market atmosphere, iron archway, towering structure, dense trees, filtered light, high contrast, rough stone, fabric folds, distinct edges, angular features, raw emotion, expressive face, sharp gaze, loose fit, unbuttoned shirt, dark waistcoat, short hair, tousled locks, sharp beams, heavy light, thick strokes, textured skin, distinct outline, angular limbs, elongated neck, expressive pose, sharp angles, raw pose, face in shadow, one eye in shadow, partially shaded face, light skinned",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 8.366,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_8, safe, 1girl, paris, market, limbs, pose, unbuttoned, shirt, dark, waistcoat, sunlight, high contrast, sketch, stone, blurry, fabric, gold, patch, impasto, perspective, artist's hand in frame, scene fashion, standing, one eye in shadow, partially shaded face",
+        "stats": {
+          "corrected": 0,
+          "dropped": 265,
+          "kept_invalid": 0,
+          "total": 28
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.056,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, paris, market, limbs, pose, unbuttoned, shirt, dark, waistcoat, sunlight, high contrast, sketch, stone, blurry, fabric, gold, patch, impasto, perspective, artist's hand in frame, scene fashion, standing, one eye in shadow, partially shaded face, @meimaru inuchiyo",
+        "slot_fill_trace": {
+          "artist": "meimaru_inuchiyo"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, paris, market, limbs, pose, unbuttoned, shirt, dark, waistcoat, sunlight, high contrast, sketch, stone, blurry, fabric, gold, patch, impasto, perspective, artist's hand in frame, scene fashion, standing, one eye in shadow, partially shaded face, @meimaru inuchiyo",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 65537,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_8, safe, 1girl, paris, market, limbs, pose, unbuttoned, shirt, dark, waistcoat, sunlight, high contrast, sketch, stone, blurry, fabric, gold, patch, impasto, perspective, artist's hand in frame, scene fashion, standing, one eye in shadow, partially shaded face, @meimaru inuchiyo",
+  "prose": "A solitary figure stands in a bustling Parisian marketplace under the shadow of a towering wrought-iron archway. The scene is rendered in the style of Egon Schiele with his signature angular, elongated limbs and expressive, almost raw poses. The central character wears a loose, unbuttoned linen shirt over a dark waistcoat, their hair cut short and uneven, framing a face that turns sharply toward the viewer. Sunlight filters through the dense canopy of trees above, casting sharp, high-contrast beams that slice across the cobblestones and highlight the texture of the rough stone. In the background, blurred market stalls offer hints of red and yellow fabric, while the ground reflects a mix of deep shadows and bright patches of gold. The air feels thick and heavy, captured through the artist's use of thick, impasto-like brushstrokes that emphasize the tactile reality of the setting. Every element bends and stretches to fit the artist's unique, slightly distorted perspective of the world.",
+  "draft": "masterpiece, best quality, score_8, safe, 1girl, egon schiele (style), paris, bustling marketplace, towering wrought-iron archway, angular limbs, elongated limbs, expressive pose, loose unbuttoned linen shirt, dark waistcoat, short uneven hair, face turned sharply, sunlight filtering, dense canopy, sharp high-contrast beams, cobblestones, rough stone, blurred market stalls, red and yellow fabric, deep shadows, bright gold patches, thick impasto-like brushstrokes, tactile reality, distorted perspective, artist's hand in frame, scene fashion, standing, one eye in shadow, partially shaded face, hatching (texture), window shadow, light skinned soles, outline, holding unworn clothes, still life, balcony shadow, holding spring onion, art tools in frame, solo focus, gendou pose, leaning on object, face in shadow, object in clothes, holding unworn skirt, shirt partially removed, balancing, scene setting, standing pose, light skinned, sharp angles, raw pose, dense foliage, high contrast, beam of light, sun drenched, cobblestone ground, market stalls, fabric swatches, uneven hair, sharp features, elongated body, raw expression, thick strokes, textured background, golden hour, sharp shadows, distinct outline, angular composition, expressive eyes, distinct lines, elongated neck, loose clothing, waistcoat unbuttoned, linen texture, dark waistcoat, short hair, tousled hair, sharp gaze, viewer focus, architectural shadow, canopy overhead, market bustle, red fabric, yellow fabric, gold light, deep shadows, bright patches, impasto texture, tactile setting, distorted world, unique perspective, sharp beams, heavy air, thick paint, elongated torso, expressive pose, angular stance, sharp jawline, distinct silhouette, market atmosphere, iron archway, towering structure, dense trees, filtered light, high contrast, rough stone, fabric folds, distinct edges, angular features, raw emotion, expressive face, sharp gaze, loose fit, unbuttoned shirt, dark waistcoat, short hair, tousled locks, sharp beams, heavy light, thick strokes, textured skin, distinct outline, angular limbs, elongated neck, expressive pose, sharp angles, raw pose, face in shadow, one eye in shadow, partially shaded face, light skinned soles, artist's hand in frame, art tools in frame, still life, scene fashion, standing, gendou pose, leaning on object, holding unworn clothes, object in clothes, jacket partially removed, cardigan partially removed, holding spring onion, balancing, outline, hatching (texture), window shadow, solitary figure, bustling market, towering arch, wrought-iron, short hair, uneven hair, loose linen, dark waistcoat, sharp beams, dense canopy, cobblestones, rough stone, blurred stalls, red fabric, yellow fabric, deep shadows, gold patches, thick impasto, tactile reality, distorted perspective, unique world, sharp features, raw expression, elongated body, angular composition, expressive eyes, distinct lines, elongated torso, expressive stance, sharp jawline, distinct silhouette, market atmosphere, iron archway, towering structure, dense trees, filtered light, high contrast, rough stone, fabric folds, distinct edges, angular features, raw emotion, expressive face, sharp gaze, loose fit, unbuttoned shirt, dark waistcoat, short hair, tousled locks, sharp beams, heavy light, thick strokes, textured skin, distinct outline, angular limbs, elongated neck, expressive pose, sharp angles, raw pose, face in shadow, one eye in shadow, partially shaded face, light skinned soles, artist's hand in frame, art tools in frame, still life, scene fashion, standing, gendou pose, leaning on object, holding unworn clothes, object in clothes, jacket partially removed, cardigan partially removed, holding spring onion, balancing, outline, hatching (texture), window shadow, solitary figure, bustling market, towering arch, wrought-iron, short hair, uneven hair, loose linen, dark waistcoat, sharp beams, dense canopy, cobblestones, rough stone, blurred stalls, red fabric, yellow fabric, deep shadows, gold patches, thick impasto, tactile reality, distorted perspective, unique world, sharp features, raw expression, elongated body, angular composition, expressive eyes, distinct lines, elongated torso, expressive stance, sharp jawline, distinct silhouette, market atmosphere, iron archway, towering structure, dense trees, filtered light, high contrast, rough stone, fabric folds, distinct edges, angular features, raw emotion, expressive face, sharp gaze, loose fit, unbuttoned shirt, dark waistcoat, short hair, tousled locks, sharp beams, heavy light, thick strokes, textured skin, distinct outline, angular limbs, elongated neck, expressive pose, sharp angles, raw pose, face in shadow, one eye in shadow, partially shaded face, light skinned",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

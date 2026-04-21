@@ -1,0 +1,362 @@
+{
+  "run_id": "v13__girl_sex__seed7919__9f1925",
+  "variant": "v13",
+  "pipeline_input": {
+    "source": "girl, sex",
+    "mods": [],
+    "seed": 7919
+  },
+  "started_at": 1776802315.318113,
+  "ended_at": 1776802337.1323035,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.494,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['sol fa soft', 'cl 55', 'e10', 'mashue', 'ta (tama20150125)', 'akadama'], characters=['girl (mokufuu)', \"girlfriend (friday night funkin')\", 'girl dm', 'acfun girl', 'female titan', 'hit girl'], series=['high score girl', 'boy meets girl', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: sol fa soft, cl 55, e10, mashue, ta (tama20150125), akadama\nCharacters: girl (mokufuu), girlfriend (friday night funkin'), girl dm, acfun girl, female titan, hit girl\nSeries: high score girl, boy meets girl, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 2.88,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A girl with a focused expression stands in a softly lit room. She wears a single thin strap over one shoulder. Her skin is smooth and warm under the overhead light. One hand grips her own hip while the other rests against her thigh. Her hair falls loosely around her face. The air feels still and heavy with tension. Shadows stretch across her legs from a nearby window. She looks directly at the viewer with a half-lidded gaze. Her posture is slightly arched forward. The fabric of her top clings tightly to her chest. A drop of sweat glistens on her collarbone. Her lips are parted slightly. The scene captures a moment of raw, physical intensity.",
+        "prose_samples": [
+          "A girl in a state of sex, her body twisted in a dynamic pose. Her skin is pale and smooth, catching the warm overhead light that casts deep shadows in the creases of her limbs. She wears a sheer fabric top that clings to her chest and a short skirt that lifts as she moves. Her hair is dark and loose, falling over one shoulder and framing a flushed face. One hand grips her own thigh while the other reaches back to hold her hair. The background is a simple, blurred interior that keeps the focus entirely on her contorted form and the sweat glistening on her collarbone.",
+          "A girl stands in a dim room, her body angled slightly as if caught mid-motion. She wears simple, form-fitting clothing that clings to her curves, highlighting the swell of her hips and the curve of her chest. Her hair falls loosely over one shoulder, framing a face tilted upward with a focused expression. The lighting is warm and directional, casting a soft shadow behind her and catching the sheen of her skin. Her pose is dynamic, suggesting movement or tension in her limbs. The air feels heavy and intimate, surrounding her solitary form.",
+          "A girl with a focused expression stands in a softly lit room. She wears a single thin strap over one shoulder. Her skin is smooth and warm under the overhead light. One hand grips her own hip while the other rests against her thigh. Her hair falls loosely around her face. The air feels still and heavy with tension. Shadows stretch across her legs from a nearby window. She looks directly at the viewer with a half-lidded gaze. Her posture is slightly arched forward. The fabric of her top clings tightly to her chest. A drop of sweat glistens on her collarbone. Her lips are parted slightly. The scene captures a moment of raw, physical intensity."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "build_pass2_candidates",
+      "params": {
+        "k": 60,
+        "min_post_count": 100
+      },
+      "elapsed_s": 0.044,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "pass2_candidates": [
+          "presenting_bra",
+          "standing",
+          "a_pose",
+          "in_heat",
+          "assertive_female",
+          "ghost_pose",
+          "seductive_smile",
+          "skirt_caught_on_object",
+          "girl_on_top",
+          "straight_on",
+          "praise_the_sun",
+          "holding",
+          "reaching",
+          "artist's_hand_in_frame",
+          "mating_press",
+          "torogao",
+          "full_body",
+          "crossed_arms",
+          "clothes_grab",
+          "light_rays",
+          "solo_focus",
+          "lower_body",
+          "claw_pose",
+          "looking_at_breasts",
+          "hip_focus",
+          "shirt_partially_removed",
+          "dress_lift",
+          "spotlight",
+          "pov",
+          "take_your_pick",
+          "scenery",
+          "outstretched_hand",
+          "holding_unworn_skirt",
+          "dress_grab",
+          "dressing",
+          "headlamp",
+          "holding_unworn_clothes",
+          "sleeves_pushed_up",
+          "carry_me",
+          "close_up",
+          "holding_laptop",
+          "one_eye_in_shadow",
+          "arm_support",
+          "skirt_lift",
+          "w_arms",
+          "thigh_focus",
+          "looking_at_mirror",
+          "emphasis_lines",
+          "arms_at_sides",
+          "leaning_forward",
+          "holding_removed_eyewear",
+          "determined",
+          "object_floating_above_hand",
+          "sitting_on_liquid",
+          "still_life",
+          "waiting",
+          "headstand",
+          "breasts_on_table",
+          "clothed_female_nude_female",
+          "revealing_clothes"
+        ],
+        "pass2_grounding_fragment": "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru DB against the prose). Strongly prefer tags from this list — they are scene-relevant and real:\n\n  presenting bra, standing, a pose, in heat, assertive female, ghost pose, seductive smile, skirt caught on object, girl on top, straight on, praise the sun, holding, reaching, artist's hand in frame, mating press, torogao, full body, crossed arms, clothes grab, light rays, solo focus, lower body, claw pose, looking at breasts, hip focus, shirt partially removed, dress lift, spotlight, pov, take your pick, scenery, outstretched hand, holding unworn skirt, dress grab, dressing, headlamp, holding unworn clothes, sleeves pushed up, carry me, close up, holding laptop, one eye in shadow, arm support, skirt lift, w arms, thigh focus, looking at mirror, emphasis lines, arms at sides, leaning forward, holding removed eyewear, determined, object floating above hand, sitting on liquid, still life, waiting, headstand, breasts on table, clothed female nude female, revealing clothes\n\nYou may emit tags OUTSIDE this list ONLY when:\n  (a) the tag is required by the format (masterpiece, best quality, score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n  (b) the prose explicitly names a character, series, or artist not in the list;\n  (c) a concept is literally named in the prose but happens to be missing from the list.\nFor any other concept, pick the closest match from the candidate list instead of inventing a novel compound tag. If no candidate fits a concept, omit it rather than inventing.\n"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.466,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, 1girl, solo focus, focused expression, softly lit room, single thin strap, one shoulder strap, smooth skin, warm skin, overhead light, hand on hip, hand on thigh, loose hair, hair framing face, still air, heavy tension, stretched shadows, shadow on legs, window light, direct gaze, half-lidded eyes, arched posture, chest clings, sweat drop, glistening collarbone, parted lips, raw intensity, physical intensity, standing, assertive female, light rays, emphasizing lines, lower body, upper body, headstand, pose, in heat, seductive smile, girl on top, a pose, spotlight, POV, close up, w arms, arm support, dress grab, shirt partially removed, clothed female, skin focus, skin tone, warm light, warm shadows, determined, looking at viewer, reaching, object floating above hand, light source, single strand, strap, hair strands, collarbone, chest, chest focus, chest plate, chest heavy, chest tight, chest clings, chest cleavage, chest bare, chest exposed, chest bare skin, chest smooth, chest warm, chest smooth skin, chest warm light, chest smooth warm, chest smooth warm light, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 11.93,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, explicit, 1girl, solo focus, skinny, shoulder strap, hand on own hip, thighs, heavy, shadow, legs, window light, sweatdrop, collarbone, parted lips, standing, assertive female, light rays, lower body, upper body, headstand, in heat, seductive smile, girl on top, a pose",
+        "stats": {
+          "corrected": 0,
+          "dropped": 180,
+          "kept_invalid": 0,
+          "total": 27
+        },
+        "anima_safety": "explicit"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, explicit, 1girl, solo focus, skinny, shoulder strap, hand on own hip, thighs, heavy, shadow, legs, window light, sweatdrop, collarbone, parted lips, standing, assertive female, light rays, lower body, upper body, headstand, in heat, seductive smile, girl on top, a pose",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, explicit, 1girl, solo focus, skinny, shoulder strap, hand on own hip, thighs, heavy, shadow, legs, window light, sweatdrop, collarbone, parted lips, standing, assertive female, light rays, lower body, upper body, headstand, in heat, seductive smile, girl on top, a pose",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_sex",
+  "seed": 7919,
+  "modifiers": [],
+  "prompt_source": "girl, sex",
+  "final_tags": "masterpiece, best quality, score_7, explicit, 1girl, solo focus, skinny, shoulder strap, hand on own hip, thighs, heavy, shadow, legs, window light, sweatdrop, collarbone, parted lips, standing, assertive female, light rays, lower body, upper body, headstand, in heat, seductive smile, girl on top, a pose",
+  "prose": "A girl with a focused expression stands in a softly lit room. She wears a single thin strap over one shoulder. Her skin is smooth and warm under the overhead light. One hand grips her own hip while the other rests against her thigh. Her hair falls loosely around her face. The air feels still and heavy with tension. Shadows stretch across her legs from a nearby window. She looks directly at the viewer with a half-lidded gaze. Her posture is slightly arched forward. The fabric of her top clings tightly to her chest. A drop of sweat glistens on her collarbone. Her lips are parted slightly. The scene captures a moment of raw, physical intensity.",
+  "draft": "masterpiece, best quality, score_7, 1girl, solo focus, focused expression, softly lit room, single thin strap, one shoulder strap, smooth skin, warm skin, overhead light, hand on hip, hand on thigh, loose hair, hair framing face, still air, heavy tension, stretched shadows, shadow on legs, window light, direct gaze, half-lidded eyes, arched posture, chest clings, sweat drop, glistening collarbone, parted lips, raw intensity, physical intensity, standing, assertive female, light rays, emphasizing lines, lower body, upper body, headstand, pose, in heat, seductive smile, girl on top, a pose, spotlight, POV, close up, w arms, arm support, dress grab, shirt partially removed, clothed female, skin focus, skin tone, warm light, warm shadows, determined, looking at viewer, reaching, object floating above hand, light source, single strand, strap, hair strands, collarbone, chest, chest focus, chest plate, chest heavy, chest tight, chest clings, chest cleavage, chest bare, chest exposed, chest bare skin, chest smooth, chest warm, chest smooth skin, chest warm light, chest smooth warm, chest smooth warm light, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest smooth warm light source, chest",
+  "shortlist": {
+    "artists": [
+      "sol fa soft",
+      "cl 55",
+      "e10",
+      "mashue",
+      "ta (tama20150125)",
+      "akadama"
+    ],
+    "characters": [
+      "girl (mokufuu)",
+      "girlfriend (friday night funkin')",
+      "girl dm",
+      "acfun girl",
+      "female titan",
+      "hit girl"
+    ],
+    "series": [
+      "high score girl",
+      "boy meets girl",
+      "girl with a pearl earring"
+    ]
+  }
+}

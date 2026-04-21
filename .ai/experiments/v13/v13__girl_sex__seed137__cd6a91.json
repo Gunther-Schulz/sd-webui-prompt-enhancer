@@ -1,0 +1,362 @@
+{
+  "run_id": "v13__girl_sex__seed137__cd6a91",
+  "variant": "v13",
+  "pipeline_input": {
+    "source": "girl, sex",
+    "mods": [],
+    "seed": 137
+  },
+  "started_at": 1776802295.9267714,
+  "ended_at": 1776802310.256673,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.565,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['0123456789', 'sol fa soft', 'e10', 'cl 55', 'chaotic unknown', 'ta (tama20150125)'], characters=['girl (mokufuu)', \"girlfriend (friday night funkin')\", 'girl dm', 'acfun girl', 'female titan', 'hit girl'], series=['high score girl', 'boy meets girl', 'girl with a pearl earring'])"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: 0123456789, sol fa soft, e10, cl 55, chaotic unknown, ta (tama20150125)\nCharacters: girl (mokufuu), girlfriend (friday night funkin'), girl dm, acfun girl, female titan, hit girl\nSeries: high score girl, boy meets girl, girl with a pearl earring"
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 2.677,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "girl with long hair and a flushed expression caught in the act of sex, her body arched back against a textured backdrop, skin glistening with sweat under warm overhead light, one leg bent high at the knee while the other stretches out, fingers gripping the edge of the scene for balance, soft shadows pooling beneath her hips, chest heaving with effort, lips parted in mid-movement, the raw physicality of the moment frozen in high definition, fabric of her garment stretched tight across her form, a single strand of hair escaping her bun to stick to her neck, depth of field blurring the background to keep focus entirely on her form and the intensity of the motion.",
+        "prose_samples": [
+          "A girl with soft skin stands in a dimly lit room, her body angled slightly forward. She wears a sheer, clinging garment that reveals the curve of her hips and the fullness of her thighs. Her hair is loose and falls over one shoulder. The light source is a warm, overhead glow that casts deep shadows in the hollows of her collarbone. Her expression is focused, lips parted slightly. The fabric of her outfit is thin and textured, catching the light with a subtle sheen. Her pose is active, one leg slightly bent to suggest motion. The air around her feels humid and heavy.",
+          "A girl with soft, natural skin and a relaxed, confident posture. She wears minimal clothing that leaves most of her body exposed. Her hair falls loosely around her shoulders. One hand grips a firm thigh while her legs are spread slightly apart. Warm overhead light casts a sharp shadow of her shoulder against a neutral background. The scene focuses entirely on her physical form and the intimate angle of her pose.",
+          "girl with long hair and a flushed expression caught in the act of sex, her body arched back against a textured backdrop, skin glistening with sweat under warm overhead light, one leg bent high at the knee while the other stretches out, fingers gripping the edge of the scene for balance, soft shadows pooling beneath her hips, chest heaving with effort, lips parted in mid-movement, the raw physicality of the moment frozen in high definition, fabric of her garment stretched tight across her form, a single strand of hair escaping her bun to stick to her neck, depth of field blurring the background to keep focus entirely on her form and the intensity of the motion."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "build_pass2_candidates",
+      "params": {
+        "k": 60,
+        "min_post_count": 100
+      },
+      "elapsed_s": 0.047,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "pass2_candidates": [
+          "clothed_after_sex",
+          "in_heat",
+          "assertive_female",
+          "aroused",
+          "dry_humping",
+          "folded",
+          "presenting_bra",
+          "implied_sex",
+          "covered_penetration",
+          "clothed_sex",
+          "flashing",
+          "hair_spread_out",
+          "girl_on_top",
+          "afterglow",
+          "standing",
+          "dress_grab",
+          "a_pose",
+          "mating_press",
+          "female_ejaculation",
+          "playing_with_hair",
+          "reaching",
+          "implied_masturbation",
+          "after_sex",
+          "clothed_masturbation",
+          "crossed_arms",
+          "kissing_hair",
+          "ghost_pose",
+          "lower_body",
+          "sleeves_pushed_up",
+          "femdom",
+          "torogao",
+          "frogtie",
+          "presenting",
+          "suspension",
+          "bald_female",
+          "outstretched_hand",
+          "muscular_female",
+          "implied_fellatio",
+          "claw_pose",
+          "take_your_pick",
+          "underwater_sex",
+          "adjusting_hair",
+          "cropped_torso",
+          "pole_dancing",
+          "erection_under_clothes",
+          "bound_torso",
+          "seductive_smile",
+          "curled_fingers",
+          "standing_sex",
+          "adjusting_another's_hair",
+          "groping",
+          "full_body",
+          "revealing_clothes",
+          "vaginal",
+          "flustered",
+          "leg_lock",
+          "masturbation",
+          "bouncing_breasts",
+          "kiss",
+          "dressing"
+        ],
+        "pass2_grounding_fragment": "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru DB against the prose). Strongly prefer tags from this list — they are scene-relevant and real:\n\n  clothed after sex, in heat, assertive female, aroused, dry humping, folded, presenting bra, implied sex, covered penetration, clothed sex, flashing, hair spread out, girl on top, afterglow, standing, dress grab, a pose, mating press, female ejaculation, playing with hair, reaching, implied masturbation, after sex, clothed masturbation, crossed arms, kissing hair, ghost pose, lower body, sleeves pushed up, femdom, torogao, frogtie, presenting, suspension, bald female, outstretched hand, muscular female, implied fellatio, claw pose, take your pick, underwater sex, adjusting hair, cropped torso, pole dancing, erection under clothes, bound torso, seductive smile, curled fingers, standing sex, adjusting another's hair, groping, full body, revealing clothes, vaginal, flustered, leg lock, masturbation, bouncing breasts, kiss, dressing\n\nYou may emit tags OUTSIDE this list ONLY when:\n  (a) the tag is required by the format (masterpiece, best quality, score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n  (b) the prose explicitly names a character, series, or artist not in the list;\n  (c) a concept is literally named in the prose but happens to be missing from the list.\nFor any other concept, pick the closest match from the candidate list instead of inventing a novel compound tag. If no candidate fits a concept, omit it rather than inventing.\n"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 6.57,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_9, safe, 1girl, long hair, flushed expression, caught in the act of sex, body arched back, textured backdrop, skin glistening, sweat, warm overhead light, one leg bent, high knee, leg stretched out, fingers gripping, edge of scene, balance, soft shadows, heaving chest, parted lips, mid-movement, raw physicality, high definition, fabric stretched tight, single strand of hair, escaping bun, sticking to neck, depth of field, blurred background, intense motion, a pose, cropped torso, standing sex, presenting, outstretched hand, reaching, lower body, seductive smile, hair spread out, playing with hair, adjusting hair, full body, female ejaculation, afterglow, dry humping, clothed sex, asserting, femdom, frogtie, torogao, standing, girl on top, suspended, cropped torso, hair bun, bun, hair strand, neck, gripping, balance, heaving, chest, heaving breasts, parted lips, mid-movement, physicality, form, intensity, motion, depth, background, focus, form, motion, high definition, fabric, garment, stretched, tight, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form,",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 4.471,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_9, safe, 1girl, long hair, caught, arched back, backdrop, sweat, light, legs, bent, knees, balancing, shadow, parted lips, fabric, tight clothes, fleeing, neck, depth of field, blurry foreground, a pose, cropped torso, standing sex, presenting, outstretched hand",
+        "stats": {
+          "corrected": 0,
+          "dropped": 439,
+          "kept_invalid": 0,
+          "total": 28
+        },
+        "anima_safety": "explicit"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, long hair, caught, arched back, backdrop, sweat, light, legs, bent, knees, balancing, shadow, parted lips, fabric, tight clothes, fleeing, neck, depth of field, blurry foreground, a pose, cropped torso, standing sex, presenting, outstretched hand",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_9, safe, 1girl, long hair, caught, arched back, backdrop, sweat, light, legs, bent, knees, balancing, shadow, parted lips, fabric, tight clothes, fleeing, neck, depth of field, blurry foreground, a pose, cropped torso, standing sex, presenting, outstretched hand",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "girl_sex",
+  "seed": 137,
+  "modifiers": [],
+  "prompt_source": "girl, sex",
+  "final_tags": "masterpiece, best quality, score_9, safe, 1girl, long hair, caught, arched back, backdrop, sweat, light, legs, bent, knees, balancing, shadow, parted lips, fabric, tight clothes, fleeing, neck, depth of field, blurry foreground, a pose, cropped torso, standing sex, presenting, outstretched hand",
+  "prose": "girl with long hair and a flushed expression caught in the act of sex, her body arched back against a textured backdrop, skin glistening with sweat under warm overhead light, one leg bent high at the knee while the other stretches out, fingers gripping the edge of the scene for balance, soft shadows pooling beneath her hips, chest heaving with effort, lips parted in mid-movement, the raw physicality of the moment frozen in high definition, fabric of her garment stretched tight across her form, a single strand of hair escaping her bun to stick to her neck, depth of field blurring the background to keep focus entirely on her form and the intensity of the motion.",
+  "draft": "masterpiece, best quality, score_9, safe, 1girl, long hair, flushed expression, caught in the act of sex, body arched back, textured backdrop, skin glistening, sweat, warm overhead light, one leg bent, high knee, leg stretched out, fingers gripping, edge of scene, balance, soft shadows, heaving chest, parted lips, mid-movement, raw physicality, high definition, fabric stretched tight, single strand of hair, escaping bun, sticking to neck, depth of field, blurred background, intense motion, a pose, cropped torso, standing sex, presenting, outstretched hand, reaching, lower body, seductive smile, hair spread out, playing with hair, adjusting hair, full body, female ejaculation, afterglow, dry humping, clothed sex, asserting, femdom, frogtie, torogao, standing, girl on top, suspended, cropped torso, hair bun, bun, hair strand, neck, gripping, balance, heaving, chest, heaving breasts, parted lips, mid-movement, physicality, form, intensity, motion, depth, background, focus, form, motion, high definition, fabric, garment, stretched, tight, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form, form,",
+  "shortlist": {
+    "artists": [
+      "0123456789",
+      "sol fa soft",
+      "e10",
+      "cl 55",
+      "chaotic unknown",
+      "ta (tama20150125)"
+    ],
+    "characters": [
+      "girl (mokufuu)",
+      "girlfriend (friday night funkin')",
+      "girl dm",
+      "acfun girl",
+      "female titan",
+      "hit girl"
+    ],
+    "series": [
+      "high score girl",
+      "boy meets girl",
+      "girl with a pearl earring"
+    ]
+  }
+}

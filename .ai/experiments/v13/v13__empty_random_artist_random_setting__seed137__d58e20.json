@@ -1,0 +1,344 @@
+{
+  "run_id": "v13__empty_random_artist_random_setting__seed137__d58e20",
+  "variant": "v13",
+  "pipeline_input": {
+    "source": "",
+    "mods": [
+      [
+        "🎲 Random Artist",
+        {
+          "behavioral": "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose.",
+          "keywords": "",
+          "target_slot": "artist"
+        }
+      ],
+      [
+        "🎲 Random Setting",
+        {
+          "behavioral": "Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features.",
+          "keywords": ""
+        }
+      ]
+    ],
+    "seed": 137
+  },
+  "started_at": 1776802423.4730217,
+  "ended_at": 1776802430.5382695,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.115,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=[], characters=[], series=[])"
+        },
+        "style_prose": "Apply these styles to the scene: Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose, Choose a specific location that fits the scene. Vary widely — pick something you haven't picked before. Describe concrete features."
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {}
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 4.551,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "A lone figure stands in a bustling Tokyo train station, captured in the style of Yoshitomo Nara. The subject is a young man with oversized, expressive eyes and a slightly melancholic expression, wearing a simple white t-shirt and blue denim jeans. His hair is dark and cut short, framing a face that seems too large for his body. Around him, the station is a chaotic blur of commuters and bright signage, rendered with Nara's signature thick, black ink outlines and flat, saturated colors. The lighting is artificial and cool, casting sharp shadows from overhead fluorescent tubes onto the polished floor. A red paper lantern hangs from the ceiling, its texture rough and fibrous against the smooth, tiled walls. The composition feels slightly tilted, adding a sense of movement and disorientation. The air appears thick with the humidity of a humid summer day, visible in the way light refracts through the glass doors. The man's pose is casual yet frozen, one hand in his pocket, the other gesturing vaguely at the crowd. The background features a mix of steel and glass, reflecting the crowd in distorted, painterly strokes. Every element balances the cartoonish proportions of the main character with the realistic density of the urban environment.",
+        "prose_samples": [
+          "A solitary figure stands in the center of a cramped, rain-slicked alleyway in 1920s Berlin, rendered in the style of Max Beckmann. The man wears a heavy, wool trench coat in deep charcoal with a single brass button catching the light. His face is angular and sharp, defined by thick, dark outlines that cut through the grey mist. He holds a long, slender umbrella tilted to shield his head from the steady downpour. The ground is paved with wet cobblestones reflecting the amber glow of a single streetlamp above. Shadows are long and distorted, stretching across the uneven pavement. The air feels thick with moisture and the scent of coal smoke. Beckmann's technique flattens the perspective, making the alley feel like a stage set rather than a deep space. A brick wall on the left features a jagged, broken window frame. The lighting is high-contrast, separating the figure from the darker background with crisp edges.",
+          "A solitary figure stands in the center of a bustling cobblestone market in 19th-century Paris, captured in the style of Egon Schiele. The artist's signature elongated limbs stretch unnaturally as the woman leans forward, her torso twisted at a sharp, awkward angle. Her skin is rendered in pale, almost translucent layers that reveal the underlying muscle structure beneath. She wears a high-necked dress made of heavy, rust-colored wool that drapes in uneven, jagged folds. Her hair is a wild mass of chestnut strands, cut into an asymmetrical shape that frames a face with a thin, angular jawline and dark, piercing eyes. The background features a wooden stall constructed from rough-hewn planks, its edges worn and uneven. Sunlight filters through the canopy above, casting harsh, diagonal shadows that slice across the wet pavement. The entire composition is framed by a thick, organic border of dark ink that bleeds into the scene, grounding the figure in a world that feels both intimate and distorted.",
+          "A lone figure stands in a bustling Tokyo train station, captured in the style of Yoshitomo Nara. The subject is a young man with oversized, expressive eyes and a slightly melancholic expression, wearing a simple white t-shirt and blue denim jeans. His hair is dark and cut short, framing a face that seems too large for his body. Around him, the station is a chaotic blur of commuters and bright signage, rendered with Nara's signature thick, black ink outlines and flat, saturated colors. The lighting is artificial and cool, casting sharp shadows from overhead fluorescent tubes onto the polished floor. A red paper lantern hangs from the ceiling, its texture rough and fibrous against the smooth, tiled walls. The composition feels slightly tilted, adding a sense of movement and disorientation. The air appears thick with the humidity of a humid summer day, visible in the way light refracts through the glass doors. The man's pose is casual yet frozen, one hand in his pocket, the other gesturing vaguely at the crowd. The background features a mix of steel and glass, reflecting the crowd in distorted, painterly strokes. Every element balances the cartoonish proportions of the main character with the realistic density of the urban environment."
+        ],
+        "prose_picker_choice": 3,
+        "prose_picker_raw": "3"
+      }
+    },
+    {
+      "step": "build_pass2_candidates",
+      "params": {
+        "k": 60,
+        "min_post_count": 100
+      },
+      "elapsed_s": 0.042,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "pass2_candidates": [
+          "artist's_hand_in_frame",
+          "ligne_claire",
+          "bara",
+          "tareme",
+          "terada_tera_(style)",
+          "torogao",
+          "yami_kawaii",
+          "standing",
+          "zun_(style)",
+          "ganguro",
+          "fan_speaking",
+          "tenshi_kaiwai",
+          "waiting",
+          "solo",
+          "gloom_(expression)",
+          "t_t",
+          "gyaru",
+          "train_station_platform",
+          "roots_(hair)",
+          "swinging_on_swing",
+          "monochrome",
+          "gendou_pose",
+          "train_station",
+          "haori",
+          "bar_censor",
+          "kantoku_(style)",
+          "jitome",
+          "narrowed_eyes",
+          "partially_colored",
+          "sitting_on_object",
+          "kimono_partially_removed",
+          "tsurime",
+          "postcard",
+          "sweatdrop",
+          "chanchanko_(clothes)",
+          "implied_futanari",
+          "sitting_on_liquid",
+          "2000s_(style)",
+          "lineart",
+          "nose",
+          "holding_drawing_tablet"
+        ],
+        "pass2_grounding_fragment": "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru DB against the prose). Strongly prefer tags from this list — they are scene-relevant and real:\n\n  artist's hand in frame, ligne claire, bara, tareme, terada tera (style), torogao, yami kawaii, standing, zun (style), ganguro, fan speaking, tenshi kaiwai, waiting, solo, gloom (expression), t t, gyaru, train station platform, roots (hair), swinging on swing, monochrome, gendou pose, train station, haori, bar censor, kantoku (style), jitome, narrowed eyes, partially colored, sitting on object, kimono partially removed, tsurime, postcard, sweatdrop, chanchanko (clothes), implied futanari, sitting on liquid, 2000s (style), lineart, nose, holding drawing tablet\n\nYou may emit tags OUTSIDE this list ONLY when:\n  (a) the tag is required by the format (masterpiece, best quality, score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n  (b) the prose explicitly names a character, series, or artist not in the list;\n  (c) a concept is literally named in the prose but happens to be missing from the list.\nFor any other concept, pick the closest match from the candidate list instead of inventing a novel compound tag. If no candidate fits a concept, omit it rather than inventing.\n"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.187,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_7, safe, 1boy, yoshitomo nara (style), train station, standing, solo, oversized eyes, melancholic, dark short hair, simple white t-shirt, blue denim jeans, thick black ink outlines, flat saturated colors, artificial cool lighting, sharp shadows, red paper lantern, fibrous texture, tiled walls, tilted composition, humid summer day, refracted light, glass doors, casual pose, hand in pocket, gesturing, steel and glass background, distorted painterly strokes, cartoonish proportions, urban density, roots, t t, tsurime, standing, jitome, kantoku (style), lineart, 2000s (style), standing",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.113,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_7, safe, 1boy, solo, train station, standing, short hair, dark, t shirt, denim, jeans, ink, outline, saturated, shadow, paper lantern, texture, summer, day, light, glass, door, casual, pose, hand in pocket",
+        "stats": {
+          "corrected": 0,
+          "dropped": 14,
+          "kept_invalid": 0,
+          "total": 27
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.057,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, solo, train station, standing, short hair, dark, t shirt, denim, jeans, ink, outline, saturated, shadow, paper lantern, texture, summer, day, light, glass, door, casual, pose, hand in pocket, @ittokyu",
+        "slot_fill_trace": {
+          "artist": "ittokyu"
+        }
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_7, safe, 1boy, solo, train station, standing, short hair, dark, t shirt, denim, jeans, ink, outline, saturated, shadow, paper lantern, texture, summer, day, light, glass, door, casual, pose, hand in pocket, @ittokyu",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "empty_random_artist_random_setting",
+  "seed": 137,
+  "modifiers": [
+    "🎲 Random Artist",
+    "🎲 Random Setting"
+  ],
+  "prompt_source": "",
+  "final_tags": "masterpiece, best quality, score_7, safe, 1boy, solo, train station, standing, short hair, dark, t shirt, denim, jeans, ink, outline, saturated, shadow, paper lantern, texture, summer, day, light, glass, door, casual, pose, hand in pocket, @ittokyu",
+  "prose": "A lone figure stands in a bustling Tokyo train station, captured in the style of Yoshitomo Nara. The subject is a young man with oversized, expressive eyes and a slightly melancholic expression, wearing a simple white t-shirt and blue denim jeans. His hair is dark and cut short, framing a face that seems too large for his body. Around him, the station is a chaotic blur of commuters and bright signage, rendered with Nara's signature thick, black ink outlines and flat, saturated colors. The lighting is artificial and cool, casting sharp shadows from overhead fluorescent tubes onto the polished floor. A red paper lantern hangs from the ceiling, its texture rough and fibrous against the smooth, tiled walls. The composition feels slightly tilted, adding a sense of movement and disorientation. The air appears thick with the humidity of a humid summer day, visible in the way light refracts through the glass doors. The man's pose is casual yet frozen, one hand in his pocket, the other gesturing vaguely at the crowd. The background features a mix of steel and glass, reflecting the crowd in distorted, painterly strokes. Every element balances the cartoonish proportions of the main character with the realistic density of the urban environment.",
+  "draft": "masterpiece, best quality, score_7, safe, 1boy, yoshitomo nara (style), train station, standing, solo, oversized eyes, melancholic, dark short hair, simple white t-shirt, blue denim jeans, thick black ink outlines, flat saturated colors, artificial cool lighting, sharp shadows, red paper lantern, fibrous texture, tiled walls, tilted composition, humid summer day, refracted light, glass doors, casual pose, hand in pocket, gesturing, steel and glass background, distorted painterly strokes, cartoonish proportions, urban density, roots, t t, tsurime, standing, jitome, kantoku (style), lineart, 2000s (style), standing",
+  "shortlist": {
+    "artists": [],
+    "characters": [],
+    "series": []
+  }
+}

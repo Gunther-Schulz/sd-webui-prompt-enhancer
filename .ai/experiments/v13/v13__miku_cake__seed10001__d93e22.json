@@ -1,0 +1,306 @@
+{
+  "run_id": "v13__miku_cake__seed10001__d93e22",
+  "variant": "v13",
+  "pipeline_input": {
+    "source": "hatsune miku holding a cake, chibi",
+    "mods": [],
+    "seed": 10001
+  },
+  "started_at": 1776802151.0493758,
+  "ended_at": 1776802156.7006555,
+  "outcome": "ok",
+  "steps": [
+    {
+      "step": "assemble_sp",
+      "params": {
+        "base_name": "Detailed",
+        "prose_directive": "STRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate."
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "mods",
+        "seed",
+        "source"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.",
+        "base_name": "Detailed"
+      }
+    },
+    {
+      "step": "build_shortlist",
+      "params": {
+        "query_expansion": true,
+        "model": null
+      },
+      "elapsed_s": 0.526,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "source",
+        "sp"
+      ],
+      "outputs_written": {
+        "shortlist": {
+          "_type": "Shortlist",
+          "_repr": "Shortlist(artists=['kotomi (happy colors)', 'chibi (shimon)', 'chibitan', 'pasutel', 'ang', 'bibi02'], characters=['hatsune miku', 'hatsune miku (nt)', 'hatsune miku (noodle stopper)', 'shaohua hatsune miku', 'miku (lee)', 'brazilian miku'], series=['hatsune miku expo', 'hatsune miku graphy collecti…"
+        },
+        "style_prose": ""
+      }
+    },
+    {
+      "step": "resolve_deferred_sources",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "deferred_resolved_count": 0
+      }
+    },
+    {
+      "step": "inject_shortlist",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "sp": "Input handling:\n- Input may be descriptive (a phrase or keyword list) or imperative (\"create X\", \"make it Y\"). Default to expanding descriptive input into a scene. For imperative input, follow the instruction literally while still producing a complete scene.\n\nYou are a prompt writer for AI image and video generators. Given a user's raw input, expand it into a concrete, detailed scene description. This base produces richer, more thorough scene descriptions than Default — useful for character-heavy prompts where you want cohesive weaving of garments, pose, and setting.\n\nWriting style:\n- Write short, direct sentences. State facts about the scene. Do not write flowing prose or poetic descriptions.\n- Be specific and concrete. Name the material, color or length, and one distinguishing feature per object. Never use abstract aesthetic labels like \"elegant\", \"stylish\", \"beautiful\".\n- Use the user's key descriptive words. Do not replace them with synonyms.\n- Mix sentence lengths. Short fragments are fine.\n- No adjective stacking. One or two modifiers per noun maximum. Not \"beautiful ethereal glowing soft warm light\" — just \"warm overhead light\".\n\nContent:\n- Follow user input strictly. Include every element requested. Do not invent unrequested characters.\n- If vague, invent concrete details: specific materials, textures, lighting conditions, setting details.\n- For characters: describe appearance, clothing, hair, expression, pose, body position.\n- Describe lighting as a physical condition: source, quality, direction, resulting shadows. Not poetic metaphors (\"light dances across the surface\").\n- Include texture and material details where relevant by naming what an eye could see or a hand could touch.\n- When style directions are provided, apply them naturally. Do not list them.\n- Do not change the user's intent. Enhance, don't rewrite.\n\nFormat:\n- No titles, headings, bullet points, or markdown.\n- No line breaks. Write everything as continuous text.\n- Start directly with the scene. No \"The image shows...\" or \"A photograph of...\".\n- Output the enhanced prompt only. No commentary.\n\nSTRICT SOURCE ADHERENCE: the user's source prompt is ground truth. Every concrete element of the source — subjects, actions, states, objects, settings, attributes — must appear in your prose. Do not drop any element. Do not substitute with a softer or more abstract equivalent. Do not re-interpret. If the source uses a specific word (including explicit, adult, violent, or otherwise mature words), your prose uses that word or its direct concrete equivalent — never a euphemism and never a sanitized rephrasing. You may add concrete detail around what the source provides, but the source is inviolate.\n\nAvailable references — if your prose names a specific real person or fictional entity, choose ONLY from the lists below. Do not invent names not listed here.\nArtists: kotomi (happy colors), chibi (shimon), chibitan, pasutel, ang, bibi02\nCharacters: hatsune miku, hatsune miku (nt), hatsune miku (noodle stopper), shaohua hatsune miku, miku (lee), brazilian miku\nSeries: hatsune miku expo, hatsune miku graphy collection, hatsune miku happy 16th birthday  dear creators "
+      }
+    },
+    {
+      "step": "multi_sample_prose",
+      "params": {
+        "n_samples": 3,
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 2.892,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "prose": "hatsune miku holding a cake, chibi, small rounded head with twin teal pigtails tied by white ribbons, oversized expressive eyes fixed on the dessert, mouth open in a wide happy smile, wearing a short teal dress with a white frilled hem, one hand gripping a frosted rectangular cake topped with a single candle, standing on a wooden floor, warm overhead lighting casting a soft shadow behind her, background filled with pastel balloons and scattered confetti, vibrant color palette with saturated teal and pink hues, slightly tilted body posture suggesting playful movement, clean lines and flat shading typical of the chibi style, detailed fabric texture on the dress showing slight folds at the waist, specific material of the cake appearing smooth and sugary.",
+        "prose_samples": [
+          "A chibi Hatsune Miku holds a cake, her large round head tilted slightly downward. She wears a fitted bodysuit with a high neck and short sleeves. Her teal twin-tails are short and rounded at the tips. Her oversized eyes gaze fixedly at the dessert. Her tiny hands grip the cake's edge with firm fingers. The cake is round with smooth frosting and a single decorative candle. She stands against a neutral background that lets her vibrant colors pop. The scene is lit by soft, even light that minimizes harsh shadows. Her pose is casual and relaxed, one leg slightly bent. The overall composition is compact and cute, emphasizing her small stature.",
+          "hatsune miku holding a cake, chibi, small rounded head with twin teal pigtails tied by white ribbons, oversized expressive eyes fixed on the dessert, mouth open in a wide happy smile, wearing a short teal dress with a white frilled hem, one hand gripping a frosted rectangular cake topped with a single candle, standing on a wooden floor, warm overhead lighting casting a soft shadow behind her, background filled with pastel balloons and scattered confetti, vibrant color palette with saturated teal and pink hues, slightly tilted body posture suggesting playful movement, clean lines and flat shading typical of the chibi style, detailed fabric texture on the dress showing slight folds at the waist, specific material of the cake appearing smooth and sugary.",
+          "chibi style hatsune miku standing and holding a round cake, teal hair tied in twin tails, green eyes looking down, white frilled dress with short sleeves, pink frosting covering the top of the cake, small round body shape, soft pastel background, flat lighting from above, minimal shadows, thick black outlines, vibrant colors, cute expression, fingers gripping the side of the cake"
+        ],
+        "prose_picker_choice": 2,
+        "prose_picker_raw": "2"
+      }
+    },
+    {
+      "step": "build_pass2_candidates",
+      "params": {
+        "k": 60,
+        "min_post_count": 100
+      },
+      "elapsed_s": 0.043,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "pass2_candidates": [
+          "happi",
+          "hime_gyaru",
+          "heisei_retro",
+          "nontraditional_miko"
+        ],
+        "pass2_grounding_fragment": "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru DB against the prose). Strongly prefer tags from this list — they are scene-relevant and real:\n\n  happi, hime gyaru, heisei retro, nontraditional miko\n\nYou may emit tags OUTSIDE this list ONLY when:\n  (a) the tag is required by the format (masterpiece, best quality, score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n  (b) the prose explicitly names a character, series, or artist not in the list;\n  (c) a concept is literally named in the prose but happens to be missing from the list.\nFor any other concept, pick the closest match from the candidate list instead of inventing a novel compound tag. If no candidate fits a concept, omit it rather than inventing.\n"
+      }
+    },
+    {
+      "step": "tag_extract",
+      "params": {
+        "tag_fmt": "Anima",
+        "temperature": 0.8,
+        "num_predict": 1024,
+        "model": null
+      },
+      "elapsed_s": 1.069,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose"
+      ],
+      "outputs_written": {
+        "draft": "masterpiece, best quality, score_8, 1girl, hatsune miku, hime gyaru, short hair, teal hair, twin pigtails, white ribbon, oversized eyes, open mouth, happy expression, holding cake, frosted cake, single candle, wooden floor, warm lighting, soft shadow, pastel balloons, scattered confetti, short dress, white frilled hem, teal dress, saturated colors, teal accents, pink accents, tilted body, chibi, small head, rounded head, flat shading, clean lines, detailed fabric, fabric folds, waist, smooth skin, sugary texture, heisei retro, nontraditional miko",
+        "tag_fmt": "Anima"
+      }
+    },
+    {
+      "step": "validate",
+      "params": {},
+      "elapsed_s": 1.12,
+      "inputs_seen": [
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "style_prose",
+        "tag_fmt"
+      ],
+      "outputs_written": {
+        "tags_after_validate": "masterpiece, best quality, score_8, safe, 1girl, hatsune miku, vocaloid, hime gyaru, short hair, short twintails, white ribbon, open mouth, happy, holding cake, candle, wooden floor, shadow, balloon, confetti, short dress, frills, saturated, chibi, small head, clean, fabric, texture, heisei retro",
+        "stats": {
+          "corrected": 0,
+          "dropped": 12,
+          "kept_invalid": 0,
+          "total": 28
+        },
+        "anima_safety": "safe"
+      }
+    },
+    {
+      "step": "slot_fill",
+      "params": {
+        "enabled": true
+      },
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, hatsune miku, vocaloid, hime gyaru, short hair, short twintails, white ribbon, open mouth, happy, holding cake, candle, wooden floor, shadow, balloon, confetti, short dress, frills, saturated, chibi, small head, clean, fabric, texture, heisei retro",
+        "slot_fill_trace": {}
+      }
+    },
+    {
+      "step": "source_inject",
+      "params": {},
+      "elapsed_s": 0.0,
+      "inputs_seen": [
+        "anima_safety",
+        "base_name",
+        "deferred_resolved_count",
+        "draft",
+        "final_tags",
+        "mods",
+        "pass2_candidates",
+        "pass2_grounding_fragment",
+        "prose",
+        "prose_picker_choice",
+        "prose_picker_raw",
+        "prose_samples",
+        "seed",
+        "shortlist",
+        "slot_fill_trace",
+        "source",
+        "sp",
+        "stats",
+        "style_prose",
+        "tag_fmt",
+        "tags_after_validate"
+      ],
+      "outputs_written": {
+        "final_tags": "masterpiece, best quality, score_8, safe, 1girl, hatsune miku, vocaloid, hime gyaru, short hair, short twintails, white ribbon, open mouth, happy, holding cake, candle, wooden floor, shadow, balloon, confetti, short dress, frills, saturated, chibi, small head, clean, fabric, texture, heisei retro",
+        "source_inject_stats": {}
+      }
+    }
+  ],
+  "prompt_id": "miku_cake",
+  "seed": 10001,
+  "modifiers": [],
+  "prompt_source": "hatsune miku holding a cake, chibi",
+  "final_tags": "masterpiece, best quality, score_8, safe, 1girl, hatsune miku, vocaloid, hime gyaru, short hair, short twintails, white ribbon, open mouth, happy, holding cake, candle, wooden floor, shadow, balloon, confetti, short dress, frills, saturated, chibi, small head, clean, fabric, texture, heisei retro",
+  "prose": "hatsune miku holding a cake, chibi, small rounded head with twin teal pigtails tied by white ribbons, oversized expressive eyes fixed on the dessert, mouth open in a wide happy smile, wearing a short teal dress with a white frilled hem, one hand gripping a frosted rectangular cake topped with a single candle, standing on a wooden floor, warm overhead lighting casting a soft shadow behind her, background filled with pastel balloons and scattered confetti, vibrant color palette with saturated teal and pink hues, slightly tilted body posture suggesting playful movement, clean lines and flat shading typical of the chibi style, detailed fabric texture on the dress showing slight folds at the waist, specific material of the cake appearing smooth and sugary.",
+  "draft": "masterpiece, best quality, score_8, 1girl, hatsune miku, hime gyaru, short hair, teal hair, twin pigtails, white ribbon, oversized eyes, open mouth, happy expression, holding cake, frosted cake, single candle, wooden floor, warm lighting, soft shadow, pastel balloons, scattered confetti, short dress, white frilled hem, teal dress, saturated colors, teal accents, pink accents, tilted body, chibi, small head, rounded head, flat shading, clean lines, detailed fabric, fabric folds, waist, smooth skin, sugary texture, heisei retro, nontraditional miko",
+  "shortlist": {
+    "artists": [
+      "kotomi (happy colors)",
+      "chibi (shimon)",
+      "chibitan",
+      "pasutel",
+      "ang",
+      "bibi02"
+    ],
+    "characters": [
+      "hatsune miku",
+      "hatsune miku (nt)",
+      "hatsune miku (noodle stopper)",
+      "shaohua hatsune miku",
+      "miku (lee)",
+      "brazilian miku"
+    ],
+    "series": [
+      "hatsune miku expo",
+      "hatsune miku graphy collection",
+      "hatsune miku happy 16th birthday  dear creators "
+    ]
+  }
+}

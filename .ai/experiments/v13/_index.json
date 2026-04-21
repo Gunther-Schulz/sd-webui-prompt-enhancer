@@ -1,0 +1,286 @@
+{
+  "variant": "v13",
+  "params": {},
+  "runs": [
+    {
+      "run_id": "v13__miku_cake__seed42__5d9d2c",
+      "prompt_id": "miku_cake",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed42__5d9d2c.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed137__341666",
+      "prompt_id": "miku_cake",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed137__341666.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed1729__16b811",
+      "prompt_id": "miku_cake",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed1729__16b811.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed7919__71ca35",
+      "prompt_id": "miku_cake",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed7919__71ca35.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed10001__d93e22",
+      "prompt_id": "miku_cake",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed10001__d93e22.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed65537__55e427",
+      "prompt_id": "miku_cake",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed65537__55e427.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed99991__2a665b",
+      "prompt_id": "miku_cake",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed99991__2a665b.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed524287__6b42ff",
+      "prompt_id": "miku_cake",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed524287__6b42ff.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed1000003__15886e",
+      "prompt_id": "miku_cake",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed1000003__15886e.json"
+    },
+    {
+      "run_id": "v13__miku_cake__seed2147483000__e21d0f",
+      "prompt_id": "miku_cake",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__miku_cake__seed2147483000__e21d0f.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed42__ce7733",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed42__ce7733.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed137__3fe8b8",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed137__3fe8b8.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed1729__36ff15",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed1729__36ff15.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed7919__46709a",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed7919__46709a.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed10001__06c38a",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed10001__06c38a.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed65537__45cecf",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed65537__45cecf.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed99991__2c4c75",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed99991__2c4c75.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed524287__d41834",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed524287__d41834.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed1000003__99cc81",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed1000003__99cc81.json"
+    },
+    {
+      "run_id": "v13__girl_random_artist_random_era__seed2147483000__90f864",
+      "prompt_id": "girl_random_artist_random_era",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_random_artist_random_era__seed2147483000__90f864.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed42__e3ac66",
+      "prompt_id": "girl_sex",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed42__e3ac66.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed137__cd6a91",
+      "prompt_id": "girl_sex",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed137__cd6a91.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed1729__54027d",
+      "prompt_id": "girl_sex",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed1729__54027d.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed7919__9f1925",
+      "prompt_id": "girl_sex",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed7919__9f1925.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed10001__b00d33",
+      "prompt_id": "girl_sex",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed10001__b00d33.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed65537__36c38b",
+      "prompt_id": "girl_sex",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed65537__36c38b.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed99991__d232ca",
+      "prompt_id": "girl_sex",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed99991__d232ca.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed524287__262fec",
+      "prompt_id": "girl_sex",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed524287__262fec.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed1000003__7b6281",
+      "prompt_id": "girl_sex",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed1000003__7b6281.json"
+    },
+    {
+      "run_id": "v13__girl_sex__seed2147483000__5fb17e",
+      "prompt_id": "girl_sex",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__girl_sex__seed2147483000__5fb17e.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed42__555d5a",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 42,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed42__555d5a.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed137__d58e20",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 137,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed137__d58e20.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed1729__483023",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 1729,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed1729__483023.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed7919__be79a6",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 7919,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed7919__be79a6.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed10001__2ecba2",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 10001,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed10001__2ecba2.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed65537__f263b4",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 65537,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed65537__f263b4.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed99991__0c4d2f",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 99991,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed99991__0c4d2f.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed524287__21568e",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 524287,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed524287__21568e.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed1000003__f0aab0",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 1000003,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed1000003__f0aab0.json"
+    },
+    {
+      "run_id": "v13__empty_random_artist_random_setting__seed2147483000__4dd5aa",
+      "prompt_id": "empty_random_artist_random_setting",
+      "seed": 2147483000,
+      "outcome": "ok",
+      "path": ".ai/experiments/v13/v13__empty_random_artist_random_setting__seed2147483000__4dd5aa.json"
+    }
+  ]
+}
