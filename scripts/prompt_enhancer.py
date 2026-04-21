@@ -1869,6 +1869,38 @@ _PROSE_ADHERENCE_DIRECTIVE = (
 )
 
 
+# ── V15 prose-as-direct-image-input directive ───────────────────────
+# Appended to the prose SP when the V14 Hybrid path is active (Anima +
+# RAG). Since V14 drops all general-category tags post-validation and
+# the structural prefix carries only quality/safety/subject-count/
+# @artist/character/series, the prose now IS the primary image signal
+# rather than scaffold for tag extraction. This directive tells the LLM
+# it must cover every visual element itself.
+_PROSE_V14_COVERAGE_DIRECTIVE = (
+    "PROSE IS THE PRIMARY IMAGE INPUT. The downstream output has only a "
+    "small structural tag prefix (quality, safety, 1girl/1boy, artist, "
+    "character, series). All other visual content must be in the prose "
+    "itself — it is fed directly to the image generator. Cover every "
+    "visual element the image needs:\n"
+    "  - Subject features: skin tone, hair color/length/style, eye color "
+    "and shape, age / build.\n"
+    "  - Clothing: every garment layer, material, color, fit, and any "
+    "distinguishing detail (straps, frills, patterns).\n"
+    "  - Pose and body position: stance, limbs, hand positions, head "
+    "orientation, weight distribution.\n"
+    "  - Expression and gaze: mouth, eyes, eyebrows, direction of look.\n"
+    "  - Lighting: source, direction, quality (harsh/soft), color "
+    "temperature, resulting shadows.\n"
+    "  - Setting: location, background elements, architecture, objects, "
+    "floor/wall textures, atmosphere.\n"
+    "  - Composition: framing (close-up, full-body), angle, depth of "
+    "field, focal subject.\n"
+    "If it is not in the prose it will not be in the image. Be concrete "
+    "and specific — name materials, colors, shapes, directions. Avoid "
+    "abstract labels; a reader must be able to picture the exact scene."
+)
+
+
 # ── V8 multi-sample picker ──────────────────────────────────────────
 # When anima_tagger_prose_samples > 1, generate N prose samples at
 # the normal temperature and have a small "picker" LLM call select the
@@ -2544,6 +2576,12 @@ class PromptEnhancer(scripts.Script):
                         # stays free.
                         if source:
                             sp = f"{sp}\n\n{_PROSE_ADHERENCE_DIRECTIVE}"
+                        # V15: on V14 Hybrid path (Anima+RAG), the prose is
+                        # the primary image input — no general tags will
+                        # survive the structural filter to cover pose /
+                        # clothing / setting / lighting. Tell the LLM so it
+                        # produces self-sufficient prose.
+                        sp = f"{sp}\n\n{_PROSE_V14_COVERAGE_DIRECTIVE}"
                         print(f"[PromptEnhancer] RAG shortlist: "
                               f"{len(_anima_shortlist.artists)} artists, "
                               f"{len(_anima_shortlist.characters)} characters, "
