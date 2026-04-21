@@ -161,19 +161,21 @@ def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, see
 
     def _expander(source: str, modifier_keywords: str | None) -> str:
         def _oneshot(sys_prompt: str, user_msg: str) -> str:
-            # _call_llm is a generator yielding progress dicts then the
-            # final content string. We only need the content.
-            content = ""
+            # _call_llm RETURNS a string (not a generator). A previous
+            # version of this bridge iterated `for chunk in _call_llm(...)`
+            # which iterated character-by-character over the return string
+            # — it silently fed only the LAST CHARACTER of the LLM's
+            # expansion into FAISS as the shortlist query. That corrupted
+            # every shortlist retrieval and produced user-visible weird
+            # tags (sparse_leg_hair, simple_fish, overhead_lights, etc.)
+            # because FAISS on a single char pulls near-random entries.
             try:
-                for chunk in _call_llm(
+                return _call_llm(
                     user_msg, api_url, model, sys_prompt, temperature,
                     think=think, timeout=30, seed=seed,
-                ):
-                    if isinstance(chunk, str):
-                        content = chunk
+                ) or ""
             except Exception:
                 return ""
-            return content
 
         return expand_query(source, _oneshot, modifier_keywords=modifier_keywords)
 

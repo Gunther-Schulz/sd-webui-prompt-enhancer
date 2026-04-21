@@ -72,3 +72,28 @@
   source: ""
   modifiers: ["🎲 Random Artist", "🎲 Random Setting"]
   note: "Dice roll + modifiers. Expect @artist + coherent setting, no incoherent mashup."
+
+# ── Weird-tag reproducers ───────────────────────────────────────────
+# Added 2026-04-21 after user reported sparse_leg_hair, overhead_lights,
+# simple_fish appearing "often" on terse/aesthetic sources. These prompts
+# mirror the SHAPE of the user's live-Forge triggers so we can measure
+# weird-tag rate in the harness and target it with future variants.
+- id: girl_beautiful_location
+  source: "girl, beautiful location"
+  modifiers: []
+  note: "User-reported trigger: overhead lights + simple fish observed on garden outputs. Expect weird-tag contamination rate measurable vs V11 baseline."
+
+- id: sexy_girl_beautiful_location
+  source: "sexy scantly clad girl, beautiful location"
+  modifiers: []
+  note: "User-reported trigger: sparse leg hair observed. Expect body-detail bias to surface from vague-aesthetic framing."
+
+- id: girl_serene
+  source: "girl, serene"
+  modifiers: []
+  note: "User-reported trigger. Terse aesthetic adjective source — qwen priors fill in tropes."
+
+- id: girl_bare
+  source: "girl"
+  modifiers: []
+  note: "Minimum source. Maximum latitude for LLM to fill with training priors."
