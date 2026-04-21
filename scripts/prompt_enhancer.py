@@ -92,13 +92,14 @@ def _get_anima_stack():
 
 def _rag_available_for(tag_fmt: str) -> tuple[bool, str]:
     """True + empty-string reason iff RAG pipeline can run for tag_fmt.
-    Returns (False, reason_string) when unavailable — the caller can
-    surface the reason in the status output so users see why their
-    RAG radio choice didn't take effect."""
+    Returns (False, reason_string) when unavailable — callers must
+    ABORT (not fall back) when the user picked RAG and it's missing.
+    Selecting RAG is an explicit user choice; silently swapping in a
+    different validation mode hides real problems."""
     if tag_fmt != "Anima":
         return False, (
-            f"RAG is currently Anima-only; '{tag_fmt}' uses the rapidfuzz "
-            f"path. Falling back to Fuzzy."
+            f"RAG is currently Anima-only. Select the Anima tag format "
+            f"or pick a different Tag Validation mode."
         )
     stack = _get_anima_stack()
     if stack is None:
@@ -111,8 +112,9 @@ def _rag_available_for(tag_fmt: str) -> tuple[bool, str]:
             except Exception:
                 pass
         return False, (
-            f"RAG artefacts not available{detail}. "
-            f"Falling back to Fuzzy. Restart Forge to retry HuggingFace download."
+            f"RAG artefacts not loaded{detail}. "
+            f"Restart Forge to retry the HuggingFace download, or pick a "
+            f"different Tag Validation mode."
         )
     return True, ""
 
@@ -123,15 +125,6 @@ def _use_anima_pipeline(tag_fmt: str, validation_mode: str = "RAG") -> bool:
         return False
     ok, _ = _rag_available_for(tag_fmt)
     return ok
-
-
-def _rapidfuzz_mode_for(validation_mode: str) -> str:
-    """Map the radio value to a mode the rapidfuzz _postprocess_tags
-    path understands. When the user picked 'RAG' but we fell back,
-    use 'Fuzzy' (non-destructive typo correction)."""
-    if validation_mode == "RAG":
-        return "Fuzzy"
-    return validation_mode
 
 
 def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, seed=-1):
@@ -1735,49 +1728,47 @@ class PromptEnhancer(scripts.Script):
                 # If picked but unavailable (non-Anima format, or artefacts
                 # missing), surface the reason so the user sees why we fell
                 # back to rapidfuzz.
+                # User-chosen RAG path. No fallback — if RAG is selected
+                # but unavailable, abort with a clear error. Other radio
+                # modes (Fuzzy Strict / Fuzzy / Off) are separate code
+                # paths; they do NOT run here as a substitute.
                 _anima = None
                 _anima_cm = None
                 _anima_shortlist = None
-                _rag_fallback_msg = ""
                 if validation_mode == "RAG":
                     ok, reason = _rag_available_for(tag_fmt)
                     if not ok:
-                        _rag_fallback_msg = reason
-                        logger.warning(f"RAG unavailable: {reason}")
-                    else:
-                        _s = _get_anima_stack()
-                        try:
-                            _anima_cm = _s.models()
-                            _anima_cm.__enter__()
-                            _anima = _s
-                            _expander = _make_anima_query_expander(
-                                api_url, model, temperature=0.3,
-                                think=False, seed=int(sd),
-                            )
-                            _anima_shortlist = _s.build_shortlist(
-                                source_prompt=source,
-                                modifier_keywords=style_str,
-                                query_expander=_expander,
-                            )
-                            _sl_frag = _anima_shortlist.as_system_prompt_fragment()
-                            if _sl_frag:
-                                sp = f"{sp}\n\n{_sl_frag}"
-                            print(f"[PromptEnhancer] RAG shortlist: "
-                                  f"{len(_anima_shortlist.artists)} artists, "
-                                  f"{len(_anima_shortlist.characters)} characters, "
-                                  f"{len(_anima_shortlist.series)} series")
-                        except Exception as e:
-                            _rag_fallback_msg = f"RAG failed to load: {e}"
-                            logger.warning(f"RAG setup failed: {e}")
-                            if _anima_cm:
-                                try: _anima_cm.__exit__(None, None, None)
-                                except Exception: pass
-                            _anima = None
-                            _anima_cm = None
-                            _anima_shortlist = None
-
-                if _rag_fallback_msg:
-                    yield gr.update(), gr.update(), f"<span style='color:#ca6'>{_rag_fallback_msg}</span>"
+                        logger.error(f"RAG unavailable: {reason}")
+                        yield "", "", f"<span style='color:#c66'>RAG unavailable — {reason}</span>"
+                        return
+                    _s = _get_anima_stack()
+                    try:
+                        _anima_cm = _s.models()
+                        _anima_cm.__enter__()
+                        _anima = _s
+                        _expander = _make_anima_query_expander(
+                            api_url, model, temperature=0.3,
+                            think=False, seed=int(sd),
+                        )
+                        _anima_shortlist = _s.build_shortlist(
+                            source_prompt=source,
+                            modifier_keywords=style_str,
+                            query_expander=_expander,
+                        )
+                        _sl_frag = _anima_shortlist.as_system_prompt_fragment()
+                        if _sl_frag:
+                            sp = f"{sp}\n\n{_sl_frag}"
+                        print(f"[PromptEnhancer] RAG shortlist: "
+                              f"{len(_anima_shortlist.artists)} artists, "
+                              f"{len(_anima_shortlist.characters)} characters, "
+                              f"{len(_anima_shortlist.series)} series")
+                    except Exception as e:
+                        logger.error(f"RAG setup failed: {e}")
+                        if _anima_cm:
+                            try: _anima_cm.__exit__(None, None, None)
+                            except Exception: pass
+                        yield "", "", f"<span style='color:#c66'>RAG setup failed: {type(e).__name__}: {e}</span>"
+                        return
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (hybrid 1/3 prose)...</span>"
@@ -1859,7 +1850,7 @@ class PromptEnhancer(scripts.Script):
                                 shortlist=_anima_shortlist,
                             )
                         else:
-                            negative, _ = _postprocess_tags(negative, tag_fmt, _rapidfuzz_mode_for(validation_mode))
+                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
 
                     # Run tags through full post-processing pipeline.
                     # When Anima retrieval is active, the bge-m3 validator
@@ -1870,7 +1861,7 @@ class PromptEnhancer(scripts.Script):
                             shortlist=_anima_shortlist,
                         )
                     else:
-                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, _rapidfuzz_mode_for(validation_mode))
+                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags + NL"]
                     if stats:
@@ -2018,28 +2009,24 @@ class PromptEnhancer(scripts.Script):
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>Validating tags ({validation_mode})...</span>"
 
                     # RAG routing for remix — only when user picked RAG on
-                    # the Tag Validation radio AND it's available for this
-                    # format. No shortlist here — remix doesn't re-query.
+                    # User-chosen RAG path. No fallback — abort on unavailable.
+                    # No shortlist here — remix doesn't re-query.
                     _anima_r = None
                     _anima_r_cm = None
-                    _rag_fallback_msg_r = ""
                     if validation_mode == "RAG":
                         ok, reason = _rag_available_for(tag_fmt)
-                        if ok:
-                            _anima_r = _get_anima_stack()
-                        else:
-                            _rag_fallback_msg_r = reason
-                            logger.warning(f"RAG unavailable (remix): {reason}")
-                    if _rag_fallback_msg_r:
-                        yield gr.update(), gr.update(), f"<span style='color:#ca6'>{_rag_fallback_msg_r}</span>"
-                    if _anima_r is not None:
+                        if not ok:
+                            logger.error(f"RAG unavailable (remix): {reason}")
+                            yield "", "", f"<span style='color:#c66'>RAG unavailable — {reason}</span>"
+                            return
+                        _anima_r = _get_anima_stack()
                         try:
                             _anima_r_cm = _anima_r.models()
                             _anima_r_cm.__enter__()
                         except Exception as _e:
-                            logger.warning(f"anima setup failed in remix, falling back: {_e}")
-                            _anima_r_cm = None
-                            _anima_r = None
+                            logger.error(f"RAG setup failed in remix: {_e}")
+                            yield "", "", f"<span style='color:#c66'>RAG setup failed: {type(_e).__name__}: {_e}</span>"
+                            return
                     _anima_r_safety = _anima_safety_from_modifiers(mods)
 
                     def _validate_tag_str(tag_str: str) -> tuple[str, dict | None]:
@@ -2047,7 +2034,7 @@ class PromptEnhancer(scripts.Script):
                             return _anima_tag_from_draft(
                                 _anima_r, tag_str, safety=_anima_r_safety,
                             )
-                        return _postprocess_tags(tag_str, tag_fmt, _rapidfuzz_mode_for(validation_mode))
+                        return _postprocess_tags(tag_str, tag_fmt, validation_mode)
 
                     if fmt == "hybrid":
                         # Split tags and NL, post-process tags only
@@ -2158,49 +2145,44 @@ class PromptEnhancer(scripts.Script):
                 else:
                     user_msg = f"{user_msg}\n\nGenerate tags. Every tag MUST be consistent with the scene and styles above. Do not contradict any detail."
 
-                # Anima retrieval: shortlist injection + bge-m3 validator
+                # User-chosen RAG path. No fallback — abort with a clear
+                # error when RAG is picked but unavailable.
                 _anima_t = None
                 _anima_t_cm = None
                 _anima_t_shortlist = None
-                _rag_fallback_msg_t = ""
                 if validation_mode == "RAG":
                     ok, reason = _rag_available_for(tag_fmt)
                     if not ok:
-                        _rag_fallback_msg_t = reason
-                        logger.warning(f"RAG unavailable: {reason}")
-                    else:
-                        _s = _get_anima_stack()
-                        try:
-                            _anima_t_cm = _s.models()
-                            _anima_t_cm.__enter__()
-                            _anima_t = _s
-                            _expander_t = _make_anima_query_expander(
-                                api_url, model, temperature=0.3,
-                                think=False, seed=int(sd),
-                            )
-                            _anima_t_shortlist = _s.build_shortlist(
-                                source_prompt=source, modifier_keywords=style_str,
-                                query_expander=_expander_t,
-                            )
-                            _frag = _anima_t_shortlist.as_system_prompt_fragment()
-                            if _frag:
-                                sp = f"{sp}\n\n{_frag}"
-                            print(f"[PromptEnhancer] RAG shortlist: "
-                                  f"{len(_anima_t_shortlist.artists)} artists, "
-                                  f"{len(_anima_t_shortlist.characters)} characters, "
-                                  f"{len(_anima_t_shortlist.series)} series")
-                        except Exception as _e:
-                            _rag_fallback_msg_t = f"RAG failed to load: {_e}"
-                            logger.warning(f"RAG setup failed: {_e}")
-                            if _anima_t_cm:
-                                try: _anima_t_cm.__exit__(None, None, None)
-                                except Exception: pass
-                            _anima_t = None
-                            _anima_t_cm = None
-                            _anima_t_shortlist = None
-
-                if _rag_fallback_msg_t:
-                    yield gr.update(), gr.update(), f"<span style='color:#ca6'>{_rag_fallback_msg_t}</span>"
+                        logger.error(f"RAG unavailable: {reason}")
+                        yield "", "", f"<span style='color:#c66'>RAG unavailable — {reason}</span>"
+                        return
+                    _s = _get_anima_stack()
+                    try:
+                        _anima_t_cm = _s.models()
+                        _anima_t_cm.__enter__()
+                        _anima_t = _s
+                        _expander_t = _make_anima_query_expander(
+                            api_url, model, temperature=0.3,
+                            think=False, seed=int(sd),
+                        )
+                        _anima_t_shortlist = _s.build_shortlist(
+                            source_prompt=source, modifier_keywords=style_str,
+                            query_expander=_expander_t,
+                        )
+                        _frag = _anima_t_shortlist.as_system_prompt_fragment()
+                        if _frag:
+                            sp = f"{sp}\n\n{_frag}"
+                        print(f"[PromptEnhancer] RAG shortlist: "
+                              f"{len(_anima_t_shortlist.artists)} artists, "
+                              f"{len(_anima_t_shortlist.characters)} characters, "
+                              f"{len(_anima_t_shortlist.series)} series")
+                    except Exception as _e:
+                        logger.error(f"RAG setup failed: {_e}")
+                        if _anima_t_cm:
+                            try: _anima_t_cm.__exit__(None, None, None)
+                            except Exception: pass
+                        yield "", "", f"<span style='color:#c66'>RAG setup failed: {type(_e).__name__}: {_e}</span>"
+                        return
 
                 if not source:
                     yield gr.update(), gr.update(), "<span style='color:#aaa'>\U0001F3B2 Rolling dice (tags)...</span>"
@@ -2228,7 +2210,7 @@ class PromptEnhancer(scripts.Script):
                                 shortlist=_anima_t_shortlist,
                             )
                         else:
-                            negative, _ = _postprocess_tags(negative, tag_fmt, _rapidfuzz_mode_for(validation_mode))
+                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
                     else:
                         tags, negative = raw, ""
                     if _anima_t is not None:
@@ -2237,7 +2219,7 @@ class PromptEnhancer(scripts.Script):
                             shortlist=_anima_t_shortlist,
                         )
                     else:
-                        tags, stats = _postprocess_tags(tags, tag_fmt, _rapidfuzz_mode_for(validation_mode))
+                        tags, stats = _postprocess_tags(tags, tag_fmt, validation_mode)
                     tag_count = stats.get("total", 0) if stats else len([t for t in tags.split(",") if t.strip()])
                     status_parts = [f"{tag_count} tags"]
                     if stats:
