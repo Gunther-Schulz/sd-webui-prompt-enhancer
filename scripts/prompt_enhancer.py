@@ -2640,6 +2640,18 @@ class PromptEnhancer(scripts.Script):
                         return
                     if style_str:
                         tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                    # V17: shortlist-aware tag_extract. The RAG shortlist
+                    # (retrieved artists / characters / series candidates)
+                    # was previously injected only into the prose SP. The
+                    # tag_extract LLM saw it indirectly via whatever the
+                    # prose mentioned. V16 refocused tag_extract to emit
+                    # ONLY structural tags (artist / character / series
+                    # among them); giving it the shortlist directly
+                    # sharpens precision on those categories.
+                    if _anima_shortlist is not None:
+                        _sl_frag_tag = _anima_shortlist.as_system_prompt_fragment()
+                        if _sl_frag_tag:
+                            tag_sp = f"{tag_sp}\n\n{_sl_frag_tag}"
                     # V13: Pass 2 grounding — prepend a scene-relevant candidate
                     # tag list retrieved from the DB against the prose. Constrains
                     # the LLM to pick from real scene-matching vocabulary instead
@@ -3167,6 +3179,11 @@ class PromptEnhancer(scripts.Script):
                         return
                     if style_str:
                         tag_sp = f"{tag_sp}\n\nThe following style directives were requested. Ensure they are reflected in the tags:\n{style_str}"
+                    # V17: shortlist-aware tag_extract. See _hybrid for rationale.
+                    if _anima_t_shortlist is not None:
+                        _sl_frag_tag = _anima_t_shortlist.as_system_prompt_fragment()
+                        if _sl_frag_tag:
+                            tag_sp = f"{tag_sp}\n\n{_sl_frag_tag}"
                     # V13: Pass 2 grounding — see _hybrid for rationale.
                     if _anima_t is not None and bool(_anima_opt("anima_tagger_pass2_grounding", False)):
                         _cand = _general_tag_candidates(_anima_t, prose, k=int(_anima_opt("anima_tagger_pass2_grounding_k", 60)), min_post_count=int(_anima_opt("anima_tagger_pass2_grounding_min_pc", 100)))
