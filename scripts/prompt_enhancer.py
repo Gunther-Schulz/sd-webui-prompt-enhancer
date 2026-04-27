@@ -2,12 +2,10 @@ import json
 import logging
 import os
 import re
-import socket
 import sys
 import threading
 import time
-import urllib.request
-import urllib.error
+import urllib.request   # for tag DB download (the LLM path uses pe_llm_layer)
 
 from rapidfuzz import distance as _rf_distance
 from rapidfuzz.process import extractOne as _rf_extract_one
@@ -50,6 +48,21 @@ _ANIMA_SRC_PATH = os.path.join(_EXT_DIR, "src")
 
 _anima_stack = None                # cached AnimaStack (db + index open)
 _anima_load_attempted = False      # set True once we've tried to avoid repeat failures
+
+
+# ── pe_llm_layer (in-process LLM via llama-cpp-python) ────────────────────
+# Wraps src/llm_runner. Replaces the old Ollama HTTP path. Imported eagerly:
+# unlike anima_tagger (which has a rapidfuzz fallback), the LLM is required
+# for every generation mode, so failing to import is a hard error.
+if _ANIMA_SRC_PATH not in sys.path:
+    sys.path.insert(0, _ANIMA_SRC_PATH)
+from pe_llm_layer import (
+    call_llm as _call_llm,
+    stream_llm as _call_llm_progress,
+    multi_sample_prose as _multi_sample_prose,
+    get_llm_status as _get_llm_status,
+    TruncatedOutput as _TruncatedError,
+)
 
 
 def _anima_opt(key: str, default):
@@ -1554,84 +1567,15 @@ def _build_style_string(mod_list, mode="prose"):
 
 # ── Ollama ───────────────────────────────────────────────────────────────────
 
-DEFAULT_API_URL = "http://localhost:11434"
-DEFAULT_MODEL = "huihui_ai/qwen3.5-abliterated:9b"
 
 # Placeholder used in the user message when Source Prompt is empty (dice roll).
 # Styles and wildcards still flow through normally; this only replaces the
 # "SOURCE PROMPT: {source}" line so the LLM knows to invent rather than expand.
-DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 
 
-def _to_ollama_base(api_url):
-    base = api_url
-    for suffix in ("/v1/chat/completions", "/v1", "/"):
-        if base.endswith(suffix):
-            base = base[: -len(suffix)]
-            break
-    return base or DEFAULT_OLLAMA_BASE
-
-
-def _fetch_ollama_models(api_url):
-    try:
-        base = _to_ollama_base(api_url)
-        req = urllib.request.Request(f"{base}/api/tags", method="GET")
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            data = json.loads(resp.read().decode("utf-8"))
-        models = [m["name"] for m in data.get("models", [])]
-        models.sort()
-        return models
-    except Exception:
-        return []
-
-
-def _refresh_models(api_url, current_model):
-    models = _fetch_ollama_models(api_url)
-    if not models:
-        return gr.update()
-    value = current_model if current_model in models else models[0]
-    return gr.update(choices=models, value=value)
-
-
-def _get_ollama_status(api_url):
-    """Get Ollama status info: running, model loaded, GPU/CPU."""
-    try:
-        base = _to_ollama_base(api_url)
-        req = urllib.request.Request(f"{base}/api/version", method="GET")
-        with urllib.request.urlopen(req, timeout=3) as resp:
-            version_data = json.loads(resp.read().decode("utf-8"))
-        version = version_data.get("version", "?")
-
-        # Check loaded models
-        req = urllib.request.Request(f"{base}/api/ps", method="GET")
-        with urllib.request.urlopen(req, timeout=3) as resp:
-            ps_data = json.loads(resp.read().decode("utf-8"))
-
-        models = ps_data.get("models", [])
-        if models:
-            m = models[0]
-            name = m.get("name", "?")
-            vram = m.get("size_vram", 0)
-            total = m.get("size", 0)
-            if vram > 0 and total > 0:
-                gpu_pct = int(vram / total * 100)
-                mode = f"GPU ({gpu_pct}%)" if gpu_pct > 50 else f"CPU ({100-gpu_pct}% offloaded)"
-            elif vram > 0:
-                mode = "GPU"
-            else:
-                mode = "CPU"
-            return f"<span style='color:#6c6'>Ollama v{version} \u2022 {name} \u2022 {mode}</span>"
-        else:
-            return f"<span style='color:#6c6'>Ollama v{version} \u2022 connected</span>"
-    except Exception:
-        return "<span style='color:#c66'>Ollama not running</span>"
 
 
 # ── Core logic ───────────────────────────────────────────────────────────────
-
-def _strip_think_blocks(text):
-    return re.sub(r"<think>[\s\S]*?</think>", "", text).strip()
-
 
 def _has_inline_wildcards(text):
     return bool(re.search(r"\{[^}]+\?\}", text))
@@ -1738,97 +1682,12 @@ def _postprocess_tags(tag_str, tag_fmt, validation_mode):
     return tag_str, None
 
 
-_STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
-# Max Ollama stream chunks (≈ tokens) before we cap and treat as
-# truncation. Historical 1000 was too low once word limits were removed
-# from base prompts — rich Detailed prose can reach ~1500 chunks. 4000
-# leaves ample headroom without opening the door to actual runaways.
-_MAX_TOKENS = int(os.environ.get("PROMPT_ENHANCER_MAX_TOKENS", "4000"))
-# Total wall time cap. 60s was tight on slower models and rich prose;
-# 180s catches genuine runaway loops without truncating legitimate calls.
-_MAX_TIME = int(os.environ.get("PROMPT_ENHANCER_MAX_TIME", "180"))
 
 
-def _detect_repetition(text):
-    """Detect repetitive output by tracking unique content ratio.
-
-    Splits text into comma/period-separated segments. Triggers on either:
-      (a) Any single segment appears 4+ times — catches short degenerate
-          loops the 30-segment window misses (e.g. "the girl's hair is a
-          deep chestnut" appearing 10x in a 19-segment paragraph).
-      (b) Of the last 20 segments, 70%+ are duplicates of earlier ones
-          (requires ≥ 30 total segments — original longer-text detector).
-
-    Returns trimmed text if loop detected, None otherwise.
-    """
-    segments = [s.strip().lower() for s in re.split(r"[,.\n]+", text) if s.strip()]
-    if len(segments) < 6:
-        return None
-    # Signal (a): any segment verbatim 4+ times → unambiguous loop
-    from collections import Counter as _C
-    counts = _C(segments)
-    worst_seg, worst_n = counts.most_common(1)[0]
-    if worst_n >= 4 and len(worst_seg) >= 10:
-        # Trim back to before the second-to-last occurrence of the repeated segment
-        # so we keep the first full use + some context.
-        positions = [i for i, s in enumerate(segments) if s == worst_seg]
-        trim_before_idx = positions[1] if len(positions) >= 2 else positions[0]
-        # Reconstruct text up to that segment
-        parts = re.split(r"([,.\n]+)", text)
-        seg_count = 0
-        char_pos = 0
-        for part in parts:
-            if part.strip() and not re.match(r"^[,.\n]+$", part):
-                if seg_count >= trim_before_idx:
-                    break
-                seg_count += 1
-            char_pos += len(part)
-        trimmed = text[:char_pos].rstrip(" ,.\n")
-        print(f"[PromptEnhancer] Aborting: repetition detected "
-              f"(segment {worst_seg!r} appeared {worst_n}x)")
-        return trimmed
-    # Signal (b): original longer-window detector
-    if len(segments) < 30:
-        return None
-    # Check: of the last 20 segments, how many are duplicates of earlier segments?
-    early = set(segments[:-20])
-    recent = segments[-20:]
-    if not early:
-        return None
-    repeated = sum(1 for s in recent if s in early)
-    ratio = repeated / len(recent)
-    if ratio >= 0.7:
-        # 70%+ of recent segments already appeared — it's looping
-        # Trim to the point where content was still fresh
-        # Walk backwards to find where repetition started
-        seen = set()
-        trim_idx = len(segments)
-        dup_streak = 0
-        for i in range(len(segments) - 1, -1, -1):
-            if segments[i] in seen:
-                dup_streak += 1
-            else:
-                if dup_streak > 5:
-                    trim_idx = i + 1
-                    break
-                dup_streak = 0
-            seen.add(segments[i])
-        # Rebuild text from non-repeated segments
-        # Find character position of the trim point
-        parts = re.split(r"([,.\n]+)", text)
-        seg_count = 0
-        char_pos = 0
-        for part in parts:
-            if part.strip() and not re.match(r"^[,.\n]+$", part):
-                seg_count += 1
-                if seg_count > trim_idx:
-                    break
-            char_pos += len(part)
-        trimmed = text[:char_pos].rstrip(" ,.\n")
-        print(f"[PromptEnhancer] Aborting: repetition detected ({ratio:.0%} of last 20 segments are repeats)")
-        return trimmed
-    return None
-_cancel_flag = threading.Event()
+# _cancel_flag is owned by pe_llm_layer so the LLM stream and the
+# cancel button operate on the same Event. (Renamed import preserves
+# the historical _cancel_flag identifier used throughout this file.)
+from pe_llm_layer import cancel_flag as _cancel_flag
 _last_seed = -1
 # Which PE button produced the currently-staged prompt. Set by each
 # handler entry point, consumed by process() to write PE Mode into image
@@ -1843,10 +1702,6 @@ _MODE_TAGS   = "\U0001F3F7 Tags"  # 🏷 Tags
 _MODE_REMIX  = "\U0001F500 Remix" # 🔀 Remix
 
 
-class _TruncatedError(Exception):
-    """LLM output was truncated (stall, max tokens, or max time)."""
-    pass
-
 
 # ── V5 conditional adherence directive ──────────────────────────────
 # V5 prose-adherence directive and V15 prose-v14-coverage directive are
@@ -1857,241 +1712,8 @@ class _TruncatedError(Exception):
 # "hidden" prompt influence lives in Python.
 
 
-def _multi_sample_prose(user_msg, sp, api_url, model, temperature,
-                         seed, n_samples, think=False, num_predict=1024):
-    """Generate n_samples prose passages and return the picker-chosen one.
-
-    Each sample uses seed+i to derive distinct trajectories. The
-    picker call runs at temp 0.1 (near-deterministic) and is asked to
-    pick a single number 1..n_samples.
-
-    Returns: (picked_prose, all_samples, choice_index_1based).
-
-    Raises ValueError if picker doesn't return a parsable digit —
-    fail-loud per CLAUDE.md, no silent fallback to sample #0.
-    """
-    samples = []
-    for i in range(n_samples):
-        sample_seed = seed + i if seed != -1 else -1
-        content = _call_llm(
-            user_msg, api_url, model, sp, temperature,
-            think=think, seed=sample_seed, num_predict=num_predict,
-        )
-        samples.append(content)
-
-    # Quality pre-filter: detect degenerate (looped) samples. Picker
-    # sees only clean options, so it can't accidentally pick a loop.
-    # If ALL samples looped, fall through to picker on the full set so
-    # we still produce output — caller can retry at their level.
-    clean_indices = []
-    for i, s in enumerate(samples):
-        if _detect_repetition(s) is None:
-            clean_indices.append(i)
-    if 0 < len(clean_indices) < n_samples:
-        print(f"[PromptEnhancer] Multi-sample: {n_samples - len(clean_indices)}/{n_samples} "
-              f"samples rejected as looping; picker sees {len(clean_indices)}.")
-    picker_options = [samples[i] for i in clean_indices] if clean_indices else samples
-
-    # Picker call: build user message with numbered samples (clean only)
-    picker_parts = [f"SOURCE: {user_msg!r}"]
-    for i, s in enumerate(picker_options, 1):
-        s_trim = s if len(s) < 800 else s[:800] + "…"
-        picker_parts.append(f"\n--- Prose {i} ---\n{s_trim}")
-    picker_parts.append("\nWhich is best? Respond with only the number.")
-    picker_msg = "\n".join(picker_parts)
-
-    pick_raw = _call_llm(
-        picker_msg, api_url, model, _prompts.get("picker", ""), 0.1,
-        think=False, seed=seed, num_predict=10,
-    )
-    # Parse first digit in 1..len(picker_options)
-    n_options = len(picker_options)
-    local_choice = None
-    for ch in pick_raw:
-        if ch.isdigit() and 1 <= int(ch) <= n_options:
-            local_choice = int(ch)
-            break
-    if local_choice is None:
-        raise ValueError(
-            f"multi-sample picker returned no valid choice. "
-            f"raw={pick_raw!r} n_options={n_options}"
-        )
-    # Map local choice back to the original samples index (if we filtered)
-    if clean_indices:
-        original_idx = clean_indices[local_choice - 1]
-    else:
-        original_idx = local_choice - 1
-    choice_reported = original_idx + 1  # 1-based for display
-    print(f"[PromptEnhancer] Multi-sample prose: picker chose {choice_reported}/{n_samples} "
-          f"(clean_options={len(picker_options)})")
-    return samples[original_idx], samples, choice_reported
 
 
-def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, timeout=None, seed=-1, _progress=None, num_predict=1024):
-    global _last_seed
-    import random as _random
-    if seed == -1:
-        seed = _random.randint(0, 2**31 - 1)
-    _last_seed = seed
-
-    base = _to_ollama_base(api_url)
-    # Prepend /no_think to user message for Qwen3 models that ignore think:false
-    user_content = prompt if think else f"/no_think\n{prompt}"
-    payload = {
-        "model": model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_content},
-        ],
-        "options": {
-            "temperature": float(temperature),
-            "seed": int(seed),
-            "top_k": 20,
-            "top_p": 0.95 if think else 0.8,
-            "repeat_penalty": 1.5,
-            "presence_penalty": 1.5,
-            # Explicit output cap. Without this, Ollama falls back to
-            # whatever the model's Modelfile specifies (often 128 for
-            # instruct variants) — which produces ~60 words of prose,
-            # then a truncated tag draft of ~15 tokens, then ~7 final
-            # tags after validator + rule-layer dedup. 1024 gives room
-            # for rich prose + multi-dozen-tag drafts.
-            "num_predict": int(num_predict),
-        },
-        "think": bool(think),
-        "stream": True,
-    }
-    data = json.dumps(payload).encode("utf-8")
-    url = f"{base}/api/chat"
-    stall_timeout = timeout or _STALL_TIMEOUT
-    print(f"[PromptEnhancer] LLM call: model={model}, think={think}, temp={temperature}, stall={stall_timeout}s, prompt_len={len(prompt)}, system_len={len(system_prompt)}")
-
-    last_err = None
-    for attempt in range(2):
-        try:
-            if attempt > 0:
-                print(f"[PromptEnhancer] Ollama retry attempt {attempt + 1}")
-            req = urllib.request.Request(
-                url, data=data,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            # Initial connection timeout
-            resp = urllib.request.urlopen(req, timeout=30)
-            # Set socket timeout so reads unblock periodically for cancel checks.
-            # Uses CPython internals — wrapped for safety.
-            try:
-                resp.fp.raw._sock.settimeout(2.0)
-            except (AttributeError, OSError):
-                pass
-            content_parts = []
-            completed = False
-            start_time = time.monotonic()
-            last_token_time = start_time
-            thinking_detected = False
-
-            try:
-                while True:
-                    try:
-                        line = resp.readline()
-                    except (socket.timeout, TimeoutError):
-                        # Socket timeout — no data yet, check cancel and continue
-                        if _cancel_flag.is_set():
-                            print(f"[PromptEnhancer] Cancelled by user")
-                            break
-                        continue
-                    if not line:
-                        break  # EOF
-                    # Check cancel flag
-                    if _cancel_flag.is_set():
-                        print(f"[PromptEnhancer] Cancelled by user")
-                        break
-                    line = line.decode("utf-8").strip()
-                    if not line:
-                        continue
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-
-                    # Check for thinking tokens (Qwen3 ignoring think:false)
-                    thinking_text = chunk.get("message", {}).get("thinking", "")
-                    if thinking_text and not think:
-                        if not thinking_detected:
-                            thinking_detected = True
-                            print(f"[PromptEnhancer] WARNING: Model is thinking despite think=false")
-                        # Don't reset timer for thinking tokens — let it stall out
-                        if time.monotonic() - last_token_time > stall_timeout:
-                            print(f"[PromptEnhancer] Aborting: thinking exceeded {stall_timeout}s")
-                            break
-                        continue
-
-                    # Content tokens
-                    token = chunk.get("message", {}).get("content", "")
-                    if token:
-                        content_parts.append(token)
-                        last_token_time = time.monotonic()
-                        # Repetition detection: check every 20 tokens
-                        if len(content_parts) % 20 == 0 and len(content_parts) >= 40:
-                            text = "".join(content_parts)
-                            repetition = _detect_repetition(text)
-                            if repetition:
-                                content_parts = [repetition]
-                                break
-                        # Update shared progress for live status
-                        if _progress is not None:
-                            elapsed = last_token_time - start_time
-                            _progress["words"] = len("".join(content_parts).split())
-                            _progress["tokens"] = len(content_parts)
-                            _progress["elapsed"] = elapsed
-                            _progress["tps"] = len(content_parts) / elapsed if elapsed > 0 else 0
-                        # Hard cap on total tokens
-                        if len(content_parts) > _MAX_TOKENS:
-                            print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TOKENS} tokens")
-                            break
-
-                    # Check for completion
-                    if chunk.get("done", False):
-                        completed = True
-                        break
-
-                    # Check stall (no content token for too long)
-                    if time.monotonic() - last_token_time > stall_timeout:
-                        print(f"[PromptEnhancer] Aborting: no tokens for {stall_timeout}s")
-                        break
-
-                    # Total time cap (catches thinking disguised as content)
-                    if time.monotonic() - start_time > _MAX_TIME:
-                        print(f"[PromptEnhancer] Aborting: exceeded {_MAX_TIME}s total time")
-                        break
-            finally:
-                try:
-                    resp.close()
-                except OSError:
-                    pass
-
-            content = "".join(content_parts)
-            was_cancelled = _cancel_flag.is_set()
-            print(f"[PromptEnhancer] Done: {len(content.split())} words, thinking={'yes' if thinking_detected else 'no'}, cancelled={'yes' if was_cancelled else 'no'}")
-            result = _strip_think_blocks(content)
-            if was_cancelled:
-                raise InterruptedError(result)
-            if not completed and result:
-                raise _TruncatedError(result)
-            return result
-
-        except urllib.error.URLError as e:
-            last_err = e
-            print(f"[PromptEnhancer] Ollama connection failed (attempt {attempt + 1}): {e.reason}")
-            if attempt == 0:
-                time.sleep(2)
-        except TimeoutError as e:
-            last_err = urllib.error.URLError(str(e))
-            print(f"[PromptEnhancer] Timeout (attempt {attempt + 1}): {e}")
-            if attempt == 0:
-                time.sleep(2)
-
-    raise last_err
 
 
 def _build_inline_wildcard_text(source):
@@ -2142,38 +1764,6 @@ def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
 
 
 
-# ── Streaming progress ──────────────────────────────────────────────────────
-
-def _call_llm_progress(prompt, api_url, model, system_prompt, temperature,
-                       think=False, timeout=None, seed=-1):
-    """Run _call_llm in a thread, yielding progress dicts every ~1s.
-
-    Final yield is the result string. Exceptions propagate normally.
-    Must be iterated from a generator function wired to a Gradio .click() handler.
-    """
-    progress = {"words": 0, "tokens": 0, "elapsed": 0.0, "tps": 0.0}
-    result_box = [None]
-    error_box = [None]
-
-    def _worker():
-        try:
-            result_box[0] = _call_llm(prompt, api_url, model, system_prompt,
-                                      temperature, think=think, timeout=timeout,
-                                      seed=seed, _progress=progress)
-        except Exception as e:
-            error_box[0] = e
-
-    thread = threading.Thread(target=_worker, daemon=True)
-    thread.start()
-
-    while thread.is_alive():
-        thread.join(timeout=1.0)
-        if thread.is_alive():
-            yield dict(progress)
-
-    if error_box[0] is not None:
-        raise error_box[0]
-    yield result_box[0]
 
 
 # ── UI ───────────────────────────────────────────────────────────────────────
@@ -2190,10 +1780,9 @@ class PromptEnhancer(scripts.Script):
     def ui(self, is_img2img):
         tab = "img2img" if is_img2img else "txt2img"
 
-        initial_models = _fetch_ollama_models(DEFAULT_API_URL)
-        if not initial_models:
-            initial_models = [DEFAULT_MODEL]
-
+        # The old Ollama-discovery block (poll /api/tags for available
+        # models) is gone — the in-process runner reads model/quant/
+        # compute from shared.opts.
         with gr.Accordion(open=False, label="Prompt Enhancer"):
 
             # ── Source prompt ──
@@ -2284,10 +1873,15 @@ class PromptEnhancer(scripts.Script):
             base.change(fn=lambda b: gr.update(visible=(b == "Custom")), inputs=[base], outputs=[custom_system_prompt], show_progress=False)
             base.change(fn=_base_description_html, inputs=[base], outputs=[base_description], show_progress=False)
 
-            # ── API + reload ──
-            with gr.Row():
-                api_url = gr.Textbox(label="API URL", value=DEFAULT_API_URL, scale=3)
-                model = gr.Dropdown(label="Model", choices=initial_models, value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0], allow_custom_value=True, scale=2)
+            # ── LLM model controls ──
+            # The in-process llm_runner reads its model + compute config
+            # from shared.opts (see Forge settings, "Prompt Enhancer LLM"
+            # section). The hidden api_url + model textboxes below are
+            # carried for backwards-compat with existing event-handler
+            # signatures (they're passed to call_llm but ignored). Next
+            # commit cleans up handler signatures and removes these.
+            api_url = gr.Textbox(value="", visible=False)
+            model = gr.Textbox(value="", visible=False)
             with gr.Row():
                 _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL", "")
                 local_dir_path = gr.Textbox(
@@ -2297,8 +1891,8 @@ class PromptEnhancer(scripts.Script):
                 )
                 local_dir_path.do_not_save_to_config = True
                 reload_btn = gr.Button(value="\U0001f504 Reload", scale=0, min_width=100)
-                refresh_models_btn = gr.Button(value="\U0001f504 Models", scale=0, min_width=100)
-            ollama_status = gr.HTML(value=_get_ollama_status(DEFAULT_API_URL))
+                llm_status_btn = gr.Button(value="\U0001f504 LLM", scale=0, min_width=100)
+            llm_status = gr.HTML(value=_get_llm_status())
 
             # ── Reload wiring ──
             # Note: reload rebuilds dropdowns but can't add/remove them dynamically.
@@ -2327,9 +1921,7 @@ class PromptEnhancer(scripts.Script):
                 outputs=[base] + dd_components + [status],
                 show_progress=False,
             )
-            def _refresh_models_and_status(api_url, current_model):
-                return _refresh_models(api_url, current_model), _get_ollama_status(api_url)
-            refresh_models_btn.click(fn=_refresh_models_and_status, inputs=[api_url, model], outputs=[model, ollama_status], show_progress=False)
+            llm_status_btn.click(fn=_get_llm_status, inputs=[], outputs=[llm_status], show_progress=False)
 
             # ── Hidden bridges ──
             prompt_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_in")
