@@ -54,30 +54,21 @@ cancel_flag = threading.Event()
 
 def call_llm(
     prompt: str,
-    api_url: Any = None,            # IGNORED — historical compat
-    model: Any = None,              # IGNORED — historical compat
-    system_prompt: str = "",
+    system_prompt: str,
     temperature: float = 0.7,
-    think: bool = False,            # IGNORED — handled by runner via /no_think
-    timeout: Optional[float] = None,
-    seed: int = -1,
-    _progress: Any = None,          # IGNORED — historical compat
-    num_predict: int = 1024,
     *,
+    seed: int = -1,
+    num_predict: int = 1024,
     json_schema: Optional[dict] = None,
+    timeout: Optional[float] = None,
     cancel_flag: Optional[threading.Event] = None,
 ) -> str:
     """Single LLM call, returns the full content string.
 
-    Signature matches the historical _call_llm so existing callsites
-    don't need updating in this commit. The api_url, model, think, and
-    _progress arguments are accepted but ignored — they were Ollama-
-    specific. The next commit cleans up the callsites and drops these
-    positional ghosts.
-
     Raises:
         TruncatedOutput: stream ended without natural completion.
-            .partial holds whatever was generated.
+            .partial holds whatever was generated. Some callers want
+            the partial (Prose mode shows it as "Truncated").
         LLMError / ModelLoadError: hard runner failure.
     """
     runner = get_runner()
@@ -98,24 +89,18 @@ def call_llm(
 
 def stream_llm(
     prompt: str,
-    api_url: Any = None,            # IGNORED — historical compat
-    model: Any = None,              # IGNORED — historical compat
-    system_prompt: str = "",
+    system_prompt: str,
     temperature: float = 0.7,
-    think: bool = False,            # IGNORED — handled via /no_think
-    timeout: Optional[float] = None,
-    seed: int = -1,
     *,
+    seed: int = -1,
+    num_predict: int = 1024,
     json_schema: Optional[dict] = None,
+    timeout: Optional[float] = None,
     cancel_flag: Optional[threading.Event] = None,
     progress_interval_s: float = 1.0,
-    num_predict: int = 1024,
 ) -> Iterator[Any]:
     """Generator: yields progress dicts during generation, then yields
     the final string as the last value.
-
-    Signature matches the historical _call_llm_progress so existing
-    callsites don't need updating in this commit.
 
     Yielded values:
       - dict {"words": int, "tokens": int, "elapsed": float, "tps": float}
@@ -177,12 +162,10 @@ def stream_llm(
 def multi_sample_prose(
     user_msg: str,
     system_prompt: str,
-    api_url: Any = None,            # IGNORED — historical compat
-    model: Any = None,              # IGNORED — historical compat
-    temperature: float = 0.7,
-    seed: int = -1,
-    n_samples: int = 3,
-    think: bool = False,            # IGNORED
+    temperature: float,
+    seed: int,
+    n_samples: int,
+    *,
     num_predict: int = 1024,
     picker_system_prompt: str = "",
 ) -> Tuple[str, List[str], int]:

@@ -155,7 +155,7 @@ def _use_anima_pipeline(tag_fmt: str, validation_mode: str = "RAG") -> bool:
     return ok
 
 
-def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, seed=-1):
+def _make_anima_query_expander(temperature=0.3, seed=-1):
     """Build a query-expander callable backed by _call_llm for shortlist retrieval.
 
     Expansion is a cheap LLM pass (~1 s on 9b) that converts the raw
@@ -183,10 +183,7 @@ def _make_anima_query_expander(api_url, model, temperature=0.3, think=False, see
             # tags (sparse_leg_hair, simple_fish, overhead_lights, etc.)
             # because FAISS on a single char pulls near-random entries.
             try:
-                return _call_llm(
-                    user_msg, api_url, model, sys_prompt, temperature,
-                    think=think, timeout=30, seed=seed,
-                ) or ""
+                return _call_llm(user_msg, sys_prompt, temperature, timeout=30, seed=seed) or ""
             except Exception:
                 return ""
 
@@ -1876,12 +1873,8 @@ class PromptEnhancer(scripts.Script):
             # ── LLM model controls ──
             # The in-process llm_runner reads its model + compute config
             # from shared.opts (see Forge settings, "Prompt Enhancer LLM"
-            # section). The hidden api_url + model textboxes below are
-            # carried for backwards-compat with existing event-handler
-            # signatures (they're passed to call_llm but ignored). Next
-            # commit cleans up handler signatures and removes these.
-            api_url = gr.Textbox(value="", visible=False)
-            model = gr.Textbox(value="", visible=False)
+            # section). No per-tab API URL or model dropdown — the runner
+            # is process-global.
             with gr.Row():
                 _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL", "")
                 local_dir_path = gr.Textbox(
@@ -1930,7 +1923,7 @@ class PromptEnhancer(scripts.Script):
             negative_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_out")
 
             # ── Prose ──
-            def _enhance(source, api_url, model, base_name, custom_sp, *args):
+            def _enhance(source, base_name, custom_sp, *args):
                 global _last_pe_mode
                 _last_pe_mode = "Prose"
                 motion_cb = args[-1]
@@ -1968,7 +1961,7 @@ class PromptEnhancer(scripts.Script):
                 print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     raw = None
-                    for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                    for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
@@ -2006,7 +1999,7 @@ class PromptEnhancer(scripts.Script):
 
             prose_event = enhance_btn.click(
                 fn=_enhance,
-                inputs=[source_prompt, api_url, model, base, custom_system_prompt]
+                inputs=[source_prompt, base, custom_system_prompt]
                        + dd_components
                        + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
@@ -2014,7 +2007,7 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Hybrid (two-pass: prose → extract tags + NL) ──
-            def _hybrid(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
+            def _hybrid(source, base_name, custom_sp, tag_fmt, validation_mode,
                         *args):
                 global _last_pe_mode
                 _last_pe_mode = "Hybrid"
@@ -2083,8 +2076,7 @@ class PromptEnhancer(scripts.Script):
                                 user_msg = f"{user_msg}\n\n{style_str}"
                             if inline_text:
                                 user_msg = f"{user_msg}\n\n{inline_text}"
-                        _expander = _make_anima_query_expander(
-                            api_url, model, temperature=0.3,
+                        _expander = _make_anima_query_expander(temperature=0.3,
                             think=False, seed=int(sd),
                         )
                         _anima_shortlist = _s.build_shortlist(
@@ -2128,13 +2120,9 @@ class PromptEnhancer(scripts.Script):
                     prose_raw = None
                     if n_samples > 1:
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 1/3 prose (multi-sample {n_samples})...</span>"
-                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(
-                            user_msg, sp, api_url, model, temp,
-                            seed=int(sd), n_samples=n_samples,
-                            think=th, num_predict=1024,
-                        )
+                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(user_msg, sp, temp, seed=int(sd), n_samples=n_samples, num_predict=1024, picker_system_prompt=_prompts.get("picker", ""))
                     else:
-                        for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                        for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                             if isinstance(chunk, dict):
                                 p = chunk
                                 if p["tokens"] > 0:
@@ -2188,7 +2176,7 @@ class PromptEnhancer(scripts.Script):
                             tag_sp = f"{tag_sp}\n{_frag}"
                             print(f"[PromptEnhancer] Pass 2 grounding: {len(_cand)} candidate tags injected")
                     tags_raw = None
-                    for chunk in _call_llm_progress(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)):
+                    for chunk in _call_llm_progress(prose, tag_sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
@@ -2219,7 +2207,7 @@ class PromptEnhancer(scripts.Script):
                         if style_str:
                             summarize_sp = f"{summarize_sp}\n\nThe following styles were applied: {style_str} Ensure these stylistic choices are reflected in the compositional summary."
                         nl_supplement = None
-                        for chunk in _call_llm_progress(prose, api_url, model, summarize_sp, temp, think=th, seed=int(sd)):
+                        for chunk in _call_llm_progress(prose, summarize_sp, temp, seed=int(sd)):
                             if isinstance(chunk, dict):
                                 p = chunk
                                 if p["tokens"] > 0:
@@ -2347,7 +2335,7 @@ class PromptEnhancer(scripts.Script):
 
             hybrid_event = hybrid_btn.click(
                 fn=_hybrid,
-                inputs=[source_prompt, api_url, model, base, custom_system_prompt,
+                inputs=[source_prompt, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + dd_components
                        + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
@@ -2373,7 +2361,7 @@ class PromptEnhancer(scripts.Script):
                     return "hybrid"
                 return "tags"
 
-            def _refine(existing, existing_neg, source, api_url, model, tag_fmt, validation_mode,
+            def _refine(existing, existing_neg, source, tag_fmt, validation_mode,
                         *args):
                 global _last_pe_mode
                 _last_pe_mode = "Remix"
@@ -2428,7 +2416,7 @@ class PromptEnhancer(scripts.Script):
 
                 try:
                     raw = None
-                    for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                    for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
@@ -2556,7 +2544,7 @@ class PromptEnhancer(scripts.Script):
                 inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
             ).then(
                 fn=_refine,
-                inputs=[prompt_in, negative_in, source_prompt, api_url, model, tag_format, tag_validation]
+                inputs=[prompt_in, negative_in, source_prompt, tag_format, tag_validation]
                        + dd_components
                        + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
@@ -2568,7 +2556,7 @@ class PromptEnhancer(scripts.Script):
             # flow, same validator + slot-fill, same RAG shortlist injection.
             # Only the Hybrid 3/3 summarize step is skipped and the output is
             # tags alone (no "\n\n{nl_supplement}" suffix).
-            def _tags(source, api_url, model, base_name, custom_sp, tag_fmt, validation_mode,
+            def _tags(source, base_name, custom_sp, tag_fmt, validation_mode,
                       *args):
                 global _last_pe_mode
                 _last_pe_mode = "Tags"
@@ -2631,8 +2619,7 @@ class PromptEnhancer(scripts.Script):
                                 user_msg = f"{user_msg}\n\n{style_str}"
                             if inline_text:
                                 user_msg = f"{user_msg}\n\n{inline_text}"
-                        _expander_t = _make_anima_query_expander(
-                            api_url, model, temperature=0.3,
+                        _expander_t = _make_anima_query_expander(temperature=0.3,
                             think=False, seed=int(sd),
                         )
                         _anima_t_shortlist = _s.build_shortlist(
@@ -2668,13 +2655,9 @@ class PromptEnhancer(scripts.Script):
                     prose_raw = None
                     if n_samples > 1:
                         yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: 1/2 prose (multi-sample {n_samples})...</span>"
-                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(
-                            user_msg, sp, api_url, model, temp,
-                            seed=int(sd), n_samples=n_samples,
-                            think=th, num_predict=1024,
-                        )
+                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(user_msg, sp, temp, seed=int(sd), n_samples=n_samples, num_predict=1024, picker_system_prompt=_prompts.get("picker", ""))
                     else:
-                        for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
+                        for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                             if isinstance(chunk, dict):
                                 p = chunk
                                 if p["tokens"] > 0:
@@ -2716,7 +2699,7 @@ class PromptEnhancer(scripts.Script):
                             tag_sp = f"{tag_sp}\n{_frag}"
                             print(f"[PromptEnhancer] Pass 2 grounding: {len(_cand)} candidate tags injected")
                     tags_raw = None
-                    for chunk in _call_llm_progress(prose, api_url, model, tag_sp, temp, think=th, seed=int(sd)):
+                    for chunk in _call_llm_progress(prose, tag_sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
@@ -2815,7 +2798,7 @@ class PromptEnhancer(scripts.Script):
 
             tags_event = tags_btn.click(
                 fn=_tags,
-                inputs=[source_prompt, api_url, model, base, custom_system_prompt,
+                inputs=[source_prompt, base, custom_system_prompt,
                         tag_format, tag_validation]
                        + dd_components
                        + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
@@ -2924,11 +2907,11 @@ class PromptEnhancer(scripts.Script):
             "PE Temperature", "PE Prepend", "PE Motion", "PE Mode",
         ]
 
-        return [source_prompt, api_url, model, base, custom_system_prompt,
+        return [source_prompt, base, custom_system_prompt,
                 *dd_components, prepend_source, seed, detail_level, think, temperature,
                 negative_prompt_cb, tag_format, tag_validation, motion_cb]
 
-    def process(self, p, source_prompt, api_url, model, base, custom_system_prompt,
+    def process(self, p, source_prompt, base, custom_system_prompt,
                 *args):
         # args = *dd_values, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation, motion_cb
         motion = args[-1]
@@ -2978,13 +2961,129 @@ class PromptEnhancer(scripts.Script):
 # ── Settings panel registration ──────────────────────────────────────────
 
 def _on_ui_settings():
-    """Register Anima Tagger options under Settings → Anima Tagger."""
+    """Register options under Settings → Prompt Enhancer LLM and
+    Settings → Anima Tagger."""
     try:
         from modules import shared
         from modules.shared import OptionInfo
     except ImportError:
         return
 
+    try:
+        import gradio as _gr_settings
+    except ImportError:
+        _gr_settings = None
+
+    # ── Prompt Enhancer LLM (in-process via llama-cpp-python) ────────────
+    llm_section = ("pe_llm", "Prompt Enhancer LLM")
+    shared.opts.add_option(
+        "pe_llm_repo_id",
+        OptionInfo(
+            "mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF",
+            "GGUF repo (HuggingFace)",
+            section=llm_section,
+        ).info(
+            "HuggingFace repo to download the GGUF from. Default is the "
+            "Huihui Qwen 3.5 9B abliterated quants. Override with any "
+            "GGUF-quants repo on HF. Ignored when 'Custom GGUF path' is set."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_quant",
+        OptionInfo(
+            "Q4_K_M",
+            "Quantization",
+            _gr_settings.Radio if _gr_settings else None,
+            {"choices": ["Q4_K_M", "Q5_K_M", "Q6_K", "Q8_0"]} if _gr_settings else None,
+            section=llm_section,
+        ).info(
+            "GGUF quant to download from the repo. Q4_K_M is ~5.6 GB "
+            "for a 9B (8 GB VRAM friendly with offload). Q5_K_M is "
+            "~6.5 GB, slightly higher quality. Q6_K and Q8_0 are larger."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_model_path",
+        OptionInfo(
+            "",
+            "Custom GGUF path (overrides repo + quant)",
+            section=llm_section,
+        ).info(
+            "Absolute path to a local GGUF file. When set, the repo + "
+            "quant settings are ignored — useful for BYO models."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_n_ctx",
+        OptionInfo(
+            4096,
+            "Context size (tokens)",
+            _gr_settings.Radio if _gr_settings else None,
+            {"choices": [2048, 4096, 8192, 16384]} if _gr_settings else None,
+            section=llm_section,
+        ).info(
+            "Max context window. Larger = more memory used. 4096 is "
+            "ample for prose + multi-pass pipelines."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_compute",
+        OptionInfo(
+            "gpu",
+            "Compute target",
+            _gr_settings.Radio if _gr_settings else None,
+            {"choices": ["gpu", "cpu", "shared"]} if _gr_settings else None,
+            section=llm_section,
+        ).info(
+            "gpu = all layers on GPU (fastest; needs VRAM). "
+            "cpu = no GPU layers (slow but no VRAM cost). "
+            "shared = split, controlled by 'n_gpu_layers' below."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_n_gpu_layers",
+        OptionInfo(
+            -1,
+            "GPU layers when compute = shared",
+            _gr_settings.Slider if _gr_settings else None,
+            {"minimum": 0, "maximum": 100, "step": 1} if _gr_settings else None,
+            section=llm_section,
+        ).info(
+            "Number of transformer layers offloaded to GPU when "
+            "compute is 'shared'. Ignored otherwise. -1 means all."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_lifecycle",
+        OptionInfo(
+            "keep_loaded",
+            "Memory persistence",
+            _gr_settings.Radio if _gr_settings else None,
+            {"choices": ["keep_loaded", "unload_after_call"]} if _gr_settings else None,
+            section=llm_section,
+        ).info(
+            "keep_loaded = model stays in VRAM/RAM after calls (fast, "
+            "greedy with VRAM). unload_after_call = release after each "
+            "generation (frees VRAM for image generation, ~30 s reload "
+            "on next call)."
+        ),
+    )
+    shared.opts.add_option(
+        "pe_llm_use_low_level_dry",
+        OptionInfo(
+            True,
+            "Use low-level DRY sampler (loop suppression)",
+            section=llm_section,
+        ).info(
+            "Drops to llama_cpp's ctypes API to build a sampler chain "
+            "with the DRY (Don't Repeat Yourself) sampler. Best loop "
+            "prevention for Qwen models. Disable to use the high-level "
+            "samplers only (no DRY) — useful if your llama-cpp-python "
+            "version doesn't expose the DRY binding."
+        ),
+    )
+
+    # ── Anima Tagger (RAG / retrieval pipeline) ──────────────────────────
     section = ("anima_tagger", "Anima Tagger")
 
     try:
