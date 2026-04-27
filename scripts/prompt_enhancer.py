@@ -116,6 +116,8 @@ from pe_modes._shared import (
 )
 from pe_modes import prose as _pe_prose, remix as _pe_remix, hybrid as _pe_hybrid, tags as _pe_tags
 from pe_modes._shared import HandlerCtx as _HandlerCtx
+import pe_metadata as _pe_metadata
+from types import SimpleNamespace as _SimpleNamespace
 from pe_tags import (
     validate as _pe_tags_validate,
     reorder as _pe_tags_reorder,
@@ -797,66 +799,36 @@ class PromptEnhancer(scripts.Script):
                 inputs=[negative_out], outputs=[negative_out], show_progress=False,
             )
 
-        # ── Metadata ──
-        def _parse_modifiers(params):
-            """Parse PE Modifiers string into a set of names."""
-            raw = params.get("PE Modifiers", "")
-            return {m.strip() for m in raw.split(",") if m.strip()} if raw else set()
-
-        def _make_dd_restore(dd_label):
-            """Create a restore function for a specific dropdown."""
-            dd_choices = _dropdown_choices.get(dd_label, [])
-            def restore(params):
-                saved = _parse_modifiers(params)
-                return [m for m in saved if m in dd_choices and m in _all_modifiers]
-            return restore
-
-        def _restore_tag_format(params):
-            val = params.get("PE Tag Format", "")
-            return val if val in _tag_formats else gr.update()
-
-        def _restore_tag_validation(params):
-            val = params.get("PE Tag Validation", "")
-            return val if val in ("RAG", "Fuzzy Strict", "Fuzzy", "Off") else gr.update()
-
-        def _restore_temperature(params):
-            raw = params.get("PE Temperature", "")
-            if not raw:
-                return gr.update()
-            try:
-                return max(0.0, min(2.0, float(raw)))
-            except (TypeError, ValueError):
-                return gr.update()
-
-        self.infotext_fields = [
-            (source_prompt, "PE Source"),
-            (base, "PE Base"),
-            (detail_level, lambda params: min(10, max(0, int(params.get("PE Detail", 0)))) if params.get("PE Detail") else 0),
-            (think, "PE Think"),
-            (seed, lambda params: int(params.get("PE Seed", -1)) if params.get("PE Seed") else -1),
-            (tag_format, _restore_tag_format),
-            (tag_validation, _restore_tag_validation),
-            (temperature, _restore_temperature),
-            (prepend_source, lambda params: params.get("PE Prepend", "").lower() == "true"),
-            (motion_cb, lambda params: params.get("PE Motion", "").lower() == "true"),
-        ]
-        # Add each modifier dropdown
-        for i, label in enumerate(dd_labels):
-            self.infotext_fields.append((dd_components[i], _make_dd_restore(label)))
-
-        self.paste_field_names = [
-            "PE Source", "PE Base", "PE Detail", "PE Modifiers",
-            "PE Think", "PE Seed", "PE Tag Format", "PE Tag Validation",
-            "PE Temperature", "PE Prepend", "PE Motion", "PE Mode",
-        ]
+        # ── Metadata round-trip (extracted to pe_metadata) ──
+        _pe_components = _SimpleNamespace(
+            source_prompt=source_prompt,
+            base=base,
+            detail_level=detail_level,
+            think=think,
+            seed=seed,
+            tag_format=tag_format,
+            tag_validation=tag_validation,
+            temperature=temperature,
+            prepend_source=prepend_source,
+            motion_cb=motion_cb,
+            dd_components=dd_components,
+        )
+        _pe_restore = _pe_metadata.build_restore_funcs(
+            _tag_formats, _all_modifiers, _dropdown_choices, gr,
+        )
+        self.infotext_fields = _pe_metadata.build_infotext_fields(
+            _pe_components, _pe_restore, dd_labels,
+        )
+        self.paste_field_names = list(_pe_metadata.PASTE_FIELD_NAMES)
 
         return [source_prompt, base, custom_system_prompt,
                 *dd_components, prepend_source, seed, detail_level, think, temperature,
                 negative_prompt_cb, tag_format, tag_validation, motion_cb]
 
-    def process(self, p, source_prompt, base, custom_system_prompt,
-                *args):
-        # args = *dd_values, prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, tag_format, tag_validation, motion_cb
+    def process(self, p, source_prompt, base, custom_system_prompt, *args):
+        """Forge image-generation hook — write our params into the
+        saved PNG's metadata via pe_metadata."""
+        # args = *dd_values, prepend, seed, detail, think, temperature, neg_cb, tag_format, tag_validation, motion
         motion = args[-1]
         tag_validation = args[-2]
         tag_format = args[-3]
@@ -867,38 +839,15 @@ class PromptEnhancer(scripts.Script):
         pe_seed = args[-8]
         prepend = args[-9]
         dd_vals = args[:-9]
-
-        if source_prompt:
-            p.extra_generation_params["PE Source"] = source_prompt
-        if base:
-            p.extra_generation_params["PE Base"] = base
-        if detail_level and int(detail_level) != 0:
-            p.extra_generation_params["PE Detail"] = int(detail_level)
-
-        all_mod_names = []
-        for dd_val in dd_vals:
-            if dd_val:
-                all_mod_names.extend(dd_val)
-        if all_mod_names:
-            p.extra_generation_params["PE Modifiers"] = ", ".join(all_mod_names)
-        if think:
-            p.extra_generation_params["PE Think"] = True
-        if neg_cb:
-            p.extra_generation_params["PE Negative"] = True
-        if _last_seed >= 0:
-            p.extra_generation_params["PE Seed"] = _last_seed
-        if tag_format:
-            p.extra_generation_params["PE Tag Format"] = tag_format
-        if tag_validation:
-            p.extra_generation_params["PE Tag Validation"] = tag_validation
-        if temp is not None:
-            p.extra_generation_params["PE Temperature"] = round(float(temp), 3)
-        if prepend:
-            p.extra_generation_params["PE Prepend"] = True
-        if motion:
-            p.extra_generation_params["PE Motion"] = True
-        if _last_pe_mode:
-            p.extra_generation_params["PE Mode"] = _last_pe_mode
+        _pe_metadata.apply_to_extra_generation_params(
+            p,
+            source_prompt=source_prompt, base=base,
+            detail_level=detail_level, dd_vals=dd_vals,
+            think=think, neg_cb=neg_cb, last_seed=_last_seed,
+            tag_format=tag_format, tag_validation=tag_validation,
+            temperature=temp, prepend=prepend, motion=motion,
+            last_pe_mode=_last_pe_mode,
+        )
 
 
 # ── Settings panel registration ──────────────────────────────────────────
