@@ -63,6 +63,12 @@ from pe_llm_layer import (
     get_llm_status as _get_llm_status,
     TruncatedOutput as _TruncatedError,
 )
+from pe_text_utils import (
+    clean_output as _clean_output,
+    clean_tag as _clean_tag,
+    split_concatenated_tag as _split_concatenated_tag,
+    split_positive_negative as _split_positive_negative,
+)
 
 
 def _anima_opt(key: str, default):
@@ -1578,55 +1584,6 @@ def _has_inline_wildcards(text):
     return bool(re.search(r"\{[^}]+\?\}", text))
 
 
-def _clean_output(text, strip_underscores=True):
-    text = re.sub(r"\*{1,3}([^*]+)\*{1,3}", r"\1", text)
-    if strip_underscores:
-        text = re.sub(r"_{1,3}([^_]+)_{1,3}", r"\1", text)
-    return text.strip()
-
-
-def _clean_tag(tag):
-    """Strip LLM meta-annotations from a single tag.
-
-    Handles patterns like [Illustrator: X], [style: X], (artist: X),
-    [artist:X] style, "setting: garden", etc. Preserves danbooru
-    disambiguation suffixes like _(style) and weight syntax like (tag:1.2).
-    """
-    tag = tag.strip()
-    # Strip all square brackets (never valid in danbooru tags)
-    tag = tag.replace("[", "").replace("]", "")
-    # Strip paren-wrapped meta: (illustrator: X) -> X, but keep _(suffix) intact
-    # Only strip if tag starts with ( (not a suffix like artist_(style))
-    if tag.startswith("(") and not tag.startswith("_("):
-        tag = tag.lstrip("(").rstrip(")")
-    # Strip "key: value" meta-annotation prefixes generically.
-    # Matches "word: content" or "word word: content" where the key part
-    # is 2+ letters and doesn't look like a danbooru tag (rating:, score_).
-    meta_match = re.match(
-        r"^(?!rating|score)([a-zA-Z][a-zA-Z_ ]{1,30})\s*:\s*(.+)$", tag
-    )
-    if meta_match:
-        key = meta_match.group(1).strip().lower()
-        # Only strip if the key looks like a meta-annotation, not a valid tag prefix
-        if key not in ("1", "2", "3"):  # don't strip numeric prefixes
-            tag = meta_match.group(2)
-    # Strip trailing " style" when it follows a name: "Kazuhiro Fujita style" -> "Kazuhiro Fujita"
-    tag = re.sub(r"\s+style$", "", tag, flags=re.IGNORECASE)
-    # Convert hyphens to underscores (hyphens are never valid in danbooru tags)
-    if "-" in tag and "_" not in tag and " " not in tag:
-        tag = tag.replace("-", "_")
-    return tag.strip()
-
-
-def _split_concatenated_tag(tag):
-    """Split concatenated words like 'moonlitcatacombs' into 'moonlit_catacombs'.
-
-    Only applies to tags longer than 15 chars with no existing separators.
-    Uses camelCase boundaries and common word boundary heuristics.
-    """
-    # Skip if already has separators or is short enough to be a real tag
-    if "_" in tag or " " in tag or len(tag) <= 15:
-        return tag
     # Skip known valid patterns (rating:, score_, source_)
     if ":" in tag:
         return tag
@@ -1639,25 +1596,6 @@ def _split_concatenated_tag(tag):
     # Return as-is, validation will handle it
     return tag
 
-
-def _split_positive_negative(text):
-    """Split LLM output at POSITIVE:/NEGATIVE: markers.
-
-    Returns (positive, negative).  If no markers found, returns (text, "").
-    """
-    # Case-insensitive search for markers
-    pos_match = re.search(r"(?i)^POSITIVE:\s*\n?", text, re.MULTILINE)
-    neg_match = re.search(r"(?i)^NEGATIVE:\s*\n?", text, re.MULTILINE)
-    if not neg_match:
-        # No NEGATIVE marker — treat entire text as positive
-        return text.strip(), ""
-    if pos_match:
-        positive = text[pos_match.end():neg_match.start()].strip()
-    else:
-        # NEGATIVE marker but no POSITIVE marker — everything before is positive
-        positive = text[:neg_match.start()].strip()
-    negative = text[neg_match.end():].strip()
-    return positive, negative
 
 
 def _postprocess_tags(tag_str, tag_fmt, validation_mode):
