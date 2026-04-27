@@ -69,6 +69,11 @@ from pe_text_utils import (
     split_concatenated_tag as _split_concatenated_tag,
     split_positive_negative as _split_positive_negative,
 )
+from pe_style import (
+    has_inline_wildcards as _has_inline_wildcards,
+    build_inline_wildcard_text as _pe_build_inline_wildcard_text,
+    build_style_string as _pe_build_style_string,
+)
 from pe_detail import (
     PRESET_MAX_TOKENS as _PRESET_MAX_TOKENS,
     TAG_COUNTS as _TAG_COUNTS,
@@ -941,52 +946,7 @@ def _collect_modifiers(dropdown_selections, seed: int | None = None):
     return result
 
 
-def _build_style_string(mod_list, mode="prose"):
-    """Build the style block for the user message.
-
-    mode:
-      "prose"   — Prose/Hybrid. Uses behavioral field. Emits a
-                  comma-separated list of style directives. The active
-                  base prompt governs HOW these get applied (voice,
-                  structure); we just name the styles.
-      "tags"    — Tags mode. Uses keywords field. Classic "Apply these
-                  styles: kw1, kw2" keyword-echoing directive.
-    """
-    if not mod_list:
-        return ""
-    if mode == "tags":
-        parts = []
-        for name, entry in mod_list:
-            # Strip 🎲 emoji marker from random-entry names
-            clean_name = name.replace("\U0001F3B2", "").strip()
-            kw = entry.get("keywords") or ""
-            if not kw:
-                # Dice entry (empty keywords). In Tags mode, any instruction
-                # text we inject is parsed by the LLM as tag tokens — even
-                # bracketed directives and "pick a surprising X" fallbacks
-                # leak words like "surprising", "location", "artist",
-                # "detailed_background" into the output. So skip these
-                # entirely in Tags mode. Dice entries remain fully functional
-                # in Prose/Hybrid mode where the LLM reads context correctly.
-                continue
-            if clean_name.lower() not in kw.lower():
-                kw = f"{clean_name.lower()}, {kw}"
-            parts.append(kw)
-        return f"Apply these styles: {', '.join(parts)}." if parts else ""
-    # Prose/Hybrid: short behaviorals concatenate into a compact directive.
-    # Qwen recognizes style/mood/setting concepts directly — we don't need
-    # to teach it, just name them. Base prompt handles voice.
-    behaviorals = []
-    for name, entry in mod_list:
-        text = (entry.get("behavioral") or "").strip()
-        if text:
-            # Strip trailing punctuation so items join cleanly with commas.
-            text = text.rstrip(".!?: ")
-            if text:
-                behaviorals.append(text)
-    if not behaviorals:
-        return ""
-    return f"Apply these styles to the scene: {', '.join(behaviorals)}."
+_build_style_string = _pe_build_style_string
 
 
 # ── Ollama ───────────────────────────────────────────────────────────────────
@@ -1000,10 +960,6 @@ def _build_style_string(mod_list, mode="prose"):
 
 
 # ── Core logic ───────────────────────────────────────────────────────────────
-
-def _has_inline_wildcards(text):
-    return bool(re.search(r"\{[^}]+\?\}", text))
-
 
 
 def _postprocess_tags(tag_str, tag_fmt, validation_mode):
@@ -1058,15 +1014,8 @@ _MODE_REMIX  = "\U0001F500 Remix" # 🔀 Remix
 
 
 def _build_inline_wildcard_text(source):
-    """Return the inline-wildcard directive if source contains {name?} placeholders.
-
-    The previous selected-wildcards system was folded into the modifier
-    system (🎲 Random X entries). This helper only handles the remaining
-    inline {name?} syntax in the source prompt itself.
-    """
-    if source and _has_inline_wildcards(source):
-        return _prompts.get("inline_wildcard", "")
-    return ""
+    """Thin wrapper threading _prompts (loaded YAML) to pe_style."""
+    return _pe_build_inline_wildcard_text(source, _prompts)
 
 
 def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
