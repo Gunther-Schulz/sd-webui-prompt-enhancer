@@ -10,6 +10,12 @@
 > `llm_runner` and the CLI flags (`--llm-quant`, `--compute`, `--no-dry`)
 > were updated. Run `git log --oneline` for the full commit list of the
 > migration + extractions.
+>
+> **Test corpus expanded** to 38 seeds (was 10 originally) with deliberate
+> coverage across length / mode / genre / cast / subject type / source
+> specificity / modifier conflicts. 31 curated stress tests + 7 legacy
+> seeds flagged `placeholder: true` for you to swap with your typical
+> use cases. Full A/B grid is now 5 × 38 × 2 = 380 runs.
 
 This is a handoff doc to pick up the story-mode experiment work on your
 local machine. Phase A (prompt-side only, no image generation) is what's
@@ -26,7 +32,7 @@ on that branch, ready to commit + push.
 | `experiments/story-modifiers/story-length.yaml` | New modifier dropdown — 3/4/6/8/12 panels. **Lives under experiments/ deliberately**, not modifiers/, so it does NOT auto-register as a Forge UI dropdown until story mode ships. Move to `modifiers/` when wiring up the production UI. |
 | `experiments/story-modifiers/story-mode.yaml` | New modifier — Linear / Vignettes / Character Study / Before & After / Day in the Life / Two Viewpoints. Same "experiments/-only for now" placement. |
 | `experiments/story-rubric.yaml` | 7-dimension rating rubric with 1/3/5 anchors per dim. v0.1 — revise during rating sessions when scores feel forced. |
-| `experiments/story-seeds.yaml` | 10 test stories spanning genres / lengths / modes. Most flagged `placeholder: true` — replace with your typical use cases when convenient. The harness runs against whichever set is in this file. |
+| `experiments/story-seeds.yaml` | 38 test stories with deliberate coverage across length (3 / 4 / 6 / 8 / 12 panels), mode (Linear / Vignettes / Character Study / Day in the Life / Before & After / Two Viewpoints), genre (10+), cast complexity (solo / duo / trio / ensemble), subject type (human / animal / place / object), source specificity (concrete / generic / vague / emotion-only / empty), and modifier conflicts. 31 curated stress-test seeds + 7 still flagged `placeholder: true` (legacy prototype seeds you may want to swap with your typical use cases). The harness runs against whichever set is in this file. |
 | `experiments/story-variants/V1_one_pass_yaml.yaml` | Single LLM call, full plan in YAML. Tests max-output-per-call extreme. |
 | `experiments/story-variants/V2_one_pass_json.yaml` | Same as V1 but JSON output. Tests YAML-vs-JSON axis. |
 | `experiments/story-variants/V3a_two_pass_yaml.yaml` | Pass 1 = plan (YAML, captions only); Pass 2 = per-panel prompts (text, run N times). Tests one-vs-multi-pass axis. |
@@ -97,12 +103,17 @@ for v in V1_one_pass_yaml V2_one_pass_json \
 done
 ```
 
-5 variants × 10 seeds × 2 LLM seeds = 100 runs. The model loads once
+5 variants × 38 seeds × 2 LLM seeds = 380 runs. The model loads once
 per variant (kept resident across all seeds within a variant invocation),
 then unloads at end of variant. Two-pass variants do ~N+1 LLM calls
 per run, so a 6-panel V3a run is 7 calls = a few minutes per run on
 GPU, longer on CPU. Realistic budget: a few hours on GPU, an evening
 on CPU.
+
+To smaller-grid first, use `--only` to filter seeds (e.g.
+`--only lighthouse_6_linear,heist_8_linear,empty_source_4_vignettes`)
+and a single `--llm-seeds 42` until you've sanity-checked one variant
+end-to-end on your machine. Then run the full grid.
 
 ### Rating — agent first, human last
 
