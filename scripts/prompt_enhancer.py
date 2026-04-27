@@ -69,8 +69,12 @@ from pe_text_utils import (
     split_concatenated_tag as _split_concatenated_tag,
     split_positive_negative as _split_positive_negative,
 )
-from pe_data import bases as _pe_bases, prompts as _pe_prompts
+from pe_data import bases as _pe_bases, prompts as _pe_prompts, modifiers as _pe_mods
 from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
+
+# Aliases for the historical underscore-prefixed names used at callsites.
+_BADGE_SOURCE = _pe_mods.BADGE_SOURCE
+_BADGE_TARGET_SLOT = _pe_mods.BADGE_TARGET_SLOT
 
 
 def _anima_opt(key: str, default):
@@ -325,11 +329,6 @@ def _retrieve_prose_slot(stack, prose: str, slot: str, seed: int = 0):
         logger.warning(f"prose slot retrieval failed ({slot}): {e}")
         return None
 
-
-# UI badges for data-driven random mechanisms. Defined here (before
-# _build_dropdown_data and _collect_modifiers use them at module load).
-_BADGE_SOURCE = "\u25c6"      # ◆ filled diamond: source: pre-pick
-_BADGE_TARGET_SLOT = "\u25c7" # ◇ hollow diamond: target_slot: post-fill
 
 
 def _resolve_source(source_spec: dict, seed: int,
@@ -782,147 +781,6 @@ def _load_tag_formats():
 
 # ── File loading ─────────────────────────────────────────────────────────────
 
-def _scan_modifier_files(directory):
-    """Scan a directory for modifier YAML/JSON files.
-
-    Returns dict: dropdown_name -> {category: {modifier: keywords}}.
-    Skips _bases.* files. Uses _label field from YAML if present,
-    otherwise derives label from filename.
-    """
-    result = {}
-    if not directory or not os.path.isdir(directory):
-        return result
-    for name in sorted(os.listdir(directory)):
-        if name.startswith("."):
-            continue
-        stem = os.path.splitext(name)[0]
-        if stem == BASES_FILENAME:
-            continue
-        if not name.endswith((".yaml", ".yml", ".json")):
-            continue
-        data = _load_file(os.path.join(directory, name))
-        if data:
-            # Require _label in YAML for dropdown name
-            label = data.pop("_label", None)
-            if not label:
-                print(f"[PromptEnhancer] WARNING: Skipping {os.path.join(directory, name)}: missing '_label' field. Add '_label: Your Label' to the YAML file.")
-                continue
-            result[label] = data
-    return result
-
-
-def _merge_modifier_dicts(base, override):
-    """Merge two dropdown-level dicts. Same dropdown name -> merge categories."""
-    merged = {}
-    for label, categories in base.items():
-        merged[label] = {}
-        for cat, items in categories.items():
-            if isinstance(items, dict):
-                merged[label][cat] = dict(items)
-    for label, categories in override.items():
-        if not isinstance(categories, dict):
-            continue
-        if label not in merged:
-            merged[label] = {}
-        for cat, items in categories.items():
-            if not isinstance(items, dict):
-                continue
-            if cat not in merged[label]:
-                merged[label][cat] = {}
-            merged[label][cat].update(items)
-    return merged
-
-
-def _normalize_modifier(entry):
-    """Normalize a modifier entry to dict form with keys:
-      behavioral: prose instruction for Prose/Hybrid modes. The prose
-                  itself tells the LLM whether to apply a named style or
-                  pick one ("The scene is lit by golden hour..." vs
-                  "Choose a specific lighting condition..."). No separate
-                  type flag — the behavioral text carries the meaning.
-      keywords:   comma-separated keyword string for Tags mode and
-                  direct-paste button. May be empty for random-choice
-                  entries where the LLM synthesizes its own tags.
-
-    Accepts:
-      - str: legacy format. Treated as keywords; behavioral is synthesized.
-      - dict: new format.
-    """
-    if isinstance(entry, str):
-        kw = entry.strip()
-        return {
-            "behavioral": f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {kw}.",
-            "keywords": kw,
-        }
-    if not isinstance(entry, dict):
-        return None
-    norm = {
-        "behavioral": (entry.get("behavioral") or "").strip(),
-        "keywords": (entry.get("keywords") or "").strip(),
-    }
-    # Optional: target_slot lets the Anima slot-coverage pass (see
-    # _active_target_slots) force-fill a category tag from prose when
-    # the LLM didn't produce one. Currently used by 🎲 Random Artist
-    # (target_slot: artist) and 🎲 Random Franchise (target_slot: copyright).
-    if isinstance(entry.get("target_slot"), str) and entry["target_slot"].strip():
-        norm["target_slot"] = entry["target_slot"].strip()
-    # Optional: source lets _collect_modifiers resolve a concrete Danbooru
-    # tag BEFORE the LLM runs, eliminating LLM-collapse bias on "random"
-    # wildcards (see _resolve_source). Combines with target_slot for
-    # strongest guarantee — pre-pick + post-fill safety net.
-    if isinstance(entry.get("source"), dict):
-        norm["source"] = entry["source"]
-    if not norm["behavioral"] and norm["keywords"]:
-        norm["behavioral"] = f"Apply this style to the scene — describe the qualities through prose, do not list them as keywords: {norm['keywords']}."
-    # Entries with `source:` legitimately ship with both behavioral AND
-    # keywords empty — _collect_modifiers fills them at runtime from the
-    # picked DB tag. Skipping the empty-reject below is what lets these
-    # survive the normalization pass. (target_slot alone without source
-    # still needs a behavioral directive for the LLM, so it doesn't get
-    # the same bypass.)
-    if norm.get("source"):
-        return norm
-    if not norm["behavioral"] and not norm["keywords"]:
-        return None
-    return norm
-
-
-def _build_dropdown_data(categories_dict):
-    """Build flat lookup and choice list from a single dropdown's categories.
-
-    Values in the returned flat dict are normalized modifier dicts (see
-    _normalize_modifier) — callers select behavioral vs keywords based on mode.
-
-    Display labels carry mechanism badges so the user can see at a glance
-    which randoms have DB guarantees:
-        ◆  — `source:`       pre-picked from DB, LLM renders chosen value
-        ◇  — `target_slot:`  post-fills a category tag if LLM dropped it
-        ◆◇ — both            strongest (pre-pick + post-fill safety net)
-    Badges are appended to choice labels only; the flat lookup stays
-    keyed on the raw YAML name. _collect_modifiers strips badges before
-    looking up.
-    """
-    flat = {}
-    choices = []
-    for cat_name, items in categories_dict.items():
-        if not isinstance(items, dict):
-            continue
-        separator = f"\u2500\u2500\u2500\u2500\u2500 {cat_name.title()} \u2500\u2500\u2500\u2500\u2500"
-        choices.append(separator)
-        for name, entry in items.items():
-            norm = _normalize_modifier(entry)
-            if norm is None:
-                continue
-            flat[name] = norm
-            badge = ""
-            if norm.get("source"):
-                badge += _BADGE_SOURCE
-            if norm.get("target_slot"):
-                badge += _BADGE_TARGET_SLOT
-            choices.append(f"{name} {badge}" if badge else name)
-    return flat, choices
-
-
 # ── Tag database ─────────────────────────────────────────────────────────────
 
 def _download_tag_db(fmt_config):
@@ -1253,21 +1111,10 @@ def _reload_all(local_dir_path=""):
     # Bases (YAML, with local overrides) — loader lives in pe_data.bases.
     _bases = _pe_bases.load(_EXT_DIR, local_dirs)
 
-    # Modifiers: scan extension modifiers/ dir + all local dirs, merge
-    all_mods = _scan_modifier_files(_MODIFIERS_DIR)
-    for local_dir in local_dirs:
-        local_mods = _scan_modifier_files(local_dir)
-        all_mods = _merge_modifier_dicts(all_mods, local_mods)
-
-    _all_modifiers = {}
-    _dropdown_order = []
-    _dropdown_choices = {}
-    for label in sorted(all_mods.keys()):
-        flat, choices = _build_dropdown_data(all_mods[label])
-        if choices:
-            _dropdown_order.append(label)
-            _dropdown_choices[label] = choices
-            _all_modifiers.update(flat)
+    # Modifiers — loader lives in pe_data.modifiers.
+    _all_modifiers, _dropdown_order, _dropdown_choices = _pe_mods.load_all(
+        _MODIFIERS_DIR, local_dirs,
+    )
 
     # Prompts (YAML, with local overrides) — loader lives in pe_data.prompts.
     _prompts = _pe_prompts.load(_EXT_DIR, local_dirs)
@@ -1348,13 +1195,7 @@ def _base_names():
     return _pe_bases.names(_bases)
 
 
-def _strip_mechanism_badges(name: str) -> str:
-    """Drop any trailing ◆/◇ badge chars + whitespace that the UI appended
-    to the display label. Keeps the YAML-side name canonical for lookup.
-    """
-    if not isinstance(name, str):
-        return name
-    return name.rstrip(f" {_BADGE_SOURCE}{_BADGE_TARGET_SLOT}")
+_strip_mechanism_badges = _pe_mods.strip_badges
 
 
 def _collect_modifiers(dropdown_selections, seed: int | None = None):
@@ -1370,8 +1211,9 @@ def _collect_modifiers(dropdown_selections, seed: int | None = None):
     picked real Danbooru tag. This is the `source:` mechanism — see
     _resolve_source for how the pool is built.
 
-    Names may arrive with UI-appended ◆/◇ badges (see _build_dropdown_data);
-    strip those before looking up the canonical YAML entry.
+    Names may arrive with UI-appended ◆/◇ badges (added by
+    pe_data.modifiers.build_dropdown_data); strip those before looking
+    up the canonical YAML entry.
     """
     result = []
     for selections in dropdown_selections:
