@@ -1,19 +1,31 @@
-# Agent rating step (Claude Code judges + compares)
+# Agent rating step (Claude Code judges + compares — first pass)
 
-The story-mode test flow has two rating passes:
+The story-mode test flow puts the human LAST in the loop:
 
-1. **Human** rating via `experiments.story_rate` — interactive, your judgment.
-2. **Agent** rating via Claude Code reading the traces directly — independent
-   second opinion. Cross-checks human ratings; cheap to run after the human
-   pass; sometimes spots failure modes a human would miss when fatigued.
+1. **Agent rating pass** (this doc): Claude Code reads every trace,
+   applies the rubric, writes `_ratings_agent.json` and a qualitative
+   `_agent_review.md` per variant. The agent does the tedious per-trace
+   reading work first.
+2. **Agent draft of cross-variant judgment**: separate Claude Code prompt
+   below — produces `experiments/STORY_RESULTS_v1_DRAFT.md` synthesizing
+   all variants' ratings + reviews into a ranking and ship/no-ship
+   recommendation.
+3. **Human review pass**: `python -m experiments.story_rate --variant <V>
+   --review-agent`. Walks each trace showing the agent's scores as
+   defaults; Enter accepts, 1-5 overrides. Fast — the human only types
+   on disagreements. Saves to `_ratings.json`.
+4. **Human finalization**: human reads the agent's draft results doc,
+   override-rates surface in the summary, and the human writes (or
+   approves) the final `experiments/STORY_RESULTS_v1.md` — the ship
+   decision.
 
-Both write rubric scores to disk (`_ratings.json` for human,
-`_ratings_agent.json` for agent). `experiments.story_summarize` reads both
-and prints them side-by-side so disagreements surface immediately.
+`experiments.story_summarize` reads both rating files and prints them
+side-by-side so agent → human disagreements surface immediately.
 
-CLAUDE.md: "Quality = intent fulfillment. Read every output yourself and
-rate it." The human pass is the primary signal. The agent pass is a
-sanity check, not a replacement.
+Final ship/no-ship is the human's call. The agent does heavy lifting;
+the human signs off. Per CLAUDE.md "read every output yourself and rate
+it" — the human review pass is still reading every output, just with
+the agent's pre-work as the starting point rather than a blank slate.
 
 ---
 
@@ -85,47 +97,69 @@ Confirm both files exist when done. No further action needed.
 
 ---
 
-## After all variants are agent-rated
+## Cross-variant draft judgment (still agent's job)
 
-```bash
-# Summary across all rated variants — human + agent ratings side-by-side
-python -m experiments.story_summarize
-
-# Markdown for pasting into a commit message or design doc
-python -m experiments.story_summarize --md
-
-# See where each variant breaks at length
-python -m experiments.story_summarize --by-length
-```
-
-If human and agent ratings agree within ~0.5 on the overall, the signal
-is solid and you can pick a winner. If they diverge by 1+ on overall
-for any variant, dig into the per-dim scores and the agent's
-`_agent_review.md` to figure out which rater missed something —
-usually a rubric gap, occasionally a real disagreement worth resolving.
-
----
-
-## Cross-variant judgment (separate from per-trace rating)
-
-After per-trace rating is complete, ask Claude Code one more question:
+After every variant has agent-rated traces + an `_agent_review.md`,
+ask Claude Code one more question to draft the cross-variant decision
+doc. The human will review and finalize this draft, but the agent
+synthesizes the data first:
 
 ```
 Read .ai/experiments/story/*/_ratings_agent.json and *_agent_review.md.
-Produce a cross-variant comparison at experiments/STORY_RESULTS_v1.md
-covering:
+Read also any .ai/experiments/story/*/_index.json files for run
+metadata.
 
-1. Headline ranking (which variant ships, which doesn't, why)
+Produce a DRAFT cross-variant comparison at
+experiments/STORY_RESULTS_v1_DRAFT.md. The human will review and either
+accept it as STORY_RESULTS_v1.md or edit/override.
+
+Cover:
+
+1. Headline ranking — which variant looks shippable, which doesn't, why.
 2. Per-axis findings:
-   - 1-pass vs 2-pass — which won, at which lengths
+   - 1-pass vs 2-pass — which performed better, at which story lengths
    - YAML vs JSON — which parsed more reliably; quality difference
-   - V5 (template-assembled) vs V3a/V3b (LLM-elaborated) — does the
-     extra LLM pass produce noticeably better per-panel prompts?
+   - V5 (template-assembled prompts) vs V3a/V3b (LLM-elaborated prompts)
+     — does the extra LLM pass produce noticeably better per-panel
+     prompts, or is template-assembly good enough?
 3. Recommended Phase A.1 promotion: which variant's prompts go into
    prompts.yaml, which modifier YAMLs move from
    experiments/story-modifiers/ to modifiers/.
 4. Open questions for Phase B (image-side testing on Qwen-Image-Edit).
+5. Confidence: where is your draft most uncertain? What would change
+   your recommendation if the human disagrees on a specific dimension?
+
+Mark this clearly as a DRAFT awaiting human review. The human's
+override-ratings (in _ratings.json) and final judgment in
+STORY_RESULTS_v1.md are the canonical decision artifact.
 ```
 
-That document becomes the artifact that drives Phase A.1 promotion to
-production. It's the "decision with evidence" deliverable per CLAUDE.md.
+---
+
+## After human review (the final step)
+
+The human runs:
+
+```bash
+# Per-variant review (agent's scores shown as defaults; Enter accepts)
+python -m experiments.story_rate --variant V1_one_pass_yaml --review-agent
+# ... repeat per variant ...
+
+# Compare both rating sets side-by-side
+python -m experiments.story_summarize
+python -m experiments.story_summarize --by-length
+```
+
+If human and agent ratings agree within ~0.5 on the overall, the
+agent's draft results doc is probably accurate; the human can copy
+STORY_RESULTS_v1_DRAFT.md to STORY_RESULTS_v1.md, edit lightly, and
+ship the recommendation.
+
+If they diverge by 1+ on overall for any variant, the human writes
+STORY_RESULTS_v1.md from scratch (referencing the draft) — that
+divergence is the signal that the agent's analysis missed something
+the human caught (or vice versa, in which case the rubric needs
+revising before the next round).
+
+Final ship/no-ship is in STORY_RESULTS_v1.md, written and approved
+by the human.

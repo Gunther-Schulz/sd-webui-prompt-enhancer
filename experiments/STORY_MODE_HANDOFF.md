@@ -72,38 +72,55 @@ call on a modest CPU. Two-pass variants do ~N+1 calls per run, so a
 on GPU. Realistic budget: an evening for the full grid on CPU, much
 less on a GPU machine.
 
-### Rating — two passes
+### Rating — agent first, human last
 
-The rubric is rated TWICE per variant: once by you (primary signal),
-once by Claude Code (independent second opinion). They write to
-different files; `story_summarize.py` reads both and surfaces
-disagreements.
+The flow puts the human LAST in the loop. The agent does heavy
+per-trace reading; the human reviews and overrides.
 
-**Pass 1 — human (interactive):**
+**Step 1 — agent rates (Claude Code reads traces directly):**
+
+Open a Claude Code session in this repo. Paste the first prompt
+template from `experiments/AGENT_RATER_PROMPT.md` per variant. Claude
+reads every trace, applies the rubric, writes `_ratings_agent.json`
+plus a qualitative `_agent_review.md`.
+
+**Step 2 — agent drafts the cross-variant decision doc:**
+
+Once every variant has agent ratings, paste the second prompt template
+from `experiments/AGENT_RATER_PROMPT.md`. Claude synthesizes all
+ratings + reviews into a draft `experiments/STORY_RESULTS_v1_DRAFT.md`
+with a ranking and Phase A.1 promotion recommendation.
+
+**Step 3 — human reviews each variant (interactive override):**
 
 ```bash
-python -m experiments.story_rate --variant V1_one_pass_yaml
+python -m experiments.story_rate --variant V1_one_pass_yaml --review-agent
 ```
 
-For each trace, the script prints the source / plan / per-panel prompts
-(or failure reason if the trace failed), then prompts for 1-5 scores
-across 7 rubric dimensions plus an overall. Failed-validation traces
-auto-score 1 on `schema_validity` and only ask for notes — saves time.
+For each trace, the script shows the source / plan / per-panel prompts
+plus the agent's score per rubric dimension as a default. Press Enter
+to accept; type 1-5 to override; 's' to skip; 'q' to quit. The human
+only types on disagreements — fast.
 
-Ratings persist to `.ai/experiments/story/<variant>/_ratings.json`
-after every rating, so Ctrl-C is safe. `--show-only` prints traces
-without rating prompts.
+Failed-validation traces auto-score 1 on `schema_validity` and only ask
+for notes. Ratings persist to `_ratings.json` after every rating, so
+Ctrl-C is safe.
 
-**Pass 2 — agent (Claude Code reads traces directly):**
+If you want maximum independence (no agent score visible), drop the
+`--review-agent` flag and rate from scratch. Useful on a sample to
+calibrate, then switch to `--review-agent` for the rest.
 
-Open a Claude Code session in this repo. Paste the prompt template
-from `experiments/AGENT_RATER_PROMPT.md`, with the variant id filled
-in. Claude reads every trace, applies the rubric, writes
-`_ratings_agent.json` + a qualitative `_agent_review.md`.
+**Step 4 — human writes final results doc:**
 
-Per CLAUDE.md "Quality = intent fulfillment, not a metric" — the human
-pass is the primary signal. The agent pass catches what you miss when
-fatigued and surfaces rubric gaps.
+If human + agent ratings agree closely (overall within 0.5 across
+variants), copy `STORY_RESULTS_v1_DRAFT.md` to `STORY_RESULTS_v1.md`
+and ship. If they diverge by 1+ on overall for any variant, the
+human writes `STORY_RESULTS_v1.md` from scratch (referencing the
+draft) — that divergence is data about either the rubric or the
+specific failure mode the agent missed.
+
+Final ship/no-ship is in `STORY_RESULTS_v1.md`, written and approved
+by the human.
 
 ### Summary across variants
 
