@@ -108,6 +108,12 @@ from pe_anima_glue.filters import (
     filter_to_structural_tags as _pe_filter_to_structural_tags,
 )
 from pe_anima_glue import stack as _pe_anima_stack
+from pe_modes._shared import (
+    status_html as _status_html,
+    progress_html as _progress_html,
+    build_user_msg as _build_user_msg,
+    apply_negative_hint as _apply_negative_hint,
+)
 from pe_tags import (
     validate as _pe_tags_validate,
     reorder as _pe_tags_reorder,
@@ -600,7 +606,7 @@ class PromptEnhancer(scripts.Script):
                 mods = _collect_modifiers(dd_vals, seed=int(sd))
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: No system prompt configured.</span>"
+                    yield "", "", _status_html(_MODE_PROSE, "No system prompt configured.", color='#c66')
                     return
 
                 if motion_cb:
@@ -609,16 +615,12 @@ class PromptEnhancer(scripts.Script):
                     sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 # Build user message with modifiers + inline wildcards
-                user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                 style_str = _build_style_string(mods)
-                if style_str:
-                    user_msg = f"{user_msg}\n\n{style_str}"
                 inline_text = _build_inline_wildcard_text(source)
-                if inline_text:
-                    user_msg = f"{user_msg}\n\n{inline_text}"
+                user_msg = _build_user_msg(source, style_str, inline_text, _prompts.get("empty_source_signal", ""))
 
                 initial_status = "\U0001F3B2 Rolling dice (prose)..." if not source else "Generating prose..."
-                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {initial_status}</span>"
+                yield gr.update(), gr.update(), _status_html(_MODE_PROSE, f"{initial_status}", color='#aaa')
 
                 print(f"[PromptEnhancer] Prose: think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
@@ -626,10 +628,7 @@ class PromptEnhancer(scripts.Script):
                     for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
-                            if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                            else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {p['elapsed']:.1f}s...</span>"
+                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_PROSE}", p)
                         else:
                             raw = chunk
                     raw = _clean_output(raw)
@@ -640,24 +639,20 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield result, negative, f"<span style='color:#6c6'>{_MODE_PROSE}: OK - {len(result.split())} words, {elapsed}</span>"
+                    yield result, negative, _status_html(_MODE_PROSE, f"OK - {len(result.split())} words, {elapsed}")
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        yield partial, "", f"<span style='color:#c66'>{_MODE_PROSE}: Cancelled - {len(partial.split())} words (partial)</span>"
+                        yield partial, "", _status_html(_MODE_PROSE, f"Cancelled - {len(partial.split())} words (partial)", color='#c66')
                     else:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: Cancelled</span>"
+                        yield "", "", _status_html(_MODE_PROSE, "Cancelled", color='#c66')
                 except _TruncatedError as e:
                     result = _clean_output(str(e))
-                    yield result, "", f"<span style='color:#ca6'>{_MODE_PROSE}: Truncated - {len(result.split())} words</span>"
-                except urllib.error.URLError as e:
-                    msg = f"Connection failed: {e.reason} - is Ollama running?"
-                    logger.error(msg)
-                    yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: {msg}</span>"
+                    yield result, "", _status_html(_MODE_PROSE, f"Truncated - {len(result.split())} words", color='#ca6')
                 except Exception as e:
                     msg = f"{type(e).__name__}: {e}"
                     logger.error(msg)
-                    yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: {msg}</span>"
+                    yield "", "", _status_html(_MODE_PROSE, f"{msg}", color='#c66')
 
             prose_event = enhance_btn.click(
                 fn=_enhance,
@@ -684,26 +679,17 @@ class PromptEnhancer(scripts.Script):
                 mods = _collect_modifiers(dd_vals, seed=int(sd))
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: No system prompt configured.</span>"
+                    yield "", "", _status_html(_MODE_HYBRID, "No system prompt configured.", color='#c66')
                     return
 
                 if motion_cb:
                     sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
-                    fmt_config = _tag_formats.get(tag_fmt, {})
-                    neg_quality = fmt_config.get("negative_quality_tags", [])
-                    neg_hint = ""
-                    if neg_quality:
-                        neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
-                    sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
+                    sp = _apply_negative_hint(sp, _tag_formats.get(tag_fmt, {}), _prompts.get('negative', ''))
 
-                user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                 style_str = _build_style_string(mods)
-                if style_str:
-                    user_msg = f"{user_msg}\n\n{style_str}"
                 inline_text = _build_inline_wildcard_text(source)
-                if inline_text:
-                    user_msg = f"{user_msg}\n\n{inline_text}"
+                user_msg = _build_user_msg(source, style_str, inline_text, _prompts.get("empty_source_signal", ""))
 
                 # RAG path when the user picked it on the Tag Validation radio.
                 # If picked but unavailable (non-Anima format, or artefacts
@@ -720,7 +706,7 @@ class PromptEnhancer(scripts.Script):
                     ok, reason = _rag_available_for(tag_fmt)
                     if not ok:
                         logger.error(f"RAG unavailable: {reason}")
-                        yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: RAG unavailable — {reason}</span>"
+                        yield "", "", _status_html(_MODE_HYBRID, f"RAG unavailable — {reason}", color='#c66')
                         return
                     _s = _get_anima_stack()
                     try:
@@ -767,11 +753,11 @@ class PromptEnhancer(scripts.Script):
                         if _anima_cm:
                             try: _anima_cm.__exit__(None, None, None)
                             except Exception: pass
-                        yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: RAG setup failed: {type(e).__name__}: {e}</span>"
+                        yield "", "", _status_html(_MODE_HYBRID, f"RAG setup failed: {type(e).__name__}: {e}", color='#c66')
                         return
 
                 if not source:
-                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: \U0001F3B2 Rolling dice (1/3 prose)...</span>"
+                    yield gr.update(), gr.update(), _status_html(_MODE_HYBRID, "\U0001F3B2 Rolling dice (1/3 prose)...", color='#aaa')
                 print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     # Pass 1: generate prose. V8 multi-sample mode when
@@ -779,21 +765,18 @@ class PromptEnhancer(scripts.Script):
                     n_samples = int(_anima_opt("anima_tagger_prose_samples", 3)) if _anima is not None else 1
                     prose_raw = None
                     if n_samples > 1:
-                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 1/3 prose (multi-sample {n_samples})...</span>"
+                        yield gr.update(), gr.update(), _status_html(_MODE_HYBRID, f"1/3 prose (multi-sample {n_samples})...", color='#aaa')
                         prose_raw, _samples_all, _picker_choice = _multi_sample_prose(user_msg, sp, temp, seed=int(sd), n_samples=n_samples, num_predict=1024, picker_system_prompt=_prompts.get("picker", ""))
                     else:
                         for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                             if isinstance(chunk, dict):
                                 p = chunk
-                                if p["tokens"] > 0:
-                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 1/3 prose: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                                else:
-                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 1/3 prose: {p['elapsed']:.1f}s...</span>"
+                                yield gr.update(), gr.update(), _progress_html(f"{_MODE_HYBRID}: 1/3 prose", p)
                             else:
                                 prose_raw = chunk
                     prose_raw = _clean_output(prose_raw)
                     if not prose_raw:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: Prose generation returned empty.</span>"
+                        yield "", "", _status_html(_MODE_HYBRID, "Prose generation returned empty.", color='#c66')
                         return
 
                     # Split negative from prose before passes 2 & 3
@@ -808,7 +791,7 @@ class PromptEnhancer(scripts.Script):
                     fmt_config = _tag_formats.get(tag_fmt, {})
                     tag_sp = fmt_config.get("system_prompt", "")
                     if not tag_sp:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: No tag format configured.</span>"
+                        yield "", "", _status_html(_MODE_HYBRID, "No tag format configured.", color='#c66')
                         return
                     if style_str:
                         tag_sp = f"{tag_sp}\n\n{_prompts.get('tag_extract_style_preamble', '')}\n{style_str}"
@@ -839,10 +822,7 @@ class PromptEnhancer(scripts.Script):
                     for chunk in _call_llm_progress(prose, tag_sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
-                            if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 2/3 tags: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                            else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 2/3 tags: {p['elapsed']:.1f}s...</span>"
+                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_HYBRID}: 2/3 tags", p)
                         else:
                             tags_raw = chunk
                     tags_raw = _clean_output(tags_raw, strip_underscores=False)
@@ -870,16 +850,13 @@ class PromptEnhancer(scripts.Script):
                         for chunk in _call_llm_progress(prose, summarize_sp, temp, seed=int(sd)):
                             if isinstance(chunk, dict):
                                 p = chunk
-                                if p["tokens"] > 0:
-                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 3/3 summarize: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                                else:
-                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: 3/3 summarize: {p['elapsed']:.1f}s...</span>"
+                                yield gr.update(), gr.update(), _progress_html(f"{_MODE_HYBRID}: 3/3 summarize", p)
                             else:
                                 nl_supplement = chunk
                         nl_supplement = _clean_output(nl_supplement)
 
                     if validation_mode != "Off":
-                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: Validating tags ({validation_mode})...</span>"
+                        yield gr.update(), gr.update(), _status_html(_MODE_HYBRID, f"Validating tags ({validation_mode})...", color='#aaa')
 
                     # Route safety tag from any active NSFW modifier selection
                     _anima_safety = _anima_safety_from_modifiers(mods, source)
@@ -966,25 +943,21 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         final = f"{source}\n\n{final}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield final, negative, f"<span style='color:#6c6'>{_MODE_HYBRID}: OK - {', '.join(status_parts)}, {elapsed}</span>"
+                    yield final, negative, _status_html(_MODE_HYBRID, f"OK - {', '.join(status_parts)}, {elapsed}")
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        yield partial, "", f"<span style='color:#c66'>{_MODE_HYBRID}: Cancelled (partial)</span>"
+                        yield partial, "", _status_html(_MODE_HYBRID, "Cancelled (partial)", color='#c66')
                     else:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: Cancelled</span>"
+                        yield "", "", _status_html(_MODE_HYBRID, "Cancelled", color='#c66')
                 except _TruncatedError:
                     # Fail loud — truncated tag output is a reduced result
                     # that looks like success. Empty textbox + red status.
-                    yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: Truncated — no output (retry)</span>"
-                except urllib.error.URLError as e:
-                    msg = f"Connection failed: {e.reason} - is Ollama running?"
-                    logger.error(msg)
-                    yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: {msg}</span>"
+                    yield "", "", _status_html(_MODE_HYBRID, "Truncated — no output (retry)", color='#c66')
                 except Exception as e:
                     msg = f"{type(e).__name__}: {e}"
                     logger.error(msg)
-                    yield "", "", f"<span style='color:#c66'>{_MODE_HYBRID}: {msg}</span>"
+                    yield "", "", _status_html(_MODE_HYBRID, f"{msg}", color='#c66')
                 finally:
                     # Release bge-m3 + reranker VRAM for image gen
                     if _anima_cm is not None:
@@ -1037,7 +1010,7 @@ class PromptEnhancer(scripts.Script):
                 existing_neg = (existing_neg or "").strip()
                 print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
                 if not existing:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: No prompt to remix. Generate one first with Prose or Tags.</span>"
+                    yield "", "", _status_html(_MODE_REMIX, "No prompt to remix. Generate one first with Prose or Tags.", color='#c66')
                     return
 
                 source = (source or "").strip()
@@ -1045,7 +1018,7 @@ class PromptEnhancer(scripts.Script):
                 print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
 
                 if not mods and not source:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Select modifiers or update source prompt.</span>"
+                    yield "", "", _status_html(_MODE_REMIX, "Select modifiers or update source prompt.", color='#c66')
                     return
 
                 fmt = _detect_format(existing)
@@ -1079,10 +1052,7 @@ class PromptEnhancer(scripts.Script):
                     for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
-                            if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_REMIX}: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                            else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_REMIX}: {p['elapsed']:.1f}s...</span>"
+                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_REMIX}", p)
                         else:
                             raw = chunk
                     raw = _clean_output(raw, strip_underscores=(fmt == "prose"))
@@ -1096,11 +1066,11 @@ class PromptEnhancer(scripts.Script):
                         if prepend and source:
                             result = f"{source}\n\n{result}"
                         elapsed = f"{time.monotonic() - t0:.1f}s"
-                        yield result, negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - remixed to {len(result.split())} words, {elapsed}</span>"
+                        yield result, negative, _status_html(_MODE_REMIX, f"OK - remixed to {len(result.split())} words, {elapsed}")
                         return
 
                     if validation_mode != "Off":
-                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_REMIX}: Validating tags ({validation_mode})...</span>"
+                        yield gr.update(), gr.update(), _status_html(_MODE_REMIX, f"Validating tags ({validation_mode})...", color='#aaa')
 
                     # RAG routing for remix — only when user picked RAG on
                     # User-chosen RAG path. No fallback — abort on unavailable.
@@ -1111,7 +1081,7 @@ class PromptEnhancer(scripts.Script):
                         ok, reason = _rag_available_for(tag_fmt)
                         if not ok:
                             logger.error(f"RAG unavailable (remix): {reason}")
-                            yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: RAG unavailable — {reason}</span>"
+                            yield "", "", _status_html(_MODE_REMIX, f"RAG unavailable — {reason}", color='#c66')
                             return
                         _anima_r = _get_anima_stack()
                         try:
@@ -1119,7 +1089,7 @@ class PromptEnhancer(scripts.Script):
                             _anima_r_cm.__enter__()
                         except Exception as _e:
                             logger.error(f"RAG setup failed in remix: {_e}")
-                            yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: RAG setup failed: {type(_e).__name__}: {_e}</span>"
+                            yield "", "", _status_html(_MODE_REMIX, f"RAG setup failed: {type(_e).__name__}: {_e}", color='#c66')
                             return
                         # Resolve any db_retrieve source: picks now. In Remix
                         # the LLM already ran with an unresolved directive
@@ -1170,21 +1140,21 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         final = f"{source}\n\n{final}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield final, negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - {', '.join(status_parts)}, {elapsed}</span>"
+                    yield final, negative, _status_html(_MODE_REMIX, f"OK - {', '.join(status_parts)}, {elapsed}")
                 except InterruptedError:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Cancelled</span>"
+                    yield "", "", _status_html(_MODE_REMIX, "Cancelled", color='#c66')
                 except _TruncatedError as e:
                     if fmt == "prose":
                         # Prose truncation → truncated prose is still prose,
                         # surface it so the user can use/edit it.
-                        yield _clean_output(str(e), strip_underscores=True), "", f"<span style='color:#ca6'>{_MODE_REMIX}: Truncated</span>"
+                        yield _clean_output(str(e), strip_underscores=True), "", _status_html(_MODE_REMIX, "Truncated", color='#ca6')
                     else:
                         # Tag-mode truncation → fail loud, no silent partial.
-                        yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Truncated — no output (retry)</span>"
+                        yield "", "", _status_html(_MODE_REMIX, "Truncated — no output (retry)", color='#c66')
                 except urllib.error.URLError as e:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Connection failed: {e.reason}</span>"
+                    yield "", "", _status_html(_MODE_REMIX, f"Connection failed: {e.reason}", color='#c66')
                 except Exception as e:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: {type(e).__name__}: {e}</span>"
+                    yield "", "", _status_html(_MODE_REMIX, f"{type(e).__name__}: {e}", color='#c66')
                 finally:
                     # Release Anima models if loaded (remix path)
                     _r_cm = locals().get("_anima_r_cm")
@@ -1233,26 +1203,17 @@ class PromptEnhancer(scripts.Script):
                 mods = _collect_modifiers(dd_vals, seed=int(sd))
                 sp = _assemble_system_prompt(base_name, custom_sp, dl)
                 if not sp:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: No system prompt configured.</span>"
+                    yield "", "", _status_html(_MODE_TAGS, "No system prompt configured.", color='#c66')
                     return
 
                 if motion_cb:
                     sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:
-                    fmt_config = _tag_formats.get(tag_fmt, {})
-                    neg_quality = fmt_config.get("negative_quality_tags", [])
-                    neg_hint = ""
-                    if neg_quality:
-                        neg_hint = f"\nAlways start negative tags with: {', '.join(neg_quality)}"
-                    sp = f"{sp}\n\n{_prompts.get('negative', '')}{neg_hint}"
+                    sp = _apply_negative_hint(sp, _tag_formats.get(tag_fmt, {}), _prompts.get('negative', ''))
 
-                user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
                 style_str = _build_style_string(mods)
-                if style_str:
-                    user_msg = f"{user_msg}\n\n{style_str}"
                 inline_text = _build_inline_wildcard_text(source)
-                if inline_text:
-                    user_msg = f"{user_msg}\n\n{inline_text}"
+                user_msg = _build_user_msg(source, style_str, inline_text, _prompts.get("empty_source_signal", ""))
 
                 # User-chosen RAG path. No fallback — abort with a clear
                 # error when RAG is picked but unavailable.
@@ -1263,7 +1224,7 @@ class PromptEnhancer(scripts.Script):
                     ok, reason = _rag_available_for(tag_fmt)
                     if not ok:
                         logger.error(f"RAG unavailable: {reason}")
-                        yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: RAG unavailable — {reason}</span>"
+                        yield "", "", _status_html(_MODE_TAGS, f"RAG unavailable — {reason}", color='#c66')
                         return
                     _s = _get_anima_stack()
                     try:
@@ -1300,11 +1261,11 @@ class PromptEnhancer(scripts.Script):
                         if _anima_t_cm:
                             try: _anima_t_cm.__exit__(None, None, None)
                             except Exception: pass
-                        yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: RAG setup failed: {type(_e).__name__}: {_e}</span>"
+                        yield "", "", _status_html(_MODE_TAGS, f"RAG setup failed: {type(_e).__name__}: {_e}", color='#c66')
                         return
 
                 if not source:
-                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: \U0001F3B2 Rolling dice (1/2 prose)...</span>"
+                    yield gr.update(), gr.update(), _status_html(_MODE_TAGS, "\U0001F3B2 Rolling dice (1/2 prose)...", color='#aaa')
                 print(f"[PromptEnhancer] Tags pass 1/2 (prose): think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     # Pass 1: generate prose (same as Hybrid). V8
@@ -1312,21 +1273,18 @@ class PromptEnhancer(scripts.Script):
                     n_samples = int(_anima_opt("anima_tagger_prose_samples", 3)) if _anima_t is not None else 1
                     prose_raw = None
                     if n_samples > 1:
-                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: 1/2 prose (multi-sample {n_samples})...</span>"
+                        yield gr.update(), gr.update(), _status_html(_MODE_TAGS, f"1/2 prose (multi-sample {n_samples})...", color='#aaa')
                         prose_raw, _samples_all, _picker_choice = _multi_sample_prose(user_msg, sp, temp, seed=int(sd), n_samples=n_samples, num_predict=1024, picker_system_prompt=_prompts.get("picker", ""))
                     else:
                         for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
                             if isinstance(chunk, dict):
                                 p = chunk
-                                if p["tokens"] > 0:
-                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: 1/2 prose: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                                else:
-                                    yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: 1/2 prose: {p['elapsed']:.1f}s...</span>"
+                                yield gr.update(), gr.update(), _progress_html(f"{_MODE_TAGS}: 1/2 prose", p)
                             else:
                                 prose_raw = chunk
                     prose_raw = _clean_output(prose_raw)
                     if not prose_raw:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: Prose generation returned empty.</span>"
+                        yield "", "", _status_html(_MODE_TAGS, "Prose generation returned empty.", color='#c66')
                         return
 
                     if neg_cb:
@@ -1340,7 +1298,7 @@ class PromptEnhancer(scripts.Script):
                     fmt_config = _tag_formats.get(tag_fmt, {})
                     tag_sp = fmt_config.get("system_prompt", "")
                     if not tag_sp:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: No tag format configured.</span>"
+                        yield "", "", _status_html(_MODE_TAGS, "No tag format configured.", color='#c66')
                         return
                     if style_str:
                         tag_sp = f"{tag_sp}\n\n{_prompts.get('tag_extract_style_preamble', '')}\n{style_str}"
@@ -1360,16 +1318,13 @@ class PromptEnhancer(scripts.Script):
                     for chunk in _call_llm_progress(prose, tag_sp, temp, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
-                            if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: 2/2 tags: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
-                            else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: 2/2 tags: {p['elapsed']:.1f}s...</span>"
+                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_TAGS}: 2/2 tags", p)
                         else:
                             tags_raw = chunk
                     tags_raw = _clean_output(tags_raw, strip_underscores=False)
 
                     if validation_mode != "Off":
-                        yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: Validating tags ({validation_mode})...</span>"
+                        yield gr.update(), gr.update(), _status_html(_MODE_TAGS, f"Validating tags ({validation_mode})...", color='#aaa')
 
                     _anima_t_safety = _anima_safety_from_modifiers(mods, source)
 
@@ -1430,23 +1385,23 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         tags_raw = f"{source}\n\n{tags_raw}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield tags_raw, negative, f"<span style='color:#6c6'>{_MODE_TAGS}: OK - {', '.join(status_parts)}, {elapsed}</span>"
+                    yield tags_raw, negative, _status_html(_MODE_TAGS, f"OK - {', '.join(status_parts)}, {elapsed}")
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        yield partial, "", f"<span style='color:#c66'>{_MODE_TAGS}: Cancelled (partial)</span>"
+                        yield partial, "", _status_html(_MODE_TAGS, "Cancelled (partial)", color='#c66')
                     else:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: Cancelled</span>"
+                        yield "", "", _status_html(_MODE_TAGS, "Cancelled", color='#c66')
                 except _TruncatedError:
                     # Fail loud. A truncated partial — even post-validation —
                     # is a reduced result that looks like success to the user.
                     # Empty textbox + red status makes the failure visible so
                     # the user retries instead of accepting degraded output.
-                    yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: Truncated — no output (retry)</span>"
+                    yield "", "", _status_html(_MODE_TAGS, "Truncated — no output (retry)", color='#c66')
                 except urllib.error.URLError as e:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: Connection failed: {e.reason}</span>"
+                    yield "", "", _status_html(_MODE_TAGS, f"Connection failed: {e.reason}", color='#c66')
                 except Exception as e:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_TAGS}: {type(e).__name__}: {e}</span>"
+                    yield "", "", _status_html(_MODE_TAGS, f"{type(e).__name__}: {e}", color='#c66')
                 finally:
                     if _anima_t_cm is not None:
                         try:
