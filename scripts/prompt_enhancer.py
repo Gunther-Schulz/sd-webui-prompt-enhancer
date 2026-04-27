@@ -669,7 +669,7 @@ class PromptEnhancer(scripts.Script):
                 initial_status = "\U0001F3B2 Rolling dice (prose)..." if not source else "Generating prose..."
                 yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {initial_status}</span>"
 
-                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
+                print(f"[PromptEnhancer] Prose: think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     raw = None
                     for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
@@ -787,9 +787,7 @@ class PromptEnhancer(scripts.Script):
                                 user_msg = f"{user_msg}\n\n{style_str}"
                             if inline_text:
                                 user_msg = f"{user_msg}\n\n{inline_text}"
-                        _expander = _make_anima_query_expander(temperature=0.3,
-                            think=False, seed=int(sd),
-                        )
+                        _expander = _make_anima_query_expander(temperature=0.3, seed=int(sd))
                         _anima_shortlist = _s.build_shortlist(
                             source_prompt=source,
                             modifier_keywords=style_str,
@@ -823,7 +821,7 @@ class PromptEnhancer(scripts.Script):
 
                 if not source:
                     yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_HYBRID}: \U0001F3B2 Rolling dice (1/3 prose)...</span>"
-                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
+                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     # Pass 1: generate prose. V8 multi-sample mode when
                     # anima_tagger_prose_samples > 1 (RAG path only).
@@ -1330,9 +1328,7 @@ class PromptEnhancer(scripts.Script):
                                 user_msg = f"{user_msg}\n\n{style_str}"
                             if inline_text:
                                 user_msg = f"{user_msg}\n\n{inline_text}"
-                        _expander_t = _make_anima_query_expander(temperature=0.3,
-                            think=False, seed=int(sd),
-                        )
+                        _expander_t = _make_anima_query_expander(temperature=0.3, seed=int(sd))
                         _anima_t_shortlist = _s.build_shortlist(
                             source_prompt=source, modifier_keywords=style_str,
                             query_expander=_expander_t,
@@ -1358,7 +1354,7 @@ class PromptEnhancer(scripts.Script):
 
                 if not source:
                     yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_TAGS}: \U0001F3B2 Rolling dice (1/2 prose)...</span>"
-                print(f"[PromptEnhancer] Tags pass 1/2 (prose): model={model}, think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
+                print(f"[PromptEnhancer] Tags pass 1/2 (prose): think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     # Pass 1: generate prose (same as Hybrid). V8
                     # multi-sample mode when anima_tagger_prose_samples > 1.
