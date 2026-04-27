@@ -33,13 +33,12 @@ behaves identically before and after this branch is merged.
 
 ## Prerequisites before running
 
-1. Ollama running locally: `ollama serve` (or with the README's CPU-only
-   incantation: `OLLAMA_NUM_GPU=0 OLLAMA_KEEP_ALIVE=0 ollama serve`)
-2. Model pulled: `ollama pull huihui_ai/qwen3.5-abliterated:9b`
-   (or override with `--model <name>`)
+1. llama-cpp-python installed (auto-installed by `install.py` on Forge load,
+   or manually: `pip install llama-cpp-python`)
+2. ~6 GB free disk for the GGUF (auto-downloaded on first run via HF cache)
 3. PyYAML installed (already a dep of the extension)
 
-No GPU required. No Forge required. No image generation involved.
+GPU optional. CPU mode works (slower). Configurable via `--compute cpu`.
 
 ## How to run
 
@@ -53,7 +52,29 @@ python -m experiments.story_runner \
     --llm-seeds 42
 ```
 
-Output goes to `.ai/experiments/story/V1_one_pass_yaml/<run_id>.json`.
+First run downloads the default GGUF (~5.6 GB for Q4_K_M of
+huihui-ai/Huihui-Qwen3.5-9B-abliterated). Subsequent runs reuse the HF
+cache. Output goes to `.ai/experiments/story/V1_one_pass_yaml/<run_id>.json`.
+
+### Override the model / compute / DRY
+
+```bash
+# Use a different quant
+python -m experiments.story_runner --variant V1_one_pass_yaml \
+    --llm-quant Q5_K_M
+
+# CPU only (slow but no GPU needed)
+python -m experiments.story_runner --variant V1_one_pass_yaml \
+    --compute cpu
+
+# Bring your own GGUF
+python -m experiments.story_runner --variant V1_one_pass_yaml \
+    --llm-model-path /path/to/your.gguf
+
+# Disable the low-level DRY sampler (use high-level samplers only;
+# useful to A/B whether DRY is helping)
+python -m experiments.story_runner --variant V1_one_pass_yaml --no-dry
+```
 
 ### Full A/B grid
 
@@ -65,12 +86,12 @@ for v in V1_one_pass_yaml V2_one_pass_json \
 done
 ```
 
-5 variants × 10 seeds × 2 LLM seeds = 100 runs. Wall time depends on
-your CPU and chosen seeds — Qwen 9B abliterated runs ~15-60s per LLM
-call on a modest CPU. Two-pass variants do ~N+1 calls per run, so a
-6-panel V3a run is ~7 calls = several minutes per run on CPU. Faster
-on GPU. Realistic budget: an evening for the full grid on CPU, much
-less on a GPU machine.
+5 variants × 10 seeds × 2 LLM seeds = 100 runs. The model loads once
+per variant (kept resident across all seeds within a variant invocation),
+then unloads at end of variant. Two-pass variants do ~N+1 LLM calls
+per run, so a 6-panel V3a run is 7 calls = a few minutes per run on
+GPU, longer on CPU. Realistic budget: a few hours on GPU, an evening
+on CPU.
 
 ### Rating — agent first, human last
 
