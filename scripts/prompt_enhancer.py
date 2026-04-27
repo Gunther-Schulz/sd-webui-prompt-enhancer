@@ -78,6 +78,16 @@ from pe_detail import (
 )
 from pe_data import bases as _pe_bases, prompts as _pe_prompts, modifiers as _pe_mods, tag_formats as _pe_tf
 from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
+from pe_tags import (
+    validate as _pe_tags_validate,
+    reorder as _pe_tags_reorder,
+    postprocess as _pe_tags_postprocess,
+    format_tag_out as _format_tag_out,
+    find_closest_tag as _find_closest_tag,
+    TAG_CORRECTIONS as _TAG_CORRECTIONS,
+    SUBJECT_TAGS as _SUBJECT_TAGS,
+    PRESERVE_UNDERSCORE_RE as _PRESERVE_UNDERSCORE_RE,
+)
 
 # Aliases for the historical underscore-prefixed names used at callsites.
 _BADGE_SOURCE = _pe_mods.BADGE_SOURCE
@@ -789,239 +799,36 @@ def _load_tag_db(tag_format):
     return _pe_tf.load_db(fmt_config, _TAGS_DIR, _tag_databases, logger=logger)
 
 
-def _find_closest_tag(tag, valid_tags, max_distance=3):
-    """Find the closest valid tag for an invalid one.
-
-    Priority: prefix substring match > Levenshtein distance (via
-    rapidfuzz). Returns (corrected_tag, None) on hit, or
-    (None, original_tag) on miss. Aliases are checked earlier in
-    _validate_tags; this function is only reached for tags that
-    failed exact + alias lookup.
-    """
-    tag_len = len(tag)
-
-    # Prefix substring: our tag is a prefix of a valid tag
-    # (e.g. "highres" is a prefix of "highres_(imageboard)").
-    # Only for tags 5+ chars and where valid_len is in [tag_len, tag_len*2].
-    if tag_len >= 5:
-        best_prefix = None
-        best_prefix_len = 999
-        for valid in valid_tags:
-            valid_len = len(valid)
-            if valid_len > 0 and tag_len / valid_len >= 0.5 and valid.startswith(tag):
-                if valid_len < best_prefix_len:
-                    best_prefix = valid
-                    best_prefix_len = valid_len
-        if best_prefix:
-            return best_prefix, None
-
-    # Levenshtein distance via rapidfuzz (C-accelerated; ~100x faster
-    # than the pure-Python loop on a 142k-tag DB). Skip for short tags
-    # where edit distance 1-3 produces nonsensical matches.
-    if tag_len < 5:
-        return None, tag
-
-    result = _rf_extract_one(
-        tag, valid_tags,
-        scorer=_rf_distance.Levenshtein.distance,
-        score_cutoff=max_distance,
-    )
-    if result is not None:
-        return result[0], None
-
-    return None, tag  # unmatched
-
 
 # Universal quality tokens — alias to pe_data.tag_formats.UNIVERSAL_QUALITY_TAGS.
 _UNIVERSAL_QUALITY_TAGS = _pe_tf.UNIVERSAL_QUALITY_TAGS
 
-# Tags that must retain underscores even when the tag-format emits spaces
-# (score_N, year_YYYY, source_*). Used by _format_tag_out().
-_PRESERVE_UNDERSCORE_RE = re.compile(r"^(score_\d+(_up)?|year_\d{4}|source_[a-z]+)$")
 
-
-def _format_tag_out(tag, use_underscores):
-    """Apply the tag-format's underscore/space convention, preserving
-    underscores for canonical tokens like score_7 that are conventionally
-    written with an underscore regardless of format.
-    """
-    if use_underscores:
-        return tag
-    if _PRESERVE_UNDERSCORE_RE.match(tag):
-        return tag
-    return tag.replace("_", " ")
-
-# Common LLM mistakes -> correct danbooru tag
-_TAG_CORRECTIONS = {
-    "1man": "1boy",
-    "1woman": "1girl",
-    "1female": "1girl",
-    "1male": "1boy",
-    "man": "male_focus",
-    "woman": "1girl",
-    "female": "1girl",
-    "male": "1boy",
-    "girl": "1girl",
-    "a_girl": "1girl",
-    "boy": "1boy",
-    "a_boy": "1boy",
-    "2girl": "2girls",
-    "2boy": "2boys",
-    "2men": "2boys",
-    "2women": "2girls",
-    "3girl": "3girls",
-    "3boy": "3boys",
-}
 
 def _validate_tags(tags_str, tag_format, mode="Fuzzy"):
-    """Validate and correct tags against the database.
-
-    Modes:
+    """Thin wrapper around pe_tags.validate that threads the
+    extension's tag-format config + DB + aliases through. Modes:
       Fuzzy        — exact + alias + fuzzy correction, keep unrecognized
-      Fuzzy Strict — exact + alias + fuzzy correction, drop unrecognized
-
-    Returns (corrected_tags_str, stats_dict).
-    """
+      Fuzzy Strict — exact + alias + fuzzy correction, drop unrecognized"""
     valid_tags = _load_tag_db(tag_format)
     if not valid_tags:
         return tags_str, {"error": "No tag database available"}
-
     fmt_config = _tag_formats.get(tag_format, {})
     db_filename = fmt_config.get("tag_db", "")
     aliases = _tag_databases.get(f"{db_filename}_aliases", {})
-    use_underscores = fmt_config.get("use_underscores", False)
-    use_fuzzy = mode in ("Fuzzy", "Fuzzy Strict")
-    drop_invalid = mode == "Fuzzy Strict"
-
-    raw_tags = [t.strip() for t in tags_str.split(",") if t.strip()]
-    result_tags = []
-    corrected = 0
-    dropped = 0
-    kept = 0
-
-    for tag in raw_tags:
-        # Strip LLM meta-annotations: [style: X], (artist: X), etc.
-        tag = _clean_tag(tag)
-        if not tag:
-            continue
-
-        # Always use underscores for lookup (DB and corrections use underscores).
-        # use_underscores only controls output format, not lookup.
-        lookup = tag.replace(" ", "_")
-
-        # Common LLM mistakes — correct before any other check
-        if lookup in _TAG_CORRECTIONS:
-            result_tags.append(_format_tag_out(_TAG_CORRECTIONS[lookup], use_underscores))
-            corrected += 1
-            continue
-
-        # Whitelisted tags always pass (per-format quality + leading + rating)
-        if lookup in fmt_config.get("whitelist_set", set()):
-            result_tags.append(_format_tag_out(lookup, use_underscores))
-            continue
-
-        # Exact match
-        if lookup in valid_tags:
-            result_tags.append(tag)
-            continue
-
-        # Alias match (always applied in all modes)
-        if lookup in aliases:
-            result_tags.append(_format_tag_out(aliases[lookup], use_underscores))
-            corrected += 1
-            continue
-
-        # Prefix match: "artist_name" -> "artist_name_(style)" etc.
-        # Catches LLM omitting danbooru disambiguation suffixes.
-        # Only for multi-word tags (contain underscore) to avoid matching
-        # common words like "high" -> "high_(hgih)" or "dusty" -> "dusty_(gravity_daze)".
-        if "_" in lookup:
-            prefix = lookup + "_("
-            prefix_matches = [v for v in valid_tags if v.startswith(prefix)]
-            if len(prefix_matches) == 1:
-                result_tags.append(_format_tag_out(prefix_matches[0], use_underscores))
-                corrected += 1
-                continue
-
-        # Fuzzy match (only in Fuzzy mode)
-        if use_fuzzy:
-            match, _ = _find_closest_tag(lookup, valid_tags)
-            if match:
-                result_tags.append(_format_tag_out(match, use_underscores))
-                corrected += 1
-                continue
-
-        # Unrecognized tag
-        if drop_invalid:
-            dropped += 1
-        else:
-            result_tags.append(tag)
-            kept += 1
-
-    # Reorder tags into standard danbooru order
-    result_tags = _reorder_tags(result_tags, tag_format)
-
-    # Escape parentheses for SD — danbooru tags like artist_(style) need
-    # \( \) so SD doesn't interpret them as emphasis/weight syntax.
-    def _escape_parens(tag):
-        if "(" in tag and "_(" in tag:
-            return tag.replace("(", r"\(").replace(")", r"\)")
-        return tag
-    result_tags = [_escape_parens(t) for t in result_tags]
-
-    stats = {"corrected": corrected, "dropped": dropped, "kept_invalid": kept, "total": len(result_tags)}
-    return ", ".join(result_tags), stats
+    return _pe_tags_validate(
+        tags_str, fmt_config, valid_tags, aliases,
+        mode=mode, clean_tag=_clean_tag,
+    )
 
 
-# Universal Danbooru subject/count tags (same across Illustrious/NoobAI/Pony/Anima).
-_SUBJECT_TAGS = {
-    "1girl", "1girls", "2girls", "3girls", "4girls", "5girls", "6+girls", "multiple_girls",
-    "1boy", "1man", "2boys", "3boys", "4boys", "5boys", "6+boys", "multiple_boys",
-    "1other", "solo", "no_humans", "male_focus", "female_focus",
-    "1woman", "man", "woman", "girl", "boy",
-}
 
 
 def _reorder_tags(tags, tag_format):
-    """Reorder tags per the selected format's convention.
-
-    Order: quality -> leading -> subjects -> rest -> rating.
-    The quality / leading / rating buckets come from the tag-format yaml.
-    Deduplicates and enforces single rating tag (keeps last).
-    """
+    """Thin wrapper around pe_tags.reorder. Order: quality →
+    leading → subjects → rest → rating."""
     fmt_config = _tag_formats.get(tag_format, {})
-    quality_set = fmt_config.get("quality_tags", _UNIVERSAL_QUALITY_TAGS)
-    leading_set = fmt_config.get("leading_tags", set())
-    rating_set = fmt_config.get("rating_tags", set())
-
-    seen = set()
-    quality, leading, subjects, rating, rest = [], [], [], [], []
-
-    for tag in tags:
-        lookup = tag.replace(" ", "_")
-        if lookup in seen:
-            continue
-        seen.add(lookup)
-
-        if lookup in quality_set:
-            quality.append(tag)
-        elif lookup in leading_set:
-            leading.append(tag)
-        elif lookup in _SUBJECT_TAGS:
-            subjects.append(tag)
-        elif lookup in rating_set:
-            rating.append(tag)
-        else:
-            rest.append(tag)
-
-    if len(rating) > 1:
-        rating = [rating[-1]]
-
-    subject_lookups = {t.replace(" ", "_") for t in subjects}
-    if "no_humans" in subject_lookups:
-        subjects = [t for t in subjects if t.replace(" ", "_") == "no_humans"]
-
-    return quality + leading + subjects + rest + rating
+    return _pe_tags_reorder(tags, fmt_config, _UNIVERSAL_QUALITY_TAGS)
 
 
 # ── Config state ─────────────────────────────────────────────────────────────
@@ -1213,22 +1020,20 @@ def _has_inline_wildcards(text):
 
 
 def _postprocess_tags(tag_str, tag_fmt, validation_mode):
-    """Apply full tag post-processing pipeline.
-
-    Handles: concatenation split, underscore formatting, validation,
-    reordering, paren escaping. Returns (processed_tags, stats_or_None).
-    """
+    """Thin wrapper around pe_tags.postprocess — full tag pipeline:
+    split-concatenated → normalize → validate → reorder → escape
+    parens. Returns (processed_tags, stats_or_None)."""
     fmt_config = _tag_formats.get(tag_fmt, {})
-    use_underscores = fmt_config.get("use_underscores", False)
-    tag_str = ", ".join(
-        _split_concatenated_tag(t.strip()).replace(" ", "_") if use_underscores
-        else _split_concatenated_tag(t.strip())
-        for t in tag_str.split(",") if t.strip()
+    valid_tags = _load_tag_db(tag_fmt)
+    db_filename = fmt_config.get("tag_db", "")
+    aliases = _tag_databases.get(f"{db_filename}_aliases", {})
+    return _pe_tags_postprocess(
+        tag_str, fmt_config, valid_tags, aliases,
+        validation_mode=validation_mode,
+        clean_tag=_clean_tag,
+        split_concat=_split_concatenated_tag,
+        universal_quality_tags=_UNIVERSAL_QUALITY_TAGS,
     )
-    if validation_mode != "Off":
-        tag_str, stats = _validate_tags(tag_str, tag_fmt, mode=validation_mode)
-        return tag_str, stats
-    return tag_str, None
 
 
 
