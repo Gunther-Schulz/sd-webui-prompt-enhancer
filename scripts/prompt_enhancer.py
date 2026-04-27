@@ -114,6 +114,7 @@ from pe_modes._shared import (
     build_user_msg as _build_user_msg,
     apply_negative_hint as _apply_negative_hint,
 )
+from pe_modes import prose as _pe_prose
 from pe_tags import (
     validate as _pe_tags_validate,
     reorder as _pe_tags_reorder,
@@ -592,67 +593,29 @@ class PromptEnhancer(scripts.Script):
 
             # ── Prose ──
             def _enhance(source, base_name, custom_sp, *args):
+                # *args = *dd_vals, prepend, seed, detail, think, temperature, neg_cb, motion_cb
                 global _last_pe_mode
                 _last_pe_mode = "Prose"
                 motion_cb = args[-1]
-                neg_cb, temp = args[-2], args[-3]
-                prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
+                neg_cb = args[-2]
+                temp = args[-3]
+                # th = args[-4]  # think — kept in inputs for compat, ignored by runner
+                dl = args[-5]
+                sd = args[-6]
+                prepend = args[-7]
                 dd_vals = args[:-7]
-
-                _cancel_flag.clear()
-                t0 = time.monotonic()
-                source = (source or "").strip()
-
-                mods = _collect_modifiers(dd_vals, seed=int(sd))
-                sp = _assemble_system_prompt(base_name, custom_sp, dl)
-                if not sp:
-                    yield "", "", _status_html(_MODE_PROSE, "No system prompt configured.", color='#c66')
-                    return
-
-                if motion_cb:
-                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
-                if neg_cb:
-                    sp = f"{sp}\n\n{_prompts.get('negative', '')}"
-
-                # Build user message with modifiers + inline wildcards
-                style_str = _build_style_string(mods)
-                inline_text = _build_inline_wildcard_text(source)
-                user_msg = _build_user_msg(source, style_str, inline_text, _prompts.get("empty_source_signal", ""))
-
-                initial_status = "\U0001F3B2 Rolling dice (prose)..." if not source else "Generating prose..."
-                yield gr.update(), gr.update(), _status_html(_MODE_PROSE, f"{initial_status}", color='#aaa')
-
-                print(f"[PromptEnhancer] Prose: think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
-                try:
-                    raw = None
-                    for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
-                        if isinstance(chunk, dict):
-                            p = chunk
-                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_PROSE}", p)
-                        else:
-                            raw = chunk
-                    raw = _clean_output(raw)
-                    if neg_cb:
-                        result, negative = _split_positive_negative(raw)
-                    else:
-                        result, negative = raw, ""
-                    if prepend and source:
-                        result = f"{source}\n\n{result}"
-                    elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield result, negative, _status_html(_MODE_PROSE, f"OK - {len(result.split())} words, {elapsed}")
-                except InterruptedError as e:
-                    partial = _clean_output(str(e))
-                    if partial:
-                        yield partial, "", _status_html(_MODE_PROSE, f"Cancelled - {len(partial.split())} words (partial)", color='#c66')
-                    else:
-                        yield "", "", _status_html(_MODE_PROSE, "Cancelled", color='#c66')
-                except _TruncatedError as e:
-                    result = _clean_output(str(e))
-                    yield result, "", _status_html(_MODE_PROSE, f"Truncated - {len(result.split())} words", color='#ca6')
-                except Exception as e:
-                    msg = f"{type(e).__name__}: {e}"
-                    logger.error(msg)
-                    yield "", "", _status_html(_MODE_PROSE, f"{msg}", color='#c66')
+                yield from _pe_prose.run(
+                    source, base_name, custom_sp, dd_vals,
+                    prepend=prepend, seed=sd, detail=dl,
+                    temperature=temp, neg_cb=neg_cb, motion_cb=motion_cb,
+                    prompts=_prompts,
+                    collect_modifiers=_collect_modifiers,
+                    assemble_system_prompt=_assemble_system_prompt,
+                    build_style_string=_build_style_string,
+                    build_inline_wildcard_text=_build_inline_wildcard_text,
+                    cancel_flag=_cancel_flag,
+                    logger=logger,
+                )
 
             prose_event = enhance_btn.click(
                 fn=_enhance,
