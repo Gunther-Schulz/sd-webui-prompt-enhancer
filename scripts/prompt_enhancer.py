@@ -69,7 +69,7 @@ from pe_text_utils import (
     split_concatenated_tag as _split_concatenated_tag,
     split_positive_negative as _split_positive_negative,
 )
-from pe_data import bases as _pe_bases
+from pe_data import bases as _pe_bases, prompts as _pe_prompts
 from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
 
 
@@ -1269,23 +1269,8 @@ def _reload_all(local_dir_path=""):
             _dropdown_choices[label] = choices
             _all_modifiers.update(flat)
 
-    # Prompts (YAML, with local overrides)
-    _prompts = {}
-    for ext in (".yaml", ".yml", ".json"):
-        path = os.path.join(_EXT_DIR, "prompts" + ext)
-        if os.path.isfile(path):
-            data = _load_file(path) or {}
-            _prompts = {k: v.strip() if isinstance(v, str) else v for k, v in data.items()}
-            break
-    # Merge local prompt overrides
-    for local_dir in local_dirs:
-        for ext in (".yaml", ".yml", ".json"):
-            path = os.path.join(local_dir, "_prompts" + ext)
-            if os.path.isfile(path):
-                local_p = _load_file(path) or {}
-                for k, v in local_p.items():
-                    if isinstance(v, str):
-                        _prompts[k] = v.strip()
+    # Prompts (YAML, with local overrides) — loader lives in pe_data.prompts.
+    _prompts = _pe_prompts.load(_EXT_DIR, local_dirs)
 
 
 _reload_all()

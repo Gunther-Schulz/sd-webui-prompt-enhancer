@@ -10,7 +10,7 @@ The shared YAML/JSON loader lives in ._util so all submodules use the
 same parser + error handling.
 """
 
-from . import bases
+from . import bases, prompts
 from ._util import load_yaml_or_json, get_local_dirs
 
-__all__ = ["bases", "load_yaml_or_json", "get_local_dirs"]
+__all__ = ["bases", "prompts", "load_yaml_or_json", "get_local_dirs"]
