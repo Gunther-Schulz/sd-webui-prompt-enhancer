@@ -69,6 +69,8 @@ from pe_text_utils import (
     split_concatenated_tag as _split_concatenated_tag,
     split_positive_negative as _split_positive_negative,
 )
+from pe_data import bases as _pe_bases
+from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
 
 
 def _anima_opt(key: str, default):
@@ -780,60 +782,6 @@ def _load_tag_formats():
 
 # ── File loading ─────────────────────────────────────────────────────────────
 
-def _load_file(path):
-    """Load a JSON or YAML file and return parsed content."""
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            if _HAS_YAML and path.endswith((".yaml", ".yml")):
-                data = yaml.safe_load(f)
-            else:
-                data = json.load(f)
-        if data is None:
-            return {}
-        if isinstance(data, dict):
-            return data
-        print(f"[PromptEnhancer] ERROR: {path} must be a YAML/JSON mapping (dict), got {type(data).__name__}")
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print(f"[PromptEnhancer] ERROR: Failed to load {path}: {e}")
-    return {}
-
-
-def _get_local_dirs(ui_path=""):
-    """Resolve local overrides directories.
-
-    Supports comma-separated paths in UI field or env var.
-    Returns list of valid directory paths.
-    """
-    raw = (ui_path or "").strip()
-    if not raw:
-        raw = os.environ.get("PROMPT_ENHANCER_LOCAL", "").strip()
-    if not raw:
-        return []
-    dirs = []
-    for p in raw.split(","):
-        p = p.strip()
-        if p and os.path.isdir(p):
-            dirs.append(p)
-    return dirs
-
-
-def _load_local_bases(local_dirs):
-    """Load _bases.yaml from all local directories.
-
-    Entries may be either a string (legacy: body only) or a dict with
-    keys like 'body', 'target', 'description'.
-    """
-    merged = {}
-    for local_dir in local_dirs:
-        for ext in (".yaml", ".yml", ".json"):
-            path = os.path.join(local_dir, BASES_FILENAME + ext)
-            if os.path.isfile(path):
-                merged.update({k: v for k, v in _load_file(path).items() if isinstance(v, (str, dict))})
-    return merged
-
-
 def _scan_modifier_files(directory):
     """Scan a directory for modifier YAML/JSON files.
 
@@ -1302,14 +1250,8 @@ def _reload_all(local_dir_path=""):
 
     local_dirs = _get_local_dirs(local_dir_path)
 
-    # Bases (YAML, with local overrides)
-    _bases = {}
-    for ext in (".yaml", ".yml", ".json"):
-        path = os.path.join(_EXT_DIR, "bases" + ext)
-        if os.path.isfile(path):
-            _bases = {k: v for k, v in _load_file(path).items() if isinstance(v, (str, dict))}
-            break
-    _bases.update(_load_local_bases(local_dirs))
+    # Bases (YAML, with local overrides) — loader lives in pe_data.bases.
+    _bases = _pe_bases.load(_EXT_DIR, local_dirs)
 
     # Modifiers: scan extension modifiers/ dir + all local dirs, merge
     all_mods = _scan_modifier_files(_MODIFIERS_DIR)
@@ -1407,53 +1349,18 @@ def _build_detail_instruction(detail, mode="enhance", preset="sd"):
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 
+# Thin wrappers around pe_data.bases (imported as _pe_bases above) so
+# the rest of this file keeps the historical _base_* identifier shape.
 def _base_body(entry):
-    """Return the body string from a base entry (str or dict with 'body')."""
-    if isinstance(entry, dict):
-        return entry.get("body", "")
-    return entry or ""
+    return _pe_bases.body(entry)
 
 
 def _base_meta(name):
-    """Return metadata dict (target, description, etc.) for a base, or {}."""
-    entry = _bases.get(name)
-    if isinstance(entry, dict):
-        return {k: v for k, v in entry.items() if k != "body"}
-    return {}
+    return _pe_bases.meta(_bases, name)
 
 
 def _base_names():
-    """Return ordered (label, value) tuples for the Base dropdown.
-
-    Label text comes from each base's yaml: an optional `label:` string
-    (used verbatim in the paren) takes precedence over auto-derivation
-    from the `target:` list (first 3 entries joined). Curated bases appear
-    first in a fixed order; user-added bases follow in yaml order.
-    Custom is always last.
-    """
-    CURATED_ORDER = ["Default", "Detailed", "Narrative", "Cinematic", "Creative"]
-
-    def _label(value):
-        meta = _base_meta(value)
-        paren = meta.get("label")
-        if not paren:
-            target = meta.get("target", [])
-            if target and isinstance(target, list):
-                paren = ", ".join(str(t) for t in target[:3])
-        return f"{value} ({paren})" if paren else value
-
-    result = []
-    seen = set()
-    for value in CURATED_ORDER:
-        if value in _bases:
-            result.append((_label(value), value))
-            seen.add(value)
-    for value in _bases.keys():
-        if value.startswith("_") or value in seen:
-            continue
-        result.append((_label(value), value))
-    result.append(("Custom", "Custom"))
-    return result
+    return _pe_bases.names(_bases)
 
 
 def _strip_mechanism_badges(name: str) -> str:
