@@ -35,27 +35,20 @@ _tag_formats = {}    # format_name -> {system_prompt, use_underscores, tag_db, t
 _tag_databases = {}  # db_filename -> set of valid tags
 
 
-# ── anima_tagger (retrieval-augmented Anima pipeline) ─────────────────────
-# Lazy-loaded on first Anima use. Falls back to the rapidfuzz path when:
-#   - the data artefacts aren't built yet (user hasn't run build_index.py),
-#   - tag_fmt is not "Anima",
-#   - or the "Anima Tagger" Forge setting is disabled.
-# Forge's script loader (modules/scripts.py) snapshots sys.path before
-# loading each extension script and restores it afterward, so a
-# module-level sys.path.insert here would be wiped out before the lazy
-# import runs. The path is inserted inside _get_anima_stack() instead.
-_ANIMA_SRC_PATH = os.path.join(_EXT_DIR, "src")
-
-_anima_stack = None                # cached AnimaStack (db + index open)
-_anima_load_attempted = False      # set True once we've tried to avoid repeat failures
+# ── Path setup for src/ packages ─────────────────────────────────────────
+# pe_llm_layer / pe_data / pe_tags / pe_anima_glue / pe_text_utils etc all
+# live under src/. Add it to sys.path before importing those packages.
+# The anima_tagger package also lives under src/ but is imported lazily
+# inside pe_anima_glue.stack on first RAG use.
+_PE_SRC_PATH = os.path.join(_EXT_DIR, "src")
+if _PE_SRC_PATH not in sys.path:
+    sys.path.insert(0, _PE_SRC_PATH)
 
 
 # ── pe_llm_layer (in-process LLM via llama-cpp-python) ────────────────────
 # Wraps src/llm_runner. Replaces the old Ollama HTTP path. Imported eagerly:
 # unlike anima_tagger (which has a rapidfuzz fallback), the LLM is required
 # for every generation mode, so failing to import is a hard error.
-if _ANIMA_SRC_PATH not in sys.path:
-    sys.path.insert(0, _ANIMA_SRC_PATH)
 from pe_llm_layer import (
     call_llm as _call_llm,
     stream_llm as _call_llm_progress,
@@ -83,6 +76,13 @@ from pe_detail import (
 )
 from pe_data import bases as _pe_bases, prompts as _pe_prompts, modifiers as _pe_mods, tag_formats as _pe_tf
 from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
+from pe_anima_glue.stack import (
+    opt as _anima_opt,
+    get_stack as _get_anima_stack,
+    available_for as _rag_available_for,
+    use_pipeline as _use_anima_pipeline,
+)
+from pe_anima_glue import stack as _pe_anima_stack
 from pe_tags import (
     validate as _pe_tags_validate,
     reorder as _pe_tags_reorder,
@@ -99,94 +99,8 @@ _BADGE_SOURCE = _pe_mods.BADGE_SOURCE
 _BADGE_TARGET_SLOT = _pe_mods.BADGE_TARGET_SLOT
 
 
-def _anima_opt(key: str, default):
-    """Read an anima_tagger_* option from shared.opts, fallback to default."""
-    try:
-        from modules import shared
-        return shared.opts.data.get(key, default)
-    except Exception:
-        return default
 
 
-_anima_load_error: str | None = None
-
-
-def _get_anima_stack():
-    """Return a loaded AnimaStack or None if artefacts missing / disabled.
-
-    DB + faiss index open on first call and stay cached. Models (bge-m3
-    + reranker) still load on-demand via `stack.models()`.
-    """
-    global _anima_stack, _anima_load_attempted, _anima_load_error
-    if _anima_stack is not None:
-        return _anima_stack
-    if _anima_load_attempted:
-        return None
-    _anima_load_attempted = True
-    try:
-        if _ANIMA_SRC_PATH not in sys.path:
-            sys.path.insert(0, _ANIMA_SRC_PATH)
-        from anima_tagger import load_all
-        _anima_stack = load_all(
-            semantic_threshold=float(_anima_opt("anima_tagger_semantic_threshold", 0.80)),
-            semantic_min_post_count=int(_anima_opt("anima_tagger_semantic_min_post_count", 100)),
-            enable_reranker=bool(_anima_opt("anima_tagger_enable_reranker", True)),
-            enable_cooccurrence=bool(_anima_opt("anima_tagger_enable_cooccurrence", True)),
-            device=str(_anima_opt("anima_tagger_device", "auto")),
-        )
-        logger.info("anima_tagger loaded (DB + FAISS ready)")
-        return _anima_stack
-    except Exception as e:
-        import traceback
-        tb = traceback.format_exc()
-        _anima_load_error = f"{type(e).__name__}: {e}"
-        # Print the full traceback prominently so the user can diagnose
-        # instead of seeing a generic "artefacts not loaded" message.
-        print("\n" + "!" * 72, file=sys.stderr)
-        print("  sd-webui-prompt-enhancer — anima_tagger load failed", file=sys.stderr)
-        print(f"  {type(e).__name__}: {e}", file=sys.stderr)
-        for line in tb.rstrip().splitlines():
-            print(f"  {line}", file=sys.stderr)
-        print("!" * 72 + "\n", file=sys.stderr)
-        logger.error(f"anima_tagger failed to load: {_anima_load_error}")
-        return None
-
-
-def _rag_available_for(tag_fmt: str) -> tuple[bool, str]:
-    """True + empty-string reason iff RAG pipeline can run for tag_fmt.
-    Returns (False, reason_string) when unavailable — callers must
-    ABORT (not fall back) when the user picked RAG and it's missing.
-    Selecting RAG is an explicit user choice; silently swapping in a
-    different validation mode hides real problems."""
-    if tag_fmt != "Anima":
-        return False, (
-            f"RAG is currently Anima-only. Select the Anima tag format "
-            f"or pick a different Tag Validation mode."
-        )
-    stack = _get_anima_stack()
-    if stack is None:
-        reason_path = os.path.join(_EXT_DIR, "data", ".rag_unavailable")
-        detail = ""
-        if os.path.exists(reason_path):
-            try:
-                with open(reason_path) as f:
-                    detail = f" ({f.read().strip()})"
-            except Exception:
-                pass
-        return False, (
-            f"RAG artefacts not loaded{detail}. "
-            f"Restart Forge to retry the HuggingFace download, or pick a "
-            f"different Tag Validation mode."
-        )
-    return True, ""
-
-
-def _use_anima_pipeline(tag_fmt: str, validation_mode: str = "RAG") -> bool:
-    """True iff the user picked RAG AND it's available for this format."""
-    if validation_mode != "RAG":
-        return False
-    ok, _ = _rag_available_for(tag_fmt)
-    return ok
 
 
 def _make_anima_query_expander(temperature=0.3, seed=-1):
@@ -779,21 +693,6 @@ def _load_tag_formats():
 def _download_tag_db(fmt_config):
     """Ensure tag DB is on disk. Delegates to pe_data.tag_formats."""
     return _pe_tf.download_db(fmt_config, _TAGS_DIR, logger=logger)
-    os.makedirs(_TAGS_DIR, exist_ok=True)
-    local_path = os.path.join(_TAGS_DIR, filename)
-    if os.path.isfile(local_path):
-        return True
-    try:
-        logger.info(f"Downloading tag database: {filename}")
-        req = urllib.request.Request(url, method="GET")
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            with open(local_path, "wb") as f:
-                f.write(resp.read())
-        logger.info(f"Tag database saved: {local_path}")
-        return True
-    except Exception as e:
-        logger.error(f"Failed to download tag database: {e}")
-        return False
 
 
 def _load_tag_db(tag_format):
