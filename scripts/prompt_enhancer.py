@@ -114,7 +114,7 @@ from pe_modes._shared import (
     build_user_msg as _build_user_msg,
     apply_negative_hint as _apply_negative_hint,
 )
-from pe_modes import prose as _pe_prose, remix as _pe_remix
+from pe_modes import prose as _pe_prose, remix as _pe_remix, hybrid as _pe_hybrid
 from pe_modes._shared import HandlerCtx as _HandlerCtx
 from pe_tags import (
     validate as _pe_tags_validate,
@@ -651,308 +651,25 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # ── Hybrid (two-pass: prose → extract tags + NL) ──
-            def _hybrid(source, base_name, custom_sp, tag_fmt, validation_mode,
-                        *args):
+            # ── Hybrid (three-pass: prose → tags → NL summary) ──
+            def _hybrid(source, base_name, custom_sp, tag_fmt, validation_mode, *args):
+                # *args = *dd_vals, prepend, seed, detail, think, temperature, neg_cb, motion_cb
                 global _last_pe_mode
                 _last_pe_mode = "Hybrid"
                 motion_cb = args[-1]
-                neg_cb, temp = args[-2], args[-3]
-                prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
+                neg_cb = args[-2]
+                temp = args[-3]
+                # think arg ignored
+                dl = args[-5]
+                sd = args[-6]
+                prepend = args[-7]
                 dd_vals = args[:-7]
-                t0 = time.monotonic()
-
-                source = (source or "").strip()
-
-                mods = _collect_modifiers(dd_vals, seed=int(sd))
-                sp = _assemble_system_prompt(base_name, custom_sp, dl)
-                if not sp:
-                    yield "", "", _status_html(_MODE_HYBRID, "No system prompt configured.", color='#c66')
-                    return
-
-                if motion_cb:
-                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
-                if neg_cb:
-                    sp = _apply_negative_hint(sp, _tag_formats.get(tag_fmt, {}), _prompts.get('negative', ''))
-
-                style_str = _build_style_string(mods)
-                inline_text = _build_inline_wildcard_text(source)
-                user_msg = _build_user_msg(source, style_str, inline_text, _prompts.get("empty_source_signal", ""))
-
-                # RAG path when the user picked it on the Tag Validation radio.
-                # If picked but unavailable (non-Anima format, or artefacts
-                # missing), surface the reason so the user sees why we fell
-                # back to rapidfuzz.
-                # User-chosen RAG path. No fallback — if RAG is selected
-                # but unavailable, abort with a clear error. Other radio
-                # modes (Fuzzy Strict / Fuzzy / Off) are separate code
-                # paths; they do NOT run here as a substitute.
-                _anima = None
-                _anima_cm = None
-                _anima_shortlist = None
-                if validation_mode == "RAG":
-                    ok, reason = _rag_available_for(tag_fmt)
-                    if not ok:
-                        logger.error(f"RAG unavailable: {reason}")
-                        yield "", "", _status_html(_MODE_HYBRID, f"RAG unavailable — {reason}", color='#c66')
-                        return
-                    _s = _get_anima_stack()
-                    try:
-                        _anima_cm = _s.models()
-                        _anima_cm.__enter__()
-                        _anima = _s
-                        # Resolve any db_retrieve source: picks (e.g. ◆ on
-                        # Random Artist) now that the stack is up. If any
-                        # fire, rebuild style_str + user_msg so the picked
-                        # value flows into the prompt AND the shortlist.
-                        if _resolve_deferred_sources(mods, int(sd), _anima, query=source):
-                            style_str = _build_style_string(mods)
-                            user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
-                            if style_str:
-                                user_msg = f"{user_msg}\n\n{style_str}"
-                            if inline_text:
-                                user_msg = f"{user_msg}\n\n{inline_text}"
-                        _expander = _make_anima_query_expander(temperature=0.3, seed=int(sd))
-                        _anima_shortlist = _s.build_shortlist(
-                            source_prompt=source,
-                            modifier_keywords=style_str,
-                            query_expander=_expander,
-                        )
-                        _sl_frag = _anima_shortlist.as_system_prompt_fragment()
-                        if _sl_frag:
-                            sp = f"{sp}\n\n{_sl_frag}"
-                        # V5 conditional adherence directive — only when
-                        # source is non-empty, so dice-roll creativity
-                        # stays free.
-                        if source:
-                            sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
-                        # V15: on V14 Hybrid path (Anima+RAG), the prose is
-                        # the primary image input — no general tags will
-                        # survive the structural filter to cover pose /
-                        # clothing / setting / lighting. Tell the LLM so it
-                        # produces self-sufficient prose.
-                        sp = f"{sp}\n\n{_prompts.get('prose_v14_coverage', '')}"
-                        print(f"[PromptEnhancer] RAG shortlist: "
-                              f"{len(_anima_shortlist.artists)} artists, "
-                              f"{len(_anima_shortlist.characters)} characters, "
-                              f"{len(_anima_shortlist.series)} series")
-                    except Exception as e:
-                        logger.error(f"RAG setup failed: {e}")
-                        if _anima_cm:
-                            try: _anima_cm.__exit__(None, None, None)
-                            except Exception: pass
-                        yield "", "", _status_html(_MODE_HYBRID, f"RAG setup failed: {type(e).__name__}: {e}", color='#c66')
-                        return
-
-                if not source:
-                    yield gr.update(), gr.update(), _status_html(_MODE_HYBRID, "\U0001F3B2 Rolling dice (1/3 prose)...", color='#aaa')
-                print(f"[PromptEnhancer] Hybrid pass 1/3 (prose): think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
-                try:
-                    # Pass 1: generate prose. V8 multi-sample mode when
-                    # anima_tagger_prose_samples > 1 (RAG path only).
-                    n_samples = int(_anima_opt("anima_tagger_prose_samples", 3)) if _anima is not None else 1
-                    prose_raw = None
-                    if n_samples > 1:
-                        yield gr.update(), gr.update(), _status_html(_MODE_HYBRID, f"1/3 prose (multi-sample {n_samples})...", color='#aaa')
-                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(user_msg, sp, temp, seed=int(sd), n_samples=n_samples, num_predict=1024, picker_system_prompt=_prompts.get("picker", ""))
-                    else:
-                        for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
-                            if isinstance(chunk, dict):
-                                p = chunk
-                                yield gr.update(), gr.update(), _progress_html(f"{_MODE_HYBRID}: 1/3 prose", p)
-                            else:
-                                prose_raw = chunk
-                    prose_raw = _clean_output(prose_raw)
-                    if not prose_raw:
-                        yield "", "", _status_html(_MODE_HYBRID, "Prose generation returned empty.", color='#c66')
-                        return
-
-                    # Split negative from prose before passes 2 & 3
-                    if neg_cb:
-                        prose, negative = _split_positive_negative(prose_raw)
-                    else:
-                        prose, negative = prose_raw, ""
-
-                    print(f"[PromptEnhancer] Hybrid pass 2/3 (tags): {len(prose.split())} words → tags")
-
-                    # Pass 2: extract tags (tag format prompt + style context)
-                    fmt_config = _tag_formats.get(tag_fmt, {})
-                    tag_sp = fmt_config.get("system_prompt", "")
-                    if not tag_sp:
-                        yield "", "", _status_html(_MODE_HYBRID, "No tag format configured.", color='#c66')
-                        return
-                    if style_str:
-                        tag_sp = f"{tag_sp}\n\n{_prompts.get('tag_extract_style_preamble', '')}\n{style_str}"
-                    # V17: shortlist-aware tag_extract. The RAG shortlist
-                    # (retrieved artists / characters / series candidates)
-                    # was previously injected only into the prose SP. The
-                    # tag_extract LLM saw it indirectly via whatever the
-                    # prose mentioned. V16 refocused tag_extract to emit
-                    # ONLY structural tags (artist / character / series
-                    # among them); giving it the shortlist directly
-                    # sharpens precision on those categories.
-                    if _anima_shortlist is not None:
-                        _sl_frag_tag = _anima_shortlist.as_system_prompt_fragment()
-                        if _sl_frag_tag:
-                            tag_sp = f"{tag_sp}\n\n{_sl_frag_tag}"
-                    # V13: Pass 2 grounding — prepend a scene-relevant candidate
-                    # tag list retrieved from the DB against the prose. Constrains
-                    # the LLM to pick from real scene-matching vocabulary instead
-                    # of inventing niche compounds (sparse_leg_hair,
-                    # overhead_lights, simple_fish). Only active with RAG + Anima.
-                    if _anima is not None and bool(_anima_opt("anima_tagger_pass2_grounding", False)):
-                        _cand = _general_tag_candidates(_anima, prose, k=int(_anima_opt("anima_tagger_pass2_grounding_k", 60)), min_post_count=int(_anima_opt("anima_tagger_pass2_grounding_min_pc", 100)))
-                        _frag = _candidate_fragment_for_tag_sp(_cand)
-                        if _frag:
-                            tag_sp = f"{tag_sp}\n{_frag}"
-                            print(f"[PromptEnhancer] Pass 2 grounding: {len(_cand)} candidate tags injected")
-                    tags_raw = None
-                    for chunk in _call_llm_progress(prose, tag_sp, temp, seed=int(sd)):
-                        if isinstance(chunk, dict):
-                            p = chunk
-                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_HYBRID}: 2/3 tags", p)
-                        else:
-                            tags_raw = chunk
-                    tags_raw = _clean_output(tags_raw, strip_underscores=False)
-
-                    # V14 path: on Anima + RAG we skip Pass 3 summarize and use
-                    # full prose as the Hybrid body. The structural-tag filter
-                    # applied below drops general-category tags (where FAISS
-                    # mis-retrievals live), leaving only quality/safety/subject-
-                    # count/@artist/character/series in the tag prefix. Anima's
-                    # Qwen3 text encoder handles the prose natively, so the
-                    # concepts that used to be general tags (pose, clothing,
-                    # body, setting, lighting, atmosphere) are carried by prose.
-                    v14_path = (_anima is not None and tag_fmt == "Anima"
-                                and validation_mode == "RAG")
-                    if v14_path:
-                        nl_supplement = None
-                    else:
-                        print(f"[PromptEnhancer] Hybrid pass 3/3 (summarize): → NL supplement")
-                        # Pass 3: summarize prose to 1-2 compositional sentences
-                        summarize_sp = _prompts.get("summarize", "")
-                        style_str = _build_style_string(mods)
-                        if style_str:
-                            summarize_sp = f"{summarize_sp}\n\nThe following styles were applied: {style_str} Ensure these stylistic choices are reflected in the compositional summary."
-                        nl_supplement = None
-                        for chunk in _call_llm_progress(prose, summarize_sp, temp, seed=int(sd)):
-                            if isinstance(chunk, dict):
-                                p = chunk
-                                yield gr.update(), gr.update(), _progress_html(f"{_MODE_HYBRID}: 3/3 summarize", p)
-                            else:
-                                nl_supplement = chunk
-                        nl_supplement = _clean_output(nl_supplement)
-
-                    if validation_mode != "Off":
-                        yield gr.update(), gr.update(), _status_html(_MODE_HYBRID, f"Validating tags ({validation_mode})...", color='#aaa')
-
-                    # Route safety tag from any active NSFW modifier selection
-                    _anima_safety = _anima_safety_from_modifiers(mods, source)
-
-                    # Post-process negative tags through tag pipeline when applicable
-                    if neg_cb and negative:
-                        if _anima is not None:
-                            negative, _ = _anima_tag_from_draft(
-                                _anima, negative, safety=_anima_safety,
-                                shortlist=_anima_shortlist,
-                            )
-                        else:
-                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
-
-                    # Run tags through full post-processing pipeline.
-                    # When Anima retrieval is active, the bge-m3 validator
-                    # + rule layer replace the rapidfuzz path entirely.
-                    if _anima is not None:
-                        tags_raw, stats = _anima_tag_from_draft(
-                            _anima, tags_raw, safety=_anima_safety,
-                            shortlist=_anima_shortlist,
-                        )
-                        # Slot-coverage pass: for each active modifier with a
-                        # target_slot (e.g. Random Artist → artist), if no
-                        # tag of that category survived validation, retrieve
-                        # a top-1 from prose and inject it. Keeps "🎲 Random
-                        # X" promises actually reflected in the output.
-                        if bool(_anima_opt("anima_tagger_slot_fill", True)):
-                            slots = _active_target_slots(mods)
-                            for slot in slots:
-                                cat_info = _SLOT_TO_CATEGORY.get(slot)
-                                if not cat_info:
-                                    continue
-                                cat_code = cat_info["category"]
-                                if _tags_have_category(tags_raw, _anima, cat_code):
-                                    continue
-                                picked = _retrieve_prose_slot(_anima, prose, slot, seed=int(sd))
-                                if not picked:
-                                    continue
-                                # Format artist picks with @ prefix (Anima convention);
-                                # other categories go in bare.
-                                tag_out = picked.replace("_", " ")
-                                if slot == "artist":
-                                    tag_out = "@" + tag_out
-                                tags_raw = f"{tags_raw}, {tag_out}" if tags_raw else tag_out
-                                print(f"[PromptEnhancer] Slot fill ({slot}): injected '{tag_out}' from prose")
-                                if stats:
-                                    stats["total"] = stats.get("total", 0) + 1
-                    else:
-                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
-                    # Source post-inject: ensure every source:-picked tag
-                    # survives the validator+slot_fill path. The pre-pick
-                    # shaped the prose; this makes sure the picked tag
-                    # actually appears in the output list.
-                    tags_raw, stats = _inject_source_picks(tags_raw, mods, stats)
-
-                    # V14: drop general+meta tags, emit {structural_tags}\n\n{prose}.
-                    # The FAISS validator force-maps every draft tag to a nearest
-                    # neighbor; on terse/mundane sources the neighbors are weird
-                    # ("sparse leg hair" for "loose hair", "simple fish" for a
-                    # garden scene, "overhead lights" for "warm light"). Anima's
-                    # Qwen3 text encoder handles those concepts as prose natively,
-                    # so we drop general tags by construction and let prose carry
-                    # them. See experiments/variants/v14.py for rating data.
-                    if v14_path:
-                        tags_raw = _filter_to_structural_tags(tags_raw, _anima, tag_fmt)
-                        tag_count = len([t for t in tags_raw.split(",") if t.strip()])
-                        status_parts = [f"{tag_count} tags + prose"]
-                    else:
-                        tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
-                        status_parts = [f"{tag_count} tags + NL"]
-                    if stats:
-                        if stats.get("corrected"):
-                            status_parts.append(f"{stats['corrected']} corrected")
-                        if stats.get("dropped"):
-                            status_parts.append(f"{stats['dropped']} dropped")
-                        if stats.get("kept_invalid"):
-                            status_parts.append(f"{stats['kept_invalid']} unverified")
-
-                    if v14_path:
-                        final = f"{tags_raw}\n\n{prose}" if prose else tags_raw
-                    else:
-                        final = f"{tags_raw}\n\n{nl_supplement}" if nl_supplement else tags_raw
-                    if prepend and source:
-                        final = f"{source}\n\n{final}"
-                    elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield final, negative, _status_html(_MODE_HYBRID, f"OK - {', '.join(status_parts)}, {elapsed}")
-                except InterruptedError as e:
-                    partial = _clean_output(str(e))
-                    if partial:
-                        yield partial, "", _status_html(_MODE_HYBRID, "Cancelled (partial)", color='#c66')
-                    else:
-                        yield "", "", _status_html(_MODE_HYBRID, "Cancelled", color='#c66')
-                except _TruncatedError:
-                    # Fail loud — truncated tag output is a reduced result
-                    # that looks like success. Empty textbox + red status.
-                    yield "", "", _status_html(_MODE_HYBRID, "Truncated — no output (retry)", color='#c66')
-                except Exception as e:
-                    msg = f"{type(e).__name__}: {e}"
-                    logger.error(msg)
-                    yield "", "", _status_html(_MODE_HYBRID, f"{msg}", color='#c66')
-                finally:
-                    # Release bge-m3 + reranker VRAM for image gen
-                    if _anima_cm is not None:
-                        try:
-                            _anima_cm.__exit__(None, None, None)
-                        except Exception as _e:
-                            logger.warning(f"anima models unload error: {_e}")
+                yield from _pe_hybrid.run(
+                    source, base_name, custom_sp, tag_fmt, validation_mode, dd_vals,
+                    prepend=prepend, seed=sd, detail=dl,
+                    temperature=temp, neg_cb=neg_cb, motion_cb=motion_cb,
+                    ctx=_build_handler_ctx(),
+                )
 
             hybrid_event = hybrid_btn.click(
                 fn=_hybrid,
