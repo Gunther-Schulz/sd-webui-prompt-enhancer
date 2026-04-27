@@ -69,7 +69,7 @@ from pe_text_utils import (
     split_concatenated_tag as _split_concatenated_tag,
     split_positive_negative as _split_positive_negative,
 )
-from pe_data import bases as _pe_bases, prompts as _pe_prompts, modifiers as _pe_mods
+from pe_data import bases as _pe_bases, prompts as _pe_prompts, modifiers as _pe_mods, tag_formats as _pe_tf
 from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
 
 # Aliases for the historical underscore-prefixed names used at callsites.
@@ -743,39 +743,10 @@ def _filter_to_structural_tags(tag_csv: str, stack, tag_fmt: str) -> str:
 
 
 def _load_tag_formats():
-    """Load tag format definitions from tag-formats/ directory."""
+    """Populate _tag_formats from the tag-formats/ directory.
+    Implementation lives in pe_data.tag_formats."""
     global _tag_formats
-    _tag_formats = {}
-    if not os.path.isdir(_TAG_FORMATS_DIR):
-        return
-    for name in sorted(os.listdir(_TAG_FORMATS_DIR)):
-        if not name.endswith((".yaml", ".yml", ".json")):
-            continue
-        data = _load_file(os.path.join(_TAG_FORMATS_DIR, name))
-        if data and "system_prompt" in data:
-            label = os.path.splitext(name)[0].replace("-", " ").replace("_", " ").title()
-            quality = {t.replace(" ", "_") for t in (data.get("quality_tags") or [])}
-            leading = {t.replace(" ", "_") for t in (data.get("leading_tags") or [])}
-            rating = {t.replace(" ", "_") for t in (data.get("rating_tags") or [])}
-            # V19: CAT_GENERAL tags that pass the V14 structural filter.
-            # Stored underscored (DB-lookup form) for O(1) membership checks.
-            general_allow = {
-                str(t).lower().replace(" ", "_").replace("-", "_")
-                for t in (data.get("general_tags_allowlist") or [])
-            }
-            quality_merged = _UNIVERSAL_QUALITY_TAGS | quality
-            _tag_formats[label] = {
-                "system_prompt": data["system_prompt"].strip(),
-                "use_underscores": data.get("use_underscores", False),
-                "negative_quality_tags": data.get("negative_quality_tags", []),
-                "tag_db": data.get("tag_db", ""),
-                "tag_db_url": data.get("tag_db_url", ""),
-                "quality_tags": quality_merged,
-                "leading_tags": leading,
-                "rating_tags": rating,
-                "general_tags_allowlist": general_allow,
-                "whitelist_set": quality_merged | leading | rating,
-            }
+    _tag_formats = _pe_tf.load(_TAG_FORMATS_DIR)
 
 
 
@@ -784,11 +755,8 @@ def _load_tag_formats():
 # ── Tag database ─────────────────────────────────────────────────────────────
 
 def _download_tag_db(fmt_config):
-    """Download tag database if not cached. Returns True if available."""
-    filename = fmt_config.get("tag_db", "")
-    url = fmt_config.get("tag_db_url", "")
-    if not filename or not url:
-        return False
+    """Ensure tag DB is on disk. Delegates to pe_data.tag_formats."""
+    return _pe_tf.download_db(fmt_config, _TAGS_DIR, logger=logger)
     os.makedirs(_TAGS_DIR, exist_ok=True)
     local_path = os.path.join(_TAGS_DIR, filename)
     if os.path.isfile(local_path):
@@ -807,51 +775,11 @@ def _download_tag_db(fmt_config):
 
 
 def _load_tag_db(tag_format):
-    """Load tag database into memory. Returns set of valid tag strings."""
+    """Load tag DB into memory, returning the set of valid tags.
+    Caches into _tag_databases keyed by filename. Delegates the
+    actual file read to pe_data.tag_formats."""
     fmt_config = _tag_formats.get(tag_format, {})
-    filename = fmt_config.get("tag_db", "")
-    if not filename:
-        return set()
-
-    # Cache by filename (multiple formats can share a DB)
-    if filename in _tag_databases:
-        return _tag_databases[filename]
-
-    if not _download_tag_db(fmt_config):
-        return set()
-
-    local_path = os.path.join(_TAGS_DIR, filename)
-    tags = set()
-    aliases = {}
-    try:
-        with open(local_path, "r", encoding="utf-8") as f:
-            for line in f:
-                parts = line.strip().split(",", 3)
-                if len(parts) >= 1:
-                    # Normalize hyphens to underscores. Some CSVs (e.g.
-                    # noobai.csv) store multi-word tags as "long-hair";
-                    # others (illustrious.csv) as "long_hair". Validation
-                    # looks up via underscore form, so unify at load time
-                    # to avoid every space-form tag missing exact match
-                    # and falling through to the (slower) fuzzy path.
-                    tag = parts[0].strip().replace("-", "_")
-                    if tag:
-                        tags.add(tag)
-                    # Parse aliases (field 4, quoted comma-separated)
-                    if len(parts) >= 4 and parts[3]:
-                        alias_str = parts[3].strip().strip('"')
-                        for alias in alias_str.split(","):
-                            alias = alias.strip().replace("-", "_")
-                            if alias:
-                                aliases[alias] = tag
-    except Exception as e:
-        logger.error(f"Failed to load tag database: {e}")
-        return set()
-
-    _tag_databases[filename] = tags
-    _tag_databases[f"{filename}_aliases"] = aliases
-    logger.info(f"Loaded {len(tags)} tags + {len(aliases)} aliases from {filename}")
-    return tags
+    return _pe_tf.load_db(fmt_config, _TAGS_DIR, _tag_databases, logger=logger)
 
 
 def _find_closest_tag(tag, valid_tags, max_distance=3):
@@ -897,12 +825,8 @@ def _find_closest_tag(tag, valid_tags, max_distance=3):
     return None, tag  # unmatched
 
 
-# Universal Danbooru-adjacent quality tokens every booru format accepts.
-# Format-specific quality/leading/rating tokens live in each tag-format yaml.
-_UNIVERSAL_QUALITY_TAGS = {
-    "masterpiece", "best_quality", "amazing_quality", "good_quality",
-    "normal_quality", "low_quality", "worst_quality", "absurdres", "highres",
-}
+# Universal quality tokens — alias to pe_data.tag_formats.UNIVERSAL_QUALITY_TAGS.
+_UNIVERSAL_QUALITY_TAGS = _pe_tf.UNIVERSAL_QUALITY_TAGS
 
 # Tags that must retain underscores even when the tag-format emits spaces
 # (score_N, year_YYYY, source_*). Used by _format_tag_out().

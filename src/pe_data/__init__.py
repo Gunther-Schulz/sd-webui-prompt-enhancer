@@ -8,15 +8,18 @@ Submodules cover one config concern each:
                       summarize, picker, motion, negative, …)
   pe_data.modifiers — modifier dropdowns (Subject / Setting / Lighting
                       / Visual Style / Camera / Audio / Narrative …)
+  pe_data.tag_formats — booru tag-format definitions (Illustrious /
+                       NoobAI / Pony / Anima) + tag-database CSV
+                       download + load
 
 The shared YAML/JSON loader lives in ._util so all submodules use the
 same parser + error handling.
 """
 
-from . import bases, prompts, modifiers
+from . import bases, prompts, modifiers, tag_formats
 from ._util import load_yaml_or_json, get_local_dirs
 
 __all__ = [
-    "bases", "prompts", "modifiers",
+    "bases", "prompts", "modifiers", "tag_formats",
     "load_yaml_or_json", "get_local_dirs",
 ]
