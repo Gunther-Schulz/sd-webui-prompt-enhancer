@@ -1,0 +1,27 @@
+# Story Length — number of panels in the generated story.
+#
+# Lives under experiments/story-modifiers/ for now (not modifiers/) so it
+# does NOT auto-register as a Forge dropdown until the production Story
+# button is wired up. When story mode ships, copy this file to modifiers/.
+#
+# Behavioral text is consumed by the LLM via the Story-mode pipeline.
+# Keywords are unused (Story mode does not produce tag-style output).
+
+_label: Story Length
+
+length:
+  3 panels:
+    behavioral: "Produce exactly 3 panels: a tight opening, middle, end. Compress hard."
+    keywords: ""
+  4 panels:
+    behavioral: "Produce exactly 4 panels: setup, complication, turn, resolution."
+    keywords: ""
+  6 panels:
+    behavioral: "Produce exactly 6 panels with a beginning-middle-end arc and one or two complications. Default."
+    keywords: ""
+  8 panels:
+    behavioral: "Produce exactly 8 panels. Room for a subplot or a quiet beat."
+    keywords: ""
+  12 panels:
+    behavioral: "Produce exactly 12 panels. Multi-act story, room to breathe between beats."
+    keywords: ""

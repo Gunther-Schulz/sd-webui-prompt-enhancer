@@ -1,0 +1,211 @@
+# Story Mode — Phase A handoff
+
+This is a handoff doc to pick up the story-mode experiment work on your
+local machine. Phase A (prompt-side only, no image generation) is what's
+in scope here; Phase B+ (Forge orchestration) comes after we have rated
+test data to point at.
+
+Branch: `claude/identify-repo-9YyME`. All changes from this session are
+on that branch, ready to commit + push.
+
+## What was built (file inventory)
+
+| File | Purpose |
+|---|---|
+| `experiments/story-modifiers/story-length.yaml` | New modifier dropdown — 3/4/6/8/12 panels. **Lives under experiments/ deliberately**, not modifiers/, so it does NOT auto-register as a Forge UI dropdown until story mode ships. Move to `modifiers/` when wiring up the production UI. |
+| `experiments/story-modifiers/story-mode.yaml` | New modifier — Linear / Vignettes / Character Study / Before & After / Day in the Life / Two Viewpoints. Same "experiments/-only for now" placement. |
+| `experiments/story-rubric.yaml` | 7-dimension rating rubric with 1/3/5 anchors per dim. v0.1 — revise during rating sessions when scores feel forced. |
+| `experiments/story-seeds.yaml` | 10 test stories spanning genres / lengths / modes. Most flagged `placeholder: true` — replace with your typical use cases when convenient. The harness runs against whichever set is in this file. |
+| `experiments/story-variants/V1_one_pass_yaml.yaml` | Single LLM call, full plan in YAML. Tests max-output-per-call extreme. |
+| `experiments/story-variants/V2_one_pass_json.yaml` | Same as V1 but JSON output. Tests YAML-vs-JSON axis. |
+| `experiments/story-variants/V3a_two_pass_yaml.yaml` | Pass 1 = plan (YAML, captions only); Pass 2 = per-panel prompts (text, run N times). Tests one-vs-multi-pass axis. |
+| `experiments/story-variants/V3b_two_pass_json.yaml` | Same as V3a but Pass 1 in JSON. |
+| `experiments/story-variants/V5_terse_yaml.yaml` | Single LLM call producing roles + captions only; image prompts are template-assembled at runtime, no LLM elaboration. Tests whether per-panel LLM elaboration is necessary or just nice-to-have. |
+| `experiments/story_validators.py` | Pure-function schema validators. One per output shape. Fail-loud per CLAUDE.md. |
+| `experiments/story_runner.py` | Test harness. Loads variant + seed, runs LLM passes against Ollama, validates outputs, saves trace JSON. |
+| `experiments/story_rate.py` | Interactive rater. Walks traces, prompts for rubric scores, saves `_ratings.json`. |
+
+What was **not** changed: `scripts/prompt_enhancer.py`, `prompts.yaml`,
+`modifiers/`, `src/`. No production behavior changes. The extension
+behaves identically before and after this branch is merged.
+
+## Prerequisites before running
+
+1. Ollama running locally: `ollama serve` (or with the README's CPU-only
+   incantation: `OLLAMA_NUM_GPU=0 OLLAMA_KEEP_ALIVE=0 ollama serve`)
+2. Model pulled: `ollama pull huihui_ai/qwen3.5-abliterated:9b`
+   (or override with `--model <name>`)
+3. PyYAML installed (already a dep of the extension)
+
+No GPU required. No Forge required. No image generation involved.
+
+## How to run
+
+### Smoke test — one variant, one seed
+
+```bash
+cd /path/to/sd-webui-prompt-enhancer
+python -m experiments.story_runner \
+    --variant V1_one_pass_yaml \
+    --only lighthouse_6_linear \
+    --llm-seeds 42
+```
+
+Output goes to `.ai/experiments/story/V1_one_pass_yaml/<run_id>.json`.
+
+### Full A/B grid
+
+```bash
+for v in V1_one_pass_yaml V2_one_pass_json \
+         V3a_two_pass_yaml V3b_two_pass_json \
+         V5_terse_yaml; do
+    python -m experiments.story_runner --variant $v --llm-seeds 42 137
+done
+```
+
+5 variants × 10 seeds × 2 LLM seeds = 100 runs. Wall time depends on
+your CPU and chosen seeds — Qwen 9B abliterated runs ~15-60s per LLM
+call on a modest CPU. Two-pass variants do ~N+1 calls per run, so a
+6-panel V3a run is ~7 calls = several minutes per run on CPU. Faster
+on GPU. Realistic budget: an evening for the full grid on CPU, much
+less on a GPU machine.
+
+### Rating
+
+After runs are saved, rate each variant interactively:
+
+```bash
+python -m experiments.story_rate --variant V1_one_pass_yaml
+```
+
+For each trace, the script prints the source / plan / per-panel prompts
+(or the failure reason if the trace failed), then prompts for 1-5 scores
+across 7 rubric dimensions plus an overall. Failed-validation traces
+auto-score 1 on `schema_validity` and only ask for notes — saves time.
+
+Ratings persist to `.ai/experiments/story/<variant>/_ratings.json`
+after every rating, so Ctrl-C is safe.
+
+`--show-only` prints traces without rating (useful for a first eyeball
+pass before committing to scoring).
+
+## How to interpret results
+
+After rating, each variant has a `_ratings.json` with all run scores.
+For now there's **no auto-aggregator script** — write one when you have
+data, or eyeball the JSONs. Things to look at:
+
+1. **Schema-validity pass rate per variant.** This is the binary signal.
+   If V1 fails to parse 70% of the time and V3a passes 95% of the time,
+   that's the answer to one-vs-multi-pass.
+2. **Schema-validity at length thresholds.** Group ratings by `length_n`
+   in the trace. If V1 is fine at 3-6 panels but breaks at 12, the
+   threshold matters and we might want a length-aware variant selection.
+3. **Quality dimensions on traces that DID parse.** Did multi-pass
+   produce richer per-panel prompts (`scene_specificity` higher)? Did
+   V5 terse + template assembly produce mechanical-feeling prompts?
+4. **YAML vs JSON.** Compare V1 vs V2, V3a vs V3b. If JSON parses more
+   reliably, prefer JSON regardless of the pass-count answer.
+
+## Decisions to settle from the data
+
+In rough priority order:
+
+1. **Pass count.** One-pass (V1/V2/V5) vs two-pass (V3a/V3b). Expectation
+   from CLAUDE.md and Qwen-9B's known limits: multi-pass wins at long
+   stories, but V5 (terse + template) might win on simplicity if its
+   output quality is acceptable.
+2. **Output format.** YAML vs JSON for the structured pass.
+3. **Per-panel elaboration necessity.** Does V5 (no per-panel LLM
+   call) produce usable prompts, or do we need the V3a/V3b second
+   pass to get scene-rich prompts?
+4. **Length threshold.** Where does each variant break down? Useful
+   to know for graceful UX (e.g. "you're asking for 12 panels with
+   variant X, expect failures").
+
+## What comes next (the rough plan, not committed)
+
+After ratings are in:
+
+- **Phase A.1 — pick winners.** Promote the winning variant's prompts
+  into `prompts.yaml` (real production prompts, not experiments).
+  Promote the modifier YAMLs from `experiments/story-modifiers/` to
+  `modifiers/`.
+- **Phase A.2 — wire the UI.** New `📖 Story` button in the prompt-
+  enhancer accordion alongside Prose/Hybrid/Tags/Remix. Opens a plan
+  editor pane where the user reviews/edits the generated plan. (No
+  image generation yet — Phase A is review-only output.) Remix can
+  operate on the plan before generation, matching the Prose pattern.
+- **Phase B — Forge orchestration.** Wire up the actual edit-chain via
+  Qwen-Image-Edit-2511. New module `src/story_orchestrator/`. Runner
+  per backend (`runners/qwen_image_edit.py`, future
+  `runners/z_image_omni.py`). Gallery UI showing panels as they
+  generate. Per-panel regenerate buttons.
+- **Phase C — Wan2GP metadata export** (opt-in toggle). Sidecar JSON
+  per panel with motion-prompt + duration + ref-frame path + cut
+  transition hints. Enables longer consistent videos by letting Wan2GP
+  generate one cut per panel.
+
+## Risks / things to watch for during testing
+
+- **Endless-loop generation** (your README flags this). If a run hangs
+  for hours, kill it. The runner's per-call timeout defaults to 600s;
+  any single LLM call exceeding that hits Ollama's timeout and the
+  runner records an error. If loops are a frequent failure mode,
+  consider lowering `num_predict` in the variant configs.
+- **Format leakage.** Qwen 9B abliterated sometimes wraps output in
+  ```` ``` ```` fences despite being told not to. The validators strip
+  these (`_strip_fences`); if a trace fails with "YAML/JSON parse
+  error" but the raw output looks valid, check whether the strip
+  worked.
+- **Empty `roles_present` for character scenes.** The model may
+  accidentally treat a character scene as an establishing shot and
+  produce `roles_present: []` even when the caption mentions Alice.
+  Validator catches this only indirectly (via the `roles_present`
+  type/membership check). Worth eyeballing during rating.
+
+## Commit + push
+
+When done with this batch of work:
+
+```bash
+git add experiments/story-modifiers/ experiments/story-rubric.yaml \
+        experiments/story-seeds.yaml experiments/story-variants/ \
+        experiments/story_runner.py experiments/story_validators.py \
+        experiments/story_rate.py experiments/STORY_MODE_HANDOFF.md
+git commit -m "Add story-mode Phase A test harness + variants
+
+Phase A scope: prompt-side only, no image generation. Tests how reliably
+Qwen 9B abliterated produces structured story plans across:
+  - 1-pass vs 2-pass (V1/V2/V5 vs V3a/V3b)
+  - YAML vs JSON (V1/V3a vs V2/V3b)
+  - Full prompts vs caption-only (V1/V2/V3a/V3b vs V5)
+
+Deliverables under experiments/:
+  - story-modifiers/    new dropdowns (length, mode), staged here so
+                        they don't appear in the Forge UI yet
+  - story-variants/     5 variants spanning the design axes
+  - story-rubric.yaml   7-dim rubric with 1/3/5 anchors
+  - story-seeds.yaml    10 test stories (most marked placeholder until
+                        replaced with real use cases)
+  - story_runner.py     test harness, calls Ollama, saves traces
+  - story_validators.py pure-function schema validators
+  - story_rate.py       interactive rater
+  - STORY_MODE_HANDOFF.md  this doc
+
+No production code changes. scripts/prompt_enhancer.py and prompts.yaml
+untouched. Promotion to production happens after testing picks winners.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
+
+git push -u origin claude/identify-repo-9YyME
+```
+
+## When you come back
+
+Read this doc first, then `experiments/story-rubric.yaml`. Look at one
+seed (`experiments/story-seeds.yaml` → `lighthouse_6_linear`) and one
+variant (`experiments/story-variants/V1_one_pass_yaml.yaml`) to refresh
+on the data shapes. Run the smoke test from "How to run" above. Rate it.
+That'll tell you whether the harness works end-to-end on your machine
+before you commit to the full grid.

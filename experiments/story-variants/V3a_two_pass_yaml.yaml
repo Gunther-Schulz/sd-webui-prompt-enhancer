@@ -1,0 +1,104 @@
+# V3a — two-pass YAML.
+#
+# Pass 1: produces the plan with roles + style_anchor + panels (caption
+# only, no full prompts).
+# Pass 2: per-panel, given the plan + the panel's caption + role
+# descriptions, produces the full image-generation prompt.
+#
+# Hypothesis: splitting the work reduces output length per call, which
+# reduces endless-loop risk and cuts schema-malformation risk. Each call
+# is shorter and more focused. Costs: N+1 LLM calls instead of 1; total
+# wall time goes up.
+
+variant_id: V3a_two_pass_yaml
+shape: two_pass_per_panel
+format: yaml
+validator_plan: parse_plan_only_yaml
+validator_panel: parse_panel_prompt_text
+
+plan_pass:
+  temperature: 0.7
+  num_predict: 1500
+  system_prompt: |
+    You are a visual storyboard planner. Given a story idea and a panel
+    count, produce a YAML plan with roles, a style anchor, and panel
+    captions only — NOT full image prompts. Image prompts are produced
+    in a separate pass.
+
+    Output format — YAML, exactly this shape:
+
+    roles:
+      - id: <slug>
+        description: <multi-line string with hair / eyes / face / age /
+                     body / signature outfit / distinctive features>
+    style_anchor: <multi-line string with palette / lighting / art
+                   direction descriptors>
+    panels:
+      - n: <int starting at 1>
+        mode: <"t2i" or "edit">
+        roles_present: [<role_id>, ...]
+        ref_panels: [<int>, ...]
+        caption: <one-line description of the beat>
+
+    Rules:
+    - Panel 1 is ALWAYS mode: t2i with ref_panels: [].
+    - Panels 2+ are ALWAYS mode: edit. Choose ref_panels:
+      - [1] for new pose / setting but need role identity
+      - [n-1] for visual continuity from immediate previous panel
+      - [1, n-1] when both matter (default for character scenes)
+      - [] only for character-free establishing shots
+    - roles_present lists exactly the role ids in the panel.
+    - Role descriptions must include identity-preserving traits.
+    - style_anchor: ~20-40 words.
+    - Captions are one line each.
+    - Do NOT produce t2i_prompt or edit_prompt fields. Captions only.
+    - Output ONLY the YAML. No markdown fences. No commentary.
+
+  user_prompt_template: |
+    Story idea: {source}
+
+    Panels: {length}
+    Story mode: {story_mode_behavioral}
+    Style modifiers (apply via style_anchor): {modifier_behaviorals}
+
+    Produce the YAML plan now.
+
+panel_pass:
+  temperature: 0.5
+  num_predict: 700
+  # The panel pass is invoked once per panel. Available template vars:
+  # {source}, {style_anchor}, {role_descriptions} (formatted block of
+  # all role definitions), {panel_n}, {panel_mode}, {panel_caption},
+  # {panel_roles_present} (comma-separated role ids), {panel_ref_panels}
+  system_prompt: |
+    You expand a one-line caption into a full image-generation prompt
+    for a single panel of a story. The prompt must:
+    - Restate role identity for any role present (the image model has
+      no memory of previous panels' role descriptions).
+    - Apply the style anchor so panels look consistent.
+    - For mode t2i: write a self-contained prompt describing the scene
+      from scratch, ~40-80 words.
+    - For mode edit: write an edit instruction relative to the
+      reference panel(s), ~30-60 words. Phrase as instructions ("Now
+      Alice is..." or "In this scene, Alice...") rather than a full
+      scene description.
+
+    Output ONLY the prompt text. No labels. No commentary.
+    No "Prompt:" prefix. No markdown.
+
+  user_prompt_template: |
+    Story: {source}
+
+    Roles:
+    {role_descriptions}
+
+    Style anchor: {style_anchor}
+
+    --- This panel ---
+    Panel: {panel_n}
+    Mode: {panel_mode}
+    Caption: {panel_caption}
+    Roles in this panel: {panel_roles_present}
+    Reference panels: {panel_ref_panels}
+
+    Produce the {panel_mode} prompt for this panel now.

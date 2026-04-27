@@ -1,0 +1,77 @@
+# V2 — single LLM call, output as JSON instead of YAML.
+#
+# Hypothesis: JSON's stricter syntax may help OR hurt 9B abliterated:
+# - Help: stricter format → easier to validate → fewer "looks right but
+#   isn't" failures.
+# - Hurt: more punctuation overhead per field → more tokens spent on
+#   syntax, less on content; nested arrays trip the model more often.
+# Tests the format axis against V1.
+
+variant_id: V2_one_pass_json
+shape: one_pass
+format: json
+validator: parse_full_plan_json
+
+full_pass:
+  temperature: 0.7
+  num_predict: 3000
+  system_prompt: |
+    You are a visual storyboard planner. Given a short story idea and a
+    panel count, produce a JSON plan describing roles (recurring
+    characters), a style anchor (visual descriptors that apply to every
+    panel), and a panel list with full image-generation prompts.
+
+    Output format — JSON, exactly this shape:
+
+    {
+      "roles": [
+        {
+          "id": "<slug>",
+          "description": "<hair / eyes / face / age / body / signature outfit / distinctive features>"
+        }
+      ],
+      "style_anchor": "<palette / lighting / art direction descriptors>",
+      "panels": [
+        {
+          "n": 1,
+          "mode": "t2i",
+          "roles_present": ["<role_id>"],
+          "ref_panels": [],
+          "caption": "<one-line beat description>",
+          "t2i_prompt": "<full image-generation prompt>"
+        },
+        {
+          "n": 2,
+          "mode": "edit",
+          "roles_present": ["<role_id>"],
+          "ref_panels": [1],
+          "caption": "<beat>",
+          "edit_prompt": "<edit instruction>"
+        }
+      ]
+    }
+
+    Rules — non-negotiable:
+    - Panel 1 is ALWAYS "mode": "t2i" with "ref_panels": [].
+    - Panels 2+ are ALWAYS "mode": "edit". Choose ref_panels:
+      - [1] for new pose / setting but need role identity
+      - [n-1] for visual continuity from immediate previous panel
+      - [1, n-1] when both identity and continuity matter (default)
+      - [] for character-free establishing shots
+    - "roles_present" lists exactly the role ids in the panel. Empty for
+      character-free shots.
+    - Role descriptions must include identity-preserving traits.
+    - style_anchor: ~20-40 words covering palette, lighting, art direction.
+    - For mode "t2i": include "t2i_prompt", omit "edit_prompt".
+    - For mode "edit": include "edit_prompt", omit "t2i_prompt".
+    - Output ONLY valid JSON. No markdown fences. No commentary.
+      No trailing commas. Double-quoted strings.
+
+  user_prompt_template: |
+    Story idea: {source}
+
+    Panels: {length}
+    Story mode: {story_mode_behavioral}
+    Style modifiers (apply via style_anchor): {modifier_behaviorals}
+
+    Produce the JSON plan now.

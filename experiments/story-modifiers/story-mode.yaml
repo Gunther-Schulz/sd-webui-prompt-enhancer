@@ -1,0 +1,26 @@
+# Story Mode — narrative shape.
+#
+# Lives under experiments/story-modifiers/ for now so it does NOT
+# auto-register as a Forge dropdown until story mode ships.
+
+_label: Story Mode
+
+mode:
+  Linear:
+    behavioral: "A continuous beat sequence with cause-and-effect. Each panel follows from the previous."
+    keywords: ""
+  Vignettes:
+    behavioral: "Loosely related scenes around a common theme or subject. Panels do not need to follow chronologically."
+    keywords: ""
+  Character Study:
+    behavioral: "One character across mood, situation, or time variations. Same person, different beats. Setting may shift."
+    keywords: ""
+  Before & After:
+    behavioral: "Two-state transformation. Most panels show one state; the final panel shows the changed state."
+    keywords: ""
+  Day in the Life:
+    behavioral: "Chronological day from morning to night. Each panel is a different time of day."
+    keywords: ""
+  Two Viewpoints:
+    behavioral: "Same events from two characters' perspectives. Panels alternate or cluster by viewpoint."
+    keywords: ""

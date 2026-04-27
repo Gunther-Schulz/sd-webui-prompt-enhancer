@@ -1,0 +1,119 @@
+# Story-mode test seeds.
+#
+# Each entry is a complete story-generation request: source idea, length,
+# mode, and any modifiers from the existing dropdowns (Lighting, Visual
+# Style, Camera, etc.). The harness fans these out against every variant.
+#
+# Mark seeds with `placeholder: true` until you've replaced them with
+# stories from your typical use cases. The placeholder set should still
+# produce useful signal because they span genres / lengths / modes.
+
+- id: lighthouse_6_linear
+  source: "A young woman visits an old lighthouse keeper during a storm"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Rain"               # from lighting-mood/atmosphere
+    - "Oil Painting"       # from visual-style
+  note: "Canonical example used in design discussion. Two roles, weather as
+        atmosphere, classic 6-panel arc."
+  placeholder: false
+
+- id: cafe_4_vignettes
+  source: "Slow afternoon in a small Tokyo cafe"
+  length: "4 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Golden Hour"
+    - "Cinematic Grade"
+  note: "No characters specified; LLM should invent OR keep panels
+        character-light. Tests how variant handles ambiguous cast."
+  placeholder: true
+
+- id: knight_8_linear
+  source: "A young knight finds a wounded dragon in a forest clearing and decides to help it"
+  length: "8 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Volumetric Light"
+    - "Fantasy"
+  note: "Two roles, fantasy genre, longer arc. Tests narrative pacing
+        and character relationship development."
+  placeholder: true
+
+- id: chef_character_6
+  source: "A chef preparing dinner service in a busy restaurant kitchen"
+  length: "6 panels"
+  story_mode: "Character Study"
+  modifiers:
+    - "Candlelight"
+    - "Film Noir"
+  note: "Character Study mode — one role across mood/intensity variations.
+        Tests whether variant produces emotion/intensity arc, not plot arc."
+  placeholder: true
+
+- id: detective_dayinlife_8
+  source: "A 1940s detective working a case from morning to midnight"
+  length: "8 panels"
+  story_mode: "Day in the Life"
+  modifiers:
+    - "Film Noir"
+  note: "Tests temporal-progression mode. Lighting should evolve across
+        panels (morning → noon → evening → night) without the user
+        specifying it explicitly."
+  placeholder: true
+
+- id: park_two_viewpoints_6
+  source: "Two strangers cross paths in a park; one is leaving, one is arriving"
+  length: "6 panels"
+  story_mode: "Two Viewpoints"
+  modifiers:
+    - "Golden Hour"
+    - "Dreamy"
+  note: "Tests Two Viewpoints mode — alternating character perspectives.
+        Both characters appear in some panels, only one in others."
+  placeholder: true
+
+- id: garden_beforeafter_4
+  source: "An overgrown garden being slowly restored over a season"
+  length: "4 panels"
+  story_mode: "Before & After"
+  modifiers:
+    - "Volumetric Light"
+  note: "Tests Before & After mode with no human characters. Subject is
+        the garden itself across stages."
+  placeholder: true
+
+- id: dancer_3_linear
+  source: "A ballet dancer in the moments before, during, and after a performance"
+  length: "3 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Backlit"
+    - "Cinematic Grade"
+  note: "Minimum-length stress test. 3 panels means each beat must carry
+        significant story weight; tests compression."
+  placeholder: true
+
+- id: spaceship_12_linear
+  source: "A small repair crew responds to a distress call on a derelict spaceship"
+  length: "12 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Neon Glow"
+    - "Horror"
+  note: "Maximum-length stress test. 12 panels with multi-character cast
+        in sci-fi setting. Tests whether structured output holds at length."
+  placeholder: true
+
+- id: kid_birthday_vignettes_6
+  source: "A child's seventh birthday party"
+  length: "6 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Candlelight"
+    - "Dreamy"
+  note: "Many implied characters (kid, parents, friends). Tests how variant
+        handles undeclared cast — should the LLM enumerate, abstract, or
+        focus on protagonist?"
+  placeholder: true

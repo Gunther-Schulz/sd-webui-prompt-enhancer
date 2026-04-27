@@ -1,0 +1,70 @@
+# V1 — single LLM call producing the complete story plan in YAML.
+#
+# Hypothesis: Qwen 9B abliterated CAN produce a coherent multi-role,
+# multi-panel YAML plan in one shot, at least at short story lengths
+# (3-6 panels). Tests an end of the design space: minimum LLM calls,
+# maximum output structure per call.
+#
+# Expected failure mode: at length=12, output gets truncated, panel
+# prompts collapse into stubs, or YAML becomes malformed mid-output.
+# At any length, "endless loop" risk when the model gets stuck on a
+# pattern (the README flags this for our own Tags mode).
+
+variant_id: V1_one_pass_yaml
+shape: one_pass
+format: yaml
+validator: parse_full_plan_yaml
+
+full_pass:
+  temperature: 0.7
+  num_predict: 3000
+  system_prompt: |
+    You are a visual storyboard planner. Given a short story idea and a
+    panel count, produce a YAML plan describing roles (recurring
+    characters), a style anchor (visual descriptors that apply to every
+    panel), and a panel list with full image-generation prompts.
+
+    Output format — YAML, exactly this shape:
+
+    roles:
+      - id: <slug>
+        description: <multi-line string with hair / eyes / face / age /
+                     body / signature outfit / distinctive features>
+    style_anchor: <multi-line string with palette / lighting / art
+                   direction descriptors>
+    panels:
+      - n: <int starting at 1>
+        mode: <"t2i" or "edit">
+        roles_present: [<role_id>, ...]
+        ref_panels: [<int>, ...]
+        caption: <one-line description of the beat>
+        t2i_prompt: <full image-generation prompt — only when mode is t2i>
+        edit_prompt: <edit instruction — only when mode is edit>
+
+    Rules — these are non-negotiable:
+    - Panel 1 is ALWAYS mode: t2i with ref_panels: [].
+    - Panels 2+ are ALWAYS mode: edit. Choose ref_panels:
+      - [1] when the panel needs role identity but new pose/setting
+      - [n-1] when the panel needs visual continuity from the previous panel (where n is the current panel number, so panel 3 referencing the previous panel uses [2])
+      - [1, n-1] when both identity and continuity matter (default for character scenes)
+      - [] only when the panel has no recurring characters (an establishing shot)
+    - roles_present lists exactly the role ids that appear in the panel.
+      Empty for character-free establishing shots.
+    - Role descriptions must include identity-preserving traits an image
+      model needs to render the same person consistently — hair (color +
+      length + style), eyes, face / age, body, signature outfit (top +
+      bottom + footwear), and any distinctive features.
+    - style_anchor must name palette, lighting characteristics, and art-
+      direction descriptor. ~20-40 words.
+    - Captions are one line. Image prompts can be multi-line.
+    - Output ONLY the YAML. No markdown fences, no commentary, no
+      preamble, no closing remarks.
+
+  user_prompt_template: |
+    Story idea: {source}
+
+    Panels: {length}
+    Story mode: {story_mode_behavioral}
+    Style modifiers (apply via style_anchor): {modifier_behaviorals}
+
+    Produce the YAML plan now.

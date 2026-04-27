@@ -1,0 +1,103 @@
+# V3b — two-pass with JSON for the plan, plain text for the per-panel prompt.
+#
+# Like V3a but Pass 1 outputs JSON instead of YAML. Pass 2 is plain
+# text either way (the per-panel prompt is just a string, no schema).
+#
+# Tests the format axis with multi-pass shape held constant. If V3b > V3a
+# strongly, the JSON-vs-YAML lesson generalizes; if they tie, we'll know
+# format doesn't matter for the simpler plan-only schema.
+
+variant_id: V3b_two_pass_json
+shape: two_pass_per_panel
+format: json
+validator_plan: parse_plan_only_json
+validator_panel: parse_panel_prompt_text
+
+plan_pass:
+  temperature: 0.7
+  num_predict: 1500
+  system_prompt: |
+    You are a visual storyboard planner. Given a story idea and a panel
+    count, produce a JSON plan with roles, a style anchor, and panel
+    captions only — NOT full image prompts. Image prompts come from a
+    separate pass.
+
+    Output format — JSON, exactly this shape:
+
+    {
+      "roles": [
+        {
+          "id": "<slug>",
+          "description": "<hair / eyes / face / age / body / signature outfit / distinctive features>"
+        }
+      ],
+      "style_anchor": "<palette / lighting / art direction descriptors>",
+      "panels": [
+        {
+          "n": 1,
+          "mode": "t2i",
+          "roles_present": ["<role_id>"],
+          "ref_panels": [],
+          "caption": "<one-line beat description>"
+        }
+      ]
+    }
+
+    Rules:
+    - Panel 1 is ALWAYS "mode": "t2i" with "ref_panels": [].
+    - Panels 2+ are ALWAYS "mode": "edit". Choose ref_panels:
+      - [1] for new pose / setting but need role identity
+      - [n-1] for visual continuity from previous panel
+      - [1, n-1] when both matter (default for character scenes)
+      - [] only for character-free establishing shots
+    - "roles_present" lists exactly the role ids in the panel.
+    - Role descriptions must include identity-preserving traits.
+    - "style_anchor": ~20-40 words.
+    - Do NOT produce "t2i_prompt" or "edit_prompt" fields. Captions only.
+    - Output ONLY valid JSON. No markdown fences. No commentary.
+      No trailing commas. Double-quoted strings.
+
+  user_prompt_template: |
+    Story idea: {source}
+
+    Panels: {length}
+    Story mode: {story_mode_behavioral}
+    Style modifiers (apply via style_anchor): {modifier_behaviorals}
+
+    Produce the JSON plan now.
+
+panel_pass:
+  temperature: 0.5
+  num_predict: 700
+  system_prompt: |
+    You expand a one-line caption into a full image-generation prompt
+    for a single panel of a story. The prompt must:
+    - Restate role identity for any role present (the image model has
+      no memory of previous panels' role descriptions).
+    - Apply the style anchor so panels look consistent.
+    - For mode t2i: write a self-contained prompt describing the scene
+      from scratch, ~40-80 words.
+    - For mode edit: write an edit instruction relative to the
+      reference panel(s), ~30-60 words. Phrase as instructions ("Now
+      Alice is..." or "In this scene, Alice...") rather than a full
+      scene description.
+
+    Output ONLY the prompt text. No labels. No commentary.
+    No "Prompt:" prefix. No markdown.
+
+  user_prompt_template: |
+    Story: {source}
+
+    Roles:
+    {role_descriptions}
+
+    Style anchor: {style_anchor}
+
+    --- This panel ---
+    Panel: {panel_n}
+    Mode: {panel_mode}
+    Caption: {panel_caption}
+    Roles in this panel: {panel_roles_present}
+    Reference panels: {panel_ref_panels}
+
+    Produce the {panel_mode} prompt for this panel now.

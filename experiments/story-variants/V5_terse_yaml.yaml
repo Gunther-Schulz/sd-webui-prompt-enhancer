@@ -1,0 +1,84 @@
+# V5 — terse one-pass: roles + captions only, NO image prompts at all.
+#
+# Image prompts are assembled at runtime by simple template substitution
+# from role descriptions + caption + style anchor. No second LLM pass.
+#
+# Hypothesis: the LLM's hardest job is producing many long structured
+# fields per panel. If we shrink that to "caption only" the plan becomes
+# very short — maybe 3-4 lines per panel — which is well within Qwen 9B's
+# reliable structured-output range. The cost: panel prompts are
+# template-assembled, not LLM-elaborated, so they may feel mechanical.
+#
+# This variant tests whether template-assembled prompts are good enough
+# for image generation — i.e. whether per-panel LLM elaboration (V3a/V3b
+# pass 2) is necessary or just nice-to-have.
+
+variant_id: V5_terse_yaml
+shape: terse_one_pass
+format: yaml
+validator: parse_terse_plan_yaml
+
+# Template used at runtime (no LLM call) to build each panel's prompt.
+# Available vars: {role_descriptions} (formatted block of present
+# roles only), {style_anchor}, {caption}, {panel_n}, {panel_ref_panels}
+panel_prompt_template_t2i: |
+  {role_descriptions}
+
+  Scene: {caption}
+
+  Style: {style_anchor}
+
+panel_prompt_template_edit: |
+  Reference: panel {panel_ref_panels}.
+
+  Modify so that: {caption}
+
+  Maintain role identity:
+  {role_descriptions}
+
+  Maintain style consistency: {style_anchor}
+
+full_pass:
+  temperature: 0.7
+  num_predict: 1200
+  system_prompt: |
+    You are a visual storyboard planner. Given a story idea and a panel
+    count, produce a TERSE YAML plan with roles, a style anchor, and
+    panel captions ONLY. Do not write image prompts — those are assembled
+    automatically.
+
+    Output format — YAML, exactly this shape:
+
+    roles:
+      - id: <slug>
+        description: <hair / eyes / face / age / body / signature outfit
+                     / distinctive features>
+    style_anchor: <palette / lighting / art direction descriptors>
+    panels:
+      - n: <int starting at 1>
+        mode: <"t2i" or "edit">
+        roles_present: [<role_id>, ...]
+        ref_panels: [<int>, ...]
+        caption: <one-line description of the beat>
+
+    Rules:
+    - Panel 1 is ALWAYS mode: t2i with ref_panels: [].
+    - Panels 2+ are ALWAYS mode: edit with appropriate ref_panels:
+      - [1] for role identity, new pose / setting
+      - [n-1] for visual continuity from previous panel
+      - [1, n-1] when both matter (default for character scenes)
+      - [] only for character-free establishing shots
+    - Role descriptions must include identity-preserving traits.
+    - Do NOT write t2i_prompt or edit_prompt — those are assembled later.
+    - Captions describe the scene specifically: action verb, location,
+      framing, body posture, environmental detail. ~15-30 words each.
+    - Output ONLY the YAML. No markdown fences. No commentary.
+
+  user_prompt_template: |
+    Story idea: {source}
+
+    Panels: {length}
+    Story mode: {story_mode_behavioral}
+    Style modifiers (apply via style_anchor): {modifier_behaviorals}
+
+    Produce the terse YAML plan now.

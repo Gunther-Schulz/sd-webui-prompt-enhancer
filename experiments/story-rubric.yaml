@@ -1,0 +1,140 @@
+# Story-mode rating rubric.
+#
+# Per CLAUDE.md: dimensions need concrete 1/3/5 anchors so ratings are
+# reproducible across sessions. Treat this as v0.1 — revise during real
+# rating sessions when scores feel forced or a failure mode isn't
+# captured. When you revise, bump the version and re-rate prior runs
+# under the new rubric (don't mix old and new scores).
+
+version: "0.1"
+target: "story-mode pipeline output (Phase A: prompt-side only, no images yet)"
+
+dimensions:
+  - id: schema_validity
+    title: "Schema validity"
+    note: "Did the LLM produce parseable, schema-correct output? Hard pass/fail signal."
+    anchors:
+      1: |
+        Output failed to parse, or fields missing, or panel count wrong, or
+        roles_present references a role that wasn't defined, or mode is invalid.
+        Validator raised.
+      3: |
+        Parsed and matches schema, but minor issues: a panel's caption is
+        empty or trivial, a role description is one-line bare-bones,
+        ref_panels is empty when it shouldn't be, panel n values out of order.
+      5: |
+        Clean parse. Every field non-empty, panel count exact, role references
+        consistent, panel n values 1..N in order.
+
+  - id: role_specificity
+    title: "Role description specificity"
+    note: "Are role descriptions concrete enough that an image model would render the same character consistently from them?"
+    anchors:
+      1: |
+        Role descriptions are vague ('a man', 'a young woman'). No
+        identity-preserving traits — no hair, eye, face, or signature
+        clothing details. Image model would invent a different person each
+        panel.
+      3: |
+        Role has 3-5 identity traits but missing key categories (e.g. has
+        hair and clothes, no face details; or has body but no clothing).
+        Render would be approximately consistent but drift on missing
+        categories.
+      5: |
+        Each role has hair (color + length + style), eyes, face/age, body
+        type, signature outfit (top + bottom + footwear), and any
+        distinctive features (scars, glasses, jewelry). 30+ words per role.
+        Render would be reliably consistent.
+
+  - id: scene_specificity
+    title: "Per-panel caption specificity"
+    note: "Does each caption tell the image model what's happening, where, and how — not just generic 'Alice does something'?"
+    anchors:
+      1: |
+        Captions are abstract or generic ('Alice is at the lighthouse',
+        'they talk'). No spatial detail, no action verb, no environmental
+        cue. Could describe a hundred different images.
+      3: |
+        Captions name the action and the setting but miss either pose,
+        framing, or environmental detail. ('Alice knocks on the lighthouse
+        door' — but no rain, no time of day, no body posture.)
+      5: |
+        Captions name action, location, framing/composition, environmental
+        atmosphere, and at least one specific detail (a held object, a
+        light source, a body posture). Roughly 15-30 words each.
+
+  - id: narrative_coherence
+    title: "Narrative coherence across panels"
+    note: "Do the panels form a story that makes sense, or are they random scenes with the same character?"
+    anchors:
+      1: |
+        Panels feel disconnected. Random scenes that happen to share roles.
+        No causal or thematic link. Or contradictions between panels (Alice
+        is wet in panel 2, dry in panel 3 with no cause).
+      3: |
+        Panels are loosely linked. A reader can squint and see a story but
+        some transitions feel arbitrary or under-motivated. One or two
+        beats feel out of place for the chosen Story Mode.
+      5: |
+        Panels form a coherent arc that fits the requested Story Mode.
+        Each panel motivates the next (Linear) or shares the requested
+        thematic spine (Vignettes / Character Study / etc.). No
+        contradictions.
+
+  - id: style_anchor_quality
+    title: "Style anchor coherence"
+    note: "Is the style_anchor concrete enough that all panels would look like the same visual world?"
+    anchors:
+      1: |
+        Style anchor is vague ('cinematic, detailed') or contradicts the
+        scene (Story is a stormy night but anchor says 'bright sunny
+        palette'). Wouldn't anchor anything.
+      3: |
+        Style anchor names palette, lighting style, and one technique
+        descriptor. Workable but might allow drift — competing painters
+        could read it differently.
+      5: |
+        Style anchor names palette, lighting characteristics, art-direction
+        descriptor (painterly / photographic / illustrative), and any
+        relevant atmospheric cue. ~20-40 words. Same image model fed the
+        same anchor across panels would produce visually consistent output.
+
+  - id: ref_panel_logic
+    title: "ref_panels selection logic"
+    note: "For non-T2I panels, is the chosen reference set sensible (panel 1 alone vs. previous vs. both vs. specific)? Only meaningful when the variant lets the LLM choose."
+    anchors:
+      1: |
+        ref_panels choices are random or wrong (e.g. panel 4 references
+        only panel 3 when panel 3 was a [NC] establishing shot containing
+        no characters). Or all panels reference [1] regardless of need.
+      3: |
+        Mostly sensible (panel-1 anchor + previous-panel for continuity)
+        but a few choices feel arbitrary or could be improved.
+      5: |
+        Each panel's ref_panels makes the right trade-off given which
+        characters appear and what continuity is needed. Establishing
+        shots (no characters) get []; character-scenes get [1] for
+        identity anchor; pose-continuation panels add [n-1].
+
+  - id: no_inventions
+    title: "No inventions / no contradictions"
+    note: "Did the LLM stay within the source story idea, or invent new characters / locations / props that weren't asked for?"
+    anchors:
+      1: |
+        New characters or major plot elements appear that weren't in the
+        source. ('Alice visits a lighthouse keeper' but panel 4 introduces
+        Alice's brother for no reason.)
+      3: |
+        Mostly faithful but adds one or two minor unprompted elements
+        (a cat, a third character, a vehicle) that fit but weren't asked
+        for. Acceptable for narrative flesh.
+      5: |
+        Stays within the source's scope. Small environmental details added
+        for richness are fine; no new characters or major story elements
+        invented.
+
+# Optional overall:
+overall_anchors:
+  1: "Variant is unusable — schema fails or output is consistently incoherent."
+  3: "Variant produces workable output most of the time but needs hand-editing per run."
+  5: "Variant produces shippable plans the user could feed to image generation with minimal editing."
