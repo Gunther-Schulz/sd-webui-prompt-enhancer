@@ -114,7 +114,7 @@ from pe_modes._shared import (
     build_user_msg as _build_user_msg,
     apply_negative_hint as _apply_negative_hint,
 )
-from pe_modes import prose as _pe_prose, remix as _pe_remix, hybrid as _pe_hybrid
+from pe_modes import prose as _pe_prose, remix as _pe_remix, hybrid as _pe_hybrid, tags as _pe_tags
 from pe_modes._shared import HandlerCtx as _HandlerCtx
 from pe_tags import (
     validate as _pe_tags_validate,
@@ -719,233 +719,25 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             )
 
-            # ── Tags ──
-            # Tags is Hybrid minus the NL-summary pass. Same prose → tag-extract
-            # flow, same validator + slot-fill, same RAG shortlist injection.
-            # Only the Hybrid 3/3 summarize step is skipped and the output is
-            # tags alone (no "\n\n{nl_supplement}" suffix).
-            def _tags(source, base_name, custom_sp, tag_fmt, validation_mode,
-                      *args):
+            # ── Tags (two-pass: prose → extract tags) ──
+            def _tags(source, base_name, custom_sp, tag_fmt, validation_mode, *args):
+                # *args = *dd_vals, prepend, seed, detail, think, temperature, neg_cb, motion_cb
                 global _last_pe_mode
                 _last_pe_mode = "Tags"
                 motion_cb = args[-1]
-                neg_cb, temp = args[-2], args[-3]
-                prepend, sd, dl, th = args[-7], args[-6], args[-5], args[-4]
+                neg_cb = args[-2]
+                temp = args[-3]
+                # think arg ignored
+                dl = args[-5]
+                sd = args[-6]
+                prepend = args[-7]
                 dd_vals = args[:-7]
-
-                _cancel_flag.clear()
-                t0 = time.monotonic()
-
-                source = (source or "").strip()
-
-                mods = _collect_modifiers(dd_vals, seed=int(sd))
-                sp = _assemble_system_prompt(base_name, custom_sp, dl)
-                if not sp:
-                    yield "", "", _status_html(_MODE_TAGS, "No system prompt configured.", color='#c66')
-                    return
-
-                if motion_cb:
-                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
-                if neg_cb:
-                    sp = _apply_negative_hint(sp, _tag_formats.get(tag_fmt, {}), _prompts.get('negative', ''))
-
-                style_str = _build_style_string(mods)
-                inline_text = _build_inline_wildcard_text(source)
-                user_msg = _build_user_msg(source, style_str, inline_text, _prompts.get("empty_source_signal", ""))
-
-                # User-chosen RAG path. No fallback — abort with a clear
-                # error when RAG is picked but unavailable.
-                _anima_t = None
-                _anima_t_cm = None
-                _anima_t_shortlist = None
-                if validation_mode == "RAG":
-                    ok, reason = _rag_available_for(tag_fmt)
-                    if not ok:
-                        logger.error(f"RAG unavailable: {reason}")
-                        yield "", "", _status_html(_MODE_TAGS, f"RAG unavailable — {reason}", color='#c66')
-                        return
-                    _s = _get_anima_stack()
-                    try:
-                        _anima_t_cm = _s.models()
-                        _anima_t_cm.__enter__()
-                        _anima_t = _s
-                        # Resolve any db_retrieve source: picks now that
-                        # the stack is up (see _hybrid for the rationale).
-                        if _resolve_deferred_sources(mods, int(sd), _anima_t, query=source):
-                            style_str = _build_style_string(mods)
-                            user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
-                            if style_str:
-                                user_msg = f"{user_msg}\n\n{style_str}"
-                            if inline_text:
-                                user_msg = f"{user_msg}\n\n{inline_text}"
-                        _expander_t = _make_anima_query_expander(temperature=0.3, seed=int(sd))
-                        _anima_t_shortlist = _s.build_shortlist(
-                            source_prompt=source, modifier_keywords=style_str,
-                            query_expander=_expander_t,
-                        )
-                        _frag = _anima_t_shortlist.as_system_prompt_fragment()
-                        if _frag:
-                            sp = f"{sp}\n\n{_frag}"
-                        # V5 conditional adherence directive — only when
-                        # source is non-empty.
-                        if source:
-                            sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
-                        print(f"[PromptEnhancer] RAG shortlist: "
-                              f"{len(_anima_t_shortlist.artists)} artists, "
-                              f"{len(_anima_t_shortlist.characters)} characters, "
-                              f"{len(_anima_t_shortlist.series)} series")
-                    except Exception as _e:
-                        logger.error(f"RAG setup failed: {_e}")
-                        if _anima_t_cm:
-                            try: _anima_t_cm.__exit__(None, None, None)
-                            except Exception: pass
-                        yield "", "", _status_html(_MODE_TAGS, f"RAG setup failed: {type(_e).__name__}: {_e}", color='#c66')
-                        return
-
-                if not source:
-                    yield gr.update(), gr.update(), _status_html(_MODE_TAGS, "\U0001F3B2 Rolling dice (1/2 prose)...", color='#aaa')
-                print(f"[PromptEnhancer] Tags pass 1/2 (prose): think={th}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
-                try:
-                    # Pass 1: generate prose (same as Hybrid). V8
-                    # multi-sample mode when anima_tagger_prose_samples > 1.
-                    n_samples = int(_anima_opt("anima_tagger_prose_samples", 3)) if _anima_t is not None else 1
-                    prose_raw = None
-                    if n_samples > 1:
-                        yield gr.update(), gr.update(), _status_html(_MODE_TAGS, f"1/2 prose (multi-sample {n_samples})...", color='#aaa')
-                        prose_raw, _samples_all, _picker_choice = _multi_sample_prose(user_msg, sp, temp, seed=int(sd), n_samples=n_samples, num_predict=1024, picker_system_prompt=_prompts.get("picker", ""))
-                    else:
-                        for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
-                            if isinstance(chunk, dict):
-                                p = chunk
-                                yield gr.update(), gr.update(), _progress_html(f"{_MODE_TAGS}: 1/2 prose", p)
-                            else:
-                                prose_raw = chunk
-                    prose_raw = _clean_output(prose_raw)
-                    if not prose_raw:
-                        yield "", "", _status_html(_MODE_TAGS, "Prose generation returned empty.", color='#c66')
-                        return
-
-                    if neg_cb:
-                        prose, negative = _split_positive_negative(prose_raw)
-                    else:
-                        prose, negative = prose_raw, ""
-
-                    print(f"[PromptEnhancer] Tags pass 2/2 (tags): {len(prose.split())} words → tags")
-
-                    # Pass 2: extract tags from prose
-                    fmt_config = _tag_formats.get(tag_fmt, {})
-                    tag_sp = fmt_config.get("system_prompt", "")
-                    if not tag_sp:
-                        yield "", "", _status_html(_MODE_TAGS, "No tag format configured.", color='#c66')
-                        return
-                    if style_str:
-                        tag_sp = f"{tag_sp}\n\n{_prompts.get('tag_extract_style_preamble', '')}\n{style_str}"
-                    # V17: shortlist-aware tag_extract. See _hybrid for rationale.
-                    if _anima_t_shortlist is not None:
-                        _sl_frag_tag = _anima_t_shortlist.as_system_prompt_fragment()
-                        if _sl_frag_tag:
-                            tag_sp = f"{tag_sp}\n\n{_sl_frag_tag}"
-                    # V13: Pass 2 grounding — see _hybrid for rationale.
-                    if _anima_t is not None and bool(_anima_opt("anima_tagger_pass2_grounding", False)):
-                        _cand = _general_tag_candidates(_anima_t, prose, k=int(_anima_opt("anima_tagger_pass2_grounding_k", 60)), min_post_count=int(_anima_opt("anima_tagger_pass2_grounding_min_pc", 100)))
-                        _frag = _candidate_fragment_for_tag_sp(_cand)
-                        if _frag:
-                            tag_sp = f"{tag_sp}\n{_frag}"
-                            print(f"[PromptEnhancer] Pass 2 grounding: {len(_cand)} candidate tags injected")
-                    tags_raw = None
-                    for chunk in _call_llm_progress(prose, tag_sp, temp, seed=int(sd)):
-                        if isinstance(chunk, dict):
-                            p = chunk
-                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_TAGS}: 2/2 tags", p)
-                        else:
-                            tags_raw = chunk
-                    tags_raw = _clean_output(tags_raw, strip_underscores=False)
-
-                    if validation_mode != "Off":
-                        yield gr.update(), gr.update(), _status_html(_MODE_TAGS, f"Validating tags ({validation_mode})...", color='#aaa')
-
-                    _anima_t_safety = _anima_safety_from_modifiers(mods, source)
-
-                    # Post-process negative tags through tag pipeline
-                    if neg_cb and negative:
-                        if _anima_t is not None:
-                            negative, _ = _anima_tag_from_draft(
-                                _anima_t, negative, safety=_anima_t_safety,
-                                shortlist=_anima_t_shortlist,
-                            )
-                        else:
-                            negative, _ = _postprocess_tags(negative, tag_fmt, validation_mode)
-
-                    # Run tags through validator + rule layer
-                    if _anima_t is not None:
-                        tags_raw, stats = _anima_tag_from_draft(
-                            _anima_t, tags_raw, safety=_anima_t_safety,
-                            shortlist=_anima_t_shortlist,
-                        )
-                        # Slot-fill — same as Hybrid
-                        if bool(_anima_opt("anima_tagger_slot_fill", True)):
-                            slots = _active_target_slots(mods)
-                            for slot in slots:
-                                cat_info = _SLOT_TO_CATEGORY.get(slot)
-                                if not cat_info:
-                                    continue
-                                cat_code = cat_info["category"]
-                                if _tags_have_category(tags_raw, _anima_t, cat_code):
-                                    continue
-                                picked = _retrieve_prose_slot(_anima_t, prose, slot, seed=int(sd))
-                                if not picked:
-                                    continue
-                                tag_out = picked.replace("_", " ")
-                                if slot == "artist":
-                                    tag_out = "@" + tag_out
-                                tags_raw = f"{tags_raw}, {tag_out}" if tags_raw else tag_out
-                                print(f"[PromptEnhancer] Slot fill ({slot}): injected '{tag_out}' from prose")
-                                if stats:
-                                    stats["total"] = stats.get("total", 0) + 1
-                    else:
-                        tags_raw, stats = _postprocess_tags(tags_raw, tag_fmt, validation_mode)
-
-                    # Source post-inject: ensure every source:-picked tag
-                    # survives through to the final output.
-                    tags_raw, stats = _inject_source_picks(tags_raw, mods, stats)
-                    tag_count = stats.get("total", 0) if stats else len([t for t in tags_raw.split(",") if t.strip()])
-                    status_parts = [f"{tag_count} tags"]
-                    if stats:
-                        if stats.get("corrected"):
-                            status_parts.append(f"{stats['corrected']} corrected")
-                        if stats.get("dropped"):
-                            status_parts.append(f"{stats['dropped']} dropped")
-                        if stats.get("kept_invalid"):
-                            status_parts.append(f"{stats['kept_invalid']} unverified")
-                        if stats.get("error"):
-                            status_parts.append(stats["error"])
-
-                    if prepend and source:
-                        tags_raw = f"{source}\n\n{tags_raw}"
-                    elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield tags_raw, negative, _status_html(_MODE_TAGS, f"OK - {', '.join(status_parts)}, {elapsed}")
-                except InterruptedError as e:
-                    partial = _clean_output(str(e))
-                    if partial:
-                        yield partial, "", _status_html(_MODE_TAGS, "Cancelled (partial)", color='#c66')
-                    else:
-                        yield "", "", _status_html(_MODE_TAGS, "Cancelled", color='#c66')
-                except _TruncatedError:
-                    # Fail loud. A truncated partial — even post-validation —
-                    # is a reduced result that looks like success to the user.
-                    # Empty textbox + red status makes the failure visible so
-                    # the user retries instead of accepting degraded output.
-                    yield "", "", _status_html(_MODE_TAGS, "Truncated — no output (retry)", color='#c66')
-                except urllib.error.URLError as e:
-                    yield "", "", _status_html(_MODE_TAGS, f"Connection failed: {e.reason}", color='#c66')
-                except Exception as e:
-                    yield "", "", _status_html(_MODE_TAGS, f"{type(e).__name__}: {e}", color='#c66')
-                finally:
-                    if _anima_t_cm is not None:
-                        try:
-                            _anima_t_cm.__exit__(None, None, None)
-                        except Exception as _e:
-                            logger.warning(f"anima models unload error (tags): {_e}")
+                yield from _pe_tags.run(
+                    source, base_name, custom_sp, tag_fmt, validation_mode, dd_vals,
+                    prepend=prepend, seed=sd, detail=dl,
+                    temperature=temp, neg_cb=neg_cb, motion_cb=motion_cb,
+                    ctx=_build_handler_ctx(),
+                )
 
             tags_event = tags_btn.click(
                 fn=_tags,
