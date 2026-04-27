@@ -1005,19 +1005,6 @@ def _has_inline_wildcards(text):
     return bool(re.search(r"\{[^}]+\?\}", text))
 
 
-    # Skip known valid patterns (rating:, score_, source_)
-    if ":" in tag:
-        return tag
-    # Try to insert underscores at likely word boundaries
-    # Look for lowercase->uppercase transitions (camelCase)
-    result = re.sub(r"([a-z])([A-Z])", r"\1_\2", tag).lower()
-    if result != tag.lower():
-        return result
-    # All lowercase concatenated — can't reliably split without a dictionary
-    # Return as-is, validation will handle it
-    return tag
-
-
 
 def _postprocess_tags(tag_str, tag_fmt, validation_mode):
     """Thin wrapper around pe_tags.postprocess — full tag pipeline:
