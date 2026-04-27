@@ -114,7 +114,8 @@ from pe_modes._shared import (
     build_user_msg as _build_user_msg,
     apply_negative_hint as _apply_negative_hint,
 )
-from pe_modes import prose as _pe_prose
+from pe_modes import prose as _pe_prose, remix as _pe_remix
+from pe_modes._shared import HandlerCtx as _HandlerCtx
 from pe_tags import (
     validate as _pe_tags_validate,
     reorder as _pe_tags_reorder,
@@ -429,6 +430,36 @@ def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
     return sp or None
 
 
+def _build_handler_ctx():
+    """Construct the HandlerCtx bundle that mode handlers consume.
+    Reads from this module's loaded state and the imported helper functions.
+    Cheap (just packs references); called once per handler invocation."""
+    return _HandlerCtx(
+        prompts=_prompts,
+        tag_formats=_tag_formats,
+        cancel_flag=_cancel_flag,
+        logger=logger,
+        collect_modifiers=_collect_modifiers,
+        assemble_system_prompt=_assemble_system_prompt,
+        build_style_string=_build_style_string,
+        build_inline_wildcard_text=_build_inline_wildcard_text,
+        rag_available_for=_rag_available_for,
+        get_anima_stack=_get_anima_stack,
+        resolve_deferred_sources=_resolve_deferred_sources,
+        anima_safety_from_modifiers=_anima_safety_from_modifiers,
+        anima_tag_from_draft=_anima_tag_from_draft,
+        inject_source_picks=_inject_source_picks,
+        postprocess_tags=_postprocess_tags,
+        make_query_expander=_make_anima_query_expander,
+        general_tag_candidates=_general_tag_candidates,
+        candidate_fragment_for_tag_sp=_candidate_fragment_for_tag_sp,
+        retrieve_prose_slot=_retrieve_prose_slot,
+        active_target_slots=_active_target_slots,
+        filter_to_structural_tags=_filter_to_structural_tags,
+        tags_have_category=_tags_have_category,
+    )
+
+
 
 
 
@@ -608,13 +639,7 @@ class PromptEnhancer(scripts.Script):
                     source, base_name, custom_sp, dd_vals,
                     prepend=prepend, seed=sd, detail=dl,
                     temperature=temp, neg_cb=neg_cb, motion_cb=motion_cb,
-                    prompts=_prompts,
-                    collect_modifiers=_collect_modifiers,
-                    assemble_system_prompt=_assemble_system_prompt,
-                    build_style_string=_build_style_string,
-                    build_inline_wildcard_text=_build_inline_wildcard_text,
-                    cancel_flag=_cancel_flag,
-                    logger=logger,
+                    ctx=_build_handler_ctx(),
                 )
 
             prose_event = enhance_btn.click(
@@ -940,206 +965,39 @@ class PromptEnhancer(scripts.Script):
             )
 
             # ── Remix ──
-            def _detect_format(text):
-                """Detect prompt format: 'prose', 'tags', or 'hybrid'."""
-                if not text:
-                    return "prose"
-                paragraphs = text.split("\n\n")
-                first_para = paragraphs[0]
-                parts = [p.strip() for p in first_para.split(",")]
-                if len(parts) < 3:
-                    return "prose"
-                avg_len = sum(len(p) for p in parts) / len(parts)
-                if avg_len >= 30 or len(parts) < 5:
-                    return "prose"
-                # First paragraph is tags — check if there's an NL supplement after
-                if len(paragraphs) > 1 and paragraphs[1].strip():
-                    return "hybrid"
-                return "tags"
-
-            def _refine(existing, existing_neg, source, tag_fmt, validation_mode,
-                        *args):
+            def _refine(existing, existing_neg, source, tag_fmt, validation_mode, *args):
+                # *args = *dd_vals, prepend, seed, detail, think, temperature, neg_cb, motion_cb
                 global _last_pe_mode
                 _last_pe_mode = "Remix"
                 motion_cb = args[-1]
-                neg_cb, temp = args[-2], args[-3]
-                prepend, sd, th = args[-6], args[-5], args[-4]
-                dd_vals = args[:-6]
-
-                _cancel_flag.clear()
-                t0 = time.monotonic()
-
-                existing = (existing or "").strip()
-                existing_neg = (existing_neg or "").strip()
-                print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
-                if not existing:
-                    yield "", "", _status_html(_MODE_REMIX, "No prompt to remix. Generate one first with Prose or Tags.", color='#c66')
-                    return
-
-                source = (source or "").strip()
-                mods = _collect_modifiers(dd_vals, seed=int(sd))
-                print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
-
-                if not mods and not source:
-                    yield "", "", _status_html(_MODE_REMIX, "Select modifiers or update source prompt.", color='#c66')
-                    return
-
-                fmt = _detect_format(existing)
-                print(f"[PromptEnhancer] Remix: detected={fmt}")
-
-                if fmt == "hybrid":
-                    sp = _prompts.get("remix_hybrid", "")
-                elif fmt == "tags":
-                    sp = _prompts.get("remix_tags", "")
-                else:
-                    sp = _prompts.get("remix_prose", "")
-
-                if motion_cb:
-                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
-                if neg_cb:
-                    sp = f"{sp}\n\n{_prompts.get('negative', '')}"
-
-                if source:
-                    sp = f"{sp}\n\nInstruction:\n{source}"
-                style_str = _build_style_string(mods)
-                if style_str:
-                    sp = f"{sp}\n\n{style_str}"
-
-                # Build user message — include current negative if checkbox is on
-                user_msg = existing
-                if neg_cb and existing_neg:
-                    user_msg = f"{user_msg}\n\nCurrent negative prompt:\n{existing_neg}"
-
-                try:
-                    raw = None
-                    for chunk in _call_llm_progress(user_msg, sp, temp, seed=int(sd)):
-                        if isinstance(chunk, dict):
-                            p = chunk
-                            yield gr.update(), gr.update(), _progress_html(f"{_MODE_REMIX}", p)
-                        else:
-                            raw = chunk
-                    raw = _clean_output(raw, strip_underscores=(fmt == "prose"))
-
-                    if neg_cb:
-                        result, negative = _split_positive_negative(raw)
-                    else:
-                        result, negative = raw, ""
-
-                    if fmt == "prose":
-                        if prepend and source:
-                            result = f"{source}\n\n{result}"
-                        elapsed = f"{time.monotonic() - t0:.1f}s"
-                        yield result, negative, _status_html(_MODE_REMIX, f"OK - remixed to {len(result.split())} words, {elapsed}")
-                        return
-
-                    if validation_mode != "Off":
-                        yield gr.update(), gr.update(), _status_html(_MODE_REMIX, f"Validating tags ({validation_mode})...", color='#aaa')
-
-                    # RAG routing for remix — only when user picked RAG on
-                    # User-chosen RAG path. No fallback — abort on unavailable.
-                    # No shortlist here — remix doesn't re-query.
-                    _anima_r = None
-                    _anima_r_cm = None
-                    if validation_mode == "RAG":
-                        ok, reason = _rag_available_for(tag_fmt)
-                        if not ok:
-                            logger.error(f"RAG unavailable (remix): {reason}")
-                            yield "", "", _status_html(_MODE_REMIX, f"RAG unavailable — {reason}", color='#c66')
-                            return
-                        _anima_r = _get_anima_stack()
-                        try:
-                            _anima_r_cm = _anima_r.models()
-                            _anima_r_cm.__enter__()
-                        except Exception as _e:
-                            logger.error(f"RAG setup failed in remix: {_e}")
-                            yield "", "", _status_html(_MODE_REMIX, f"RAG setup failed: {type(_e).__name__}: {_e}", color='#c66')
-                            return
-                        # Resolve any db_retrieve source: picks now. In Remix
-                        # the LLM already ran with an unresolved directive
-                        # (stack wasn't up yet) — this late resolution at
-                        # least ensures _inject_source_picks can land the
-                        # picked tag. Pre-pick prose-shaping is a Remix
-                        # limitation; ◆◇ still post-fills correctly.
-                        _resolve_deferred_sources(mods, int(sd), _anima_r, query=(source or existing))
-                    _anima_r_safety = _anima_safety_from_modifiers(mods, source)
-
-                    def _validate_tag_str(tag_str: str) -> tuple[str, dict | None]:
-                        if _anima_r is not None:
-                            return _anima_tag_from_draft(
-                                _anima_r, tag_str, safety=_anima_r_safety,
-                            )
-                        return _postprocess_tags(tag_str, tag_fmt, validation_mode)
-
-                    if fmt == "hybrid":
-                        # Split tags and NL, post-process tags only
-                        parts = result.split("\n\n", 1)
-                        tag_str = parts[0].strip()
-                        nl_supplement = parts[1].strip() if len(parts) > 1 else ""
-                        tag_str, stats = _validate_tag_str(tag_str)
-                        tag_str, stats = _inject_source_picks(tag_str, mods, stats)
-                        tag_count = stats.get("total", 0) if stats else len([t for t in tag_str.split(",") if t.strip()])
-                        final = f"{tag_str}\n\n{nl_supplement}" if nl_supplement else tag_str
-                        status_parts = [f"remixed {tag_count} tags + NL"]
-                    else:
-                        # Pure tags
-                        result, stats = _validate_tag_str(result)
-                        result, stats = _inject_source_picks(result, mods, stats)
-                        tag_count = stats.get("total", 0) if stats else len([t for t in result.split(",") if t.strip()])
-                        final = result
-                        status_parts = [f"remixed {tag_count} tags"]
-
-                    # Post-process negative tags
-                    if neg_cb and negative:
-                        negative, _ = _validate_tag_str(negative)
-
-                    if stats:
-                        if stats.get("corrected"):
-                            status_parts.append(f"{stats['corrected']} corrected")
-                        if stats.get("dropped"):
-                            status_parts.append(f"{stats['dropped']} dropped")
-                        if stats.get("kept_invalid"):
-                            status_parts.append(f"{stats['kept_invalid']} unverified")
-
-                    if prepend and source:
-                        final = f"{source}\n\n{final}"
-                    elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield final, negative, _status_html(_MODE_REMIX, f"OK - {', '.join(status_parts)}, {elapsed}")
-                except InterruptedError:
-                    yield "", "", _status_html(_MODE_REMIX, "Cancelled", color='#c66')
-                except _TruncatedError as e:
-                    if fmt == "prose":
-                        # Prose truncation → truncated prose is still prose,
-                        # surface it so the user can use/edit it.
-                        yield _clean_output(str(e), strip_underscores=True), "", _status_html(_MODE_REMIX, "Truncated", color='#ca6')
-                    else:
-                        # Tag-mode truncation → fail loud, no silent partial.
-                        yield "", "", _status_html(_MODE_REMIX, "Truncated — no output (retry)", color='#c66')
-                except urllib.error.URLError as e:
-                    yield "", "", _status_html(_MODE_REMIX, f"Connection failed: {e.reason}", color='#c66')
-                except Exception as e:
-                    yield "", "", _status_html(_MODE_REMIX, f"{type(e).__name__}: {e}", color='#c66')
-                finally:
-                    # Release Anima models if loaded (remix path)
-                    _r_cm = locals().get("_anima_r_cm")
-                    if _r_cm is not None:
-                        try:
-                            _r_cm.__exit__(None, None, None)
-                        except Exception as _e:
-                            logger.warning(f"anima models unload error (remix): {_e}")
+                neg_cb = args[-2]
+                temp = args[-3]
+                # think arg ignored (in-process runner controls thinking)
+                # detail unused by Remix; consumed positionally
+                sd = args[-6]
+                prepend = args[-7]
+                dd_vals = args[:-7]
+                yield from _pe_remix.run(
+                    existing, existing_neg, source, tag_fmt, validation_mode, dd_vals,
+                    prepend=prepend, seed=sd, temperature=temp,
+                    neg_cb=neg_cb, motion_cb=motion_cb,
+                    ctx=_build_handler_ctx(),
+                )
 
             remix_event = refine_btn.click(
                 fn=lambda x, y: (_cancel_flag.clear(), x, y)[1:],
                 _js=f"""function(x, y) {{
                     var ta = document.querySelector('#{tab}_prompt textarea');
                     var neg = document.querySelector('#{tab}_neg_prompt textarea');
-                    return [ta ? ta.value : x, neg ? neg.value : y];
+                    return [ta ? ta.value : '', neg ? neg.value : ''];
                 }}""",
-                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
+                inputs=[prompt_in, negative_in],
+                outputs=[prompt_in, negative_in], show_progress=False,
             ).then(
                 fn=_refine,
                 inputs=[prompt_in, negative_in, source_prompt, tag_format, tag_validation]
                        + dd_components
-                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb],
+                       + [prepend_source, seed, detail_level, think, temperature, negative_prompt_cb, motion_cb],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
