@@ -82,6 +82,12 @@ from pe_anima_glue.stack import (
     available_for as _rag_available_for,
     use_pipeline as _use_anima_pipeline,
 )
+from pe_anima_glue.modifiers import (
+    SAFETY_TIER_ORDER as _SAFETY_TIER_ORDER,
+    safety_from_modifiers as _anima_safety_from_modifiers,
+    active_target_slots as _active_target_slots,
+    inject_source_picks as _inject_source_picks,
+)
 from pe_anima_glue import stack as _pe_anima_stack
 from pe_tags import (
     validate as _pe_tags_validate,
@@ -140,36 +146,6 @@ def _make_anima_query_expander(temperature=0.3, seed=-1):
     return _expander
 
 
-# Tier precedence — most permissive first. A modifier YAML entry declares
-# its safety tier via a `safety_tier` field with one of these values.
-# The highest-tier active modifier wins.
-_SAFETY_TIER_ORDER = ("explicit", "nsfw", "sensitive", "safe")
-
-
-def _anima_safety_from_modifiers(mod_list, source: str = "") -> str:
-    """Resolve the safety tag from active modifiers via the `safety_tier`
-    field declared on each modifier's YAML entry.
-
-    Precedence: most permissive tier among active modifiers wins. If no
-    active modifier declares a tier, defaults to `safe`. Rating detection
-    from raw source text is deferred to the LLM (see V16 tag-extract SP).
-
-    `source` argument is retained (unused) for call-site compatibility.
-
-    Knowledge lives in data, not Python: the previous name-to-tier dict
-    and production-style name set have been removed. A modifier's tier is
-    declared on the modifier itself via YAML; adding a new modifier with
-    a safety implication never requires a Python edit.
-    """
-    del source  # rating signal comes from modifiers' own declarations
-    winning_index = len(_SAFETY_TIER_ORDER)  # higher = less permissive
-    for _name, entry in mod_list:
-        tier = entry.get("safety_tier") if isinstance(entry, dict) else None
-        if tier in _SAFETY_TIER_ORDER:
-            idx = _SAFETY_TIER_ORDER.index(tier)
-            if idx < winning_index:
-                winning_index = idx
-    return _SAFETY_TIER_ORDER[winning_index] if winning_index < len(_SAFETY_TIER_ORDER) else "safe"
 
 
 def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
@@ -505,63 +481,8 @@ def _resolve_deferred_sources(mods, seed: int, stack, query: str):
     return resolved_count
 
 
-def _inject_source_picks(tags_csv: str, mods, stats: dict | None = None):
-    """Post-fill safety net for `source:`-driven modifiers.
-
-    After tag validation + slot_fill, ensure every `source:`-picked tag
-    actually survives in the final tag list. The pre-pick already shapes
-    the prose (the LLM writes a 1970s scene if we said 1970s), but the
-    tag-extraction pass can fail to emit the literal decade tag if the
-    LLM described the era in concrete terms without naming it.
-
-    Mirrors `target_slot:`'s category-coverage pass — the pick was made
-    with a seed for reproducibility; this just makes sure the picked
-    value survives into the output. Together the two passes give
-    source+target_slot modifiers a strictly-stronger guarantee than
-    either alone (hence the ◆◇ double-badge convention).
-
-    Tags are converted underscore→space to match the anima output form
-    (other formats apply their own transforms downstream).
-    """
-    tags = [t.strip() for t in (tags_csv or "").split(",") if t.strip()]
-    existing = {t.lower().replace("_", " ").strip() for t in tags}
-    added = 0
-    for name, entry in mods or []:
-        if not isinstance(entry, dict):
-            continue
-        pick = entry.get("_resolved_from_source")
-        if not pick:
-            continue
-        pick_spaced = pick.replace("_", " ")
-        if pick_spaced.lower() in existing:
-            continue
-        tags.append(pick_spaced)
-        existing.add(pick_spaced.lower())
-        added += 1
-        print(f"[PromptEnhancer] Source inject ({name}): appended '{pick_spaced}'")
-    if added and stats is not None:
-        stats["total"] = stats.get("total", 0) + added
-        stats["source_injected"] = stats.get("source_injected", 0) + added
-    return ", ".join(tags), (stats or {})
 
 
-def _active_target_slots(mods) -> list[str]:
-    """Collect the set of target_slot values from active modifiers.
-
-    `mods` is the list of (name, entry) pairs produced by
-    _collect_modifiers. Reads `target_slot` from each entry. Dedupes
-    while preserving discovery order so injection is stable.
-    """
-    seen: set[str] = set()
-    out: list[str] = []
-    for _name, entry in mods or []:
-        if not isinstance(entry, dict):
-            continue
-        slot = entry.get("target_slot")
-        if slot and slot not in seen:
-            seen.add(slot)
-            out.append(slot)
-    return out
 
 
 def _tags_have_category(tag_csv: str, stack, category: int) -> bool:
