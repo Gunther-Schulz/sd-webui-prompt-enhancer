@@ -1,5 +1,16 @@
 # Story Mode — Phase A handoff
 
+> **Status note (post-refactor):** the broader extension was substantially
+> refactored after this doc was written. Most of `scripts/prompt_enhancer.py`
+> moved into `src/` packages (`llm_runner`, `pe_llm_layer`, `pe_data`,
+> `pe_tags`, `pe_anima_glue`, `pe_modes`, `pe_settings`, `pe_metadata`,
+> `pe_text_utils`, `pe_style`, `pe_detail`). The Ollama backend was replaced
+> with in-process llama-cpp-python. The story-mode harness described below
+> still works as documented — `story_runner.py` was migrated to use
+> `llm_runner` and the CLI flags (`--llm-quant`, `--compute`, `--no-dry`)
+> were updated. Run `git log --oneline` for the full commit list of the
+> migration + extractions.
+
 This is a handoff doc to pick up the story-mode experiment work on your
 local machine. Phase A (prompt-side only, no image generation) is what's
 in scope here; Phase B+ (Forge orchestration) comes after we have rated
@@ -22,7 +33,7 @@ on that branch, ready to commit + push.
 | `experiments/story-variants/V3b_two_pass_json.yaml` | Same as V3a but Pass 1 in JSON. |
 | `experiments/story-variants/V5_terse_yaml.yaml` | Single LLM call producing roles + captions only; image prompts are template-assembled at runtime, no LLM elaboration. Tests whether per-panel LLM elaboration is necessary or just nice-to-have. |
 | `experiments/story_validators.py` | Pure-function schema validators. One per output shape. Fail-loud per CLAUDE.md. |
-| `experiments/story_runner.py` | Test harness. Loads variant + seed, runs LLM passes against Ollama, validates outputs, saves trace JSON. |
+| `experiments/story_runner.py` | Test harness. Loads variant + seed, runs LLM passes via the in-process `llm_runner`, validates outputs, saves trace JSON. |
 | `experiments/story_rate.py` | Interactive rater. Walks traces, prompts for rubric scores, saves `_ratings.json` (human pass). |
 | `experiments/story_summarize.py` | Cross-variant aggregator. Reads traces + ratings, prints headline + per-dim + per-length comparison tables. |
 | `experiments/AGENT_RATER_PROMPT.md` | Paste-ready prompt that has Claude Code read traces directly and write `_ratings_agent.json` + qualitative `_agent_review.md`. The agent pass is a second opinion, NOT a replacement for human rating. |
@@ -252,42 +263,15 @@ After ratings are in:
 
 ## Commit + push
 
-When done with this batch of work:
+The Phase A harness + the broader extension refactor + the Ollama →
+llama-cpp-python cutover are all already committed and pushed on
+`claude/identify-repo-9YyME`. Use `git log --oneline` to review the
+full history. New artefacts produced by running the harness (trace
+JSONs, ratings files, agent reviews) live under
+`.ai/experiments/story/` which is gitignored — you don't push those.
 
-```bash
-git add experiments/story-modifiers/ experiments/story-rubric.yaml \
-        experiments/story-seeds.yaml experiments/story-variants/ \
-        experiments/story_runner.py experiments/story_validators.py \
-        experiments/story_rate.py experiments/story_summarize.py \
-        experiments/AGENT_RATER_PROMPT.md \
-        experiments/STORY_MODE_HANDOFF.md
-git commit -m "Add story-mode Phase A test harness + variants
-
-Phase A scope: prompt-side only, no image generation. Tests how reliably
-Qwen 9B abliterated produces structured story plans across:
-  - 1-pass vs 2-pass (V1/V2/V5 vs V3a/V3b)
-  - YAML vs JSON (V1/V3a vs V2/V3b)
-  - Full prompts vs caption-only (V1/V2/V3a/V3b vs V5)
-
-Deliverables under experiments/:
-  - story-modifiers/    new dropdowns (length, mode), staged here so
-                        they don't appear in the Forge UI yet
-  - story-variants/     5 variants spanning the design axes
-  - story-rubric.yaml   7-dim rubric with 1/3/5 anchors
-  - story-seeds.yaml    10 test stories (most marked placeholder until
-                        replaced with real use cases)
-  - story_runner.py     test harness, calls Ollama, saves traces
-  - story_validators.py pure-function schema validators
-  - story_rate.py       interactive rater
-  - STORY_MODE_HANDOFF.md  this doc
-
-No production code changes. scripts/prompt_enhancer.py and prompts.yaml
-untouched. Promotion to production happens after testing picks winners.
-
-Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>"
-
-git push -u origin claude/identify-repo-9YyME
-```
+If you add new variants, seeds, or change the rubric, commit those
+changes individually under `experiments/` with descriptive messages.
 
 ## When you come back
 
