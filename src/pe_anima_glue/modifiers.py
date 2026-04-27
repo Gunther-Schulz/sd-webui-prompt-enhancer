@@ -1,7 +1,13 @@
 """Modifier-driven Anima behaviors.
 
-Small, self-contained operations that read the active-modifier list
-to drive Anima-pipeline behaviors:
+  collect_modifiers(dropdown_selections, all_modifiers, seed=None)
+                                    → list[(name, entry)]
+      Resolve the user's Gradio dropdown selections into normalized
+      (name, entry) tuples. For modifiers with a `source:` entry +
+      seed, performs the db_pattern source pick HERE so the picked
+      value flows into the LLM system prompt. db_retrieve is
+      deferred (needs the loaded stack — handler resolves later via
+      pe_anima_glue.sources.resolve_deferred_sources).
 
   safety_from_modifiers(mod_list)   → str
       Resolves the safety tag (`safe`/`sensitive`/`nsfw`/`explicit`)
@@ -18,9 +24,10 @@ to drive Anima-pipeline behaviors:
       final tag list, so source+target_slot modifiers have the
       strictly-stronger ◆◇ guarantee.
 
-All three are pure operations on the (name, entry) tuples produced
-by `_collect_modifiers` in scripts/prompt_enhancer.py. No anima_tagger
-dependency — they look at modifier metadata only.
+These operate on the (name, entry) tuples produced by
+collect_modifiers. The first three need only modifier metadata;
+collect_modifiers calls into sources.resolve_source for db_pattern
+picks (which doesn't need the loaded stack — only the DB file).
 """
 
 from __future__ import annotations
@@ -35,6 +42,73 @@ logger = logging.getLogger("prompt_enhancer.pe_anima_glue.modifiers")
 # declares its safety tier via a `safety_tier` field with one of
 # these values. The most-permissive (lowest-index) active tier wins.
 SAFETY_TIER_ORDER = ("explicit", "nsfw", "sensitive", "safe")
+
+
+# ── Modifier collection (Gradio selections → resolved entries) ──────────
+
+
+def collect_modifiers(
+    dropdown_selections: Iterable[Iterable[str]],
+    all_modifiers: dict,
+    seed: Optional[int] = None,
+) -> List[Tuple[str, Any]]:
+    """Resolve Gradio dropdown selections into (name, entry) tuples.
+
+    `dropdown_selections` is an iterable of iterables — one inner list
+    per dropdown, each holding raw selection strings (which may carry
+    UI-appended ◆/◇ badges from pe_data.modifiers.build_dropdown_data).
+    `all_modifiers` is the flat lookup loaded by
+    pe_data.modifiers.load_all (canonical YAML names → normalized entries).
+
+    For modifiers with a `source:` block AND a non-None seed, the pick
+    is resolved here:
+      - db_pattern: resolved immediately (pure DB lookup, no models).
+      - db_retrieve: deferred — the loaded stack isn't available yet
+        and the caller (mode handler) re-resolves later.
+
+    The resolved entry has `behavioral` / `keywords` overwritten from
+    the picked Danbooru tag and gets a `_resolved_from_source`
+    breadcrumb so post-fill safety nets can detect "I made this pick,
+    make sure it survives validation".
+
+    Returns the list of (name, entry) tuples in selection order.
+    """
+    # Lazy import to avoid pe_anima_glue.modifiers ↔ pe_anima_glue.sources
+    # cycle issues (sources imports nothing from this module, but keep
+    # the dep direction explicit anyway).
+    from . import sources as _sources
+    from pe_data.modifiers import strip_badges
+
+    result: List[Tuple[str, Any]] = []
+    for selections in dropdown_selections:
+        for raw_name in (selections or []):
+            name = strip_badges(raw_name)
+            entry = all_modifiers.get(name)
+            if not entry:
+                continue
+            source = entry.get("source") if isinstance(entry, dict) else None
+            if source and seed is not None:
+                # db_retrieve needs the loaded stack; defer to the handler.
+                # db_pattern is a pure DB lookup; resolve immediately.
+                is_deferred = "db_retrieve" in source and "db_pattern" not in source
+                if is_deferred:
+                    pass  # leave entry as-is; handler resolves later
+                else:
+                    picked = _sources.resolve_source(source, seed)
+                    if picked:
+                        resolved = dict(entry)
+                        resolved["behavioral"] = picked["behavioral"]
+                        resolved["keywords"] = picked["keywords"]
+                        resolved["_resolved_from_source"] = picked["name"]
+                        print(f"[PromptEnhancer] Random pick ({name}): "
+                              f"{picked['name']} (pool={picked['pool_size']}, "
+                              f"post_count={picked['post_count']})")
+                        entry = resolved
+                    else:
+                        print(f"[PromptEnhancer] Random pick ({name}): "
+                              f"pool empty, falling back to LLM behavioral")
+            result.append((name, entry))
+    return result
 
 
 def safety_from_modifiers(

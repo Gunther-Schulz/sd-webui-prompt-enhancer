@@ -87,6 +87,7 @@ from pe_anima_glue.modifiers import (
     safety_from_modifiers as _anima_safety_from_modifiers,
     active_target_slots as _active_target_slots,
     inject_source_picks as _inject_source_picks,
+    collect_modifiers as _pe_collect_modifiers,
 )
 from pe_anima_glue.pipeline import (
     make_query_expander as _pe_make_query_expander,
@@ -327,60 +328,10 @@ def _base_names():
 _strip_mechanism_badges = _pe_mods.strip_badges
 
 
-def _collect_modifiers(dropdown_selections, seed: int | None = None):
-    """Collect all selected modifiers into a list of (name, normalized_entry) tuples.
-
-    Each normalized_entry is a dict with 'behavioral', 'keywords' and
-    optional 'source' / 'target_slot' fields. The caller decides which
-    fields to use based on the mode.
-
-    When a modifier has a `source:` entry AND a seed is provided, the
-    pick is resolved HERE (before the LLM sees any system prompt): the
-    returned entry has `behavioral` and `keywords` rewritten from the
-    picked real Danbooru tag. This is the `source:` mechanism — see
-    _resolve_source for how the pool is built.
-
-    Names may arrive with UI-appended ◆/◇ badges (added by
-    pe_data.modifiers.build_dropdown_data); strip those before looking
-    up the canonical YAML entry.
-    """
-    result = []
-    for selections in dropdown_selections:
-        for raw_name in (selections or []):
-            name = _strip_mechanism_badges(raw_name)
-            entry = _all_modifiers.get(name)
-            if not entry:
-                continue
-            source = entry.get("source") if isinstance(entry, dict) else None
-            if source and seed is not None:
-                # db_retrieve needs the anima stack (retriever + models),
-                # which isn't available at _collect_modifiers time. Defer
-                # those to _resolve_deferred_sources in the handler after
-                # models load. db_pattern resolves immediately here.
-                is_deferred = "db_retrieve" in source and "db_pattern" not in source
-                if is_deferred:
-                    # Leave entry as-is; handler will resolve later and
-                    # update behavioral/keywords/_resolved_from_source.
-                    pass
-                else:
-                    picked = _resolve_source(source, seed)
-                    if picked:
-                        # Materialize a per-run entry with picked values baked
-                        # in. Preserve target_slot / other keys so the post-fill
-                        # safety net still fires when combined with source.
-                        resolved = dict(entry)
-                        resolved["behavioral"] = picked["behavioral"]
-                        resolved["keywords"] = picked["keywords"]
-                        resolved["_resolved_from_source"] = picked["name"]
-                        print(f"[PromptEnhancer] Random pick ({name}): "
-                              f"{picked['name']} (pool={picked['pool_size']}, "
-                              f"post_count={picked['post_count']})")
-                        entry = resolved
-                    else:
-                        print(f"[PromptEnhancer] Random pick ({name}): "
-                              f"pool empty, falling back to LLM behavioral")
-            result.append((name, entry))
-    return result
+def _collect_modifiers(dropdown_selections, seed=None):
+    """Thin wrapper that threads the _all_modifiers global to
+    pe_anima_glue.modifiers.collect_modifiers."""
+    return _pe_collect_modifiers(dropdown_selections, _all_modifiers, seed=seed)
 
 
 _build_style_string = _pe_build_style_string
