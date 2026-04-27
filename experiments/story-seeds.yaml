@@ -1,23 +1,115 @@
 # Story-mode test seeds.
 #
 # Each entry is a complete story-generation request: source idea, length,
-# mode, and any modifiers from the existing dropdowns (Lighting, Visual
-# Style, Camera, etc.). The harness fans these out against every variant.
+# mode, and modifiers (must match real entries in modifiers/*.yaml — the
+# harness fail-louds on unknown names).
 #
-# Mark seeds with `placeholder: true` until you've replaced them with
-# stories from your typical use cases. The placeholder set should still
-# produce useful signal because they span genres / lengths / modes.
+# Coverage axes designed into this corpus:
+#   - LENGTH       3 / 4 / 6 / 8 / 12 panels (across multiple seeds each)
+#   - MODE         Linear / Vignettes / Character Study / Before & After /
+#                  Day in the Life / Two Viewpoints (multiple seeds per mode)
+#   - GENRE        contemporary / fantasy / sci-fi / horror / noir /
+#                  romance / historical / mythological / post-apocalyptic /
+#                  slice-of-life
+#   - CAST         solo / duo / trio / ensemble
+#   - SUBJECT      human / animal / place / object/vehicle
+#   - SOURCE       concrete (named) / generic (descriptive) / vague /
+#                  empty (dice-roll)
+#   - MODIFIERS    cover lighting / mood / atmosphere / setting /
+#                  visual style / camera / activity / time period
+#
+# Total: 35 seeds. Variant matrix on full corpus = 5 variants × 35 seeds
+# × 2 LLM seeds = 350 runs (~few hours on GPU, an evening on CPU).
+#
+# `placeholder: true` flags seeds the maintainer might want to swap with
+# their actual use cases. The non-placeholder ones are stressors designed
+# to surface variant-specific failure modes (length thresholds, schema
+# breakage on long output, cast-confusion, modifier conflicts, etc.).
+
+
+# ── Length stress (single mode = Linear, varying length) ────────────────
+
+- id: dancer_3_linear
+  source: "A ballet dancer in the moments before, during, and after a performance"
+  length: "3 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Backlit"
+    - "Cinematic Grade"
+  note: "Minimum-length stress test. 3 panels means each beat must carry
+        significant story weight; tests compression."
+  placeholder: false
+
+- id: forest_walk_3_linear
+  source: "Walking deeper into a misty forest as light fades"
+  length: "3 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Fog"
+    - "Watercolor"
+  note: "Solo, minimal source, atmospheric. Tests dice-roll-adjacent
+        creativity at minimum length."
+  placeholder: false
 
 - id: lighthouse_6_linear
   source: "A young woman visits an old lighthouse keeper during a storm"
   length: "6 panels"
   story_mode: "Linear"
   modifiers:
-    - "Rain"               # from lighting-mood/atmosphere
-    - "Oil Painting"       # from visual-style
-  note: "Canonical example used in design discussion. Two roles, weather as
-        atmosphere, classic 6-panel arc."
+    - "Rain"
+    - "Oil Painting"
+  note: "Canonical example used in design discussion. Two roles, weather
+        as atmosphere, classic 6-panel arc. Reference baseline."
   placeholder: false
+
+- id: heist_8_linear
+  source: "A four-person crew planning and executing a museum heist"
+  length: "8 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Gritty"
+    - "Cinematic Grade"
+  note: "Multi-character action. Tests whether variants can track 4
+        named characters across 8 panels without collapsing them into
+        one or two."
+  placeholder: false
+
+- id: knight_8_linear
+  source: "A young knight finds a wounded dragon in a forest clearing and decides to help it"
+  length: "8 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Volumetric Light"
+    - "Fantasy"
+  note: "Two roles (one human, one creature), fantasy genre, longer arc.
+        Tests narrative pacing and character relationship development."
+  placeholder: true
+
+- id: voyage_12_linear
+  source: "A merchant ship's three-month voyage across uncharted ocean"
+  length: "12 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Backlit"
+    - "Oil Painting"
+  note: "Long-arc stress test with implicit ensemble cast and no human
+        protagonist named. Tests whether variants stay coherent across
+        12 distinct beats."
+  placeholder: false
+
+- id: spaceship_12_linear
+  source: "A small repair crew responds to a distress call on a derelict spaceship"
+  length: "12 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Neon Glow"
+    - "Horror"
+  note: "Maximum-length stress test. 12 panels with multi-character cast
+        in sci-fi setting. Tests whether structured output holds at length."
+  placeholder: false
+
+
+# ── Mode breadth at standard length (4 or 6 panels) ─────────────────────
 
 - id: cafe_4_vignettes
   source: "Slow afternoon in a small Tokyo cafe"
@@ -30,16 +122,16 @@
         character-light. Tests how variant handles ambiguous cast."
   placeholder: true
 
-- id: knight_8_linear
-  source: "A young knight finds a wounded dragon in a forest clearing and decides to help it"
-  length: "8 panels"
-  story_mode: "Linear"
+- id: street_market_vignettes_6
+  source: "A bustling open-air market on a summer afternoon"
+  length: "6 panels"
+  story_mode: "Vignettes"
   modifiers:
-    - "Volumetric Light"
-    - "Fantasy"
-  note: "Two roles, fantasy genre, longer arc. Tests narrative pacing
-        and character relationship development."
-  placeholder: true
+    - "Golden Hour"
+    - "35mm Film"
+  note: "Vignettes mode with no central character — should produce
+        mood-shots, not a story arc. Tests mode adherence."
+  placeholder: false
 
 - id: chef_character_6
   source: "A chef preparing dinner service in a busy restaurant kitchen"
@@ -52,16 +144,17 @@
         Tests whether variant produces emotion/intensity arc, not plot arc."
   placeholder: true
 
-- id: detective_dayinlife_8
-  source: "A 1940s detective working a case from morning to midnight"
-  length: "8 panels"
-  story_mode: "Day in the Life"
+- id: writer_character_6
+  source: "A novelist alone in their apartment, deep into a writing session"
+  length: "6 panels"
+  story_mode: "Character Study"
   modifiers:
-    - "Film Noir"
-  note: "Tests temporal-progression mode. Lighting should evolve across
-        panels (morning → noon → evening → night) without the user
-        specifying it explicitly."
-  placeholder: true
+    - "Candlelight"
+    - "Dreamy"
+  note: "Solo Character Study — same character, different emotional
+        beats and time-of-night progression. Stresses 'no plot, only
+        mood' adherence."
+  placeholder: false
 
 - id: park_two_viewpoints_6
   source: "Two strangers cross paths in a park; one is leaving, one is arriving"
@@ -70,9 +163,20 @@
   modifiers:
     - "Golden Hour"
     - "Dreamy"
-  note: "Tests Two Viewpoints mode — alternating character perspectives.
+  note: "Two Viewpoints mode — alternating character perspectives.
         Both characters appear in some panels, only one in others."
   placeholder: true
+
+- id: rivals_two_viewpoints_6
+  source: "Two competing chefs preparing for a televised cook-off"
+  length: "6 panels"
+  story_mode: "Two Viewpoints"
+  modifiers:
+    - "Cinematic Grade"
+    - "Wong Kar-wai"
+  note: "Two Viewpoints with confrontational relationship. Tests cleanly
+        alternating perspective without the LLM merging them."
+  placeholder: false
 
 - id: garden_beforeafter_4
   source: "An overgrown garden being slowly restored over a season"
@@ -84,27 +188,39 @@
         the garden itself across stages."
   placeholder: true
 
-- id: dancer_3_linear
-  source: "A ballet dancer in the moments before, during, and after a performance"
-  length: "3 panels"
-  story_mode: "Linear"
+- id: rehearsal_to_premiere_beforeafter_6
+  source: "A small theater company from chaotic rehearsals to opening night"
+  length: "6 panels"
+  story_mode: "Before & After"
   modifiers:
     - "Backlit"
     - "Cinematic Grade"
-  note: "Minimum-length stress test. 3 panels means each beat must carry
-        significant story weight; tests compression."
+  note: "Before & After across collaborative effort. Tests whether
+        variants honor the pivot-panel structure."
+  placeholder: false
+
+- id: detective_dayinlife_8
+  source: "A 1940s detective working a case from morning to midnight"
+  length: "8 panels"
+  story_mode: "Day in the Life"
+  modifiers:
+    - "Film Noir"
+    - "1920s Art Deco"
+  note: "Day in the Life with implicit time progression. Lighting
+        should evolve panel-to-panel without the user specifying it
+        explicitly."
   placeholder: true
 
-- id: spaceship_12_linear
-  source: "A small repair crew responds to a distress call on a derelict spaceship"
-  length: "12 panels"
-  story_mode: "Linear"
+- id: bakery_dayinlife_6
+  source: "A small neighborhood bakery from before-dawn prep through closing"
+  length: "6 panels"
+  story_mode: "Day in the Life"
   modifiers:
-    - "Neon Glow"
-    - "Horror"
-  note: "Maximum-length stress test. 12 panels with multi-character cast
-        in sci-fi setting. Tests whether structured output holds at length."
-  placeholder: true
+    - "Golden Hour"
+    - "Watercolor"
+  note: "Day in the Life with consistent setting. Tests time-of-day
+        beat differentiation when the location stays constant."
+  placeholder: false
 
 - id: kid_birthday_vignettes_6
   source: "A child's seventh birthday party"
@@ -113,7 +229,246 @@
   modifiers:
     - "Candlelight"
     - "Dreamy"
-  note: "Many implied characters (kid, parents, friends). Tests how variant
-        handles undeclared cast — should the LLM enumerate, abstract, or
-        focus on protagonist?"
+  note: "Many implied characters (kid, parents, friends). Tests how
+        variant handles undeclared cast — should the LLM enumerate,
+        abstract, or focus on protagonist?"
   placeholder: true
+
+
+# ── Genre breadth ───────────────────────────────────────────────────────
+
+- id: vampire_estate_6_linear
+  source: "A young scholar arrives at the remote estate of a centuries-old vampire"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Fog"
+    - "Horror"
+  note: "Gothic horror genre. Two roles with strong age/era contrast.
+        Tests atmosphere consistency across panels."
+  placeholder: false
+
+- id: time_traveler_6_linear
+  source: "A scientist arrives in ancient Rome carrying a broken pocket watch"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Volumetric Light"
+    - "Ancient"
+  note: "Sci-fi adventure with anachronism. Tests whether variants
+        preserve era-specific detail in scene captions."
+  placeholder: false
+
+- id: romance_4_linear
+  source: "Two people meet at a bookstore and stay reading until closing"
+  length: "4 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Golden Hour"
+    - "Dreamy"
+  note: "Quiet contemporary romance. Tests whether variants honor
+        small-stakes intimacy or inflate into melodrama."
+  placeholder: false
+
+- id: mecha_battle_6_linear
+  source: "A mecha pilot's first sortie against an unknown enemy in a city"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Anime Mecha"
+    - "Neon Glow"
+  note: "Action/mecha genre. Tests whether anime-style modifier
+        propagates into per-panel descriptions."
+  placeholder: false
+
+- id: tea_ceremony_4_vignettes
+  source: "A traditional Japanese tea ceremony from preparation to first sip"
+  length: "4 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Japanese"
+    - "Pastel"
+  note: "Slow contemplative aesthetic. Tests whether variants resist
+        action verbs when the source is meditative."
+  placeholder: false
+
+- id: speakeasy_8_linear
+  source: "A jazz singer's nervous debut at a Prohibition-era speakeasy"
+  length: "8 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "1920s Art Deco"
+    - "Film Noir"
+  note: "Historical period. Tests era-specific costume/setting
+        consistency across 8 panels."
+  placeholder: false
+
+- id: post_apocalypse_8_linear
+  source: "A lone wanderer crosses a flooded ruin searching for the last library"
+  length: "8 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Gritty"
+    - "Backlit"
+  note: "Dystopian solo journey. Tests pacing — solo journeys can
+        easily collapse into 'wanders, wanders, wanders, finds it'."
+  placeholder: false
+
+- id: orpheus_6_linear
+  source: "Orpheus descends into the underworld to retrieve Eurydice"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Volumetric Light"
+    - "Charcoal Drawing"
+  note: "Mythological retelling — known story, two named characters.
+        Tests whether variants over-rely on the LLM's prior knowledge
+        and skip per-panel scene specificity."
+  placeholder: false
+
+
+# ── Cast complexity ─────────────────────────────────────────────────────
+
+- id: solo_artist_4_character_study
+  source: "A painter alone in a sunlit studio, working from morning to dusk"
+  length: "4 panels"
+  story_mode: "Character Study"
+  modifiers:
+    - "Golden Hour"
+    - "Oil Painting"
+  note: "Single character, single setting. Tests whether variants can
+        produce visual variation without manufacturing additional cast."
+  placeholder: false
+
+- id: band_trio_6_linear
+  source: "A three-piece indie band on the last day of a road tour"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "35mm Film"
+    - "Neon Glow"
+  note: "Trio cast — three roles must be distinct + named in role
+        descriptions. Stress test for role-id collisions."
+  placeholder: false
+
+- id: dinner_party_8_vignettes
+  source: "A dinner party of five close friends, each with their own quiet drama"
+  length: "8 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Candlelight"
+    - "Cinematic Grade"
+  note: "Ensemble cast (5 named friends) across 8 panels. Tests whether
+        variants can handle large declared casts without conflating
+        characters."
+  placeholder: false
+
+- id: pirate_crew_8_linear
+  source: "A pirate captain and her crew survive a storm, then mutiny"
+  length: "8 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Rain"
+    - "Oil Painting"
+  note: "Ensemble action, multi-character arc with cast turning on each
+        other. Tests whether ref_panels logic adapts to cast composition
+        changes mid-story."
+  placeholder: false
+
+
+# ── Empty / vague source (dice-roll cases) ──────────────────────────────
+
+- id: empty_source_4_vignettes
+  source: ""
+  length: "4 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Dreamy"
+    - "Pastel"
+  note: "Completely empty source — variants must invent the entire
+        story from modifiers alone. Tests dice-roll creativity floor."
+  placeholder: false
+
+- id: emotion_only_3_character_study
+  source: "Loneliness"
+  length: "3 panels"
+  story_mode: "Character Study"
+  modifiers:
+    - "Fog"
+    - "Black and White"
+  note: "Emotion-only source — no scene, no character, no plot.
+        Tests how variants ground abstract sources in concrete imagery."
+  placeholder: false
+
+- id: abstract_dream_4_vignettes
+  source: "A fading childhood memory"
+  length: "4 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Dreamy"
+    - "Watercolor"
+  note: "Abstract source. Tests whether variants invent specific scenes
+        or stay frustratingly vague."
+  placeholder: false
+
+
+# ── Subject type diversity (non-human protagonists) ─────────────────────
+
+- id: cat_adventure_6_linear
+  source: "An indoor cat's first hour outside the house"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Golden Hour"
+    - "Watercolor"
+  note: "Animal protagonist. Tests whether variants describe through
+        the animal's perspective vs. as a distant observer."
+  placeholder: false
+
+- id: ancient_temple_4_vignettes
+  source: "An abandoned forest temple slowly being reclaimed by nature"
+  length: "4 panels"
+  story_mode: "Vignettes"
+  modifiers:
+    - "Volumetric Light"
+    - "Oil Painting"
+  note: "Place as protagonist (no humans). Tests whether variants
+        introduce people anyway or honor the no-human framing."
+  placeholder: false
+
+- id: motorcycle_6_dayinlife
+  source: "A vintage motorcycle's day from cold morning start to evening parking"
+  length: "6 panels"
+  story_mode: "Day in the Life"
+  modifiers:
+    - "Backlit"
+    - "Vintage Film"
+  note: "Object/vehicle as protagonist. Edge case — tests how variants
+        handle 'character study' on something inanimate."
+  placeholder: false
+
+
+# ── Modifier-conflict stress tests ──────────────────────────────────────
+
+- id: horror_dreamy_6_linear
+  source: "A nurse on a quiet night shift at an old hospital"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Horror"
+    - "Dreamy"
+  note: "Mood conflict — Horror + Dreamy. Tests whether variants
+        synthesize 'unsettling-quiet' or pick one and ignore the
+        other."
+  placeholder: false
+
+- id: neon_pastel_6_linear
+  source: "A late-night convenience store across a year of overnight shifts"
+  length: "6 panels"
+  story_mode: "Linear"
+  modifiers:
+    - "Neon Glow"
+    - "Pastel"
+  note: "Color conflict — saturated neon + soft pastel. Tests whether
+        the style_anchor reconciles or breaks across panels."
+  placeholder: false
