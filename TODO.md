@@ -28,7 +28,8 @@ Forward-looking work. Everything previously in this file has shipped.
   (e.g. `c0e627b`, `64572b9`) for the pattern.
 - **Test before committing.** For retriever/validator changes run
   `src/anima_tagger/scripts/verify.py`; for end-to-end changes run
-  `src/anima_tagger/scripts/full_pipeline_test.py` against Ollama.
+  `src/anima_tagger/scripts/full_pipeline_test.py` against the
+  in-process llm_runner (formerly Ollama).
   New A/B test ideas go under `src/anima_tagger/scripts/` as
   `ab_*.py`, not `test_*.py` (gitignored prefix).
 - **Don't touch Remix/Tags/Hybrid handler signatures.** They're
@@ -194,62 +195,29 @@ be fully evidence-based, A/B each one before concluding.
 
 ---
 
-## Investigate: replacing Ollama with an internal runner
+## Done: Ollama → in-process llama-cpp-python (April 2026)
 
-Currently the extension requires Ollama running externally (HTTP on
-`127.0.0.1:11434`). Benefits of replacing it with an in-process runner
-would be: no separate daemon, automatic model lifecycle management
-coordinated with image generation, no HTTP overhead, and the ability
-to use **grammar-constrained decoding** (which would solve the last
-class of LLM-drafted hallucinations — tokens that only match real
-Danbooru tags can be emitted).
+Replaced the external Ollama HTTP path with `src/llm_runner/` (wrapping
+llama-cpp-python) plus `src/pe_llm_layer/` (the call-shape adapter). The
+extension no longer requires a separate daemon; the GGUF auto-downloads
+on first use via huggingface_hub.
 
-### Candidate runners
+Key wins from this cutover:
+- **Loop suppression actually works.** Ollama's Go runner silently
+  dropped `repeat_penalty` / `presence_penalty` / `frequency_penalty`
+  for Qwen 3.5 (issue ollama/ollama#14493). The in-process runner
+  uses the DRY sampler with Qwen-tuned defaults (multiplier=0.5,
+  base=1.75, allowed_length=2) plus working repeat penalties.
+- **Grammar-constrained decoding (GBNF) available** for the
+  experimental Story mode — JSON Schema → guaranteed-valid output.
+- **VRAM coordination** is ours: lifecycle setting toggles between
+  keep-loaded (fast) and unload-after-call (frees VRAM for image gen).
+- **Cleaner code:** ~400 LOC of Ollama HTTP plumbing + post-hoc
+  loop-detection heuristics deleted from prompt_enhancer.py.
 
-- **llama-cpp-python** — Python bindings for llama.cpp. Loads GGUF
-  models directly from HF. Supports GBNF grammar constraints (big
-  unlock — we could directly enforce "only real Danbooru tags" at
-  generation time). CPU + GPU (CUDA) builds available. Lightweight.
-- **vllm** — high-throughput server. Overkill for single-user workflow.
-- **transformers + accelerate** — slowest option; no grammar support.
-- **MLC-LLM** — compiles models for specific hardware. Setup-heavy.
-
-### Likely architecture
-
-- Ship a "LLM Runner" setting: `ollama` (current) | `internal (llama-cpp)`.
-- For internal runner: auto-download a recommended GGUF (e.g. a
-  quantized version of the abliterated qwen3.5-9b) from HF via
-  `huggingface_hub`.
-- Load on-demand in a context manager similar to how `anima_tagger`
-  handles bge-m3 (per-call load, auto-unload to free VRAM for image
-  generation).
-- Reuse existing `_call_llm` interface so the rest of the codebase
-  doesn't care which runner is active.
-
-### Considerations
-
-- **Users with existing Ollama setups.** Keep Ollama as a supported
-  runner; don't force-switch. Recommend internal for new installs.
-- **GGUF licensing.** Model licenses must permit redistribution for
-  auto-download to work cleanly. Abliterated qwen variants are
-  typically Apache-2.0 — should be fine.
-- **VRAM coordination.** With bge-m3 + reranker + Anima DiT + the LLM
-  all potentially co-resident, need careful unload sequencing.
-  Internal runner makes this easier (we own the lifecycle).
-- **Grammar decoding benefit.** With GBNF constraints generating only
-  valid Danbooru tags, we could drop the rapidfuzz validator entirely
-  and rely on the retrieval validator for semantic correction only —
-  simpler pipeline.
-
-### Risks
-
-- **Token throughput.** llama-cpp GGUF inference on RTX 4090/5090 is
-  ~50-80 tok/s for 9B models; Ollama is similar. No regression expected.
-- **Setup complexity for users.** Ollama "just works" on most OSes.
-  llama-cpp-python requires CUDA toolkit matching torch. Wheels
-  should cover most setups; fallback to CPU.
-- **Context-length mismatches.** Current prompts are well under 4k
-  tokens; both runners handle this fine.
+Settings for the runner (in Settings → Prompt Enhancer LLM):
+GGUF repo, quant, custom path, context size, compute target
+(gpu/cpu/shared), GPU layers, lifecycle, low-level DRY toggle.
 
 ---
 

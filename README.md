@@ -6,7 +6,9 @@ Takes your short prompt and expands it into a detailed description, booru-style 
 
 ## Features
 
-- **Local LLM powered** — uses Ollama or any OpenAI-compatible API
+- **In-process LLM** — llama-cpp-python with auto-downloaded GGUF; no daemon, no HTTP, no separate Ollama install
+- **DRY sampler enabled by default** — Don't-Repeat-Yourself loop suppression at the sampler level (an Ollama bug silently dropped repetition penalties for Qwen 3.5; the in-process runner fixes this)
+- **JSON / GBNF support** — pass a JSON Schema and outputs are guaranteed structurally valid (used by experimental Story mode)
 - **Four generation modes** — Prose (flowing paragraph), Hybrid (tags + NL supplement), Tags (booru tags), Remix (modify existing)
 - **Mode modifiers** — Still (frozen moment), Scene (action over time), Audio (sound cues) — available in the Mode dropdown alongside other modifiers
 - **130+ categorized modifiers** — organized into auto-generated dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
@@ -19,34 +21,40 @@ Takes your short prompt and expands it into a detailed description, booru-style 
 - **Detail slider** — scales output length to the active image model (SD/SDXL/Flux/Z-Image)
 - **Streaming** — real-time token streaming with stall detection, thinking detection, and configurable safeguards
 - **Cancel button** — abort any running generation
-- **Ollama status** — shows version, loaded model, and GPU/CPU mode
+- **LLM status** — shows model, load state, compute target (GPU/CPU/shared), and DRY sampler status
 - **Metadata** — all settings saved to generated images and restored when loading
 - **Works in both txt2img and img2img** tabs
 
 ## Requirements
 
-You need [Ollama](https://ollama.com/download) running locally:
+The extension's `install.py` automatically installs `llama-cpp-python`
+on first Forge load and detects your CUDA version to pick the matching
+prebuilt wheel. The default GGUF model auto-downloads from HuggingFace
+on first prompt-enhancer use (~5.6 GB cached at `~/.cache/huggingface/`).
 
-```bash
-# Install Ollama
-curl -fsSL https://ollama.com/install.sh | sh
+If the CUDA wheel install fails (rare), `install.py` falls back to a
+CPU-only build with a visible warning explaining how to manually rebuild
+with CUDA support.
 
-# Pull the recommended model
-ollama pull huihui_ai/qwen3.5-abliterated:9b
-
-# Start Ollama (CPU-only, no VRAM used)
-OLLAMA_NUM_GPU=0 OLLAMA_KEEP_ALIVE=0 ollama serve
-```
+No external daemon is required — the LLM runs in-process inside Forge.
 
 ### Recommended model
 
-**`huihui_ai/qwen3.5-abliterated:9b`** (~6 GB) — best balance of quality and instruction following. This is the default.
+The default is **`mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF`**
+quantized to **Q4_K_M** (~5.6 GB, comfortably runs on 8 GB VRAM with
+offload). Override the repo, quant, custom path, context size, compute
+target (GPU / CPU / shared), and lifecycle (keep loaded vs. unload
+after each call) in **Settings → Prompt Enhancer LLM**.
 
-The 4b variant is not recommended as it produces noticeably lower quality output. Larger models (14b+) work well if you have the RAM but are slower on CPU.
+"Abliterated" models have refusal behaviors removed, which is useful
+for unrestricted creative content. Standard models work fine for
+general use — just point the **GGUF repo** setting at any quants repo.
 
-"Abliterated" models have refusal behaviors removed, which is useful for unrestricted creative content. Standard models work fine for general use.
-
-**Known limitation:** Certain combinations of source prompt, modifiers, and wildcards can cause Qwen to enter a repetition loop, generating garbage until the token limit is reached. This shows as a "Truncated" status. If this happens, try removing or changing a modifier — some combinations are simply too complex for a 9B model to synthesize coherently. Larger models handle complex combinations better.
+**Loop suppression:** the runner uses the DRY (Don't Repeat Yourself)
+sampler with Qwen-tuned defaults. Repetition loops — a chronic problem
+on the older Ollama path because of an upstream bug — should now be
+rare. If you still see a "Truncated" status, the sampler caught a
+genuine degenerate case; try a different seed or simpler modifier mix.
 
 ## Installation
 
@@ -97,7 +105,7 @@ Tag databases are automatically downloaded on first use (~2-3 MB per format; ~1.
 - **Fuzzy** — alias + fuzzy string matching, keep unrecognized
 - **Off** — raw LLM output, no validation
 
-On truncation (Ollama hit the token or time budget), tag-mode outputs fail loud: empty textbox, red "Truncated — no output (retry)" status. A reduced partial result would look like success but silently missing content; the retry path is more honest.
+On truncation (the runner hit `num_predict` or the wall-time cap before completion), tag-mode outputs fail loud: empty textbox, red "Truncated — no output (retry)" status. A reduced partial result would look like success but silently missing content; the retry path is more honest.
 
 ### Remixing an existing prompt
 
@@ -187,17 +195,27 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 | Temperature | 0.8 | Creativity (0 = deterministic, 2 = creative) |
 | Think | off | Let model reason before answering (slower) |
 | Seed | -1 (random) | LLM seed for reproducibility. Fixed seed = same output for same input |
-| API URL | `http://localhost:11434` | Ollama API endpoint |
-| Model | `huihui_ai/qwen3.5-abliterated:9b` | LLM model (auto-detected from Ollama) |
+
+LLM model + compute config lives in **Settings → Prompt Enhancer LLM**:
+
+| Setting | Default | Description |
+|---|---|---|
+| GGUF repo | `mradermacher/Huihui-Qwen3.5-9B-abliterated-GGUF` | HuggingFace GGUF repo |
+| Quantization | `Q4_K_M` | `Q4_K_M` / `Q5_K_M` / `Q6_K` / `Q8_0` |
+| Custom GGUF path | (empty) | Absolute path to a local GGUF (overrides repo + quant) |
+| Context size | 4096 | 2048 / 4096 / 8192 / 16384 |
+| Compute target | `gpu` | `gpu` / `cpu` / `shared` (split GPU+CPU) |
+| GPU layers (when shared) | -1 | Number of layers offloaded to GPU |
+| Memory persistence | `keep_loaded` | `keep_loaded` (fast) or `unload_after_call` (frees VRAM for image gen) |
+| Low-level DRY sampler | enabled | Loop suppression via the DRY sampler (Qwen-tuned). Disable to use the high-level sampler set instead. |
 
 ### Environment variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PROMPT_ENHANCER_LOCAL` | (none) | Comma-separated directories for local modifier overrides |
-| `PROMPT_ENHANCER_STALL_TIMEOUT` | 10 | Abort if no tokens received for this many seconds |
-| `PROMPT_ENHANCER_MAX_TOKENS` | 1000 | Hard cap on output tokens |
-| `PROMPT_ENHANCER_MAX_TIME` | 60 | Hard cap on total generation time in seconds |
+| `PROMPT_ENHANCER_STALL_TIMEOUT` | 30 | Abort if no tokens received for this many seconds |
+| `PROMPT_ENHANCER_MAX_TIME` | 180 | Hard cap on total generation time in seconds |
 
 ## Published modifiers
 

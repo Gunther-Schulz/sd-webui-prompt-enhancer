@@ -5,3 +5,8 @@ huggingface_hub>=0.24
 datasets>=4.0
 pyarrow>=15.0
 
+# llama-cpp-python is NOT pinned here because the correct CUDA wheel depends
+# on torch's CUDA version, which is detected at runtime. install.py handles
+# this. A plain `pip install -r requirements.txt` outside of Forge would
+# install the CPU-only build (functional but slow on a 9B model).
+

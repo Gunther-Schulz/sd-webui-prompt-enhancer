@@ -1,10 +1,15 @@
 """Forge install hook.
 
 Runs on extension load:
-  1. Installs Python deps on first use (rapidfuzz, sentence-transformers, …).
+  1. Installs Python deps on first use (rapidfuzz, sentence-transformers,
+     llama-cpp-python with CUDA-wheel detection, etc).
   2. Downloads the pre-built anima_tagger artefacts from HuggingFace
-     so the Anima retrieval pipeline just works out of the box —
-     no separate manual scripts for the end user.
+     so the Anima retrieval pipeline just works out of the box.
+
+The LLM model itself (a GGUF ~5-7 GB) is NOT downloaded here. It
+auto-downloads on first prompt-enhancer invocation via
+huggingface_hub's HF cache (managed by src/llm_runner/download.py).
+This avoids loading multi-GB model weights at every Forge startup.
 
 Everything under src/anima_tagger/scripts/ is DEV-only (maintainer
 workflow: rebuild index, upload to HF). End users never touch it.
@@ -34,9 +39,11 @@ _DEPS = [
     ("faiss",                 "faiss-cpu>=1.8",
      "vector index for Anima tag retrieval"),
     ("huggingface_hub",       "huggingface_hub>=0.24",
-     "Danbooru dataset + artefact download"),
+     "Danbooru dataset + artefact download + GGUF download"),
     ("pyarrow",               "pyarrow>=15.0",
      "parquet I/O for downloaded datasets"),
+    # llama-cpp-python is installed via a separate code path
+    # (_install_llama_cpp) because it needs CUDA-wheel detection.
 ]
 
 
@@ -47,6 +54,109 @@ def _install_deps():
                 f"install {pip_spec}",
                 f"{pip_spec.split('>=')[0]} for sd-webui-prompt-enhancer ({purpose})",
             )
+    _install_llama_cpp()
+
+
+# ── 1b. llama-cpp-python with CUDA-wheel detection ────────────────────
+#
+# llama-cpp-python ships pre-built wheels per CUDA version at
+# https://abetlen.github.io/llama-cpp-python/whl/cu<NN>/. The default
+# `pip install llama-cpp-python` only fetches the CPU build, which is
+# painfully slow on a 9B model.
+#
+# We detect torch's CUDA version (Forge already has torch installed by
+# this point) and install the matching wheel. If no wheel exists for
+# that CUDA version, fall back to the CPU build with a loud warning so
+# the user knows they're on the slow path and what to do about it.
+
+
+def _detect_torch_cuda() -> str:
+    """Return torch's CUDA version as 'cu<NN>' (e.g. 'cu124'), or ''
+    if torch isn't available or has no CUDA. Empty means CPU build."""
+    try:
+        import torch
+    except ImportError:
+        return ""
+    cuda = getattr(torch.version, "cuda", None)
+    if not cuda:
+        return ""
+    # "12.4" -> "cu124"
+    return "cu" + cuda.replace(".", "")
+
+
+def _install_llama_cpp():
+    if launch.is_installed("llama_cpp"):
+        return
+
+    cuda_tag = _detect_torch_cuda()
+    if cuda_tag:
+        # Try the CUDA wheel first
+        index_url = f"https://abetlen.github.io/llama-cpp-python/whl/{cuda_tag}/"
+        cmd = f"install llama-cpp-python --extra-index-url {index_url}"
+        try:
+            launch.run_pip(
+                cmd,
+                f"llama-cpp-python ({cuda_tag} wheel) for sd-webui-prompt-enhancer "
+                f"(in-process LLM inference)",
+            )
+            return
+        except Exception as e:
+            _warn_cuda_fallback(cuda_tag, str(e))
+            # fall through to CPU build
+
+    # CPU build (either no CUDA, or CUDA wheel install failed)
+    try:
+        launch.run_pip(
+            "install llama-cpp-python",
+            "llama-cpp-python (CPU build) for sd-webui-prompt-enhancer "
+            "(in-process LLM inference)",
+        )
+    except Exception as e:
+        _warn(
+            "LLM RUNNER UNAVAILABLE",
+            f"Failed to install llama-cpp-python: {type(e).__name__}: {e}\n\n"
+            f"The Prompt Enhancer extension will not be able to generate "
+            f"prompts until llama-cpp-python is installed. Try a manual "
+            f"install:\n\n"
+            f"    pip install llama-cpp-python\n\n"
+            f"For GPU acceleration:\n"
+            f"    pip install llama-cpp-python "
+            f"--extra-index-url https://abetlen.github.io/llama-cpp-python/whl/<cuda>/\n\n"
+            f"where <cuda> matches your torch build (e.g. cu124 for "
+            f"CUDA 12.4). See https://github.com/abetlen/llama-cpp-python "
+            f"for details."
+        )
+
+
+def _warn_cuda_fallback(cuda_tag: str, err: str) -> None:
+    bar = "*" * 72
+    print("", file=sys.stderr)
+    print(bar, file=sys.stderr)
+    print(f"  sd-webui-prompt-enhancer — llama-cpp-python CUDA wheel unavailable",
+          file=sys.stderr)
+    print(f"  No prebuilt {cuda_tag} wheel found, falling back to CPU build.", file=sys.stderr)
+    print(f"  Generation will be much slower than on GPU.", file=sys.stderr)
+    print(f"  Original error: {err.splitlines()[0] if err else '(none)'}",
+          file=sys.stderr)
+    print(f"  Fix: build llama-cpp-python with CUDA support manually:",
+          file=sys.stderr)
+    print(f"    CMAKE_ARGS=\"-DGGML_CUDA=on\" pip install --force-reinstall "
+          f"--no-cache-dir llama-cpp-python", file=sys.stderr)
+    print(bar, file=sys.stderr)
+    print("", file=sys.stderr)
+
+
+def _warn(banner: str, msg: str) -> None:
+    """Multi-line stderr warning, formatted to be visible in the Forge
+    console log among other startup messages."""
+    bar = "*" * 72
+    print("", file=sys.stderr)
+    print(bar, file=sys.stderr)
+    print(f"  sd-webui-prompt-enhancer — {banner}", file=sys.stderr)
+    for line in msg.rstrip().splitlines():
+        print(f"  {line}", file=sys.stderr)
+    print(bar, file=sys.stderr)
+    print("", file=sys.stderr)
 
 
 # ── 2. Pre-built artefacts auto-download ──────────────────────────────
@@ -93,17 +203,10 @@ def _download(url: str, dest: str) -> None:
     os.replace(dest + ".part", dest)
 
 
-def _warn(msg: str) -> None:
-    """Print a prominently-formatted warning to stderr so it's visible
-    in the Forge console log, not lost in a sea of startup messages."""
-    bar = "*" * 72
-    print("", file=sys.stderr)
-    print(bar, file=sys.stderr)
-    print(f"  sd-webui-prompt-enhancer — ANIMA RAG UNAVAILABLE", file=sys.stderr)
-    for line in msg.rstrip().splitlines():
-        print(f"  {line}", file=sys.stderr)
-    print(bar, file=sys.stderr)
-    print("", file=sys.stderr)
+def _warn_anima(msg: str) -> None:
+    """Anima-specific warning. Wraps _warn (defined above) with the
+    anima-RAG banner so the message stays parseable in the log."""
+    _warn("ANIMA RAG UNAVAILABLE", msg)
 
 
 def _fetch_artefacts():
@@ -139,7 +242,7 @@ def _fetch_artefacts():
             manifest = json.loads(r.read())
     except Exception as e:
         err = f"{type(e).__name__}: {e}"
-        _warn(
+        _warn_anima(
             f"Could not reach HuggingFace to download the RAG index.\n"
             f"URL: {ver_url}\n"
             f"Error: {err}\n\n"
