@@ -23,7 +23,9 @@ on that branch, ready to commit + push.
 | `experiments/story-variants/V5_terse_yaml.yaml` | Single LLM call producing roles + captions only; image prompts are template-assembled at runtime, no LLM elaboration. Tests whether per-panel LLM elaboration is necessary or just nice-to-have. |
 | `experiments/story_validators.py` | Pure-function schema validators. One per output shape. Fail-loud per CLAUDE.md. |
 | `experiments/story_runner.py` | Test harness. Loads variant + seed, runs LLM passes against Ollama, validates outputs, saves trace JSON. |
-| `experiments/story_rate.py` | Interactive rater. Walks traces, prompts for rubric scores, saves `_ratings.json`. |
+| `experiments/story_rate.py` | Interactive rater. Walks traces, prompts for rubric scores, saves `_ratings.json` (human pass). |
+| `experiments/story_summarize.py` | Cross-variant aggregator. Reads traces + ratings, prints headline + per-dim + per-length comparison tables. |
+| `experiments/AGENT_RATER_PROMPT.md` | Paste-ready prompt that has Claude Code read traces directly and write `_ratings_agent.json` + qualitative `_agent_review.md`. The agent pass is a second opinion, NOT a replacement for human rating. |
 
 What was **not** changed: `scripts/prompt_enhancer.py`, `prompts.yaml`,
 `modifiers/`, `src/`. No production behavior changes. The extension
@@ -70,42 +72,88 @@ call on a modest CPU. Two-pass variants do ~N+1 calls per run, so a
 on GPU. Realistic budget: an evening for the full grid on CPU, much
 less on a GPU machine.
 
-### Rating
+### Rating — two passes
 
-After runs are saved, rate each variant interactively:
+The rubric is rated TWICE per variant: once by you (primary signal),
+once by Claude Code (independent second opinion). They write to
+different files; `story_summarize.py` reads both and surfaces
+disagreements.
+
+**Pass 1 — human (interactive):**
 
 ```bash
 python -m experiments.story_rate --variant V1_one_pass_yaml
 ```
 
 For each trace, the script prints the source / plan / per-panel prompts
-(or the failure reason if the trace failed), then prompts for 1-5 scores
+(or failure reason if the trace failed), then prompts for 1-5 scores
 across 7 rubric dimensions plus an overall. Failed-validation traces
 auto-score 1 on `schema_validity` and only ask for notes — saves time.
 
 Ratings persist to `.ai/experiments/story/<variant>/_ratings.json`
-after every rating, so Ctrl-C is safe.
+after every rating, so Ctrl-C is safe. `--show-only` prints traces
+without rating prompts.
 
-`--show-only` prints traces without rating (useful for a first eyeball
-pass before committing to scoring).
+**Pass 2 — agent (Claude Code reads traces directly):**
 
-## How to interpret results
+Open a Claude Code session in this repo. Paste the prompt template
+from `experiments/AGENT_RATER_PROMPT.md`, with the variant id filled
+in. Claude reads every trace, applies the rubric, writes
+`_ratings_agent.json` + a qualitative `_agent_review.md`.
 
-After rating, each variant has a `_ratings.json` with all run scores.
-For now there's **no auto-aggregator script** — write one when you have
-data, or eyeball the JSONs. Things to look at:
+Per CLAUDE.md "Quality = intent fulfillment, not a metric" — the human
+pass is the primary signal. The agent pass catches what you miss when
+fatigued and surfaces rubric gaps.
 
-1. **Schema-validity pass rate per variant.** This is the binary signal.
-   If V1 fails to parse 70% of the time and V3a passes 95% of the time,
-   that's the answer to one-vs-multi-pass.
-2. **Schema-validity at length thresholds.** Group ratings by `length_n`
-   in the trace. If V1 is fine at 3-6 panels but breaks at 12, the
-   threshold matters and we might want a length-aware variant selection.
+### Summary across variants
+
+After rating (one or both passes complete):
+
+```bash
+# Headline + per-dim tables, terminal output
+python -m experiments.story_summarize
+
+# Markdown tables (paste into commit message or design doc)
+python -m experiments.story_summarize --md
+
+# Per-length parse-rate breakdown — shows where each variant collapses
+python -m experiments.story_summarize --by-length
+```
+
+The headline table shows: parse rate, mean wall time, mean tokens,
+mean LLM-call count, mean overall rating per rater. The per-dimension
+table shows means per rubric dim per variant. Disagreements between
+human and agent overall means by 1+ flag a deeper look.
+
+### Cross-variant judgment (the actual decision document)
+
+After per-trace ratings exist, the second half of
+`experiments/AGENT_RATER_PROMPT.md` has a separate prompt that asks
+Claude Code to read all `_ratings_agent.json` + `_agent_review.md`
+files and produce `experiments/STORY_RESULTS_v1.md` — a per-axis
+comparison and a recommendation for which variant ships in Phase A.1.
+
+That document is the artifact that drives Phase A.1 promotion (lifting
+prompts into `prompts.yaml`, moving modifier YAMLs into `modifiers/`).
+
+## What to look at while rating / interpreting
+
+1. **Schema-validity pass rate per variant.** Binary signal. If V1
+   fails to parse 70% of the time and V3a passes 95%, that's the answer
+   to one-vs-multi-pass.
+2. **Pass rate × length** (`--by-length`). Tells you whether single-
+   pass collapses at length=12 (likely) and whether multi-pass costs
+   are worth it for short stories.
 3. **Quality dimensions on traces that DID parse.** Did multi-pass
    produce richer per-panel prompts (`scene_specificity` higher)? Did
-   V5 terse + template assembly produce mechanical-feeling prompts?
+   V5 terse + template-assembly produce mechanical prompts vs. V3a/V3b's
+   LLM-elaborated ones?
 4. **YAML vs JSON.** Compare V1 vs V2, V3a vs V3b. If JSON parses more
    reliably, prefer JSON regardless of the pass-count answer.
+5. **Token cost vs. quality.** V3a/V3b will use ~3x the tokens of V1.
+   If V1 has 60% parse rate and V3a has 95% but produces only marginally
+   better prompts on the parsed runs, the trade-off may favor V1 +
+   retry-on-parse-failure.
 
 ## Decisions to settle from the data
 
@@ -172,7 +220,9 @@ When done with this batch of work:
 git add experiments/story-modifiers/ experiments/story-rubric.yaml \
         experiments/story-seeds.yaml experiments/story-variants/ \
         experiments/story_runner.py experiments/story_validators.py \
-        experiments/story_rate.py experiments/STORY_MODE_HANDOFF.md
+        experiments/story_rate.py experiments/story_summarize.py \
+        experiments/AGENT_RATER_PROMPT.md \
+        experiments/STORY_MODE_HANDOFF.md
 git commit -m "Add story-mode Phase A test harness + variants
 
 Phase A scope: prompt-side only, no image generation. Tests how reliably
