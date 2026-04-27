@@ -93,6 +93,54 @@ def meta(bases: Dict[str, Any], name: str) -> Dict[str, Any]:
     return {}
 
 
+def assemble_system_prompt(
+    bases: Dict[str, Any],
+    base_name: str,
+    custom_system_prompt: str = "",
+    detail: int = 3,
+    preset: str = "sd",
+) -> str:
+    """Assemble the system prompt (base + detail wrap, no modifiers /
+    wildcards — those get added by the calling mode handler).
+
+    For non-Custom bases, wraps the per-base body with shared `_preamble`
+    (prepended) and `_format` (appended) blocks from bases.yaml when
+    present. The Custom base is used as-is, bypassing the shared
+    preamble + format.
+
+    `preset` is the Forge image-model preset (sd/xl/flux/...) used by
+    the detail-instruction builder. The caller should read this from
+    shared.opts at call time — pe_data has no Forge dependency.
+
+    Returns "" when the base body is empty (e.g. unknown base name)
+    so callers can detect "no usable system prompt" cleanly.
+    """
+    if base_name == "Custom":
+        system_prompt = (custom_system_prompt or "").strip()
+    else:
+        b = body(bases.get(base_name))
+        if not b:
+            return ""
+        parts = [
+            body(bases.get("_preamble")).strip(),
+            b.strip(),
+            body(bases.get("_format")).strip(),
+        ]
+        system_prompt = "\n\n".join(p for p in parts if p)
+    if not system_prompt:
+        return ""
+
+    detail = int(detail) if detail else 0
+    # Lazy import — pe_detail lives at the same package level as pe_data,
+    # which makes a top-level import here a layering smell. Lazy-importing
+    # keeps pe_data importable in isolation.
+    from pe_detail import build_instruction
+    instruction = build_instruction(detail, mode="enhance", preset=preset)
+    if instruction:
+        system_prompt = f"{system_prompt}\n\n{instruction}"
+    return system_prompt
+
+
 def names(
     bases: Dict[str, Any],
     curated_order: Iterable[str] = CURATED_ORDER,

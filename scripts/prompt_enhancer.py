@@ -1278,38 +1278,19 @@ def _build_inline_wildcard_text(source):
 
 
 def _assemble_system_prompt(base_name, custom_system_prompt, detail=3):
-    """Assemble the system prompt (base + detail, no modifiers/wildcards).
-
-    For non-Custom bases, wraps the per-base body with shared _preamble
-    (prepended) and _format (appended) blocks from bases.yaml when
-    present. Custom bases are used as-is.
-    """
-    if base_name == "Custom":
-        system_prompt = (custom_system_prompt or "").strip()
-    else:
-        body = _base_body(_bases.get(base_name))
-        if not body:
-            return None
-        parts = [
-            _base_body(_bases.get("_preamble")).strip(),
-            body.strip(),
-            _base_body(_bases.get("_format")).strip(),
-        ]
-        system_prompt = "\n\n".join(p for p in parts if p)
-    if not system_prompt:
-        return None
-
-    detail = int(detail) if detail else 0
+    """Thin wrapper over pe_data.bases.assemble_system_prompt — reads
+    forge_preset from shared.opts at call time and delegates the actual
+    assembly. Returns None (not '') when the base body is empty so
+    existing callsites that check for falsy stay correct."""
     try:
         from modules import shared
         preset = getattr(shared.opts, "forge_preset", "sd")
     except Exception:
         preset = "sd"
-    instruction = _build_detail_instruction(detail, "enhance", preset)
-    if instruction:
-        system_prompt = f"{system_prompt}\n\n{instruction}"
-
-    return system_prompt
+    sp = _pe_bases.assemble_system_prompt(
+        _bases, base_name, custom_system_prompt, detail=detail, preset=preset,
+    )
+    return sp or None
 
 
 
