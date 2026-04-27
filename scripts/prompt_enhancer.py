@@ -69,6 +69,13 @@ from pe_text_utils import (
     split_concatenated_tag as _split_concatenated_tag,
     split_positive_negative as _split_positive_negative,
 )
+from pe_detail import (
+    PRESET_MAX_TOKENS as _PRESET_MAX_TOKENS,
+    TAG_COUNTS as _TAG_COUNTS,
+    DETAIL_LABELS as _DETAIL_LABELS,
+    get_word_target as _get_word_target,
+    build_instruction as _build_detail_instruction,
+)
 from pe_data import bases as _pe_bases, prompts as _pe_prompts, modifiers as _pe_mods, tag_formats as _pe_tf
 from pe_data._util import load_yaml_or_json as _load_file, get_local_dirs as _get_local_dirs
 
@@ -1049,57 +1056,6 @@ _reload_all()
 
 _load_tag_formats()
 
-# Max tokens per forge preset (from backend/diffusion_engine/*.py)
-_PRESET_MAX_TOKENS = {
-    "sd": 75, "xl": 75, "flux": 255, "klein": 255,
-    "qwen": 512, "lumina": 512, "zit": 999, "wan": 512,
-    "anima": 512, "ernie": 512,
-}
-
-# Tag counts per detail level (model-independent)
-_TAG_COUNTS = {0: None, 1: 8, 2: 12, 3: 18, 4: 25, 5: 35, 6: 45, 7: 55, 8: 65, 9: 75, 10: 90}
-
-# Detail level descriptions
-_DETAIL_LABELS = {
-    0: None,
-    1: "very short, minimal",
-    2: "short, concise",
-    3: "brief but complete",
-    4: "moderate",
-    5: "moderately detailed",
-    6: "detailed",
-    7: "detailed, vivid",
-    8: "highly detailed",
-    9: "very detailed, comprehensive",
-    10: "extensive, exhaustive",
-}
-
-
-def _get_word_target(detail, preset="sd"):
-    """Calculate word target based on detail level and forge preset."""
-    if detail == 0:
-        return None
-    max_tokens = _PRESET_MAX_TOKENS.get(preset, 75)
-    # Rough: 1 token ≈ 0.75 words, scale detail 1-10 across 20%-100% of max
-    max_words = int(max_tokens * 0.75)
-    fraction = 0.1 + (detail / 10) * 0.9  # detail 1 = 20%, detail 10 = 100%
-    return max(20, int(max_words * fraction))
-
-
-def _build_detail_instruction(detail, mode="enhance", preset="sd"):
-    """Build detail instruction for enhance or tags.
-
-    Returns a style-descriptor only ("detailed, vivid") — no word or
-    tag count targets. Historical versions injected "Aim for around N
-    words" / "around N tags"; those are removed since they made the
-    LLM stingy and suppressed real coverage.
-    """
-    if detail == 0:
-        return None
-    label = _DETAIL_LABELS.get(detail, "moderate")
-    if mode == "tags":
-        return f"Generate a {label} set of tags. Cover every distinct concept."
-    return f"Write a {label} description."
 
 
 
