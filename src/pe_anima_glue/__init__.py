@@ -8,14 +8,19 @@ prompt-enhancer's mode handlers consume.
 Submodules:
   stack       — singleton lifecycle (lazy load, error reporting,
                 availability checks for RAG mode)
-
-More submodules will be extracted from prompt_enhancer.py as the
-refactor progresses (pipeline / sources / filters / safety …).
+  modifiers   — modifier-driven Anima behaviors (safety tier,
+                target_slot collection, source-pick post-fill)
+  pipeline    — main pipeline functions (query expander,
+                tag_from_draft, general-tag candidates, candidate
+                fragment for the Pass-2 system prompt)
+  sources     — source-pick + slot-retrieval (db_pattern /
+                db_retrieve / deferred / prose-slot)
+  filters     — tag filtering helpers driven by the anima DB
+                (tags_have_category, filter_to_structural_tags)
 """
 
-from . import stack
+from . import stack, modifiers, pipeline, sources, filters
 
-# Convenience re-exports for stable callsite shape.
 from .stack import (
     get_stack,
     available_for,
@@ -24,9 +29,6 @@ from .stack import (
 )
 
 __all__ = [
-    "stack",
-    "get_stack",
-    "available_for",
-    "use_pipeline",
-    "anima_opt",
+    "stack", "modifiers", "pipeline", "sources", "filters",
+    "get_stack", "available_for", "use_pipeline", "anima_opt",
 ]

@@ -88,6 +88,24 @@ from pe_anima_glue.modifiers import (
     active_target_slots as _active_target_slots,
     inject_source_picks as _inject_source_picks,
 )
+from pe_anima_glue.pipeline import (
+    make_query_expander as _pe_make_query_expander,
+    tag_from_draft as _anima_tag_from_draft,
+    general_tag_candidates as _general_tag_candidates,
+    candidate_fragment_for_tag_sp as _candidate_fragment_for_tag_sp,
+)
+from pe_anima_glue.sources import (
+    SLOT_TO_CATEGORY as _SLOT_TO_CATEGORY,
+    resolve_source as _resolve_source,
+    resolve_deferred_sources as _resolve_deferred_sources,
+    retrieve_prose_slot as _retrieve_prose_slot,
+)
+from pe_anima_glue.filters import (
+    SUBJECT_COUNT_RE as _SUBJECT_COUNT_RE,
+    STRUCTURAL_CATEGORIES as _STRUCTURAL_CATEGORIES,
+    tags_have_category as _tags_have_category,
+    filter_to_structural_tags as _pe_filter_to_structural_tags,
+)
 from pe_anima_glue import stack as _pe_anima_stack
 from pe_tags import (
     validate as _pe_tags_validate,
@@ -110,114 +128,15 @@ _BADGE_TARGET_SLOT = _pe_mods.BADGE_TARGET_SLOT
 
 
 def _make_anima_query_expander(temperature=0.3, seed=-1):
-    """Build a query-expander callable backed by _call_llm for shortlist retrieval.
-
-    Expansion is a cheap LLM pass (~1 s on 9b) that converts the raw
-    source prompt into a tag-style concept list, so the shortlist
-    retriever embeds a denser, thematically-aligned query instead of
-    a sparse source with name-collision risk.
-
-    Returns None if disabled via setting.
-    """
-    if not bool(_anima_opt("anima_tagger_query_expansion", True)):
-        return None
-    try:
-        from anima_tagger.query_expansion import expand_query, EXPANSION_SYSTEM_PROMPT
-    except ImportError:
-        return None
-
-    def _expander(source: str, modifier_keywords: str | None) -> str:
-        def _oneshot(sys_prompt: str, user_msg: str) -> str:
-            # _call_llm RETURNS a string (not a generator). A previous
-            # version of this bridge iterated `for chunk in _call_llm(...)`
-            # which iterated character-by-character over the return string
-            # — it silently fed only the LAST CHARACTER of the LLM's
-            # expansion into FAISS as the shortlist query. That corrupted
-            # every shortlist retrieval and produced user-visible weird
-            # tags (sparse_leg_hair, simple_fish, overhead_lights, etc.)
-            # because FAISS on a single char pulls near-random entries.
-            try:
-                return _call_llm(user_msg, sys_prompt, temperature, timeout=30, seed=seed) or ""
-            except Exception:
-                return ""
-
-        return expand_query(source, _oneshot, modifier_keywords=modifier_keywords)
-
-    return _expander
+    """Thin wrapper around pe_anima_glue.pipeline.make_query_expander.
+    Threads _call_llm in so the new module stays LLM-layer-agnostic."""
+    return _pe_make_query_expander(_call_llm, temperature=temperature, seed=seed)
 
 
 
 
-def _anima_tag_from_draft(stack, draft_str: str, safety: str = "safe",
-                          use_underscores: bool = False,
-                          shortlist=None) -> tuple[str, dict]:
-    """Validate + rule-layer an LLM draft via anima_tagger.
-
-    Drop-in replacement for _postprocess_tags when anima_tagger is
-    active. Passes the shortlist (if any) to the validator for
-    category-aware alias resolution.
-    """
-    compound_split = bool(_anima_opt("anima_tagger_compound_split", True))
-    # Diagnostic: surface draft and validator outcome so integration
-    # issues (short prose, validator dropping too much, compound_split
-    # not helping) are visible in the Forge console. Cheap.
-    draft_tokens_preview = [t.strip() for t in draft_str.split(",") if t.strip()]
-    print(f"[PromptEnhancer] Anima validate: draft_tokens={len(draft_tokens_preview)}, "
-          f"compound_split={compound_split}, shortlist="
-          f"{len(shortlist.artists) if shortlist else 0}a/"
-          f"{len(shortlist.characters) if shortlist else 0}c/"
-          f"{len(shortlist.series) if shortlist else 0}s")
-    if len(draft_tokens_preview) <= 25:
-        print(f"[PromptEnhancer]   draft: {draft_tokens_preview}")
-    tags_list = stack.tagger.tag_from_draft(
-        draft_str, safety=safety, use_underscores=use_underscores,
-        shortlist=shortlist, compound_split=compound_split,
-    )
-    draft_token_count = len(draft_tokens_preview)
-    stats = {
-        "corrected": 0,
-        "dropped": max(0, draft_token_count - len(tags_list)),
-        "kept_invalid": 0,
-        "total": len(tags_list),
-    }
-    print(f"[PromptEnhancer]   → {len(tags_list)} kept, raw dropped={stats['dropped']}")
-    return ", ".join(tags_list), stats
 
 
-# Map of target_slot → (category_code, min_post_count, prefer_popularity).
-# Matches the category IDs in anima_tagger.config. Slots without a
-# category entry here aren't eligible for retrieval fill (e.g. general-
-# concept slots like "pose" or "setting" — those live in CAT_GENERAL
-# and are already covered by the LLM draft + compound_split).
-#
-# prefer_popularity = True means "among semantically-relevant candidates,
-# pick the most-popular one" — useful for copyright/franchise where we
-# usually want the mainstream series name (vocaloid, pokemon), not a
-# niche long-title reranker favorite.
-_SLOT_TO_CATEGORY = {
-    "artist":    {"category": 1, "min_post": 500,  "prefer_popularity": False},
-    "copyright": {"category": 3, "min_post": 500,  "prefer_popularity": True},
-}
-
-
-def _retrieve_prose_slot(stack, prose: str, slot: str, seed: int = 0):
-    """Pick ONE DB tag for the given slot from semantically-closest
-    candidates to the prose. Requires an open models() context.
-
-    Determinism: retrieval is always deterministic for a given prose.
-    For artist (and similar random-X slots), we pull top-K candidates
-    and pick one using the user's seed — so the same seed gives the
-    same artist (reproducible runs), but different seeds give genuine
-    variation. Without this step, `@e.o.` dominates every NSFW prompt
-    because it's always the top reranker pick.
-
-    For slots flagged `prefer_popularity` (copyright/franchise), we
-    prefer the mainstream option rather than the random pick — users
-    usually want `vocaloid` over a niche reranker-favorite series.
-    """
-    entry = _SLOT_TO_CATEGORY.get(slot)
-    if not entry or stack.retriever is None:
-        return None
     category = entry["category"]
     min_post = entry["min_post"]
     prefer_pop = entry.get("prefer_popularity", False)
@@ -243,152 +162,8 @@ def _retrieve_prose_slot(stack, prose: str, slot: str, seed: int = 0):
 
 
 
-def _resolve_source(source_spec: dict, seed: int,
-                    stack=None, query: str = "") -> dict | None:
-    """Seed-pick a real Danbooru tag from the DB based on `source_spec`.
-
-    Two mechanisms supported (exactly one per modifier):
-
-        db_pattern:  regex matched against category=general names. Fast,
-                     no models required. Used by Random Era, Random Flower,
-                     Random Food, Random Animal, Random Constellation,
-                     Random Tarot Card, Random Symbol.
-
-        db_retrieve: FAISS retrieval against a specific Danbooru category
-                     (1=artist, 3=copyright, 4=character). Requires the
-                     anima_tagger stack with models loaded. Query is the
-                     user's source prompt + modifier keywords. Seed-picks
-                     from top-K scene-relevant candidates. Used by ◆ on
-                     Random Artist / Random Franchise / Random Character.
-
-    YAML schemas:
-        source: { db_pattern: "^\\d{4}s_\\(style\\)$", min_post_count: 50,
-                  template: "Set scene in {display}." }
-        source: { db_retrieve: { category: 1, min_post_count: 500,
-                                 final_k: 10 },
-                  template: "Render in the style of {display}." }
-
-    Returns dict {name, display, behavioral, keywords, post_count,
-    pool_size} or None on failure. `db_retrieve` returns None when
-    called without a stack (caller re-resolves after models load).
-    """
-    import re as _re
-    import sqlite3 as _sqlite3
-    try:
-        from anima_tagger.config import TAG_DB_PATH as _TAG_DB_PATH
-    except Exception:
-        return None
-    template = source_spec.get("template") or "Apply {display}."
-    import random as _random
-    rng = _random.Random(int(seed) if seed not in (None, -1) else _random.randint(0, 2**31 - 1))
-
-    picked_name = None
-    picked_pc = 0
-    pool_size = 0
-
-    if "db_pattern" in source_spec:
-        pattern = source_spec["db_pattern"]
-        if not os.path.isfile(_TAG_DB_PATH):
-            return None
-        min_pc = int(source_spec.get("min_post_count", 50))
-        try:
-            rx = _re.compile(pattern)
-        except _re.error as e:
-            logger.warning(f"_resolve_source: bad regex {pattern!r}: {e}")
-            return None
-        try:
-            conn = _sqlite3.connect(_TAG_DB_PATH)
-            cur = conn.cursor()
-            cur.execute(
-                "SELECT name, post_count FROM tags WHERE category=0 AND post_count >= ?",
-                (min_pc,),
-            )
-            pool = [(n, pc) for n, pc in cur.fetchall() if rx.search(n)]
-            conn.close()
-        except Exception as e:
-            logger.warning(f"_resolve_source: DB query failed: {e}")
-            return None
-        if not pool:
-            return None
-        picked_name, picked_pc = rng.choice(pool)
-        pool_size = len(pool)
-
-    elif "db_retrieve" in source_spec:
-        spec = source_spec["db_retrieve"]
-        # db_retrieve requires the anima_tagger stack with models loaded.
-        # When stack is absent (e.g. pre-RAG-load phase), return None so
-        # the caller can re-resolve later.
-        if stack is None or getattr(stack, "retriever", None) is None:
-            return None
-        category = spec.get("category")
-        min_pc = int(spec.get("min_post_count", 500))
-        final_k = int(spec.get("final_k", 10))
-        prefer_pop = bool(spec.get("prefer_popularity", False))
-        q = (query or "").strip() or "image"
-        try:
-            cands = stack.retriever.retrieve(
-                q, retrieve_k=200, final_k=final_k,
-                category=category, min_post_count=min_pc,
-            )
-        except Exception as e:
-            logger.warning(f"_resolve_source: db_retrieve failed: {e}")
-            return None
-        if not cands:
-            return None
-        if prefer_pop:
-            chosen = max(cands, key=lambda c: getattr(c, "post_count", 0))
-        else:
-            chosen = rng.choice(cands)
-        picked_name = chosen.name
-        picked_pc = getattr(chosen, "post_count", 0)
-        pool_size = len(cands)
-
-    else:
-        return None
-
-    # display = human form: underscores→spaces, strip Danbooru _(X) disambiguator
-    display = _re.sub(r"_\([^)]+\)$", "", picked_name).replace("_", " ")
-    keywords = picked_name.replace("_", " ")
-    try:
-        behavioral = template.format(name=picked_name, display=display)
-    except Exception as e:
-        logger.warning(f"_resolve_source: bad template {template!r}: {e}")
-        behavioral = f"Apply {display}."
-    return {
-        "name": picked_name,
-        "display": display,
-        "behavioral": behavioral,
-        "keywords": keywords,
-        "post_count": picked_pc,
-        "pool_size": pool_size,
-    }
 
 
-def _general_tag_candidates(stack, prose: str, k: int = 60,
-                            min_post_count: int = 100) -> list[str]:
-    """Retrieve top-k general-category Danbooru tags semantically matching
-    the prose. Used by Pass 2 grounding to constrain the LLM's tag output
-    to scene-relevant real Danbooru vocabulary.
-
-    Root-cause fix for the weird-tag problem observed in production:
-    Pass 2 LLM freely invents tokens like `sparse_leg_hair`,
-    `overhead_lights`, `simple_fish` that ARE real Danbooru tags but
-    don't belong in the scene. Grounding Pass 2 in FAISS-retrieved
-    candidates lets it SELECT from scene-relevant vocabulary instead of
-    emitting arbitrary compounds. Returns underscore-form names (DB
-    canonical), caller converts to space form for display.
-
-    Implementation note: bypasses the default stack.retriever.retrieve()
-    path because that path's reranker + default retrieve_k=300 tends to
-    return only a handful of general tags when the top-300 dense hits
-    are dominated by thematic artist/character/series entries. For V13
-    grounding we want BROAD general-tag coverage: dense search with
-    large retrieve_k, filter to category=0 + min_post_count, sort by
-    dense score, take top-k. No reranker (its query-pair scoring is
-    designed for shorter queries than a multi-sentence prose).
-    """
-    if stack is None or getattr(stack, "retriever", None) is None:
-        return []
     try:
         r = stack.retriever
         q_vec = r.embedder.encode_one(prose)
@@ -417,79 +192,14 @@ def _general_tag_candidates(stack, prose: str, k: int = 60,
         return []
 
 
-def _candidate_fragment_for_tag_sp(candidates: list[str]) -> str:
-    """Format the candidate tag list as a fragment appended to the Pass 2
-    system prompt. Prose-friendly phrasing — tells the LLM the list is
-    a pre-curated scene-relevant vocabulary and how to deviate safely
-    (named subjects, required format tokens).
-    """
-    if not candidates:
-        return ""
-    # Space-form for readability matching anima convention
-    display = ", ".join(n.replace("_", " ") for n in candidates)
-    return (
-        "\nCANDIDATE TAGS FOR THIS SCENE (pre-retrieved from the Danbooru "
-        "DB against the prose). Strongly prefer tags from this list — "
-        "they are scene-relevant and real:\n\n"
-        f"  {display}\n\n"
-        "You may emit tags OUTSIDE this list ONLY when:\n"
-        "  (a) the tag is required by the format (masterpiece, best quality, "
-        "score_N, safe/sensitive/nsfw/explicit, 1girl/1boy/1other);\n"
-        "  (b) the prose explicitly names a character, series, or artist not "
-        "in the list;\n"
-        "  (c) a concept is literally named in the prose but happens to be "
-        "missing from the list.\n"
-        "For any other concept, pick the closest match from the candidate "
-        "list instead of inventing a novel compound tag. If no candidate "
-        "fits a concept, omit it rather than inventing.\n"
-    )
-
-
-def _resolve_deferred_sources(mods, seed: int, stack, query: str):
-    """Second-pass source resolution for entries that needed the anima
-    stack (db_retrieve). Mutates `mods` in place. Called by handlers after
-    the RAG models are loaded. Returns count of entries resolved.
-
-    `mods` is the (name, entry) list from _collect_modifiers. Entries
-    with `source.db_retrieve` and no `_resolved_from_source` yet are
-    candidates — the pre-models _collect_modifiers pass couldn't fill
-    them because the retriever wasn't available. Now it is.
-    """
-    resolved_count = 0
-    for i, (name, entry) in enumerate(mods or []):
-        if not isinstance(entry, dict):
-            continue
-        source = entry.get("source")
-        if not source:
-            continue
-        if entry.get("_resolved_from_source"):
-            continue  # already resolved via db_pattern
-        if "db_retrieve" not in source:
-            continue
-        picked = _resolve_source(source, seed, stack=stack, query=query)
-        if not picked:
-            continue
-        updated = dict(entry)
-        updated["behavioral"] = picked["behavioral"]
-        updated["keywords"] = picked["keywords"]
-        updated["_resolved_from_source"] = picked["name"]
-        mods[i] = (name, updated)
-        resolved_count += 1
-        print(f"[PromptEnhancer] Random pick ({name}): "
-              f"{picked['name']} (pool={picked['pool_size']}, "
-              f"post_count={picked['post_count']})")
-    return resolved_count
 
 
 
 
 
 
-def _tags_have_category(tag_csv: str, stack, category: int) -> bool:
-    """True if any tag in the comma-separated list resolves to a DB record
-    of the given category. Trims '@' prefix since artist tokens carry it."""
-    if not tag_csv or not stack or not stack.db:
-        return False
+
+
     for t in tag_csv.split(","):
         norm = t.strip().lstrip("@").lower().replace(" ", "_").replace("-", "_")
         if not norm:
@@ -500,103 +210,10 @@ def _tags_have_category(tag_csv: str, stack, category: int) -> bool:
     return False
 
 
-_SUBJECT_COUNT_RE = re.compile(r"^\d+(girl|boy|other)s?$")
-
-# Structural Danbooru categories (artist/character/copyright). CAT_GENERAL=0
-# and CAT_META=5 are the ones V14 drops — that's where "sparse leg hair" /
-# "simple fish" / "overhead lights" live after FAISS retrieval.
-_STRUCTURAL_CATEGORIES = {1, 3, 4}
-
-
-def _filter_to_structural_tags(tag_csv: str, stack, tag_fmt: str) -> str:
-    """V14 Hybrid filter + V19 carve-outs: keep structural tags, plus a
-    small curated set of general tags that carry tag-level conditioning.
-
-    V14 baseline: drop CAT_GENERAL and CAT_META. Keep only format whitelist
-    (quality/safety/rating), subject-count (1girl/1boy/2girls/…), and
-    Danbooru categories {artist, character, copyright}. The Hybrid prose
-    carries everything else since Anima's Qwen3 text encoder handles
-    natural language natively.
-
-    V19 carve-outs on top of V14:
-      (A) Co-occurrence — for each surviving structural tag (character /
-          series / artist), retain CAT_GENERAL tags the DB records as
-          highly co-occurring (p_given_src ≥ min_prob). Fixes character-
-          signature objects (e.g. hatsune_miku → leek retained).
-      (B) Format allowlist — retain CAT_GENERAL tags in the format's
-          `general_tags_allowlist` yaml field. These are rendering-
-          control / booru-trained-convention tokens (framing, named
-          poses, clothing archetypes, anime-specific visual tokens,
-          rendering techniques) that carry tag-level conditioning prose
-          cannot fully replicate.
-
-    Must be called with a stack that has an active DB (Anima format + RAG).
-    Co-occurrence carve-out is a no-op if stack.cooccurrence is unavailable.
-    """
-    if not tag_csv:
-        return tag_csv
-    fmt = _tag_formats.get(tag_fmt, {})
-    whitelist: set = set()
-    whitelist |= {str(t).lower() for t in (fmt.get("quality_tags") or set())}
-    whitelist |= {str(t).lower() for t in (fmt.get("leading_tags") or set())}
-    whitelist |= {str(t).lower() for t in (fmt.get("rating_tags") or set())}
-    general_allow: set = set(fmt.get("general_tags_allowlist") or set())
-
-    # Parse once, normalize, classify per tag
-    parsed = []
-    for t in tag_csv.split(","):
-        t = t.strip()
-        if not t:
-            continue
-        norm = t.lstrip("@").lower().replace(" ", "_").replace("-", "_")
-        if norm:
-            parsed.append((t, norm))
-
-    # Pass 1: keep structural tags; collect their names for co-occurrence lookup
-    kept_indices = set()
-    structural_names: list = []
-    for i, (t, norm) in enumerate(parsed):
-        if norm in whitelist or _SUBJECT_COUNT_RE.match(norm):
-            kept_indices.add(i)
-            continue
-        if stack is not None and stack.db is not None:
-            rec = stack.db.get_by_name(norm)
-            if rec and rec.get("category") in _STRUCTURAL_CATEGORIES:
-                kept_indices.add(i)
-                structural_names.append(norm)
-
-    # Pass 2a: build co-occurrence allowlist from surviving structural tags
-    cooc_allow: set = set()
-    if (stack is not None and getattr(stack, "cooccurrence", None) is not None
-            and structural_names):
-        top_k = int(_anima_opt("anima_tagger_v19_cooc_top_k", 20))
-        min_prob = float(_anima_opt("anima_tagger_v19_cooc_min_prob", 0.3))
-        for sname in structural_names:
-            try:
-                hits = stack.cooccurrence.top_for(
-                    sname, category=0, top_k=top_k, min_prob=min_prob,
-                )
-            except Exception:
-                hits = []
-            for hit in hits:
-                cooc_allow.add(hit.get("tag", ""))
-
-    # Pass 2b: carve-outs — retain CAT_GENERAL tags present in the format
-    # allowlist or the co-occurrence allowlist
-    if general_allow or cooc_allow:
-        for i, (t, norm) in enumerate(parsed):
-            if i in kept_indices:
-                continue
-            if norm not in general_allow and norm not in cooc_allow:
-                continue
-            # Sanity: verify it's actually CAT_GENERAL (not meta etc.)
-            if stack is not None and stack.db is not None:
-                rec = stack.db.get_by_name(norm)
-                if rec is None or rec.get("category") != 0:
-                    continue
-            kept_indices.add(i)
-
-    return ", ".join(parsed[i][0] for i in sorted(kept_indices))
+def _filter_to_structural_tags(tag_csv, stack, tag_fmt):
+    """Thin wrapper threading the format-config from _tag_formats."""
+    fmt_config = _tag_formats.get(tag_fmt, {})
+    return _pe_filter_to_structural_tags(tag_csv, stack, fmt_config)
 
 
 def _load_tag_formats():
