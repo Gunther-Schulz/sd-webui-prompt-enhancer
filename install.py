@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 import urllib.request
 
 import launch
@@ -22,6 +23,89 @@ import launch
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 _DATA_DIR = os.path.join(_THIS_DIR, "data")
 HF_REPO = "freedumb2000/anima-tagger-artifacts"
+
+_TAG = "[sd-webui-prompt-enhancer]"
+
+
+def _open_console():
+    """The terminal, when our stdout is not it.
+
+    Forge does not stream extension installers. It runs each install.py
+    through modules/launch_utils.run() with live=False, which pipes BOTH
+    stdout and stderr (launch_utils.py:69-70), collects the output, and
+    prints it only after the process exits (launch_utils.py:171-173).
+    So during a 1.1 GB download every print here — however often it is
+    flushed, whichever stream it picks — sits in a pipe, and the user
+    watches a console that has said nothing since "Version: neo 2.28".
+
+    Writing to the controlling terminal escapes that pipe. It is a
+    genuine second channel rather than a stream choice, which is why
+    stderr is not the fix.
+
+    Returns None when stdout is already the terminal (nothing to
+    duplicate) or when there is no terminal to open — a service, a CI
+    run, output redirected to a file. Both degrade to plain printing.
+    """
+    try:
+        if sys.stdout.isatty():
+            return None
+    except Exception:
+        return None
+    try:
+        return open("/dev/tty", "w")
+    except Exception:
+        return None
+
+
+_CONSOLE = _open_console()
+
+
+def _say(msg: str) -> None:
+    """Every progress line from this hook goes through here.
+
+    Written to BOTH channels when they differ: the terminal so the wait
+    is visible while it happens, stdout so the line still lands in
+    whatever collected it — Forge's post-install dump, a redirected log.
+    That duplicates the block once in Forge's console at the end, which
+    is the cheap side of the trade: the alternative is a silent hour.
+
+    flush=True is not decoration either. Forge's launcher starts webui
+    with `python -u`, but the bootstrap that runs install.py after a
+    fresh clone does not, and a block-buffered "downloading 1.1 GB"
+    banner reaches the console only once the download is already under
+    way — the exact moment it existed to warn about.
+
+    The tag goes on continuation lines too: extension installers run
+    back to back with nothing naming them, so an untagged line during a
+    long startup does not tell the reader who is busy.
+    """
+    line = f"{_TAG} {msg}"
+    print(line, flush=True)
+    if _CONSOLE is not None:
+        try:
+            _CONSOLE.write(line + "\n")
+            _CONSOLE.flush()
+        except Exception:
+            pass
+
+
+def _fmt_mb(nbytes: int) -> str:
+    return f"{nbytes / 1024 / 1024:,.1f} MB"
+
+
+# Hashing a file this large takes long enough that a silent stretch
+# reads as a hang — the incident this reporting exists for (2026-08-21:
+# startup sat with no output at all after "Version: neo 2.28", and the
+# operator killed it believing Forge had wedged). Below the threshold
+# the check is fast enough that announcing it is just noise.
+_ANNOUNCE_HASH_BYTES = 64 * 1024 * 1024
+
+# How much has to arrive before another progress line. The old code
+# tested `downloaded % (16 MB) < 1 MB`, which silently depends on every
+# read returning exactly 1 MB: one short read desynchronises the
+# modulus for the rest of the file. That is why the 30 MB artefact
+# reported once, at 54%, and never again.
+_PROGRESS_EVERY_BYTES = 64 * 1024 * 1024
 
 
 # ── 1. Python dependencies ────────────────────────────────────────────
@@ -77,19 +161,37 @@ def _sha256(path: str) -> str:
     return h.hexdigest()
 
 
+def _progress(done: int, total: int, t0: float) -> None:
+    elapsed = max(time.monotonic() - t0, 1e-6)
+    rate = done / elapsed
+    pct = 100.0 * done / total
+    if done >= total:
+        tail = f"done in {elapsed:.0f}s"
+    elif rate > 0:
+        eta = (total - done) / rate
+        tail = f"~{int(eta) // 60}m{int(eta) % 60:02d}s left"
+    else:
+        tail = "stalled"
+    _say(f"    {done/1024/1024:>6.0f} / {total/1024/1024:>6.0f} MB "
+         f"({pct:>3.0f}%)  {rate/1024/1024:>5.1f} MB/s  {tail}")
+
+
 def _download(url: str, dest: str) -> None:
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     with urllib.request.urlopen(url, timeout=120) as resp:
         total = int(resp.headers.get("Content-Length", 0))
         downloaded = 0
+        reported = 0
+        t0 = time.monotonic()
         with open(dest + ".part", "wb") as f:
             for chunk in iter(lambda: resp.read(1 << 20), b""):
                 f.write(chunk)
                 downloaded += len(chunk)
-                if total and downloaded % (16 * 1024 * 1024) < (1 << 20):
-                    pct = 100.0 * downloaded / total
-                    print(f"    {downloaded/1024/1024:>6.0f} / "
-                          f"{total/1024/1024:>6.0f} MB ({pct:.0f}%)", flush=True)
+                if total and downloaded - reported >= _PROGRESS_EVERY_BYTES:
+                    reported = downloaded
+                    _progress(downloaded, total, t0)
+        if total:
+            _progress(downloaded, total, t0)
     os.replace(dest + ".part", dest)
 
 
@@ -134,6 +236,7 @@ def _fetch_artefacts():
 
     base = f"https://huggingface.co/datasets/{HF_REPO}/resolve/main"
     ver_url = f"{base}/VERSION"
+    _say(f"anima artefacts: checking for updates ({HF_REPO}) …")
     try:
         with urllib.request.urlopen(ver_url, timeout=15) as r:
             manifest = json.loads(r.read())
@@ -161,39 +264,61 @@ def _fetch_artefacts():
         if not info:
             continue
         local = os.path.join(_DATA_DIR, fname)
-        if os.path.exists(local) and os.path.getsize(local) == info.get("size", 0):
+        size = info.get("size", 0)
+        if os.path.exists(local) and os.path.getsize(local) == size:
+            loud = size >= _ANNOUNCE_HASH_BYTES
+            if loud:
+                _say(f"  verifying the local copy of {fname} "
+                     f"({_fmt_mb(size)}) — this reads the whole file, "
+                     f"so it takes a moment …")
+            t0 = time.monotonic()
             try:
                 if _sha256(local) == info.get("sha256", ""):
+                    if loud:
+                        _say(f"  {fname} is current "
+                             f"({time.monotonic() - t0:.0f}s)")
                     continue  # already current
             except Exception:
                 pass
+            if loud:
+                _say(f"  {fname} does not match the published checksum "
+                     f"— it will be downloaded again")
         needed.append((fname, info))
 
     if not needed:
+        _say("anima artefacts are up to date.")
         return
 
-    print(f"[sd-webui-prompt-enhancer] anima artefacts: downloading "
-          f"{len(needed)} file(s) from HuggingFace ({HF_REPO}) …")
+    total = sum(i.get("size", 0) for _, i in needed)
+    _say(f"anima artefacts: downloading {len(needed)} file(s), "
+         f"{_fmt_mb(total)} in total, from HuggingFace ({HF_REPO}) …")
+    _say(f"  this runs once per artefact version, and Forge does not "
+         f"finish starting until it is done — expect a wait.")
+    started = time.monotonic()
     for fname, info in needed:
         dest = os.path.join(_DATA_DIR, fname)
-        size_mb = info.get("size", 0) / 1024 / 1024
-        print(f"  [{size_mb:>7.1f} MB] {fname}")
+        size = info.get("size", 0)
+        _say(f"  [{_fmt_mb(size):>12}] {fname}")
+        t0 = time.monotonic()
         try:
             _download(f"{base}/{fname}", dest)
             if info.get("sha256"):
+                if size >= _ANNOUNCE_HASH_BYTES:
+                    _say(f"    verifying the checksum of {_fmt_mb(size)} "
+                         f"— another whole-file read …")
                 got = _sha256(dest)
                 if got != info["sha256"]:
                     os.remove(dest)
                     raise RuntimeError(f"sha256 mismatch on {fname}")
-            print(f"    ✓ {fname}")
+            _say(f"    ✓ {fname} ({time.monotonic() - t0:.0f}s)")
         except Exception as e:
-            print(f"    ✗ {fname}: {type(e).__name__}: {e}")
+            _say(f"    ✗ {fname}: {type(e).__name__}: {e}")
             if os.path.exists(dest + ".part"):
                 try:
                     os.remove(dest + ".part")
                 except Exception:
                     pass
-    print("[sd-webui-prompt-enhancer] anima artefacts done.")
+    _say(f"anima artefacts done ({time.monotonic() - started:.0f}s).")
 
 
 # ── entry ────────────────────────────────────────────────────────────
@@ -201,6 +326,5 @@ _install_deps()
 try:
     _fetch_artefacts()
 except Exception as e:
-    print(f"[sd-webui-prompt-enhancer] anima artefacts: unexpected error "
-          f"({type(e).__name__}: {e}) — extension will still work in "
-          f"rapidfuzz mode.")
+    _say(f"anima artefacts: unexpected error ({type(e).__name__}: {e}) "
+         f"— extension will still work in rapidfuzz mode.")
