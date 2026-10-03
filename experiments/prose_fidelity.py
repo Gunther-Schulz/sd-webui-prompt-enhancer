@@ -155,6 +155,7 @@ def main() -> int:
     ap.add_argument("--append-file", default=None, help="append this file's text to the system prompt")
     ap.add_argument("--repeat-penalty", type=float, default=None)
     ap.add_argument("--presence-penalty", type=float, default=None)
+    ap.add_argument("--think", action="store_true", help="run the model with thinking on (the panel's Think toggle)")
     ap.add_argument("--quiet", action="store_true", help="scores only, do not print the outputs")
     args = ap.parse_args()
 
@@ -200,7 +201,7 @@ def main() -> int:
                         continue
                     text = pe._clean_output(pe._call_llm(
                         f"SOURCE PROMPT: {SOURCES[name]['text']}", args.api_url, args.model, sp,
-                        args.temp, think=False, seed=seed))
+                        args.temp, think=args.think, seed=seed))
                     if not text:
                         raise RuntimeError(f"empty LLM output: {base} {name} {seed}")
                     fh.write(json.dumps({"label": args.label, "base": base, "source": name,

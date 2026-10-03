@@ -6,7 +6,61 @@ evidence they wait on. Closed entries move to `## Done` with their commit ref.
 
 ## Ready
 
-_(none)_
+### Does a different model, or thinking mode, fix the two-body problem?
+
+**Booked 2026-10-03**, started and cancelled the same evening at the operator's request (2 of 34
+outputs written, discarded). Background: `experiments/PROSE-TUNING.md`, "Variety between seeds" —
+when the source leaves the arrangement of two people open, about 4 of 8-11 outputs are physically
+inconsistent on `huihui_ai/qwen3.5-abliterated:9b`, and no base wording fixed it.
+
+Candidates, in this order:
+1. Thinking mode on the current model (`--think`; the panel's Think toggle, never tested).
+2. `huihui_ai/gemma-4-abliterated:12b` (installed).
+3. `gemma4:26b` (installed, 16.8 GB, not an uncensored build — may refuse or soften). Only with
+   the image model unloaded: with Forge holding ~27 of 32 GB it would run mostly on CPU.
+4. A larger abliterated Qwen3.5, if one exists on Ollama (not checked; the Wan2GP launcher has a
+   "27b" enhancer setting).
+
+Run, from the repo root, Forge's Python, Ollama up, `PROMPT_ENHANCER_LOCAL=""` so no local
+overrides interfere:
+
+    SEEDS=42,137,1729,7919,10001,65537,1000003,2147483000
+    python -m experiments.prose_fidelity --out /tmp/models.jsonl --label think9b --think --sources var_sex --seeds $SEEDS
+    python -m experiments.prose_fidelity --out /tmp/models.jsonl --label gemma12b --model huihui_ai/gemma-4-abliterated:12b --sources var_sex --seeds $SEEDS
+    python -m experiments.prose_fidelity --out /tmp/models.jsonl --label gemma12b --model huihui_ai/gemma-4-abliterated:12b --seeds 42
+
+*Verifier:* READ the eight `var_sex` outputs per candidate for physical consistency (no keyword
+check sees it) and count; then the 18-source run for the hard class and softeners.
+*Done-criterion:* a count per candidate recorded in PROSE-TUNING.md beside the ~4-of-8 baseline,
+with seconds per call, and a recommendation: keep the model, switch, or leave it to the position
+list.
+*Write-set:* `experiments/PROSE-TUNING.md`; `scripts/prompt_enhancer.py` (DEFAULT_MODEL) and
+`wan2gp/forge-config.sh` (OLLAMA_MODEL, other repo, untracked) only if a switch is decided.
+
+### "Say little about how the bodies meet": full regression before adopting
+
+**Booked 2026-10-03.** The one base rule that helped the un-steered case (about 2 of 8 physically
+inconsistent against about 4 of 8), by saying less. Eight outputs is thin and it makes the act
+vaguer, so it is not in the base. The candidate text is the Default body plus one line after the
+"Only what a camera can record" rule:
+"- People in physical contact: spend the words on what each person looks like, what they wear,
+the place and the light. About how the bodies meet, say one short sentence and no more."
+*Verifier:* `prose_fidelity --base-file` with that text, 18 sources x 3 seeds, against the
+committed base: hard class still 66/66, stated elements not below 296/300, and `var_sex` on eight
+seeds read by hand. *Done-criterion:* adopted in `bases.yaml` or dropped, with the counts in
+PROSE-TUNING.md. *Write-set:* `bases.yaml`, `experiments/PROSE-TUNING.md`.
+
+### Nothing built on 2026-10-03 has been clicked inside Forge
+
+**Booked 2026-10-03.** Every check that day ran outside Forge. The operator's test list after a
+full restart through the launcher: the panel loads with "✨ Enhance"; the Local Overrides box
+shows the storage-root folder; the Positions dropdown and "🎲 Random position" exist; a plain
+Enhance keeps age and gender; the dice shows "picked: ..." and changes with seed -1; a
+`<lora:...>` tag in the main prompt survives Enhance with Keep LoRAs on (the JS pull of the main
+field never ran in a browser — the highest-risk piece); `a cat @@ Reply with the single word OK`
+returns OK; Remix, the three checkboxes and the modifier dropdowns with the new base.
+*Done-criterion:* each item seen working, or its console error captured. *Write-set:* whatever a
+failure points at in `scripts/prompt_enhancer.py`.
 
 ## Parked
 
