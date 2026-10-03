@@ -99,7 +99,7 @@ def call_ollama(model, system_prompt, user_msg, max_tokens=400):
         "options": {
             "temperature": 0.6, "num_predict": max_tokens,
             "top_k": 20, "top_p": 0.8,
-            "repeat_penalty": 1.5, "presence_penalty": 1.5,
+            "repeat_penalty": 1.1, "presence_penalty": 1.5,
         },
         "messages": [
             {"role": "system", "content": system_prompt},

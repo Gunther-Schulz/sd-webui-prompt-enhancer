@@ -1948,7 +1948,13 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             "seed": int(seed),
             "top_k": 20,
             "top_p": 0.95 if think else 0.8,
-            "repeat_penalty": 1.5,
+            # repeat_penalty stays at Ollama's default. At 1.5 it penalised
+            # every token in the recent context, and the source prompt IS the
+            # recent context — so the model swapped the user's own words
+            # (handrail -> escalator, "two" -> "three", on her back -> prone)
+            # and produced garbled run-ons. presence_penalty alone keeps the
+            # loop guard. Measured 2026-10-03, experiments/LOG.md.
+            "repeat_penalty": 1.1,
             "presence_penalty": 1.5,
             # Explicit output cap. Without this, Ollama falls back to
             # whatever the model's Modelfile specifies (often 128 for

@@ -134,7 +134,7 @@ def call_llm(model: str, sp: str, up: str, seed: int, temperature: float = 0.8,
         "options": {
             "temperature": temperature, "seed": int(seed),
             "top_k": 20, "top_p": 0.8,
-            "repeat_penalty": 1.5, "presence_penalty": 1.5,
+            "repeat_penalty": 1.1, "presence_penalty": 1.5,
             "num_predict": int(num_predict),
         },
     }

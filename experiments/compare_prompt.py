@@ -64,12 +64,14 @@ def call_ollama(sp: str, user_msg: str, model: str, seed: int, temp: float,
             "num_predict": int(num_predict),
             "top_k": 20,
             "top_p": 0.95 if think else 0.8,
-            "repeat_penalty": 1.5,
+            "repeat_penalty": 1.1,
             "presence_penalty": 1.5,
         },
         "messages": [
             {"role": "system", "content": sp},
-            {"role": "user", "content": user_msg},
+            # Same prefix scripts/prompt_enhancer.py:_call_llm sends; without it
+            # this harness does not reproduce the extension's output.
+            {"role": "user", "content": user_msg if think else f"/no_think\n{user_msg}"},
         ],
     }
     req = urllib.request.Request(
