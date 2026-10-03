@@ -10,7 +10,7 @@ Takes your short prompt and expands it into a detailed natural-language descript
 - **Enhance** — expands the source prompt into prose, written straight into the main prompt box
 - **Remix** — applies an instruction or new modifiers to the prompt that is already in the main prompt box
 - **Keep LoRAs** — `<lora:...>` tokens in the main prompt box survive a regeneration
-- **Bases** — the system prompt that sets the prose voice: `Default` (Z-Image style, scene first) and `Narrative` (flowing, camera-aware); add your own
+- **Bases** — the system prompt that turns your source into prose. One ships, `Default`: it keeps everything you state and invents what you leave open. Add your own through Local Overrides
 - **220+ categorized modifiers** — organized into auto-generated dropdowns, one per YAML file
 - **Inline wildcards** — `{name?}` placeholders in your prompt
 - **`@` / `@@`** — add to or replace the system prompt from inside the source prompt
@@ -116,7 +116,7 @@ a woman sitting in a {location?} wearing {outfit?} during {time?}
 a serious woman at a desk @ keep it under three sentences
 ```
 
-`@@` replaces the whole system prompt — the base, the adherence rule, and the Motion and Negative blocks are all left out:
+`@@` replaces the whole system prompt — the base and the Motion and Negative blocks are all left out:
 
 ```
 a woman opens a door @@ Output exactly 6 lines. Each line describes only visible motion.
@@ -217,7 +217,7 @@ An entry carrying a `source:` key (the tag-database lookup of earlier versions) 
 
 ### Authoring base prompts and operational prompts
 
-`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`remix_prose`, `prose_adherence`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`, `sigil_append`). Both merge with the published defaults; anything you don't override stays.
+`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`remix_prose`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`, `sigil_append`). Both merge with the published defaults; anything you don't override stays.
 
 ```yaml
 # _bases.yaml
@@ -236,7 +236,7 @@ your base body             # per-base: style and content rules
 _format                    # shared: no headings, no line breaks, no commentary
 ```
 
-Then these blocks are appended as they apply: `prose_adherence` when the source prompt is not empty, `motion` when **+ Motion and Audio** is on, and `negative` (with its `POSITIVE:`/`NEGATIVE:` contract) when **+ Negative** is on. The user message carries `SOURCE PROMPT: ...`, an `Apply these styles to the scene: ...` line for selected modifiers, and the `inline_wildcard` instruction when the source contains `{name?}` placeholders.
+Then these blocks are appended as they apply: `motion` when **+ Motion and Audio** is on, and `negative` (with its `POSITIVE:`/`NEGATIVE:` contract) when **+ Negative** is on. The user message carries `SOURCE PROMPT: ...`, an `Apply these styles to the scene: ...` line for selected modifiers, and the `inline_wildcard` instruction when the source contains `{name?}` placeholders.
 
 An `@` suffix in the source prompt is appended right after `_format`, under the `sigil_append` line, before the blocks above. An `@@` suffix replaces all of it.
 

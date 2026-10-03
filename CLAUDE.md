@@ -4,13 +4,17 @@ This file gives agents (Claude Code, etc.) the project-specific context
 they need to work effectively on this extension. Human contributors
 can skim it but it's primarily written for AI sessions.
 
-## Start new sessions by reading the experiment log
+## Start new sessions by reading the tuning record
 
-`experiments/LOG.md` is the persistent digest of what's been tried.
-Read it first if you're coming in fresh — it gives current status,
-rejected variants (don't re-test), cross-variant findings, and
-next-hypothesis candidates. Individual `_ratings.json` files under
-`.ai/experiments/<variant>/` have per-run details.
+`experiments/PROSE-TUNING.md` is the record of what was learned tuning
+the enhancer's prose: what counts as a failure (the operator's own
+grading), the method, each finding with its numbers, the dead ends, and
+what is still open. Read it before changing a base, a directive, the
+sampling options or the model. Its instrument is
+`experiments/prose_fidelity.py`.
+
+`experiments/LOG.md`, where present, is an older local log of the
+removed tag pipeline (gitignored, machine-local).
 
 ## TL;DR — the load-bearing rules
 

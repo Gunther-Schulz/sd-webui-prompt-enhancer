@@ -63,7 +63,7 @@ def call_ollama(sp: str, user_msg: str, model: str, seed: int, temp: float,
             "top_k": 20,
             "top_p": 0.95 if think else 0.8,
             "repeat_penalty": 1.1,
-            "presence_penalty": 1.5,
+            "presence_penalty": 0.0,
         },
         "messages": [
             {"role": "system", "content": sp},
@@ -95,7 +95,7 @@ def call_ollama(sp: str, user_msg: str, model: str, seed: int, temp: float,
 def main() -> int:
     ap = argparse.ArgumentParser(description="Compare extension prompt construction with ad-hoc tests.")
     ap.add_argument("--source", required=True, help="Source prompt string")
-    ap.add_argument("--base", default="Default", help="Base name (e.g. Default, Narrative)")
+    ap.add_argument("--base", default="Default", help="Base name (Default, or one from Local Overrides)")
     ap.add_argument("--modifiers", default="", help="Comma-separated modifier names (e.g. 'Dramatic,🎲 Random Artist')")
     ap.add_argument("--motion", action="store_true", help="Append motion+audio directive (mirrors '+ Motion and Audio' checkbox)")
     ap.add_argument("--neg", action="store_true", help="Append negative-prompt directive (mirrors '+ Negative' checkbox)")
@@ -133,10 +133,6 @@ def main() -> int:
 
     # After an `@@` replace nothing is appended — mirrors _enhance
     if not replaced:
-        # Adherence directive, non-empty source only
-        if source:
-            sp = f"{sp}\n\n{pe._prompts.get('prose_adherence', '')}"
-
         # Motion + negative directives
         if args.motion:
             sp = f"{sp}\n\n{pe._prompts.get('motion', '')}"
