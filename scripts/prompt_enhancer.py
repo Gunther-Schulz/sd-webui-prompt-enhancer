@@ -286,7 +286,7 @@ def _base_names():
     from the `target:` list (first 3 entries joined). Curated bases appear
     first in a fixed order; user-added bases follow in yaml order.
     """
-    CURATED_ORDER = ["Default", "Narrative"]
+    CURATED_ORDER = ["Default"]
 
     def _label(value):
         meta = _base_meta(value)
@@ -633,14 +633,16 @@ def _call_llm(prompt, api_url, model, system_prompt, temperature, think=False, t
             "seed": int(seed),
             "top_k": 20,
             "top_p": 0.95 if think else 0.8,
-            # repeat_penalty stays at Ollama's default. At 1.5 it penalised
-            # every token in the recent context, and the source prompt IS the
-            # recent context — so the model swapped the user's own words
-            # (handrail -> escalator, "two" -> "three", on her back -> prone)
-            # and produced garbled run-ons. presence_penalty alone keeps the
-            # loop guard. Measured 2026-10-03, experiments/LOG.md.
+            # Both penalties act on tokens in the recent context, and the
+            # source prompt IS the recent context. repeat_penalty 1.5 swapped
+            # the user's own words (handrail -> escalator, "two" -> "three",
+            # on her back -> prone) and garbled the grammar; presence_penalty
+            # 1.5 still pushed explicit source words out. Ollama's default
+            # repeat_penalty is the loop guard that remains: no loop or
+            # truncation in ~600 outputs. Measured 2026-10-03,
+            # experiments/PROSE-TUNING.md.
             "repeat_penalty": 1.1,
-            "presence_penalty": 1.5,
+            "presence_penalty": 0.0,
             # Explicit output cap. Without this, Ollama falls back to
             # whatever the model's Modelfile specifies (often 128 for
             # instruct variants) — which produces ~60 words of prose,
@@ -1071,12 +1073,6 @@ class PromptEnhancer(scripts.Script):
                 # After an `@@` replace the user's text is the whole system
                 # prompt: nothing below is appended to it.
                 if not replaced:
-                    # Adherence directive — only when source is non-empty, so
-                    # dice-roll creativity stays free. Without it the output euphemised
-                    # explicit source terms (measured 2026-10-03).
-                    if source:
-                        sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
-
                     if motion_cb:
                         sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                     if neg_cb:
