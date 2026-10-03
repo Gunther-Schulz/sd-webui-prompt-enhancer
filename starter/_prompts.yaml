@@ -1,0 +1,14 @@
+# Overrides for the enhancer's fixed helper texts. Rarely needed. This file
+# does nothing until you remove the "# " from a line below. Anything you do
+# not list keeps its shipped text (see prompts.yaml in the extension folder
+# for the originals). Picked up by the Reload button.
+#
+#   motion              added when "+ Motion and Audio" is ticked
+#   negative            added when "+ Negative" is ticked
+#   remix_prose         the instruction the Remix button uses
+#   empty_source_signal what the enhancer is told when the source box is empty
+#   sigil_append        the line that introduces an "@" instruction
+#   inline_wildcard     how {name?} placeholders in the source are handled
+
+# motion: |
+#   After the scene, add one sentence describing how it moves.

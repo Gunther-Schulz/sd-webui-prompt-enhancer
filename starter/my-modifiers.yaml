@@ -1,0 +1,23 @@
+# Your own modifiers. Each .yaml file in this folder becomes one dropdown in
+# the Prompt Enhancer panel. This file does nothing until you remove the "# "
+# from the lines below. New files need a Forge restart to appear; edits to an
+# existing file are picked up by the Reload button.
+#
+# _label is the dropdown's name. Use the name of a shipped dropdown (Subject,
+# Setting, Camera, Lighting & Mood, Visual Style, ...) to add your entries to
+# that one instead of creating a new dropdown.
+#
+# Under it: categories, and in each category the entries you can tick.
+# An entry is either a plain keyword line, or "behavioral" (an instruction to
+# the enhancer) with optional keywords.
+
+# _label: Mine
+#
+# places:
+#   Laundromat at night: laundromat, fluorescent tubes, rows of washing machines, night
+#   Rooftop:
+#     behavioral: "Set the scene on a flat city rooftop."
+#     keywords: "rooftop, skyline, gravel, low wall"
+#
+# looks:
+#   Flash snapshot: amateur phone photo, direct flash, slightly blurry

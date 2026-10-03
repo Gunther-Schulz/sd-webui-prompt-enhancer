@@ -1,0 +1,20 @@
+# Your own bases. Each entry here appears in the Base dropdown next to
+# "Default". This file does nothing until you remove the "# " from the lines
+# below. Picked up by the Reload button.
+#
+# A base is the instruction the enhancer follows when it turns your source
+# prompt into a full one. Two shared blocks are wrapped around every base
+# automatically: one about how to read the input, one that forbids headings,
+# line breaks and commentary. So write only the part that is yours.
+#
+# For a one-off, you do not need a base at all: type
+#   your prompt @ extra instruction      (added on top of the selected base)
+#   your prompt @@ whole instruction     (replaces the base for that run)
+# in the source box.
+
+# My Base:
+#   description: "Shown under the dropdown."
+#   label: "what it is for"
+#   body: |
+#     You expand a short image prompt into a fuller one.
+#     Keep everything the source states. Invent what it leaves open.

@@ -184,7 +184,11 @@ Set the `PROMPT_ENHANCER_LOCAL` environment variable to one or more comma-separa
 PROMPT_ENHANCER_LOCAL="/home/user/my-modifiers, /home/user/experimental"
 ```
 
-The **Local Overrides** field in the UI can refresh content of existing dropdowns. **New files require a Forge restart** to create new dropdowns.
+The **Local Overrides** field in the UI shows the folder in use (pre-filled from the variable) and can refresh content of existing dropdowns. **New files require a Forge restart** to create new dropdowns.
+
+A configured folder that does not exist loads nothing, and says so: a console line, a note under the field, and a red note after **Reload**. The extension never creates the folder itself.
+
+**Starter files.** The first time the folder exists but holds no config file, three commented templates are copied into it from `starter/`: `my-modifiers.yaml`, `_bases.yaml` and `_prompts.yaml`. They change nothing until you remove the comment marks, and they carry the format and the file names so you do not have to remember them.
 
 ### How it works
 

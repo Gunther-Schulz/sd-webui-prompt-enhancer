@@ -50,6 +50,33 @@ def _load_file(path):
     return {}
 
 
+# Configured Local Overrides folders that do not exist, as of the last load.
+_missing_local_dirs = []
+
+_STARTER_DIR = os.path.join(_EXT_DIR, "starter")
+
+
+def _seed_local_dir(directory):
+    """Copy the starter files into a Local Overrides folder that holds no
+    config file yet. They are comments only: they load nothing, and they
+    put the file names and the format where the user edits. Never creates
+    the folder itself (that is the launcher's decision, not ours) and never
+    touches a folder that already has a file in it."""
+    try:
+        if any(n.endswith((".yaml", ".yml", ".json")) for n in os.listdir(directory)):
+            return
+        import shutil
+        copied = []
+        for name in sorted(os.listdir(_STARTER_DIR)):
+            if name.endswith(".yaml"):
+                shutil.copyfile(os.path.join(_STARTER_DIR, name), os.path.join(directory, name))
+                copied.append(name)
+        if copied:
+            print(f"[PromptEnhancer] Local Overrides folder was empty; starter files written to {directory}: {', '.join(copied)}")
+    except OSError as e:
+        print(f"[PromptEnhancer] Could not write starter files to {directory}: {e}")
+
+
 def _get_local_dirs(ui_path=""):
     """Resolve local overrides directories.
 
@@ -62,10 +89,19 @@ def _get_local_dirs(ui_path=""):
     if not raw:
         return []
     dirs = []
+    _missing_local_dirs.clear()
     for p in raw.split(","):
         p = p.strip()
-        if p and os.path.isdir(p):
+        if not p:
+            continue
+        if os.path.isdir(p):
+            _seed_local_dir(p)
             dirs.append(p)
+        else:
+            # A configured folder that is not there loads nothing. Say so:
+            # skipped silently, it reads exactly like "no overrides wanted".
+            _missing_local_dirs.append(p)
+            print(f"[PromptEnhancer] Local Overrides folder not found, nothing loaded from it: {p}")
     return dirs
 
 
@@ -98,7 +134,10 @@ def _scan_modifier_files(directory):
         if name.startswith("."):
             continue
         stem = os.path.splitext(name)[0]
-        if stem == BASES_FILENAME:
+        # Underscore-prefixed files are special (_bases, _prompts), never
+        # modifier dropdowns. _prompts used to fall through to the _label
+        # warning below on every load.
+        if stem.startswith("_"):
             continue
         if not name.endswith((".yaml", ".yml", ".json")):
             continue
@@ -983,9 +1022,13 @@ class PromptEnhancer(scripts.Script):
                 model = gr.Dropdown(label="Model", choices=initial_models, value=DEFAULT_MODEL if DEFAULT_MODEL in initial_models else initial_models[0], allow_custom_value=True, scale=2)
             with gr.Row():
                 _env_local = os.environ.get("PROMPT_ENHANCER_LOCAL", "")
+                # Pre-filled with the folder the launcher passed in
+                # (PROMPT_ENHANCER_LOCAL), so what is in use is what is shown.
                 local_dir_path = gr.Textbox(
                     label="Local Overrides",
-                    placeholder=f"Using: {_env_local}" if _env_local else "Comma-separated dirs (refreshes content only, restart for new dropdowns)",
+                    value=_env_local,
+                    placeholder="Comma-separated dirs (refreshes content only, restart for new dropdowns)",
+                    info=("Folder not found: " + ", ".join(_missing_local_dirs)) if _missing_local_dirs else None,
                     scale=3,
                 )
                 local_dir_path.do_not_save_to_config = True
@@ -1011,6 +1054,9 @@ class PromptEnhancer(scripts.Script):
                        f"{len(_dropdown_order)} modifier groups, "
                        f"{len(_all_modifiers)} modifiers, "
                        f"{len(_prompts)} prompts</span>")
+                if _missing_local_dirs:
+                    msg += (f" <span style='color:#c66'>Local Overrides folder not found: "
+                            f"{', '.join(_missing_local_dirs)}</span>")
                 results.append(msg)
                 return results
 
