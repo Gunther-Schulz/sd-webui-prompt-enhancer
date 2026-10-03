@@ -42,9 +42,8 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT))
-sys.path.insert(0, str(_REPO_ROOT / "src"))
 
-from anima_tagger.scripts._pe_bootstrap import pe  # noqa: E402
+from experiments._pe_bootstrap import pe  # noqa: E402
 
 # Each source fixes things a swap would show up against. "look" marks
 # sources that name their own medium, where added camera gear is a
@@ -70,7 +69,7 @@ _LEAK = re.compile(r"the source|source prompt|texturing term|describe it|\bapply
 
 def system_prompt(base: str, source: str, adherence: bool) -> str:
     """Mirror of the Prose handler's assembly (scripts/prompt_enhancer.py, _enhance)."""
-    sp = pe._assemble_system_prompt(base, None, 0)
+    sp = pe._assemble_system_prompt(base)
     if not sp:
         raise SystemExit(f"no system prompt for base {base!r}")
     if adherence and source:

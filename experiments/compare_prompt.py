@@ -10,8 +10,7 @@ options the extension uses.
 Usage:
     python -m experiments.compare_prompt \\
         --source "girl in a meadow" \\
-        --base Default \\
-        --detail 0
+        --base Default
 
     # With modifiers, motion, negative
     python -m experiments.compare_prompt \\
@@ -30,7 +29,7 @@ so you can compare with what Forge sends. The output is the actual
 LLM response — with the same SP construction the extension uses.
 
 This catches drift between standalone tests and extension behavior:
-modifiers, motion, prepend, detail level, etc. all flow through the
+modifiers, motion, prepend, etc. all flow through the
 real assembly functions.
 """
 
@@ -44,9 +43,8 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO_ROOT))
-sys.path.insert(0, str(_REPO_ROOT / "src"))
 
-from anima_tagger.scripts._pe_bootstrap import pe  # noqa: E402
+from experiments._pe_bootstrap import pe  # noqa: E402
 
 
 def call_ollama(sp: str, user_msg: str, model: str, seed: int, temp: float,
@@ -97,9 +95,7 @@ def call_ollama(sp: str, user_msg: str, model: str, seed: int, temp: float,
 def main() -> int:
     ap = argparse.ArgumentParser(description="Compare extension prompt construction with ad-hoc tests.")
     ap.add_argument("--source", required=True, help="Source prompt string")
-    ap.add_argument("--base", default="Default", help="Base name (e.g. Default, Detailed, Cinematic)")
-    ap.add_argument("--detail", type=int, default=0, help="Detail level 0-3 (0=match base, 3=most detailed)")
-    ap.add_argument("--custom-sp", default=None, help="Custom system prompt (overrides base)")
+    ap.add_argument("--base", default="Default", help="Base name (e.g. Default, Narrative)")
     ap.add_argument("--modifiers", default="", help="Comma-separated modifier names (e.g. 'Dramatic,🎲 Random Artist')")
     ap.add_argument("--motion", action="store_true", help="Append motion+audio directive (mirrors '+ Motion and Audio' checkbox)")
     ap.add_argument("--neg", action="store_true", help="Append negative-prompt directive (mirrors '+ Negative' checkbox)")
@@ -116,12 +112,12 @@ def main() -> int:
     mod_names = [m.strip() for m in args.modifiers.split(",") if m.strip()]
     if mod_names:
         # pe._collect_modifiers takes list-of-lists (one per dropdown)
-        mods = pe._collect_modifiers([mod_names], seed=args.seed)
+        mods = pe._collect_modifiers([mod_names])
     else:
         mods = []
 
     # Assemble system prompt via the same function the extension calls
-    sp = pe._assemble_system_prompt(args.base, args.custom_sp, args.detail)
+    sp = pe._assemble_system_prompt(args.base)
     if not sp:
         print(f"[ERROR] No system prompt for base={args.base!r}. Available bases:")
         for name in pe._bases:
@@ -133,7 +129,7 @@ def main() -> int:
     if args.source.strip():
         sp = f"{sp}\n\n{pe._prompts.get('prose_adherence', '')}"
 
-    # Append motion + negative directives mirroring _enhance/_hybrid
+    # Append motion + negative directives mirroring _enhance
     if args.motion:
         sp = f"{sp}\n\n{pe._prompts.get('motion', '')}"
     if args.neg:
@@ -152,7 +148,6 @@ def main() -> int:
     # Print the assembly so user can verify what gets sent
     print("=" * 78)
     print(f"BASE:       {args.base}")
-    print(f"DETAIL:     {args.detail}")
     print(f"MODIFIERS:  {mod_names if mod_names else '(none)'}")
     print(f"MOTION:     {args.motion}")
     print(f"NEGATIVE:   {args.neg}")

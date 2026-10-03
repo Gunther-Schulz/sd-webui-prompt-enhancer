@@ -51,19 +51,9 @@ style influence:
   🎲 Random Artist:
     behavioral: "Choose ONE specific real artist or illustrator (be surprising — not the most famous). Explicitly NAME the artist in the prose — e.g. 'in the style of <full name>' — then describe their characteristic techniques and how they shape this scene. The artist's name must appear in the prose."
     keywords: ""
-    # ◇ target_slot only. Experimented with adding ◆ source:db_retrieve
-    # (pre-pick an artist via FAISS over source text) but the pre-flight
-    # showed the pool collapses to 1-2 artists for terse sources like
-    # "girl" — seed-picking from a 1-element pool eliminated the variance
-    # that target_slot's prose-aware retrieval provides. See
-    # experiments/preflight_db_retrieve.py for the measurement that led
-    # to reverting. Scene-adaptive post-fill is the right mechanism here.
-    target_slot: artist
   🎲 Random Franchise:
     behavioral: "Choose ONE specific franchise or visual IP (be surprising). Explicitly NAME the franchise in the prose — e.g. 'in the visual language of <franchise>' — then describe its distinctive style and how it shapes this scene. The franchise name must appear in the prose."
     keywords: ""
-    # ◇ target_slot only — same reasoning as Random Artist above.
-    target_slot: copyright
   🎲 Random Art Movement:
     behavioral: "Choose a specific art movement (be surprising). Apply its principles throughout."
     keywords: ""
@@ -71,28 +61,9 @@ style influence:
     behavioral: "Choose a specific art medium (be surprising). Make the image look like it was created with it."
     keywords: ""
 
-symbol:
-  # Data-driven (◆) randoms: picked from Danbooru's disambiguation-suffix
-  # pools. The `_(X)` suffix is Danbooru's own human curation, so these
-  # lists require zero allowlist from us — pure pattern against DB.
-  🎲 Random Tarot Card:
-    behavioral: ""
-    keywords: ""
-    source:
-      db_pattern: "_\\(tarot\\)$"
-      min_post_count: 50
-      template: "Weave {display} as a thematic element — reflected in pose, composition, symbolism, or mood. The card's meaning shapes the scene."
-  🎲 Random Symbol:
-    behavioral: ""
-    keywords: ""
-    source:
-      db_pattern: "_\\(symbol\\)$"
-      min_post_count: 100
-      template: "Incorporate a {display} motif in the scene — as an ornament, pattern, or compositional anchor."
-
 anime:
   # Anime-flavored variety is covered by chaining the Anime modifier
-  # with Random Artist ◇ / Random Era ◆ / Random Color Palette / etc.
+  # with Random Artist / Random Color Palette / etc.
   # Previously had 4 Random Anime * LLM-driven wildcards that duplicated
   # those compositions and added collapse-risk surface without new
   # capability; removed.
