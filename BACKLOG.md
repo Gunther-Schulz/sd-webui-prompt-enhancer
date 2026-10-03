@@ -6,58 +6,7 @@ evidence they wait on. Closed entries move to `## Done` with their commit ref.
 
 ## Ready
 
-### install.py's progress channel has no test, and the bug it fixes is invisible without one
-
-**Found 2026-08-21**, the hard way. The Anima artefact download left the Forge
-console silent after `Version: neo 2.28` and read as a hang. The cause was not
-in this repo's printing at all: Forge runs each extension `install.py` through
-`modules/launch_utils.run()` with `live=False`, which pipes **both** stdout and
-stderr (`modules/launch_utils.py:69-70`) and prints the collected output only
-after the process exits (`:171-173`). So no print from here reached the console
-while the 1.1 GB download ran, however often it was flushed and whichever
-stream it chose.
-
-Fixed in `a4184d4` by writing progress to the controlling terminal via
-`/dev/tty` as well as stdout. **Nothing guards that.** `_open_console()` looks
-like a defensive nicety rather than the entire point, so a later tidy-up that
-drops it — or that "simplifies" `_say` back to a plain `print` — restores the
-original bug exactly, and restores it silently: the output still appears, just
-an hour late, which is indistinguishable from working unless someone is
-watching a real Forge start.
-
-The first fix attempt missed this because it was verified by running
-`install.py` directly. That harness could not see the defect: the capture lives
-in the caller, not in the script. Reproducing the caller is the whole method,
-and it is the part worth freezing into a test.
-
-**The design:** `tests/check_install_progress.py`, run the way
-`tests/check_tags_pipeline.py` is. It spawns `install.py` exactly as Forge does
-— `subprocess.Popen(..., stdout=PIPE, stderr=PIPE)` — against a local fixture
-served over `file://` so no network and no real artefacts are involved, and
-asserts the discriminating **pair**:
-
-- **without** a controlling terminal, the child's own stdout yields nothing
-  until exit — this reproduces the defect and proves the harness can see it;
-- **under a pty** (`pty.openpty()`, or the run wrapped in
-  `script -qec ... /dev/null`), progress lines appear on the terminal *while*
-  the child is still running.
-
-The second half is the assertion that fails if `/dev/tty` is dropped. The first
-half is what stops the test passing vacuously on a harness that could never
-have observed a difference — without it, a test that always reports "live" is
-byte-identical to a correct one.
-
-*Write boundary:* `tests/check_install_progress.py` (new), and a line in
-`CLAUDE.md`'s verify section naming it. `install.py` is NOT touched — the test
-grades it, so deriving the expectation from it would move with the mutant.
-
-*Verifier:* the test itself, proven red first by reverting `_say` to a plain
-`print` and confirming the pty half goes red while the no-tty half stays green
-— a red on both halves means the harness broke, not the fix.
-
-*Done-criterion:* the test passes on the current tree, goes red on a `_say`
-reverted to plain `print`, and needs neither network nor the real 1.1 GB
-artefacts to run.
+_(none)_
 
 ## Parked
 
@@ -84,105 +33,11 @@ in this repo.
   Generate button while the enhancer's status is in progress, or a server-side
   check. Neither has been read against Forge's UI code.
 
-### `@` / `@@` inline system-prompt sigils in the source prompt
-
-**Waiting on:** the operator testing whether the existing `Custom` base covers the
-need. It discriminates cleanly. If `Custom` is enough, only `@` (append) remains
-worth building and `@@` is dropped as duplicate; if reaching for the Custom box
-mid-session turns out to be the friction, both ship.
-
-Ported from WanGP, which is the definition, not a starting point:
-`Wan2GP/docs/PROMPTS.md:610-657` (behaviour) and
-`Wan2GP/shared/prompt_enhancer/prompt_enhance_utils.py:162-187` (reference
-implementation). Requested 2026-08-21 as "the same feature we have in Wan2GP".
-
-**Semantics** — the user types the sigil into the Source Prompt box:
-
-- `prompt @ extra instructions` — the suffix is appended to the assembled system
-  prompt under a fixed joining line, verbatim from upstream:
-  `Follow these additional user instructions with higher priority if they conflict with the guidance above:`
-- `prompt @@ replacement` — the suffix REPLACES the assembled system prompt.
-- `@@` is tested BEFORE `@`, split on first occurrence, both halves stripped. The
-  sigil and everything after it never reach the user message.
-- An empty suffix changes nothing, replace or not, so a half-typed `foo @@`
-  degrades to normal behaviour rather than sending the model no instructions.
-- Deliberately NOT ported: upstream folds a thinking super-system-prompt into the
-  same merge. `Think` here is request-side only — `payload["think"]`, a `top_p`
-  swap, and a `/no_think\n` user-content prefix (`scripts/prompt_enhancer.py:1937-1952`)
-  — so the two compose independently.
-- No escape for a literal `@`, matching upstream. `a poster for @midnight` will
-  split; the failure is visible in the output rather than silent.
-
-**Why `@` is the half that matters.** `@@` duplicates what the `Custom` base
-already does — `_assemble_system_prompt:2116-2117` takes `custom_system_prompt`
-verbatim and skips the `_preamble`/`_format` wrapping, and with `detail_level`
-pinned to 0 (`:2278`, `_build_detail_instruction:1383-1384` returns None) nothing
-is appended afterwards, so `Custom` is a TOTAL replacement today. `@` has no
-equivalent anywhere: extending the selected base with one extra instruction
-currently means pasting the whole base body into the Custom box and editing it,
-which loses the base as a base.
-
-**Design (decided).** Two pure functions plus one seam. `split_sigil(prompt)` →
-`(body, suffix, replace)`; `merge_system_prompt(sp, suffix, replace)` → the
-effective system prompt. Hook them in `_enhance` between `sp =
-_assemble_system_prompt(...)` (`:2354`) and the `user_msg = f"SOURCE PROMPT:
-{source}"` construction (`:2364`) — `body` feeds the wrapper, the merged system
-prompt feeds `_call_llm`. Applying the sigil to the RESULT of
-`_assemble_system_prompt` rather than inside it is what makes `@@` a true total
-override. Reference implementation, already written and mutation-tested:
-
-    def split_sigil(prompt):
-        prompt = str(prompt or "").strip()
-        body, separator, suffix = prompt.partition("@@")
-        if separator == "@@":
-            return body.strip(), suffix.strip(), True
-        body, separator, suffix = prompt.partition("@")
-        if separator == "":
-            return prompt, "", False
-        return body.strip(), suffix.strip(), False
-
-    def merge_system_prompt(system_prompt, suffix, replace=False):
-        system_prompt = str(system_prompt or "").rstrip()
-        suffix = str(suffix or "").strip()
-        if not suffix:
-            return system_prompt
-        if replace:
-            return suffix
-        return f"{system_prompt}\n{APPEND_JOINER}\n{suffix}"
-
-`merge_system_prompt` must tolerate an empty/None base — a `Custom` base with an
-empty textbox assembles to `None` and `@@` has to work there.
-
-*Note on `@` in this codebase:* `@` already prefixes ARTIST tags throughout the
-tag pipeline (`:616`, `:620`, `:2686`, `:3174`; `src/anima_tagger/rule_layer.py:159-193`;
-`validator.py:135`) — that is the "@-prefix" CLAUDE.md:303 refers to. Different
-field, output side, no live collision: the only character-level parser on raw
-`source` today is the `{name?}` wildcard detector (`:1636`). But any doc written
-for this feature must disambiguate the two.
-
-*Write boundary:* `scripts/prompt_enhancer.py` (the `_enhance` seam), plus a new
-`tests/check_sigils.py`. One seam only — the lite extension keeps a single mode,
-so the awkward case is gone: Remix folded `source` into the SYSTEM prompt
-(`:2825`) rather than the user message, where a sigil would have interacted
-differently. If this lands in the CURRENT extension instead of the lite one,
-Hybrid and Tags need their own hooks at `:2453` and `:3009`.
-
-*Verifier:* a mutation-driven test, already written and proven. Baseline green
-first, then each mutant red — six mutants for six distinct defect classes, since a
-red on one certifies that class only: `@` tested before `@@` (caught by 10 checks),
-no stripping (6), empty suffix blanking the system prompt (1). Expectations derive
-from `PROMPTS.md`, never from the implementation they grade. Wire it through
-`src/anima_tagger/scripts/_pe_bootstrap.py` like `experiments/compare_prompt.py`
-does, NOT as a standalone reimplementation — `tests/check_tags_pipeline.py` is the
-island-test shape CLAUDE.md rule 5 warns against and would not catch a sigil
-regression.
-
-*Done-criterion:* `experiments/compare_prompt.py --dry --source "x @ be terse"`
-shows the joiner and suffix in the assembled system prompt and a clean body in the
-user message; the mutation test passes clean and goes red on each of the six
-mutants.
+## Done
 
 ### Cut this extension down to prose only, with LoRA survival
+
+**DONE 2026-10-03** — `47389de` (the cut), `f77c9cb` (prose_adherence wording), `9d2a6c3` (Enhance rename, README and CLAUDE.md), `c868a38` (Keep LoRAs). Built by a dispatched agent, verified at the desk: every tracked .py compiles, no `anima_tagger` reference remains under scripts/ or experiments/, both YAMLs parse, `experiments/prose_fidelity.py` runs against the result; the agent's handler probe showed system prompt, user message and options identical before and after the cut in 11 of 11 cases. Deviations accepted: `install.py` and `requirements.txt` deleted outright (nothing tag-free remained in them); Keep LoRAs done in Python through the `prompt_in` pull, not in the write-back JS. The Custom base went too (operator decision the same day: `@@` replaces it); Narrative and Default are the remaining bases. NOT verified: loading the extension inside Forge and clicking the buttons — first real test is the operator's. The two questions this entry waited on (the three checkboxes, which bases survive) stay with the operator's re-test and are not blockers.
 
 **Waiting on:** two operator decisions, both asked 2026-10-03 and both waiting
 on the operator trying things in Forge after that day's fidelity fix (`83ba634`,
@@ -293,6 +148,159 @@ regeneration and is not doubled on a second one.
 after the cut as before it (commit `83ba634` as the reference), and Remix still
 runs end to end.
 
-## Done
+### `@` / `@@` inline system-prompt sigils in the source prompt
+
+**DONE 2026-10-03** — `dd6d399`. Both sigils built as specified, on Enhance and Remix. `@@` replaces the whole system prompt, so the adherence directive and the + Motion / + Negative blocks are not appended on such a run. Measured by the building agent: `@@` is obeyed; `@` is a weak nudge on qwen3.5-abliterated:9b (asked for one sentence, got two to four). The check script lived in the agent's scratch and is not in the repo.
+
+**Waiting on:** the operator testing whether the existing `Custom` base covers the
+need. It discriminates cleanly. If `Custom` is enough, only `@` (append) remains
+worth building and `@@` is dropped as duplicate; if reaching for the Custom box
+mid-session turns out to be the friction, both ship.
+
+Ported from WanGP, which is the definition, not a starting point:
+`Wan2GP/docs/PROMPTS.md:610-657` (behaviour) and
+`Wan2GP/shared/prompt_enhancer/prompt_enhance_utils.py:162-187` (reference
+implementation). Requested 2026-08-21 as "the same feature we have in Wan2GP".
+
+**Semantics** — the user types the sigil into the Source Prompt box:
+
+- `prompt @ extra instructions` — the suffix is appended to the assembled system
+  prompt under a fixed joining line, verbatim from upstream:
+  `Follow these additional user instructions with higher priority if they conflict with the guidance above:`
+- `prompt @@ replacement` — the suffix REPLACES the assembled system prompt.
+- `@@` is tested BEFORE `@`, split on first occurrence, both halves stripped. The
+  sigil and everything after it never reach the user message.
+- An empty suffix changes nothing, replace or not, so a half-typed `foo @@`
+  degrades to normal behaviour rather than sending the model no instructions.
+- Deliberately NOT ported: upstream folds a thinking super-system-prompt into the
+  same merge. `Think` here is request-side only — `payload["think"]`, a `top_p`
+  swap, and a `/no_think\n` user-content prefix (`scripts/prompt_enhancer.py:1937-1952`)
+  — so the two compose independently.
+- No escape for a literal `@`, matching upstream. `a poster for @midnight` will
+  split; the failure is visible in the output rather than silent.
+
+**Why `@` is the half that matters.** `@@` duplicates what the `Custom` base
+already does — `_assemble_system_prompt:2116-2117` takes `custom_system_prompt`
+verbatim and skips the `_preamble`/`_format` wrapping, and with `detail_level`
+pinned to 0 (`:2278`, `_build_detail_instruction:1383-1384` returns None) nothing
+is appended afterwards, so `Custom` is a TOTAL replacement today. `@` has no
+equivalent anywhere: extending the selected base with one extra instruction
+currently means pasting the whole base body into the Custom box and editing it,
+which loses the base as a base.
+
+**Design (decided).** Two pure functions plus one seam. `split_sigil(prompt)` →
+`(body, suffix, replace)`; `merge_system_prompt(sp, suffix, replace)` → the
+effective system prompt. Hook them in `_enhance` between `sp =
+_assemble_system_prompt(...)` (`:2354`) and the `user_msg = f"SOURCE PROMPT:
+{source}"` construction (`:2364`) — `body` feeds the wrapper, the merged system
+prompt feeds `_call_llm`. Applying the sigil to the RESULT of
+`_assemble_system_prompt` rather than inside it is what makes `@@` a true total
+override. Reference implementation, already written and mutation-tested:
+
+    def split_sigil(prompt):
+        prompt = str(prompt or "").strip()
+        body, separator, suffix = prompt.partition("@@")
+        if separator == "@@":
+            return body.strip(), suffix.strip(), True
+        body, separator, suffix = prompt.partition("@")
+        if separator == "":
+            return prompt, "", False
+        return body.strip(), suffix.strip(), False
+
+    def merge_system_prompt(system_prompt, suffix, replace=False):
+        system_prompt = str(system_prompt or "").rstrip()
+        suffix = str(suffix or "").strip()
+        if not suffix:
+            return system_prompt
+        if replace:
+            return suffix
+        return f"{system_prompt}\n{APPEND_JOINER}\n{suffix}"
+
+`merge_system_prompt` must tolerate an empty/None base — a `Custom` base with an
+empty textbox assembles to `None` and `@@` has to work there.
+
+*Note on `@` in this codebase:* `@` already prefixes ARTIST tags throughout the
+tag pipeline (`:616`, `:620`, `:2686`, `:3174`; `src/anima_tagger/rule_layer.py:159-193`;
+`validator.py:135`) — that is the "@-prefix" CLAUDE.md:303 refers to. Different
+field, output side, no live collision: the only character-level parser on raw
+`source` today is the `{name?}` wildcard detector (`:1636`). But any doc written
+for this feature must disambiguate the two.
+
+*Write boundary:* `scripts/prompt_enhancer.py` (the `_enhance` seam), plus a new
+`tests/check_sigils.py`. One seam only — the lite extension keeps a single mode,
+so the awkward case is gone: Remix folded `source` into the SYSTEM prompt
+(`:2825`) rather than the user message, where a sigil would have interacted
+differently. If this lands in the CURRENT extension instead of the lite one,
+Hybrid and Tags need their own hooks at `:2453` and `:3009`.
+
+*Verifier:* a mutation-driven test, already written and proven. Baseline green
+first, then each mutant red — six mutants for six distinct defect classes, since a
+red on one certifies that class only: `@` tested before `@@` (caught by 10 checks),
+no stripping (6), empty suffix blanking the system prompt (1). Expectations derive
+from `PROMPTS.md`, never from the implementation they grade. Wire it through
+`src/anima_tagger/scripts/_pe_bootstrap.py` like `experiments/compare_prompt.py`
+does, NOT as a standalone reimplementation — `tests/check_tags_pipeline.py` is the
+island-test shape CLAUDE.md rule 5 warns against and would not catch a sigil
+regression.
+
+*Done-criterion:* `experiments/compare_prompt.py --dry --source "x @ be terse"`
+shows the joiner and suffix in the assembled system prompt and a clean body in the
+user message; the mutation test passes clean and goes red on each of the six
+mutants.
+
+### install.py's progress channel has no test, and the bug it fixes is invisible without one
+
+**DROPPED 2026-10-03** — the subject no longer exists: `install.py` was deleted in `47389de` with the tag half it installed for.
+
+**Found 2026-08-21**, the hard way. The Anima artefact download left the Forge
+console silent after `Version: neo 2.28` and read as a hang. The cause was not
+in this repo's printing at all: Forge runs each extension `install.py` through
+`modules/launch_utils.run()` with `live=False`, which pipes **both** stdout and
+stderr (`modules/launch_utils.py:69-70`) and prints the collected output only
+after the process exits (`:171-173`). So no print from here reached the console
+while the 1.1 GB download ran, however often it was flushed and whichever
+stream it chose.
+
+Fixed in `a4184d4` by writing progress to the controlling terminal via
+`/dev/tty` as well as stdout. **Nothing guards that.** `_open_console()` looks
+like a defensive nicety rather than the entire point, so a later tidy-up that
+drops it — or that "simplifies" `_say` back to a plain `print` — restores the
+original bug exactly, and restores it silently: the output still appears, just
+an hour late, which is indistinguishable from working unless someone is
+watching a real Forge start.
+
+The first fix attempt missed this because it was verified by running
+`install.py` directly. That harness could not see the defect: the capture lives
+in the caller, not in the script. Reproducing the caller is the whole method,
+and it is the part worth freezing into a test.
+
+**The design:** `tests/check_install_progress.py`, run the way
+`tests/check_tags_pipeline.py` is. It spawns `install.py` exactly as Forge does
+— `subprocess.Popen(..., stdout=PIPE, stderr=PIPE)` — against a local fixture
+served over `file://` so no network and no real artefacts are involved, and
+asserts the discriminating **pair**:
+
+- **without** a controlling terminal, the child's own stdout yields nothing
+  until exit — this reproduces the defect and proves the harness can see it;
+- **under a pty** (`pty.openpty()`, or the run wrapped in
+  `script -qec ... /dev/null`), progress lines appear on the terminal *while*
+  the child is still running.
+
+The second half is the assertion that fails if `/dev/tty` is dropped. The first
+half is what stops the test passing vacuously on a harness that could never
+have observed a difference — without it, a test that always reports "live" is
+byte-identical to a correct one.
+
+*Write boundary:* `tests/check_install_progress.py` (new), and a line in
+`CLAUDE.md`'s verify section naming it. `install.py` is NOT touched — the test
+grades it, so deriving the expectation from it would move with the mutant.
+
+*Verifier:* the test itself, proven red first by reverting `_say` to a plain
+`print` and confirming the pty half goes red while the no-tty half stays green
+— a red on both halves means the harness broke, not the fix.
+
+*Done-criterion:* the test passes on the current tree, goes red on a `_say`
+reverted to plain `print`, and needs neither network nor the real 1.1 GB
+artefacts to run.
 
 _(none yet)_
