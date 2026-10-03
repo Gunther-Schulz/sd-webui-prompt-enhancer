@@ -2362,6 +2362,13 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: No system prompt configured.</span>"
                     return
 
+                # V5 conditional adherence directive — only when source is
+                # non-empty, so dice-roll creativity stays free. The same rule
+                # the Hybrid and Tags paths apply; without it Prose euphemised
+                # explicit source terms (measured 2026-10-03).
+                if source:
+                    sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
+
                 if motion_cb:
                     sp = f"{sp}\n\n{_prompts.get('motion', '')}"
                 if neg_cb:

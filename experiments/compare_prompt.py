@@ -129,6 +129,10 @@ def main() -> int:
                 print(f"  - {name}")
         return 1
 
+    # Adherence directive, non-empty source only — mirrors _enhance
+    if args.source.strip():
+        sp = f"{sp}\n\n{pe._prompts.get('prose_adherence', '')}"
+
     # Append motion + negative directives mirroring _enhance/_hybrid
     if args.motion:
         sp = f"{sp}\n\n{pe._prompts.get('motion', '')}"
