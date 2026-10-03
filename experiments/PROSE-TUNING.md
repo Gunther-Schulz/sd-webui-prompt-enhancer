@@ -154,17 +154,62 @@ seeds, eighteen sources, against the tuned old Default:
 Still imperfect: smells and sounds slip in (about 8 of 54), and one
 long explicit source dropped a detail in 2 of 3 seeds.
 
-## Open: variety between seeds
+## Variety between seeds: what was tried, and what is shelved
 
 The model alone does NOT give varied scenes. Eight seeds of "a man and
 a woman having sex": a dimly lit bedroom or dim room in all eight, the
-man dark-haired and broad-shouldered almost every time. Eight seeds of
-"a man and a woman dancing": a dim room, a charcoal suit, an emerald
-gown. Temperature 1.1 changed little. The shipped "Random" modifiers
-only tell the model to "be surprising", which is the same biased
-sampler. Variety needs randomness from outside the model: a seeded pick
-(from lists, or from options the model is first asked to enumerate) fed
-into the prompt. Not built yet.
+man dark-haired and broad-shouldered almost every time, man on top with
+her legs around his waist in 7 of 11. Eight seeds of "a man and a woman
+dancing": a dim room, a charcoal suit, an emerald gown. Temperature 1.1
+changed little. The shipped "Random" modifiers only tell the model to
+"be surprising", which is the same biased sampler. Variety has to come
+from a pick the CODE makes.
+
+**Two-pass prototype** (`experiments/variety_two_pass.py`, shelved by
+operator decision 2026-10-03): the model lists several setups for the
+source, the code picks one by seed, Enhance writes the scene around it.
+Four versions:
+
+1. Separate option lists per aspect, one pick each. The lists differ a
+   lot between seeds (30 distinct locations over three lists, none
+   shared), so a static list is not needed for variety. But independent
+   picks do not fit together ("crowded train car, dim candle glow,
+   curled around the pillow"), "unusual" options were impossible
+   ("floating weightlessly"), and two lists for a sexual source
+   contained underage-sounding entries ("young freckled girl",
+   "youthful energetic teens"). Any list prompt MUST state that every
+   person is an adult.
+2. Ten whole setups in one line each. Coherent places and light, but the
+   act stayed vague, ages were absent, about two in ten were far-fetched,
+   and the poetic tone of the setup pulled euphemisms back into the
+   scene.
+3. Plain setups naming the act, ages and looks, each self-rated by the
+   model as workable or far-fetched. Good variety (kitchen, sofa,
+   bathroom, park bench, car, hallway; ages 20 to 60; for a bare
+   "woman": a grocery aisle, a mirror, a kitchen chair, a garden). The
+   self-rating is useless: 96 of 96 marked workable, garbled ones
+   included. About one setup in four garbled.
+4. Five separate fields per setup, temperature 0.8. People, place,
+   clothing and light come out plain, varied and believable. An
+   "outdoors" steer was mostly respected (one "inside a wooden cabin"
+   in about twenty setups). Age-range steers were not reached.
+
+**The limit that shelved it: the model cannot arrange two bodies.**
+About 4 in 10 sexual setups were physically wrong ("vaginal intercourse
+while lying flat on their backs", "standing up facing each other, in an
+office chair") or drifted off the source ("cuddling", "interlocking
+fingers"). The same limit shows in plain Enhance whenever the source
+leaves the arrangement open: of eleven outputs from "a man and a woman
+having sex" / "couple having sex", about four were physically
+inconsistent (one gives him two pairs of hands). Where the source NAMES
+the arrangement, Enhance keeps it. So the arrangement must come from
+outside the model: stated in the source, or a named position picked by
+code from a list. Physical inconsistency is the worst invention failure
+(it becomes body horror in the image) and no keyword check sees it; it
+is graded by reading.
+
+Direction chosen instead: positions (and anything else) as modifier
+lists, with a code-side random pick by seed. Not built yet.
 
 ## Not tested
 

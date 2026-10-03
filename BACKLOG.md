@@ -10,6 +10,22 @@ _(none)_
 
 ## Parked
 
+### Two-pass scene variety (model lists setups, code picks one)
+
+**PARKED 2026-10-03, operator decision** ("let's shelf the 2-pass for now ... keep it around for
+a possible revisit").
+
+Prototype kept at `experiments/variety_two_pass.py`; what four versions of it showed is in
+`experiments/PROSE-TUNING.md`, "Variety between seeds". In short: it does produce varied and
+believable people, places, clothing and light, and it would have been an opt-in checkbox beside
+Enhance; it was shelved because the model cannot arrange two bodies (about 4 in 10 sexual setups
+physically wrong), and positions are better served by a list.
+
+**Waiting on:** either a larger or better model (the Wan2GP enhancer work plans to reconsider the
+model), or the simpler route proving insufficient: modifier lists with a code-side random pick.
+Unparked, the open points are the age-range steer (untested), the missing "every person is an
+adult" guard in any list prompt, and whether the list call respects a place steer reliably.
+
 ### Generate and the enhancer can run at the same time, and together they run out of memory
 
 **PARKED 2026-10-03, operator report** ("a shim to block the generate button while
