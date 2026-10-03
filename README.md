@@ -217,6 +217,18 @@ my category:
     keywords: "tokyo streets, neon reflections, rain, umbrellas, night"
 ```
 
+**Random pick.** An entry with `pick: true` is a dice. Tick it and the extension picks one of the other entries in the same category itself, by the enhancer seed: the same seed gives the same pick, seed -1 a new one each time. The pick is shown in the status line after Enhance and saved in the image metadata as `PE Picked`.
+
+```yaml
+places:
+  🎲 Random place:
+    pick: true
+  Laundromat at night: laundromat, fluorescent tubes, rows of washing machines, night
+  Rooftop: rooftop, skyline, gravel, low wall
+```
+
+This is different from the shipped `🎲 Random ...` entries, which only ask the model to choose. Asked to choose, the model picks its favourite nearly every time; a pick made by code has no favourite.
+
 An entry carrying a `source:` key (the tag-database lookup of earlier versions) is skipped, with a console line naming it.
 
 ### Authoring base prompts and operational prompts

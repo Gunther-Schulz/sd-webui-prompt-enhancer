@@ -10,10 +10,17 @@
 # Under it: categories, and in each category the entries you can tick.
 # An entry is either a plain keyword line, or "behavioral" (an instruction to
 # the enhancer) with optional keywords.
+#
+# An entry with "pick: true" is a dice: tick it and the extension itself picks
+# one of the OTHER entries in the same category, a different one per seed (the
+# same seed gives the same pick). What it picked is shown in the status line
+# and saved with the image as "PE Picked".
 
 # _label: Mine
 #
 # places:
+#   🎲 Random place:
+#     pick: true
 #   Laundromat at night: laundromat, fluorescent tubes, rows of washing machines, night
 #   Rooftop:
 #     behavioral: "Set the scene on a flat city rooftop."

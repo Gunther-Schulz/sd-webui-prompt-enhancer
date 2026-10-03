@@ -208,8 +208,27 @@ code from a list. Physical inconsistency is the worst invention failure
 (it becomes body horror in the image) and no keyword check sees it; it
 is graded by reading.
 
-Direction chosen instead: positions (and anything else) as modifier
-lists, with a code-side random pick by seed. Not built yet.
+Direction chosen instead, and built: a modifier entry with `pick: true`
+is resolved by code to one of the other entries of its category, by
+seed. With a list of named positions, each carrying one plain sentence
+of who is where, the bare source "a man and a woman having sex" over
+eight seeds gave six different positions and 0-1 gross physical
+inconsistencies (read by hand), against about 4 of 8-11 with nothing
+given. The model copies the given arrangement and then stays inside it
+far better than it invents one.
+
+Three base rules were tried for the un-steered single pass, eight seeds
+each on the same bare source, graded by reading:
+
+- "Name the arrangement once and do not place individual limbs": about
+  5 of 8 still inconsistent, limbs still placed, the rule echoed once.
+  Dropped.
+- "Name one standard position first, then say only what is true in it":
+  about 4-5 of 8 inconsistent ("lying side by side... her legs hooked
+  over his shoulders"), and it named missionary every time. Dropped.
+- "Spend the words on looks, clothes, place and light; one short
+  sentence on how the bodies meet": about 2 of 8, by saying less. A weak
+  result on eight outputs; not adopted without a full regression round.
 
 ## Not tested
 

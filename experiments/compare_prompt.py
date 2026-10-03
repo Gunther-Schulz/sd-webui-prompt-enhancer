@@ -112,7 +112,7 @@ def main() -> int:
     mod_names = [m.strip() for m in args.modifiers.split(",") if m.strip()]
     if mod_names:
         # pe._collect_modifiers takes list-of-lists (one per dropdown)
-        mods = pe._collect_modifiers([mod_names])
+        mods = pe._collect_modifiers([mod_names], args.seed)
     else:
         mods = []
 

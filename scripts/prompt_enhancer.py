@@ -196,6 +196,12 @@ def _normalize_modifier(entry):
         }
     if not isinstance(entry, dict):
         return None
+    if entry.get("pick"):
+        # A random-pick entry: resolved by CODE to one of the other entries
+        # in its category, using the seed (see _collect_modifiers). The model
+        # is not asked to choose: asked to "be surprising", it picks its
+        # favourite every time (experiments/PROSE-TUNING.md, variety).
+        return {"pick": True, "behavioral": "", "keywords": "", "siblings": []}
     norm = {
         "behavioral": (entry.get("behavioral") or "").strip(),
         "keywords": (entry.get("keywords") or "").strip(),
@@ -235,6 +241,15 @@ def _build_dropdown_data(categories_dict):
                 continue
             flat[name] = norm
             choices.append(name)
+        siblings = [n for n in items if n in flat and not flat[n].get("pick")]
+        for name in list(items):
+            if name in flat and flat[name].get("pick"):
+                if siblings:
+                    flat[name]["siblings"] = siblings
+                else:
+                    print(f"[PromptEnhancer] Skipping modifier '{name}': 'pick' needs at least one other entry in category '{cat_name}'.")
+                    del flat[name]
+                    choices.remove(name)
     return flat, choices
 
 
@@ -349,15 +364,43 @@ def _base_names():
     return result
 
 
-def _collect_modifiers(dropdown_selections):
-    """Collect all selected modifiers into a list of (name, normalized_entry) tuples."""
+def _collect_modifiers(dropdown_selections, seed=-1):
+    """Collect all selected modifiers into a list of (name, normalized_entry) tuples.
+
+    A `pick` entry is replaced by one of the other entries of its category,
+    chosen by code: the same seed gives the same pick, seed -1 a fresh one
+    each time. What was picked is recorded in `_last_picks` for the status
+    line and the image metadata.
+    """
+    import random as _random
+    global _last_picks
+    _last_picks = []
     result = []
+    seen = set()
     for selections in dropdown_selections:
         for name in (selections or []):
             entry = _all_modifiers.get(name)
-            if entry:
+            if not entry:
+                continue
+            if entry.get("pick"):
+                rng = _random.Random(f"{int(seed)}:{name}") if int(seed) >= 0 else _random.Random()
+                name = rng.choice(entry["siblings"])
+                entry = _all_modifiers.get(name)
+                if not entry:
+                    continue
+                _last_picks.append(name)
+            if name not in seen:
+                seen.add(name)
                 result.append((name, entry))
     return result
+
+
+# Entries chosen by `pick` modifiers on the last Enhance / Remix.
+_last_picks = []
+
+
+def _picks_note():
+    return f" · picked: {', '.join(_last_picks)}" if _last_picks else ""
 
 
 def _build_style_string(mod_list):
@@ -635,6 +678,13 @@ def _detect_repetition(text):
 
 _cancel_flag = threading.Event()
 _last_seed = -1
+
+
+def _effective_seed(seed):
+    """Turn the UI's -1 ("random") into a concrete seed up front."""
+    import random as _random
+    seed = int(seed)
+    return seed if seed >= 0 else _random.randint(0, 2**31 - 1)
 # Which PE button produced the currently-staged prompt. Set by each
 # handler entry point, consumed by process() to write PE Mode into image
 # metadata and shown in every status line via _MODE_* prefixes below.
@@ -1108,7 +1158,10 @@ class PromptEnhancer(scripts.Script):
                 # the overwrite. The field's text itself is not used here.
                 kept_tokens = _extract_angle_tokens(existing) if keep_loras else []
 
-                mods = _collect_modifiers(dd_vals)
+                # One seed for the modifier picks and the model call, so
+                # "reuse seed" reproduces both.
+                sd = _effective_seed(sd)
+                mods = _collect_modifiers(dd_vals, sd)
                 sp = _assemble_system_prompt(base_name)
                 if not sp:
                     yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: No system prompt configured.</span>"
@@ -1156,7 +1209,7 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_ENHANCE}: OK - {len(result.split())} words, {elapsed}</span>"
+                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_ENHANCE}: OK - {len(result.split())} words, {elapsed}{_picks_note()}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
@@ -1217,7 +1270,8 @@ class PromptEnhancer(scripts.Script):
                 # From here on `source` is the instruction without its sigil part.
                 source, sigil_suffix, sigil_replace = _split_sigil(source)
                 replaced = sigil_replace and bool(sigil_suffix)
-                mods = _collect_modifiers(dd_vals)
+                sd = _effective_seed(sd)
+                mods = _collect_modifiers(dd_vals, sd)
                 print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
 
                 if not mods and not source and not sigil_suffix:
@@ -1266,7 +1320,7 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - remixed to {len(result.split())} words, {elapsed}</span>"
+                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - remixed to {len(result.split())} words, {elapsed}{_picks_note()}</span>"
                 except InterruptedError:
                     yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Cancelled</span>"
                 except _TruncatedError as e:
@@ -1411,6 +1465,8 @@ class PromptEnhancer(scripts.Script):
             p.extra_generation_params["PE Negative"] = True
         if _last_seed >= 0:
             p.extra_generation_params["PE Seed"] = _last_seed
+        if _last_picks:
+            p.extra_generation_params["PE Picked"] = ", ".join(_last_picks)
         if temp is not None:
             p.extra_generation_params["PE Temperature"] = round(float(temp), 3)
         if prepend:
