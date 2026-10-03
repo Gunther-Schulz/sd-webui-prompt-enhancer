@@ -27,7 +27,7 @@ HOW TO RUN A ROUND (small rounds first, one change per round):
   5. Only when a change looks right, confirm with --seeds 42,7919,137.
 
 The call is the extension's own `_call_llm`, and the system prompt is
-assembled the way the Prose handler (`_enhance`) does it, so a result
+assembled the way the Enhance handler (`_enhance`) does it, so a result
 here is a result in Forge. Needs Ollama running and the Forge Python
 environment (the system one lacks dependencies).
 """
@@ -68,7 +68,7 @@ _LEAK = re.compile(r"the source|source prompt|texturing term|describe it|\bapply
 
 
 def system_prompt(base: str, source: str, adherence: bool) -> str:
-    """Mirror of the Prose handler's assembly (scripts/prompt_enhancer.py, _enhance)."""
+    """Mirror of the Enhance handler's assembly (scripts/prompt_enhancer.py, _enhance)."""
     sp = pe._assemble_system_prompt(base)
     if not sp:
         raise SystemExit(f"no system prompt for base {base!r}")

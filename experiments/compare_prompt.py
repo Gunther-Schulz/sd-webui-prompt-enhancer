@@ -1,8 +1,8 @@
 """Standalone prompt-construction harness for comparing extension output
 with ad-hoc Ollama tests.
 
-Mirrors what scripts/prompt_enhancer.py does in Prose mode (the path
-z-image uses): assembles the system prompt via pe._assemble_system_prompt,
+Mirrors what scripts/prompt_enhancer.py does on the Enhance button:
+assembles the system prompt via pe._assemble_system_prompt,
 optionally appends motion/negative directives, builds the user message
 with style modifiers and inline wildcards, calls Ollama with the same
 options the extension uses.

@@ -2,25 +2,21 @@
 
 A Stable Diffusion WebUI extension that builds prompts using a local LLM. Works with [Forge Neo](https://github.com/Haoming02/sd-webui-forge-classic), Forge, and AUTOMATIC1111.
 
-Takes your short prompt and expands it into a detailed description, booru-style tags, or a hybrid of both using a locally-running language model. No cloud APIs, no data leaves your machine.
+Takes your short prompt and expands it into a detailed natural-language description using a locally-running language model. No cloud APIs, no data leaves your machine.
 
 ## Features
 
-- **Local LLM powered** — uses Ollama or any OpenAI-compatible API
-- **Four generation modes** — Prose (flowing paragraph), Hybrid (tags + NL supplement), Tags (booru tags), Remix (modify existing)
-- **Mode modifiers** — Still (frozen moment), Scene (action over time), Audio (sound cues) — available in the Mode dropdown alongside other modifiers
-- **130+ categorized modifiers** — organized into auto-generated dropdowns: Subject, Setting, Lighting & Mood, Visual Style, Camera, Audio
-- **Tag generation & validation** — Illustrious, NoobAI, Pony, and **Anima** (retrieval-augmented) formats with auto-downloaded danbooru databases, alias correction, fuzzy matching, deduplication, and standard tag ordering
-- **Tag post-processing** — strips LLM meta-annotations, converts hyphens, escapes parentheses for SD, prefix-matches danbooru disambiguation suffixes
-- **Wildcards** — creative LLM choices: surprise location, random artist, anime era, narrative detail, and more
+- **Local LLM powered** — uses [Ollama](https://ollama.com)
+- **Enhance** — expands the source prompt into prose, written straight into the main prompt box
+- **Remix** — applies an instruction or new modifiers to the prompt that is already in the main prompt box
+- **Bases** — the system prompt that sets the prose voice: `Default` (Z-Image style, scene first) and `Narrative` (flowing, camera-aware); add your own
+- **220+ categorized modifiers** — organized into auto-generated dropdowns, one per YAML file
 - **Inline wildcards** — `{name?}` placeholders in your prompt
 - **Local overrides** — extend with your own YAML files; each file becomes a dropdown
-- **Extensible tag formats** — add new model support by dropping a YAML file
-- **Detail slider** — scales output length to the active image model (SD/SDXL/Flux/Z-Image)
-- **Streaming** — real-time token streaming with stall detection, thinking detection, and configurable safeguards
+- **Streaming** — token streaming with stall detection, thinking detection, repetition detection, and configurable safeguards
 - **Cancel button** — abort any running generation
 - **Ollama status** — shows version, loaded model, and GPU/CPU mode
-- **Metadata** — all settings saved to generated images and restored when loading
+- **Metadata** — settings saved to generated images and restored when loading
 - **Works in both txt2img and img2img** tabs
 
 ## Requirements
@@ -46,7 +42,7 @@ The 4b variant is not recommended as it produces noticeably lower quality output
 
 "Abliterated" models have refusal behaviors removed, which is useful for unrestricted creative content. Standard models work fine for general use.
 
-**Known limitation:** Certain combinations of source prompt, modifiers, and wildcards can cause Qwen to enter a repetition loop, generating garbage until the token limit is reached. This shows as a "Truncated" status. If this happens, try removing or changing a modifier — some combinations are simply too complex for a 9B model to synthesize coherently. Larger models handle complex combinations better.
+**Known limitation:** Certain combinations of source prompt and modifiers can cause Qwen to enter a repetition loop, generating garbage until the token limit is reached. This shows as a "Truncated" status. If this happens, try removing or changing a modifier — some combinations are simply too complex for a 9B model to synthesize coherently. Larger models handle complex combinations better.
 
 ## Installation
 
@@ -69,97 +65,29 @@ Restart the WebUI.
 ## Usage
 
 1. Open the **Prompt Enhancer** accordion in the txt2img or img2img tab
-2. Type your prompt in the **Source Prompt** box
-3. Optionally select modifiers from the categorized dropdowns (Mode, Subject, Setting, Lighting & Mood, etc.)
-5. Optionally select **Wildcards** for creative LLM choices
-6. Choose a generation mode:
+2. Type your prompt in the **Source Prompt** box, or leave it empty to let the model invent a scene
+3. Optionally pick a **Base** and select modifiers from the categorized dropdowns
+4. Click **✨ Enhance**
 
-### Generation modes
+The result is written into the main prompt box. Nothing is sent to the image model until you press Forge's own Generate button.
 
-**Prose** — Click **✍ Prose** for a flowing paragraph. Best for Flux, SD3, and other natural-language models.
+### Checkboxes
 
-**Hybrid** — Click **✨ Hybrid** for danbooru-style tags followed by a short NL description. Three-pass pipeline: (1) generates rich prose with wildcards/modifiers, (2) extracts tags from that prose using the selected tag format, (3) summarizes the prose into 1-2 compositional sentences. Best for Illustrious, NoobAI, and Pony — follows the community-recommended "tags + NL" format where tags provide precise control and the NL supplement captures spatial relationships, lighting, and mood that tags alone cannot express.
-
-**Tags** — Click **🏷 Tags** for pure booru-style tags. Two-pass pipeline: (1) generates rich prose (same as Prose mode, with wildcards/modifiers), (2) extracts tags from that prose using the selected tag format. The prose pass gives the LLM room to reason about the scene before compressing it to tags — producing richer, more coherent tag lists than asking for tags directly. Tags are post-processed through validation, correction, reordering, and paren escaping.
-
-### Tag generation
-
-Both **Hybrid** and **Tags** modes use the tag post-processing pipeline:
-
-1. Select a **Tag Format** — Illustrious, NoobAI, Pony, or **Anima** (recommended)
-2. Choose a **Tag Validation** mode (RAG recommended with Anima)
-
-Tag databases are automatically downloaded on first use (~2-3 MB per format; ~1.1 GB for Anima's FAISS index). Tags are validated, corrected (aliases, common mistakes like `1man` → `1boy`), deduplicated, and reordered into standard danbooru convention. Parentheses in disambiguation suffixes (e.g., `artist_(style)`) are automatically escaped for SD.
-
-**Validation modes:**
-- **RAG** — retrieval + embedding validator (Anima format only) — shortlist of real artists/characters/series injected into system prompt + every drafted tag checked against FAISS index. Default.
-- **Fuzzy Strict** — alias + fuzzy matching, drop unrecognized
-- **Fuzzy** — alias + fuzzy string matching, keep unrecognized
-- **Off** — raw LLM output, no validation
-
-On truncation (Ollama hit the token or time budget), tag-mode outputs fail loud: empty textbox, red "Truncated — no output (retry)" status. A reduced partial result would look like success but silently missing content; the retry path is more honest.
+- **Prepend** — puts your source prompt, verbatim, in front of the generated prose
+- **+ Negative** — also asks for a short negative prompt and writes it into the negative prompt box
+- **+ Motion and Audio** — adds a short motion and sound tail for image-to-video workflows
 
 ### Remixing an existing prompt
 
-Already have an enhanced prompt and want to tweak it?
+Already have a prompt in the main prompt box and want to tweak it?
 
-1. Select new modifiers or wildcards, or update the source prompt
-2. Click **🔀 Remix** instead of Prose
-3. The LLM reads the current prompt from the main textarea and integrates the changes without rewriting everything
-4. Remix auto-detects whether the existing prompt is prose, tags, or hybrid format and applies the appropriate system prompt and post-processing
+1. Type an instruction in the **Source Prompt** box ("make it night", "add rain"), select modifiers, or both
+2. Click **🔀 Remix** instead of Enhance
+3. The model reads the current prompt from the main prompt box and patches it rather than rewriting it from scratch
 
-### Random wildcards — how the 🎲 modifiers work
+### Random modifiers
 
-Random modifiers come in three flavors. The dropdown label shows which flavor via the badge after the name:
-
-| label | guarantee | when it decides | how it decides |
-|---|---|---|---|
-| `🎲 Random X` | LLM-driven | during generation | the LLM picks; relies on model's creativity; **collapses onto priors** for small models (e.g. qwen3 picks 1920s for Random Era 81% of the time) |
-| `🎲 Random X ◆` | pre-picked from DB | before generation | seed-picked from a Danbooru pattern-filtered pool; LLM just **renders** the chosen value |
-| `🎲 Random X ◇` | post-filled if dropped | after generation | LLM generates freely; if the expected category is missing from the output, scene-aware retrieval (FAISS on the generated prose) + seed pick injects a real tag |
-| `🎲 Random X ◆◇` | both | pre-pick **and** safety-net | strongest — pre-picked value steers prose, and if LLM ignores the directive, post-fill still injects the category |
-
-**Mnemonic:** filled diamond ◆ = **committed upfront** (pre-pick). Hollow diamond ◇ = **fills a gap after** (post-fill).
-
-**Two randomization mechanisms side-by-side:**
-
-- **`source:`** (pre-pick, ◆) — resolves before the LLM runs. The wildcard turns into a concrete Danbooru tag via regex against the DB (`^\d{4}s_\(style\)$` for Random Era, `_(flower)$` for Random Flower, etc.). The picked value is injected into the system prompt as if you had selected it directly. The LLM's job is to *render* the chosen thing, not to *choose*.
-
-- **`target_slot:`** (post-fill, ◇) — runs after the LLM's output. Checks whether the expected Danbooru category (artist, copyright, character) was covered by the LLM. If missing, `_retrieve_prose_slot` does a FAISS search of the **generated prose** against that DB category, reranks to top-10, and seed-picks one to inject as a tag. Deterministic for a given prose + seed.
-
-**Data-driven randoms currently shipped:**
-
-| modifier | mechanism | DB pool | dropdown |
-|---|---|---|---|
-| Random Era | `source:` | decade styles (`^\d{4}s_\(style\)$`) — 7 | Setting |
-| Random Flower | `source:` | `_(flower)$` — 73 | Setting |
-| Random Food | `source:` | `_(food)$` — 79 | Setting |
-| Random Animal | `source:` | `_(animal)$` — 31 | Setting |
-| Random Constellation | `source:` | `_(constellation)$` — 52 | Setting |
-| Random Tarot Card | `source:` | `_(tarot)$` — 23 | Visual Style |
-| Random Symbol | `source:` | `_(symbol)$` — 38 | Visual Style |
-| Random Artist | `target_slot: artist` | category=1 (Danbooru artists) | Visual Style |
-| Random Franchise | `target_slot: copyright` | category=3 | Visual Style |
-
-Other 🎲 modifiers are LLM-driven — they work, but can exhibit collapse bias toward training-data priors.
-
-**Adding your own data-driven random in a local override:**
-
-```yaml
-# PROMPT_ENHANCER_LOCAL/my.yaml
-decor:
-  🎲 Random Gem:
-    behavioral: ""
-    keywords: ""
-    source:
-      db_pattern: "_\\(gemstone\\)$"   # any regex against category=general tags
-      min_post_count: 50                # popularity floor; blocks niche/junk
-      template: "Include {display} as a prop or ornament in the scene."
-```
-
-The UI auto-detects the `source:` key and appends the ◆ badge. No Python changes needed.
-
-**Console trace:** when a `source:`-driven random fires, the Forge console logs `[PromptEnhancer] Random pick (Random Era): 1970s_(style) (pool=7, post_count=992)` so you can see what was chosen and how big the pool was.
+Modifiers marked 🎲 ask the model to pick something itself (an artist, a time of day, a colour palette). They are instructions to the model, nothing more: a small model tends to return to the same few choices.
 
 ### Inline wildcards
 
@@ -177,18 +105,17 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| Mode | (none) | Dropdown: Still (frozen moment), Scene (action over time), Audio (sound cues) |
-| Base | Default | System prompt template (Default or Custom) |
-| Tag Format | Illustrious | Tag output format: Illustrious, NoobAI, Pony, Anima (for Tags and Hybrid buttons) |
-| Tag Validation | RAG | How to validate generated tags: RAG (Anima only), Fuzzy Strict, Fuzzy, Off |
+| Base | Default | System prompt that sets the prose voice |
 | Modifiers | (none) | Multiple categorized dropdowns auto-generated from YAML files |
-| Wildcards | (none) | Creative delegation — let the LLM make choices |
-| Detail | 0 (auto) | Output length: 0=auto, 1=minimal ... 10=extensive, scales to model |
+| Prepend | off | Put the source prompt in front of the result |
+| + Negative | off | Also produce a negative prompt |
+| + Motion and Audio | off | Add a motion and sound tail |
 | Temperature | 0.8 | Creativity (0 = deterministic, 2 = creative) |
 | Think | off | Let model reason before answering (slower) |
-| Seed | -1 (random) | LLM seed for reproducibility. Fixed seed = same output for same input |
+| Seed | -1 (random) | LLM seed. 🎲 resets it to random, ♻ reuses the seed of the last run |
 | API URL | `http://localhost:11434` | Ollama API endpoint |
 | Model | `huihui_ai/qwen3.5-abliterated:9b` | LLM model (auto-detected from Ollama) |
+| Local Overrides | (none) | Comma-separated directories with your own YAML files |
 
 ### Environment variables
 
@@ -196,8 +123,8 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 |----------|---------|-------------|
 | `PROMPT_ENHANCER_LOCAL` | (none) | Comma-separated directories for local modifier overrides |
 | `PROMPT_ENHANCER_STALL_TIMEOUT` | 10 | Abort if no tokens received for this many seconds |
-| `PROMPT_ENHANCER_MAX_TOKENS` | 1000 | Hard cap on output tokens |
-| `PROMPT_ENHANCER_MAX_TIME` | 60 | Hard cap on total generation time in seconds |
+| `PROMPT_ENHANCER_MAX_TOKENS` | 4000 | Hard cap on output tokens |
+| `PROMPT_ENHANCER_MAX_TIME` | 180 | Hard cap on total generation time in seconds |
 
 ## Published modifiers
 
@@ -205,77 +132,15 @@ Modifiers are organized into YAML files in the `modifiers/` directory. Each file
 
 | Dropdown | Categories |
 |----------|------------|
-| **Mode** | mode (Still, Scene, Audio) |
-| **Subject** | genre, subject, activity, relationship |
-| **Setting** | setting, time period, aesthetic |
-| **Lighting & Mood** | lighting, mood, atmosphere, emotion |
-| **Visual Style** | color, art style, anime (25+ sub-styles), cinema style, photography format, vintage format |
+| **Audio** | audio |
 | **Camera** | perspective, distance, focus, technique, motion, material |
-| **Audio** | ambient types, silence |
-
-## Tag formats
-
-Tag format definitions live in `tag-formats/` as YAML files. Each file defines:
-
-```yaml
-system_prompt: |
-  (LLM instructions for generating tags)
-use_underscores: true
-tag_db: illustrious.csv
-tag_db_url: https://...
-```
-
-Add support for new models by dropping a YAML file — no code changes needed.
-
-### Anima — retrieval-augmented tag pipeline
-
-The **Anima** tag format uses a richer pipeline than the rapidfuzz-based
-validation of the other formats:
-
-- **Shortlist retrieval**: before prose generation, real Danbooru
-  artists / characters / series that match the source prompt are
-  pre-retrieved and injected into the LLM's system prompt. Prevents
-  hallucinated names like `@takashi_murowo` at the source.
-- **Embedding-based validator**: every LLM-drafted tag is checked
-  against a 273k-entry FAISS index using bge-m3 embeddings. Real
-  Danbooru tags pass through; phrase-shape hallucinations (`4k`,
-  `detailed_background`, `animedia`) are dropped.
-- **Character → series pairing** via pre-computed co-occurrence table
-  (e.g. `hatsune_miku` → `vocaloid` added automatically).
-- **Artist/character signatures**: artist embeddings include their
-  top co-occurring general tags from 500k real Danbooru posts, so the
-  retriever can match on style/theme rather than just name.
-
-Zero setup needed — the extension's `install.py` downloads ~1.1 GB of
-pre-built index artefacts from HuggingFace on first load
-([dataset](https://huggingface.co/datasets/freedumb2000/anima-tagger-artifacts)).
-The bge-m3 embedder and bge-reranker models auto-download via
-`sentence-transformers` (~3.4 GB total) on first Anima click.
-
-Settings live under **Settings → Anima Tagger** — threshold, reranker
-toggle, co-occurrence pairing toggle, query expansion toggle.
-
-### Developer pipeline (not for end users)
-
-Scripts under `src/anima_tagger/scripts/` are the maintainer workflow
-for (re)building the artefacts when Danbooru data updates:
-
-```bash
-# 1. Pull latest Danbooru tag dump + post dataset from HF
-python src/anima_tagger/scripts/download_data.py
-
-# 2. Rebuild sqlite + FAISS index + co-occurrence (~10 min on GPU)
-python src/anima_tagger/scripts/build_index.py
-
-# 3. Upload fresh artefacts to HF (auth via `hf auth login` first)
-python src/anima_tagger/scripts/package_artifacts.py
-
-# 4. (Optional) verify retrieval quality
-python src/anima_tagger/scripts/verify.py
-python src/anima_tagger/scripts/full_pipeline_test.py
-```
-
-End users never run these.
+| **Focus** | focus |
+| **Lighting & Mood** | lighting, mood, atmosphere |
+| **Narrative** | narrative |
+| **Setting** | setting, time period, aesthetic |
+| **Subject** | genre, subject, character detail, activity, relationship |
+| **Temporal Framing** | temporal framing |
+| **Visual Style** | color, art style, style influence, anime, cinema style, photography format, vintage format |
 
 ## Local overrides
 
@@ -293,31 +158,36 @@ The **Local Overrides** field in the UI can refresh content of existing dropdown
 
 ### How it works
 
-Each `.yaml` file becomes a dropdown. The filename determines the dropdown label:
+Each `.yaml` file becomes a dropdown. The file's `_label` field is the dropdown label; a file without one is skipped with a console warning:
 
 ```
 /home/user/my-modifiers/
   _bases.yaml        # extends the Base dropdown (underscore prefix = special)
-  nsfw.yaml           # creates "Nsfw" dropdown
-  my-styles.yaml      # creates "My Styles" dropdown
+  _prompts.yaml      # overrides operational prompts
+  my-styles.yaml     # creates the dropdown named in its _label
 ```
 
-Files with the same name as published ones (e.g., `subject.yaml`) merge their content into the existing dropdown.
+A file whose `_label` matches a published dropdown (e.g. `Subject`) merges its content into that dropdown.
 
 ### YAML format
 
-All files use the same two-level format — categories containing named keyword strings:
+All modifier files use the same two-level format — categories containing named entries. An entry is either a keyword string or a mapping with a `behavioral` instruction:
 
 ```yaml
-# my-styles.yaml — becomes "My Styles" dropdown
+# my-styles.yaml
+_label: My Styles
 my category:
   Cozy Autumn: autumn, warm tones, falling leaves, golden light, wood smoke
-  Rainy Tokyo: tokyo streets, neon reflections, rain, umbrellas, night
+  Rainy Tokyo:
+    behavioral: "Rainy Tokyo street at night."
+    keywords: "tokyo streets, neon reflections, rain, umbrellas, night"
 ```
+
+An entry carrying a `source:` key (the tag-database lookup of earlier versions) is skipped, with a console line naming it.
 
 ### Authoring base prompts and operational prompts
 
-`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (Remix, summarize, wildcard preamble, negative contract). Both merge with the published defaults; anything you don't override stays.
+`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`remix_prose`, `prose_adherence`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`). Both merge with the published defaults; anything you don't override stays.
 
 ```yaml
 # _bases.yaml
@@ -328,18 +198,17 @@ My Custom Base: |
 
 #### How a base is assembled
 
-For every non-Custom base, the final system prompt is:
+For every base, the system prompt is:
 
 ```
 _preamble                  # shared: input handling
 your base body             # per-base: style and content rules
 _format                    # shared: no headings, no line breaks, no commentary
-[detail instruction]       # added when Detail slider > 0
 ```
 
-Then during generation these sections are appended in order: `SOURCE PROMPT: ...`, `Apply these styles: ...` for selected modifiers, `wildcard_preamble` plus each wildcard instruction, and (when the `+ Negative` checkbox is on) the `negative` block with its `POSITIVE:`/`NEGATIVE:` contract.
+Then these blocks are appended as they apply: `prose_adherence` when the source prompt is not empty, `motion` when **+ Motion and Audio** is on, and `negative` (with its `POSITIVE:`/`NEGATIVE:` contract) when **+ Negative** is on. The user message carries `SOURCE PROMPT: ...`, an `Apply these styles to the scene: ...` line for selected modifiers, and the `inline_wildcard` instruction when the source contains `{name?}` placeholders.
 
-Override `_preamble` or `_format` in `_bases.yaml` to change shared behavior for all bases. Select the `Custom` base to bypass the wrapping entirely and supply a raw system prompt from the UI.
+Override `_preamble` or `_format` in `_bases.yaml` to change shared behavior for all bases.
 
 #### The label-mirror trap
 
@@ -382,17 +251,15 @@ Rules of thumb:
 #### Testing your prompts
 
 - Turn on the **Think** checkbox to see the model's reasoning — useful for diagnosing why it picked a particular structure.
-- Try empty-source + active wildcards, conflicting modifiers, and instruction-style source prompts (*"make it darker"*) as edge cases.
+- Try an empty source with 🎲 modifiers, conflicting modifiers, and instruction-style source prompts (*"make it darker"*) as edge cases.
 - Watch for any words or phrases from your system prompt that appear verbatim in output — that's mirroring, and usually means you need to reframe that section as prose instead of labeled structure.
 
 ## How it works
 
-1. **Prose**: source prompt is sent to the local LLM with system prompt (base + modifiers + detail level) and wildcards in the user message. The LLM returns a detailed flowing paragraph.
-2. **Hybrid**: three-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 extracts danbooru tags from that prose using the selected tag format's system prompt. Pass 3 summarizes the prose into 1-2 compositional sentences. Tags go through the full post-processing pipeline. All three passes use the same seed for consistency.
-3. **Tags**: two-pass pipeline. Pass 1 generates prose (same as Prose mode). Pass 2 extracts danbooru tags from that prose using the selected tag format's system prompt. Tags go through the full post-processing pipeline. Both passes use the same seed for consistency. On Anima + RAG, the same shortlist + embedding validator as Hybrid applies; on truncation, tag mode fails loud (empty output + retry status) rather than delivering a partial list that looks complete.
-4. **Remix**: the current prompt is sent back to the LLM with new modifiers/wildcards to integrate. Auto-detects prose, tags, or hybrid format and uses the appropriate refine prompt and post-processing.
-5. **Streaming**: all LLM calls use streaming with real-time stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
-6. The output is written to the main prompt textbox and all settings are saved to image metadata for reproducibility.
+1. **Enhance**: the source prompt is sent to the local LLM with the assembled system prompt, and the selected modifiers in the user message. The LLM returns a description in prose.
+2. **Remix**: the current prompt is sent back to the LLM together with your instruction and modifiers, under an editor prompt that asks for a minimal patch.
+3. **Streaming**: all LLM calls use streaming with stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
+4. The output is written to the main prompt textbox and the settings are saved to image metadata.
 
 ## License
 

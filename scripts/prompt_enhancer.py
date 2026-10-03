@@ -559,7 +559,7 @@ _last_pe_mode: str | None = None
 
 # Status line prefix per mode — matches the button glyphs so the status
 # message is self-identifying at a glance.
-_MODE_PROSE = "\u270d Prose"       # ✍ Prose
+_MODE_ENHANCE = "\u2728 Enhance"   # ✨ Enhance
 _MODE_REMIX = "\U0001F500 Remix"   # 🔀 Remix
 
 
@@ -831,9 +831,9 @@ class PromptEnhancer(scripts.Script):
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
-                enhance_btn = gr.Button(value="✍ Prose", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
+                enhance_btn = gr.Button(value="\u2728 Enhance", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
                 refine_btn = gr.Button(value="\U0001f500 Remix", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
-                cancel_btn = gr.Button(value="❌ Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
+                cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
                 prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=60)
                 prepend_source.do_not_save_to_config = True
                 negative_prompt_cb = gr.Checkbox(label="+ Negative", value=False, scale=0, min_width=110)
@@ -882,7 +882,7 @@ class PromptEnhancer(scripts.Script):
                 seed = gr.Number(label="Seed", value=-1, minimum=-1, step=1, scale=1, info="-1 = random", precision=0, elem_id=f"{tab}_pe_seed")
                 seed.do_not_save_to_config = True
                 seed_random_btn = ToolButton(value="\U0001f3b2", elem_id=f"{tab}_pe_seed_random")
-                seed_reuse_btn = ToolButton(value="♻", elem_id=f"{tab}_pe_seed_reuse")
+                seed_reuse_btn = ToolButton(value="\u267b", elem_id=f"{tab}_pe_seed_reuse")
                 think = gr.Checkbox(label="Think", value=False, scale=0, min_width=80)
                 think.do_not_save_to_config = True
                 seed_random_btn.click(fn=lambda: -1, inputs=[], outputs=[seed], show_progress=False)
@@ -941,10 +941,10 @@ class PromptEnhancer(scripts.Script):
             negative_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_in")
             negative_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_out")
 
-            # ── Prose ──
+            # ── Enhance ──
             def _enhance(source, api_url, model, base_name, *args):
                 global _last_pe_mode
-                _last_pe_mode = "Prose"
+                _last_pe_mode = "Enhance"
                 motion_cb = args[-1]
                 neg_cb, temp = args[-2], args[-3]
                 prepend, sd, th = args[-6], args[-5], args[-4]
@@ -957,11 +957,11 @@ class PromptEnhancer(scripts.Script):
                 mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name)
                 if not sp:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: No system prompt configured.</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: No system prompt configured.</span>"
                     return
 
                 # Adherence directive — only when source is non-empty, so
-                # dice-roll creativity stays free. Without it Prose euphemised
+                # dice-roll creativity stays free. Without it the output euphemised
                 # explicit source terms (measured 2026-10-03).
                 if source:
                     sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
@@ -981,18 +981,18 @@ class PromptEnhancer(scripts.Script):
                     user_msg = f"{user_msg}\n\n{inline_text}"
 
                 initial_status = "\U0001F3B2 Rolling dice (prose)..." if not source else "Generating prose..."
-                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {initial_status}</span>"
+                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_ENHANCE}: {initial_status}</span>"
 
-                print(f"[PromptEnhancer] Prose: model={model}, think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
+                print(f"[PromptEnhancer] Enhance: model={model}, think={th}, mods={len(mods)}, seed={int(sd)}, neg={neg_cb}, dice={not source}")
                 try:
                     raw = None
                     for chunk in _call_llm_progress(user_msg, api_url, model, sp, temp, think=th, seed=int(sd)):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_ENHANCE}: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
                             else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_PROSE}: {p['elapsed']:.1f}s...</span>"
+                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_ENHANCE}: {p['elapsed']:.1f}s...</span>"
                         else:
                             raw = chunk
                     raw = _clean_output(raw)
@@ -1003,24 +1003,24 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield result, negative, f"<span style='color:#6c6'>{_MODE_PROSE}: OK - {len(result.split())} words, {elapsed}</span>"
+                    yield result, negative, f"<span style='color:#6c6'>{_MODE_ENHANCE}: OK - {len(result.split())} words, {elapsed}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        yield partial, "", f"<span style='color:#c66'>{_MODE_PROSE}: Cancelled - {len(partial.split())} words (partial)</span>"
+                        yield partial, "", f"<span style='color:#c66'>{_MODE_ENHANCE}: Cancelled - {len(partial.split())} words (partial)</span>"
                     else:
-                        yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: Cancelled</span>"
+                        yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: Cancelled</span>"
                 except _TruncatedError as e:
                     result = _clean_output(str(e))
-                    yield result, "", f"<span style='color:#ca6'>{_MODE_PROSE}: Truncated - {len(result.split())} words</span>"
+                    yield result, "", f"<span style='color:#ca6'>{_MODE_ENHANCE}: Truncated - {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
-                    yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: {msg}</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: {msg}</span>"
                 except Exception as e:
                     msg = f"{type(e).__name__}: {e}"
                     logger.error(msg)
-                    yield "", "", f"<span style='color:#c66'>{_MODE_PROSE}: {msg}</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: {msg}</span>"
 
             enhance_btn.click(
                 fn=_enhance,
@@ -1047,7 +1047,7 @@ class PromptEnhancer(scripts.Script):
                 existing_neg = (existing_neg or "").strip()
                 print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
                 if not existing:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: No prompt to remix. Generate one first with Prose.</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: No prompt to remix. Generate one first with Enhance.</span>"
                     return
 
                 source = (source or "").strip()

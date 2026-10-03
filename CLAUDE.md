@@ -19,15 +19,16 @@ Before writing code, check these. Full explanations follow below.
 1. **Don't pick, test.** When a design question has multiple reasonable
    answers, don't ask the maintainer — implement variants, rate outputs,
    recommend with evidence.
-2. **Quality = intent fulfillment.** Not tag count. Not drop rate. Read
-   every output yourself and rate it against a rubric with concrete
-   anchors. Revise the rubric when it stops distinguishing good from bad.
-3. **Knowledge lives in data (YAML + DB), not Python.** No keyword lists,
-   no tag-name constants, no modifier→behavior dicts in `.py` files.
-4. **No silent fallbacks.** Empty LLM output, zero retrieval results —
-   fail loud, make it visible in the trace. Don't paper over with defaults.
-5. **No island tests.** Experiment and extension share ONE pipeline
-   implementation. Promoted variant → same source/seed → same output.
+2. **Quality = intent fulfillment.** Not a word count, not a keyword
+   screen. Read every output yourself and rate it against a rubric with
+   concrete anchors. Revise the rubric when it stops distinguishing good
+   from bad.
+3. **Knowledge lives in data (YAML), not Python.** No keyword lists,
+   no modifier→behavior dicts, no prompt text in `.py` files.
+4. **No silent fallbacks.** Empty LLM output — fail loud, make it
+   visible. Don't paper over with defaults.
+5. **No island tests.** Test tools and extension share ONE
+   implementation. Same source/seed → same request to the model.
 6. **Don't anchor on existing code.** Throw it away if the shape is
    wrong. This project has no shipped users.
 7. **One factor at a time** between variants (attribution discipline) —
@@ -37,8 +38,10 @@ Before writing code, check these. Full explanations follow below.
 ## Project state
 
 Heavy active development. Single maintainer. Not yet a widely-used
-extension. The RAG pipeline (`src/anima_tagger/`) was just built and
-integrated into the Tag Validation flow in April 2026.
+extension. Prose only since 2026-10-03: the extension expands a source
+prompt into natural-language prose (Enhance) and patches an existing
+prompt (Remix). The earlier tag half — Hybrid and Tags modes, tag
+formats, the Danbooru retrieval pipeline — was removed.
 
 ## No backwards compatibility required
 
@@ -53,46 +56,23 @@ concerns; until then, prioritize clean code over transitional crust.
 
 Examples of what this means in practice:
 - Renaming a setting key: just rename it; don't read both old + new.
-- Removing a radio choice (e.g. `Check` mode): just remove it; don't
-  add a `_restore_*` branch that maps old values to something else.
-- Changing the HF artefact schema: bump `format_version` in
-  `package_artifacts.py` and have `install.py` re-download; don't
-  bother converting existing files.
-- Renaming a module: just rename (though see "Naming conventions"
-  below for specific modules that stay as-is).
-
-## Naming conventions that DO stay stable
-
-A few names are load-bearing even in dev:
-
-- **`anima_tagger`** module under `src/` — referenced in HF dataset
-  repo id (`freedumb2000/anima-tagger-artifacts`), in the user-facing
-  "Anima Tagger" Settings section, and in persistent option keys
-  (`anima_tagger_*`). Extending scope to other formats is fine; keep
-  the name.
-- **Settings keys** under `anima_tagger_*` — persisted in users'
-  `config.json` files locally. Changing them silently invalidates
-  their preferences. Rename only if you have a reason worth the cost.
-- **Tag format yaml filenames** (`anima.yaml`, `illustrious.yaml`,
-  `noobai.yaml`, `pony.yaml`) — referenced in the Tag Format
-  dropdown's user-visible labels.
+- Removing a choice (a mode, a base): just remove it; don't add a
+  `_restore_*` branch that maps old values to something else.
+- Renaming a module: just rename.
 
 ## Testing expectations
 
-The canonical test workflow lives in `experiments/` (see "Working
-style" below). The experiment runner + rubric + test prompt set is
-the primary way to evaluate changes to tagging behavior.
+The test tools live in `experiments/`:
 
-Legacy scripts under `src/anima_tagger/scripts/` (`verify.py`,
-`ab_*.py`, `full_pipeline_test.py`) measured tag counts and drop
-rates, not quality. They're retained for unit-level sanity checks
-on retriever/validator components, but should NOT be used to judge
-whether a pipeline change is an improvement — use the rubric-based
-`experiments/` runner for that.
+- `experiments/prose_fidelity.py` — does the enhancer keep what the
+  source states? Fixed sources, read every output, keyword screens only
+  point at where to look.
+- `experiments/compare_prompt.py` — prints the exact system prompt and
+  user message for a source (`--dry`), or runs it against Ollama.
 
-New A/B test ideas go in `experiments/` as parameterized variants,
-not as standalone ab_*.py scripts (which duplicate pipeline code and
-drift from the extension).
+Both import the real extension module through
+`experiments/_pe_bootstrap.py`, so they exercise the functions Forge
+runs. They need Ollama and the Forge Python environment.
 
 ## Commit style
 
@@ -101,22 +81,6 @@ One logical change per commit. Imperative subject, detailed body
 <noreply@anthropic.com>` trailer.
 
 Good recent examples: `c0e627b`, `64572b9`, `aad2e2c`.
-
-## Developer pipeline vs end-user install
-
-- `install.py` at the extension root runs on every Forge extension
-  load. pip-installs deps, auto-downloads RAG artefacts from HF,
-  falls back to rapidfuzz path with visible warning on failure.
-  **Never** require the user to run anything from `src/` manually.
-
-- Everything under `src/anima_tagger/scripts/` is DEV-only — the
-  maintainer rebuilds the index or uploads artefacts. End users
-  don't touch it.
-
-- HF artefact upload: `package_artifacts.py` uses `huggingface_hub`
-  with the maintainer's logged-in token (`hf auth login`). Credentials
-  never go through the codebase; the script reads from
-  `~/.cache/huggingface/token`.
 
 ## Working style: experiment-driven, willing to discard code
 
@@ -127,11 +91,10 @@ architecture up front and patching it.
 ### Don't pick, test
 
 When there's a design question with multiple reasonable answers
-("curator prompt should do X or Y?", "retrieval flat or faceted?",
-"concept enumeration separate call or inline?") — **do not ask the
-maintainer to pick.** Implement both (or several) as variants in the
-experiment runner, rate the outputs against the rubric, and recommend
-the winner with evidence.
+("should the base prompt do X or Y?", "one call or two?") — **do not
+ask the maintainer to pick.** Implement both (or several) as variants,
+rate the outputs against the rubric, and recommend the winner with
+evidence.
 
 Questions like "should I do A or B?" offload thinking that the
 experiment is supposed to answer. Pre-deciding without data is exactly
@@ -146,16 +109,11 @@ wrong architecture accumulate into brittleness that's expensive to
 untangle later. Be willing to write a fresh pipeline alongside the
 existing one and compare.
 
-Red flag: you're editing the 5th fallback condition inside
-`_anima_tag_from_draft`. Step back — the surrounding shape may be the
-problem, not the details.
-
 ### Quality = intent fulfillment, not a metric
 
-**Tag count is not quality. Drop rate is not quality. Coverage
-markers are not quality.** These are cheap proxies that are easy to
-optimize without improving actual output. Easy to optimize ≠
-meaningful.
+**Word count is not quality. A keyword screen is not quality.** These
+are cheap proxies that are easy to optimize without improving actual
+output. Easy to optimize ≠ meaningful.
 
 The real question: does the output, fed to the image model, produce
 what the source prompt + modifiers asked for? Answering that requires
@@ -168,9 +126,9 @@ no inventions, coverage appropriate.
 "Score 1-5 for scene coherence" drifts — my definition of 3 today
 might be 2 tomorrow. Each rubric dimension must carry concrete anchor
 descriptions at minimum for scores 1 / 3 / 5: "1 = the output contains
-tags that clearly contradict the source (e.g. 'airplane' in a
-speakeasy scene). 3 = mostly coherent, 1-2 off-theme tags. 5 = every
-tag traces back to a concept in the prose."
+details that clearly contradict the source (e.g. an airplane in a
+speakeasy scene). 3 = mostly coherent, 1-2 off-theme details. 5 = every
+detail traces back to a concept in the source."
 
 Without anchors, ratings become mood-of-the-day. With anchors, they
 are reproducible across runs and sessions.
@@ -203,13 +161,11 @@ insufficient evidence.
 ### Traceability is non-negotiable
 
 Every experiment run produces a structured trace: every LLM call's
-input+output, every retrieval's query+candidates+picks, every
-decision's reason. Without traceability you can't tell which factor
-caused an outcome, which means you can't do controlled experiments.
+input+output, every decision's reason. Without traceability you can't
+tell which factor caused an outcome, which means you can't do
+controlled experiments.
 
-The `experiments/` directory is the canonical place for this
-tooling. The older `src/anima_tagger/scripts/` harness measured
-counts; the new runner rates behavior.
+The `experiments/` directory is the canonical place for this tooling.
 
 ### Iterative variants with one-factor-at-a-time attribution
 
@@ -219,8 +175,8 @@ against the rubric. Design V2 as a direct response to V1's
 highest-impact rated failure. Rate V2. Repeat.
 
 Between any two variants being compared head-to-head, change **one
-factor**. If you swap the pipeline shape AND the LLM AND the retrieval
-config between V1 and V2, a V2 win could come from any of them and you
+factor**. If you swap the pipeline shape AND the LLM AND the base
+prompt between V1 and V2, a V2 win could come from any of them and you
 learn nothing. One-factor-at-a-time is an attribution discipline — it
 tells you WHAT caused a change.
 
@@ -231,105 +187,81 @@ change one factor. Not: only propose one-line tweaks.
 
 ### Fail-loud, no silent defaults
 
-In the experiment runner, every step fails loudly on unexpected input
-— LLM empty output, retrieval returning zero candidates, curator
-dropping all tags. Silent fallbacks (empty string → "safe", missing
-result → default value) make it impossible to tell whether a variant
-failed structurally or got bad LLM output, because the trace looks
-normal. Raise + log + fail the run; investigate before patching.
-
-Concrete example of the pattern to avoid: the `chosen_safety =
-safety_from_draft or default` idiom in `rule_layer.apply_anima_rules`
-silently substitutes a default when the draft contains no safety tag.
-The trace shows "safety was safe" with no indication that the LLM
-emitted nothing. Make the empty case explicit and visible — ideally
-return a sentinel the trace can display, and let the caller decide
-whether to fall back.
+Every step fails loudly on unexpected input — LLM empty output, a
+missing prompt key, a base that assembles to nothing. Silent fallbacks
+(empty string → "safe", missing result → default value) make it
+impossible to tell whether a variant failed structurally or got bad LLM
+output, because the trace looks normal. Raise + log + fail the run;
+investigate before patching.
 
 ### Isolate one factor at a time
 
-Pipeline outputs are influenced by: LLM model choice per step, base
-prompt, tag-format system prompt, modifier behaviorals, query
-expansion config, retrieval params, pipeline shape, curator prompt,
-rule-layer options. When output is bad, identify which factor to
-swap — then swap only that, not several at once. Otherwise a win can
-come from any combination and you learn nothing.
+Outputs are influenced by: LLM model choice, base prompt, the appended
+directives (adherence, motion, negative), modifier behaviorals,
+sampling options, pipeline shape. When output is bad, identify which
+factor to swap — then swap only that, not several at once. Otherwise a
+win can come from any combination and you learn nothing.
 
 ### No island tests — the extension and the experiment share code
 
-A/B results are only trustworthy if the winning variant, once
-promoted into the Forge extension, produces the **same** output as
-it did in the experiment. Island tests (a harness that uses
-simplified prompts, mirrors of the real code, or its own copy of the
-pipeline) give false confidence and have bitten this project before.
+Results are only trustworthy if the tested behaviour is the behaviour
+Forge runs. Island tests (a harness that uses simplified prompts,
+mirrors of the real code, or its own copy of the pipeline) give false
+confidence and have bitten this project before.
 
-Contract: the pipeline implementation lives in ONE place
-(`experiments/pipeline.py` or equivalent) as pure, importable
-functions. The experiment runner calls it. The Forge event handlers
-(Hybrid / Tags / Remix buttons) are thin wrappers that call the
-exact same code with a named variant. Zero duplication.
+Contract: the implementation lives in ONE place
+(`scripts/prompt_enhancer.py`). The test tools import that module
+through `experiments/_pe_bootstrap.py` and call its functions. Where a
+tool has to rebuild a step the button handler does inline (the handler
+is a closure inside the UI), it says so and stays a line-for-line
+mirror of the handler.
 
-When a variant is promoted to the extension, verify with the same
-source + modifiers + seed: extension output must equal experiment
-output (modulo Ollama-side nondeterminism). If they differ, the
-shared-implementation contract is broken and must be fixed before
-trusting the variant.
+When behaviour changes, verify with the same source + modifiers + seed
+that the request the handler sends is what the tool sends. If they
+differ, the shared-implementation contract is broken and must be fixed
+before trusting a result.
 
 ### Fundamental redesign is always on the table
 
 The user has repeatedly signaled: if the current pipeline is the
-reason we're failing, redesign it — multi-LLM stages, multi-RAG
-calls, whatever it takes. Don't confine the search space to "minimal
-changes to what exists." Include structurally different variants in
-every round of experiments.
+reason we're failing, redesign it — multi-LLM stages, whatever it
+takes. Don't confine the search space to "minimal changes to what
+exists." Include structurally different variants in every round of
+experiments.
 
 ## Architectural principle: knowledge lives in data, not in Python
 
-This is a RAG system. The Danbooru tag DB + FAISS index + LLM are the
-source of truth. Python's job is to **orchestrate** — read config, call
-the LLM, run retrieval, apply structural rules — NOT to encode domain
-knowledge about what tags mean or which words are NSFW.
+The YAML files and the LLM are the source of truth. Python's job is to
+**orchestrate** — read config, call the LLM, assemble prompts — NOT to
+encode domain knowledge about what a style means or which words are
+NSFW.
 
 ### Where different kinds of things belong
 
 | Kind of thing | Belongs in | Examples |
 |---|---|---|
-| Tag format conventions | `tag-formats/<name>.yaml` | quality prefix, valid safety tags, subject-count tag set, non-DB whitelist tokens |
-| Modifier metadata | `modifiers/**/*.yaml` entries | behavioral text, keywords, `target_slot`, safety tier implied by the modifier |
+| Modifier metadata | `modifiers/**/*.yaml` entries | behavioral text, keywords |
 | Base prose style | `bases.yaml` | voice, structure, content rules (including "do/don't sanitize") |
-| Danbooru category IDs | `anima_tagger.config` | `CAT_ARTIST = 1`, `CAT_COPYRIGHT = 3`, etc. (these ARE the schema) |
-| Tunable thresholds | `shared.opts` settings | semantic threshold, popularity floor |
-| Content classification | LLM call or retrieval | "is this NSFW?", "does this tag fit the scene?", "which artist for this prose?" |
-| Structural algorithms | Python | compound-split, dedup, ordering, @-prefix, category bucketing |
+| Operational prompts | `prompts.yaml` | adherence, remix, motion, negative, inline wildcards |
+| Content classification | LLM call | "is this NSFW?", "does this detail fit the scene?" |
+| Structural algorithms | Python | prompt assembly, output cleanup, repetition detection |
 
 ### Red flags — do NOT add any of these to Python
 
-- **Keyword lists of tags.** If you're writing `{"sex", "nude", "penetration"}` in a `.py` file, stop. The DB has those tags with categories and context. Use retrieval or DB lookups.
-- **Tag name constants for a specific tag format.** `_QUALITY_PREFIX = ("masterpiece", ...)` in Python duplicates what's in `tag-formats/anima.yaml` — changes drift. Read from the YAML.
-- **Modifier-name → behavior dicts** in Python. Every modifier attribute (safety tier, target_slot, whatever) should be declared on the modifier's YAML entry and read out. Adding a new modifier should never require a Python edit.
-- **Magic threshold numbers** without a setting or a derivation. If you pick 500, it should be a named setting or computed from the data (e.g. percentile of retrieved candidates).
-- **"Fallback" keyword checks** to patch around the LLM or retrieval. If the primary path is giving bad output, fix the prompt or the retrieval — don't add a keyword filter to paper over it.
-
-### Red flags — do NOT add to the test harness either
-
-- Word lists like `_POSE_HINTS = {"standing", "sitting", ...}` for metric computation. If you need to check whether an output "has a pose tag", derive that from the DB (tags of a known category, tags matching a known semantic neighborhood) or from the tag-format config, not a Python constant that decays.
+- **Keyword lists.** If you're writing `{"sex", "nude", "penetration"}` in a `.py` file, stop.
+- **LLM-facing text.** Every instruction the model reads lives in YAML, so no "hidden" prompt influence sits in Python.
+- **Modifier-name → behavior dicts** in Python. Every modifier attribute should be declared on the modifier's YAML entry and read out. Adding a new modifier should never require a Python edit.
+- **Magic threshold numbers** without a setting or a derivation.
+- **"Fallback" keyword checks** to patch around the LLM. If the primary path is giving bad output, fix the prompt — don't add a keyword filter to paper over it.
 
 ### The failure pattern to avoid
 
-When the LLM sanitizes explicit content, the fix is **the prose/extract prompts** (or the modifier/base config that feeds them), NOT a hardcoded keyword override in `_anima_safety_from_modifiers`. When the "Random Artist" modifier always picks the same artist, the fix is **seeded retrieval** or **shortlist presentation randomization**, NOT a hardcoded exclude-list. When a low-popularity tag wins an exact-match lookup and hijacks a general concept, the fix is **a popularity gate driven by DB signals**, NOT a hardcoded list of "dangerous" tag names.
+When the LLM sanitizes explicit content, the fix is **the base and the operational prompts** (or the modifier config that feeds them), NOT a hardcoded keyword override in Python.
 
-Patching symptoms in Python produces a system that needs constant maintenance and drifts from the YAML/DB that supposedly defines behavior.
+Patching symptoms in Python produces a system that needs constant maintenance and drifts from the YAML that supposedly defines behavior.
 
 ## What the agent should NOT do
 
-- Don't commit `data/` — gitignored (holds ~1.1 GB of artefacts).
-- Don't run Git credential helpers (note the `install.py` upload
-  warning says this explicitly).
-- Don't add third-party vector DBs (Chroma, Qdrant, pgvector) — the
-  project uses `faiss-cpu` directly and that's sufficient at 273k
-  vectors.
-- Don't introduce `langchain` / `haystack` / similar abstractions —
-  overkill for a single-purpose retriever.
 - Don't create README.md, dev docs, or any new documentation files
   unless explicitly asked.
 - Don't add telemetry, usage analytics, or any phone-home code.

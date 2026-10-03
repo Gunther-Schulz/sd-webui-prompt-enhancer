@@ -1,4 +1,4 @@
-# Base system prompts for Prose mode
+# Base system prompts for the Enhance button
 # Add more entries to create additional options in the Base dropdown
 # Override or extend via _bases.yaml in your local overrides directory
 #
