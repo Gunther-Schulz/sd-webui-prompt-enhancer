@@ -61,7 +61,28 @@ artefacts to run.
 
 ## Parked
 
-_(none)_
+### Generate and the enhancer can run at the same time, and together they run out of memory
+
+**PARKED 2026-10-03, operator report** ("a shim to block the generate button while
+the prompt enhancer runs (forge) because they get in each other's way (will get
+OOM)"; ranked by the operator as not very important).
+
+The enhancer's LLM (Ollama) and Forge's image model share one machine. Nothing
+stops a Generate click while an enhancer call is in flight, or an enhancer click
+while an image is generating. The OOM is the operator's observation, not measured
+in this repo.
+
+**Waiting on** (design is open; each item is one short measurement or read):
+- Which memory runs out — GPU or host — and whether the LLM is still loaded after
+  the enhancer call returns (`curl 127.0.0.1:11434/api/ps` right after a call).
+  If it stays loaded, unloading it on completion may matter more than any button
+  lock, and a lock alone would not help a Generate clicked one second later.
+- Which direction needs the lock: Generate blocked during enhancement (the
+  request), the enhancer buttons blocked during generation, or both.
+- Where a lock can live. `javascript/` is empty today, so there is no existing
+  button handling to extend; the candidates are a small script disabling Forge's
+  Generate button while the enhancer's status is in progress, or a server-side
+  check. Neither has been read against Forge's UI code.
 
 ## Done
 
