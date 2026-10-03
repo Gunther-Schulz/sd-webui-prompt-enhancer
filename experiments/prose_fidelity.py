@@ -99,6 +99,7 @@ SCREENS = {
     "hedge (perhaps / maybe)": (re.compile(r"\b(perhaps|maybe|possibly|presumably)\b", re.I), lambda s: True),
     "'X or Y' alternative": (re.compile(r"\b\w+ or \w+\b"), lambda s: True),
     "vague placeholder": (re.compile(r"suitable for|suited (to|for)|practical (clothing|attire)|casual attire|simple attire|whatever|some kind of|appropriate for|a quiet spot|general setting", re.I), lambda s: True),
+    "undefined place or surface": (re.compile(r"\b(a|an|some) (unseen |undefined |plain |neutral )?surface\b|undefined room|unseen surface|barely visible beneath|an intimate setting|a quiet spot", re.I), lambda s: True),
     "smell or sound": (re.compile(r"\b(scent|scents|smell|smells|aroma|hum|hums|humming|chatter|sound|sounds|noise|echo|echoing|clatter|clink|clinking)\b", re.I), lambda s: True),
     "camera gear or grading": (re.compile(r"Kodak|Fujifilm|Canon|Hasselblad|Sony|Portra|Ektachrome|\bf/\d|\d+mm\b|film stock|color grading", re.I), lambda s: True),
     "camera mentioned though the source gives no angle": (re.compile(r"camera|\blens\b|low[- ]angle|high[- ]angle|eye level|close-up|wide shot|medium shot", re.I), lambda s: SOURCES[s].get("no_angle")),

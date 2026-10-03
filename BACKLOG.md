@@ -50,6 +50,28 @@ committed base: hard class still 66/66, stated elements not below 296/300, and `
 seeds read by hand. *Done-criterion:* adopted in `bases.yaml` or dropped, with the counts in
 PROSE-TUNING.md. *Write-set:* `bases.yaml`, `experiments/PROSE-TUNING.md`.
 
+### Enhance still writes "either/or" and leaves the place undefined
+
+**Booked 2026-10-03, operator report from the first Forge test** of the new base. Source: a man
+and a woman having sex. Output, quoted: "their bodies tangled together on a surface barely visible
+beneath them ... toes curling against the floor or bedsheet beneath them". Two classes in one
+output:
+- an invented detail left as an ALTERNATIVE ("the floor or bedsheet"). The tuning measured
+  "'X or Y'" in 8 of 54 outputs and "perhaps/maybe" in 1 of 54 and called hedging nearly solved;
+  the either/or form is the larger half and was not driven down.
+- the place left UNDEFINED ("on a surface", elsewhere "an undefined room", "an unseen surface").
+  Not counted at all until now; `prose_fidelity.py` has a screen for it as of this entry.
+Both are the model declining to commit where the source is silent. What was tried: a ban on
+"or / perhaps / maybe" changed nothing; "invented details are concrete and named" removed
+"perhaps" but not "X or Y".
+*Next round to run:* state it as a positive requirement on the place and the support ("say where
+they are and what they are on, as one definite thing"), and test whether naming the place first
+anchors the rest, on `var_sex`, `sex_short`, `fishing`, `mall_short`, eight seeds.
+*Verifier:* the "'X or Y' alternative" and "undefined place or surface" screens over that run and
+over the 18-source x 3-seed run, plus reading the bare-source outputs. *Done-criterion:* both
+screens at or under 2 of 54 with the hard class still 66/66, or the limit recorded in
+PROSE-TUNING.md. *Write-set:* `bases.yaml`, `experiments/PROSE-TUNING.md`.
+
 ### Nothing built on 2026-10-03 has been clicked inside Forge
 
 **Booked 2026-10-03.** Every check that day ran outside Forge. The operator's test list after a
