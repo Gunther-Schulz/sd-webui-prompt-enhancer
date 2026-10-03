@@ -9,6 +9,7 @@ Takes your short prompt and expands it into a detailed natural-language descript
 - **Local LLM powered** — uses [Ollama](https://ollama.com)
 - **Enhance** — expands the source prompt into prose, written straight into the main prompt box
 - **Remix** — applies an instruction or new modifiers to the prompt that is already in the main prompt box
+- **Keep LoRAs** — `<lora:...>` tokens in the main prompt box survive a regeneration
 - **Bases** — the system prompt that sets the prose voice: `Default` (Z-Image style, scene first) and `Narrative` (flowing, camera-aware); add your own
 - **220+ categorized modifiers** — organized into auto-generated dropdowns, one per YAML file
 - **Inline wildcards** — `{name?}` placeholders in your prompt
@@ -76,6 +77,15 @@ The result is written into the main prompt box. Nothing is sent to the image mod
 - **Prepend** — puts your source prompt, verbatim, in front of the generated prose
 - **+ Negative** — also asks for a short negative prompt and writes it into the negative prompt box
 - **+ Motion and Audio** — adds a short motion and sound tail for image-to-video workflows
+- **Keep LoRAs** (on by default) — see below
+
+### Keep LoRAs
+
+Enhance and Remix overwrite the main prompt box. With **Keep LoRAs** on, every `<...>` token found in the box before the run — `<lora:name:0.8>`, `<hypernet:name:1>`, anything between angle brackets — is appended to the new prompt, so a LoRA you are testing stays put while the prose changes. A token the new prompt already contains is not added twice. The tokens go to the end: Forge takes them out of the prompt wherever they sit, so their position carries no meaning.
+
+On Remix, which sends the box's text to the model, the tokens are taken out before the send and put back afterwards, so the model never sees them.
+
+With the checkbox off nothing is carried over. Known limit: prose containing bare comparison brackets (`5 < 10 > 3`) is read as a token.
 
 ### Remixing an existing prompt
 
@@ -110,6 +120,7 @@ Click **❌ Cancel** to abort any running generation. Works reliably across mult
 | Prepend | off | Put the source prompt in front of the result |
 | + Negative | off | Also produce a negative prompt |
 | + Motion and Audio | off | Add a motion and sound tail |
+| Keep LoRAs | on | Carry `<...>` tokens in the main prompt box across a run |
 | Temperature | 0.8 | Creativity (0 = deterministic, 2 = creative) |
 | Think | off | Let model reason before answering (slower) |
 | Seed | -1 (random) | LLM seed. 🎲 resets it to random, ♻ reuses the seed of the last run |

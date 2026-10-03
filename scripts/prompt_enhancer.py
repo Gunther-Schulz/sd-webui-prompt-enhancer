@@ -458,6 +458,50 @@ def _split_positive_negative(text):
     return positive, negative
 
 
+# ── Keep LoRAs ───────────────────────────────────────────────────────────────
+# Forge's main prompt field can carry `<...>` tokens (`<lora:name:0.8>`,
+# `<hypernet:...>`). An enhancer run overwrites that field, so with
+# "Keep LoRAs" on the tokens are carried across the overwrite, and kept
+# away from the model on the Remix path, which sends the field's text.
+#
+# Any `<...>` counts, so new token kinds ride along without a code
+# change. Refusing nested brackets is what stops one match swallowing a
+# whole prompt that holds two tokens. Known limit, accepted: prose with
+# bare comparison brackets ("5 < 10 > 3") yields a spurious token.
+_ANGLE_TOKEN_RE = re.compile(r"<[^<>]+>")
+
+
+def _extract_angle_tokens(text):
+    """Return the `<...>` tokens in text, in order of first appearance."""
+    tokens = []
+    for token in _ANGLE_TOKEN_RE.findall(text or ""):
+        if token not in tokens:
+            tokens.append(token)
+    return tokens
+
+
+def _strip_angle_tokens(text):
+    """Remove `<...>` tokens and collapse the whitespace they leave behind."""
+    text = _ANGLE_TOKEN_RE.sub(" ", text or "")
+    text = re.sub(r"[ \t]+", " ", text)
+    text = re.sub(r" ?\n ?", "\n", text)
+    return text.strip()
+
+
+def _append_missing_tokens(text, tokens):
+    """Append every token not already present in text.
+
+    Idempotent: a token the text already holds is not added again, so a
+    second run does not double it. Position is not preserved — Forge
+    strips these tokens wherever they sit, so placement carries no meaning.
+    """
+    text = text or ""
+    missing = [token for token in tokens if token not in text]
+    if not missing:
+        return text
+    return f"{text} {' '.join(missing)}" if text else " ".join(missing)
+
+
 _STALL_TIMEOUT = int(os.environ.get("PROMPT_ENHANCER_STALL_TIMEOUT", "10"))
 # Max Ollama stream chunks (≈ tokens) before we cap and treat as
 # truncation. Historical 1000 was too low once word limits were removed
@@ -840,6 +884,8 @@ class PromptEnhancer(scripts.Script):
                 negative_prompt_cb.do_not_save_to_config = True
                 motion_cb = gr.Checkbox(label="+ Motion and Audio", value=False, scale=0, min_width=150)
                 motion_cb.do_not_save_to_config = True
+                keep_loras = gr.Checkbox(label="Keep LoRAs", value=True, scale=0, min_width=110)
+                keep_loras.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
 
             # ── Base ──
@@ -941,18 +987,35 @@ class PromptEnhancer(scripts.Script):
             negative_in = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_in")
             negative_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_out")
 
+            # First step of both buttons: copy the main prompt fields into
+            # the hidden inputs. Remix edits that text; Enhance only reads
+            # it for the `<...>` tokens to keep.
+            pull_main_fields_js = f"""function(x, y) {{
+                    var ta = document.querySelector('#{tab}_prompt textarea');
+                    var neg = document.querySelector('#{tab}_neg_prompt textarea');
+                    return [ta ? ta.value : x, neg ? neg.value : y];
+                }}"""
+
+            def _pull_main_fields(x, y):
+                _cancel_flag.clear()
+                return x, y
+
             # ── Enhance ──
-            def _enhance(source, api_url, model, base_name, *args):
+            def _enhance(existing, source, api_url, model, base_name, *args):
                 global _last_pe_mode
                 _last_pe_mode = "Enhance"
-                motion_cb = args[-1]
-                neg_cb, temp = args[-2], args[-3]
-                prepend, sd, th = args[-6], args[-5], args[-4]
-                dd_vals = args[:-6]
+                keep_loras = args[-1]
+                motion_cb = args[-2]
+                neg_cb, temp = args[-3], args[-4]
+                prepend, sd, th = args[-7], args[-6], args[-5]
+                dd_vals = args[:-7]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
                 source = (source or "").strip()
+                # `<...>` tokens in the main prompt field, to carry across
+                # the overwrite. The field's text itself is not used here.
+                kept_tokens = _extract_angle_tokens(existing) if keep_loras else []
 
                 mods = _collect_modifiers(dd_vals)
                 sp = _assemble_system_prompt(base_name)
@@ -1003,16 +1066,16 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield result, negative, f"<span style='color:#6c6'>{_MODE_ENHANCE}: OK - {len(result.split())} words, {elapsed}</span>"
+                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_ENHANCE}: OK - {len(result.split())} words, {elapsed}</span>"
                 except InterruptedError as e:
                     partial = _clean_output(str(e))
                     if partial:
-                        yield partial, "", f"<span style='color:#c66'>{_MODE_ENHANCE}: Cancelled - {len(partial.split())} words (partial)</span>"
+                        yield _append_missing_tokens(partial, kept_tokens), "", f"<span style='color:#c66'>{_MODE_ENHANCE}: Cancelled - {len(partial.split())} words (partial)</span>"
                     else:
                         yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: Cancelled</span>"
                 except _TruncatedError as e:
                     result = _clean_output(str(e))
-                    yield result, "", f"<span style='color:#ca6'>{_MODE_ENHANCE}: Truncated - {len(result.split())} words</span>"
+                    yield _append_missing_tokens(result, kept_tokens), "", f"<span style='color:#ca6'>{_MODE_ENHANCE}: Truncated - {len(result.split())} words</span>"
                 except urllib.error.URLError as e:
                     msg = f"Connection failed: {e.reason} - is Ollama running?"
                     logger.error(msg)
@@ -1023,10 +1086,14 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: {msg}</span>"
 
             enhance_btn.click(
+                fn=_pull_main_fields,
+                _js=pull_main_fields_js,
+                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
+            ).then(
                 fn=_enhance,
-                inputs=[source_prompt, api_url, model, base]
+                inputs=[prompt_in, source_prompt, api_url, model, base]
                        + dd_components
-                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb],
+                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
@@ -1035,14 +1102,21 @@ class PromptEnhancer(scripts.Script):
             def _refine(existing, existing_neg, source, api_url, model, *args):
                 global _last_pe_mode
                 _last_pe_mode = "Remix"
-                motion_cb = args[-1]
-                neg_cb, temp = args[-2], args[-3]
-                prepend, sd, th = args[-6], args[-5], args[-4]
-                dd_vals = args[:-6]
+                keep_loras = args[-1]
+                motion_cb = args[-2]
+                neg_cb, temp = args[-3], args[-4]
+                prepend, sd, th = args[-7], args[-6], args[-5]
+                dd_vals = args[:-7]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
 
+                # Remix sends the main field's text to the model, so the
+                # `<...>` tokens come out before the send and go back on
+                # after it.
+                kept_tokens = _extract_angle_tokens(existing) if keep_loras else []
+                if keep_loras:
+                    existing = _strip_angle_tokens(existing)
                 existing = (existing or "").strip()
                 existing_neg = (existing_neg or "").strip()
                 print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
@@ -1097,31 +1171,27 @@ class PromptEnhancer(scripts.Script):
                     if prepend and source:
                         result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield result, negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - remixed to {len(result.split())} words, {elapsed}</span>"
+                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - remixed to {len(result.split())} words, {elapsed}</span>"
                 except InterruptedError:
                     yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Cancelled</span>"
                 except _TruncatedError as e:
                     # Truncated prose is still prose — surface it so the
                     # user can use or edit it.
-                    yield _clean_output(str(e)), "", f"<span style='color:#ca6'>{_MODE_REMIX}: Truncated</span>"
+                    yield _append_missing_tokens(_clean_output(str(e)), kept_tokens), "", f"<span style='color:#ca6'>{_MODE_REMIX}: Truncated</span>"
                 except urllib.error.URLError as e:
                     yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Connection failed: {e.reason}</span>"
                 except Exception as e:
                     yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: {type(e).__name__}: {e}</span>"
 
             refine_btn.click(
-                fn=lambda x, y: (_cancel_flag.clear(), x, y)[1:],
-                _js=f"""function(x, y) {{
-                    var ta = document.querySelector('#{tab}_prompt textarea');
-                    var neg = document.querySelector('#{tab}_neg_prompt textarea');
-                    return [ta ? ta.value : x, neg ? neg.value : y];
-                }}""",
+                fn=_pull_main_fields,
+                _js=pull_main_fields_js,
                 inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
             ).then(
                 fn=_refine,
                 inputs=[prompt_in, negative_in, source_prompt, api_url, model]
                        + dd_components
-                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb],
+                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             )
