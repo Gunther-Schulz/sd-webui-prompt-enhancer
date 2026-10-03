@@ -814,6 +814,47 @@ def _assemble_system_prompt(base_name):
     return "\n\n".join(p for p in parts if p) or None
 
 
+# ── `@` / `@@` sigils in the source prompt ───────────────────────────────────
+# `prompt @ extra`        appends `extra` to the system prompt, under the
+#                         joining line `sigil_append` from prompts.yaml.
+# `prompt @@ replacement` replaces the system prompt with `replacement`.
+# The sigil and everything after it never reach the user message. An
+# empty suffix changes nothing, so a half-typed `foo @@` behaves like
+# `foo`. There is no escape for a literal `@`: `a poster for @midnight`
+# splits, and the effect is visible in the output rather than silent.
+# Same behaviour as the WanGP prompt enhancer this is ported from.
+
+def _split_sigil(prompt):
+    """Split a source prompt at its sigil: (body, suffix, replace).
+
+    `@@` is tested before `@`, the split is on the first occurrence,
+    and both halves are stripped.
+    """
+    prompt = str(prompt or "").strip()
+    body, separator, suffix = prompt.partition("@@")
+    if separator == "@@":
+        return body.strip(), suffix.strip(), True
+    body, separator, suffix = prompt.partition("@")
+    if separator == "":
+        return prompt, "", False
+    return body.strip(), suffix.strip(), False
+
+
+def _merge_system_prompt(system_prompt, suffix, replace=False):
+    """Apply a sigil suffix to a system prompt.
+
+    Empty suffix: the system prompt unchanged. replace: the suffix
+    alone. Otherwise the suffix appended under the joining line.
+    """
+    system_prompt = str(system_prompt or "").rstrip()
+    suffix = str(suffix or "").strip()
+    if not suffix:
+        return system_prompt
+    if replace:
+        return suffix
+    return f"{system_prompt}\n{_prompts['sigil_append']}\n{suffix}"
+
+
 # ── Streaming progress ──────────────────────────────────────────────────────
 
 def _call_llm_progress(prompt, api_url, model, system_prompt, temperature,
@@ -871,7 +912,7 @@ class PromptEnhancer(scripts.Script):
             # ── Source prompt ──
             source_prompt = gr.Textbox(
                 label="Source Prompt", lines=3,
-                placeholder="Type your prompt here, or leave empty to roll the dice. Use {name?} for inline wildcards.",
+                placeholder="Type your prompt here, or leave empty to roll the dice. Use {name?} for inline wildcards, 'prompt @ extra instructions' to add to the system prompt, 'prompt @@ instructions' to replace it.",
                 elem_id=f"{tab}_pe_source",
             )
             with gr.Row():
@@ -1012,7 +1053,9 @@ class PromptEnhancer(scripts.Script):
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
-                source = (source or "").strip()
+                # From here on `source` is the prompt without its sigil part.
+                source, sigil_suffix, sigil_replace = _split_sigil(source)
+                replaced = sigil_replace and bool(sigil_suffix)
                 # `<...>` tokens in the main prompt field, to carry across
                 # the overwrite. The field's text itself is not used here.
                 kept_tokens = _extract_angle_tokens(existing) if keep_loras else []
@@ -1023,16 +1066,21 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", f"<span style='color:#c66'>{_MODE_ENHANCE}: No system prompt configured.</span>"
                     return
 
-                # Adherence directive — only when source is non-empty, so
-                # dice-roll creativity stays free. Without it the output euphemised
-                # explicit source terms (measured 2026-10-03).
-                if source:
-                    sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
+                sp = _merge_system_prompt(sp, sigil_suffix, sigil_replace)
 
-                if motion_cb:
-                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
-                if neg_cb:
-                    sp = f"{sp}\n\n{_prompts.get('negative', '')}"
+                # After an `@@` replace the user's text is the whole system
+                # prompt: nothing below is appended to it.
+                if not replaced:
+                    # Adherence directive — only when source is non-empty, so
+                    # dice-roll creativity stays free. Without it the output euphemised
+                    # explicit source terms (measured 2026-10-03).
+                    if source:
+                        sp = f"{sp}\n\n{_prompts.get('prose_adherence', '')}"
+
+                    if motion_cb:
+                        sp = f"{sp}\n\n{_prompts.get('motion', '')}"
+                    if neg_cb:
+                        sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 # Build user message with modifiers + inline wildcards
                 user_msg = f"SOURCE PROMPT: {source}" if source else _prompts.get("empty_source_signal", "")
@@ -1124,20 +1172,25 @@ class PromptEnhancer(scripts.Script):
                     yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: No prompt to remix. Generate one first with Enhance.</span>"
                     return
 
-                source = (source or "").strip()
+                # From here on `source` is the instruction without its sigil part.
+                source, sigil_suffix, sigil_replace = _split_sigil(source)
+                replaced = sigil_replace and bool(sigil_suffix)
                 mods = _collect_modifiers(dd_vals)
                 print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
 
-                if not mods and not source:
+                if not mods and not source and not sigil_suffix:
                     yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Select modifiers or update source prompt.</span>"
                     return
 
-                sp = _prompts.get("remix_prose", "")
+                # The sigil acts on the editor prompt. The user's own
+                # instruction and styles are appended after it either way.
+                sp = _merge_system_prompt(_prompts.get("remix_prose", ""), sigil_suffix, sigil_replace)
 
-                if motion_cb:
-                    sp = f"{sp}\n\n{_prompts.get('motion', '')}"
-                if neg_cb:
-                    sp = f"{sp}\n\n{_prompts.get('negative', '')}"
+                if not replaced:
+                    if motion_cb:
+                        sp = f"{sp}\n\n{_prompts.get('motion', '')}"
+                    if neg_cb:
+                        sp = f"{sp}\n\n{_prompts.get('negative', '')}"
 
                 if source:
                     sp = f"{sp}\n\nInstruction:\n{source}"

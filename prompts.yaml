@@ -36,6 +36,10 @@ prose_adherence: |
 
   INTEGRATION — your output is PROSE ONLY: full sentences with proper grammar and punctuation. Never begin with comma-separated tokens, whether echoed from the source ("girl, cooking, …") or invented to mimic booru tags ("1girl, 1boy, kissing, …"). The prose must read as prose from the first word. Every source element must still appear, but woven into flowing sentences, not pasted as a tag-like header. If the user wants the source prepended verbatim they will enable a separate "Prepend" option on their end — it is not your job.
 
+# Joining line for the `@` sigil: `prompt @ extra` appends this line and
+# then `extra` to the system prompt.
+sigil_append: "Follow these additional user instructions with higher priority if they conflict with the guidance above:"
+
 # Instruction for {name?} inline wildcard placeholders in the source prompt
 inline_wildcard: |
   The user's prompt contains placeholders in {name?} format. For each one, choose a specific, concrete option that fits the scene. Replace the placeholder with your choice.

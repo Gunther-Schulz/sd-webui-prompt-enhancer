@@ -13,6 +13,7 @@ Takes your short prompt and expands it into a detailed natural-language descript
 - **Bases** — the system prompt that sets the prose voice: `Default` (Z-Image style, scene first) and `Narrative` (flowing, camera-aware); add your own
 - **220+ categorized modifiers** — organized into auto-generated dropdowns, one per YAML file
 - **Inline wildcards** — `{name?}` placeholders in your prompt
+- **`@` / `@@`** — add to or replace the system prompt from inside the source prompt
 - **Local overrides** — extend with your own YAML files; each file becomes a dropdown
 - **Streaming** — token streaming with stall detection, thinking detection, repetition detection, and configurable safeguards
 - **Cancel button** — abort any running generation
@@ -107,6 +108,24 @@ Use `{name?}` placeholders in your source prompt for the LLM to fill creatively:
 a woman sitting in a {location?} wearing {outfit?} during {time?}
 ```
 
+### `@` and `@@` — instructions to the enhancer, typed into the source prompt
+
+`@` adds extra instructions for this run, on top of the selected base:
+
+```
+a serious woman at a desk @ keep it under three sentences
+```
+
+`@@` replaces the whole system prompt — the base, the adherence rule, and the Motion and Negative blocks are all left out:
+
+```
+a woman opens a door @@ Output exactly 6 lines. Each line describes only visible motion.
+```
+
+Everything from the sigil on is taken out of the prompt the model is asked to enhance. `@@` is looked for first, and the first occurrence splits. Nothing after an empty `@` or `@@` changes anything, so a half-typed `prompt @@` behaves like `prompt`.
+
+There is no way to escape a literal `@`: `a poster for @midnight` is split at the `@`. Both work on Enhance and on Remix; on Remix the sigil acts on the editor instructions, and your instruction text before the sigil is still applied.
+
 ### Cancel
 
 Click **❌ Cancel** to abort any running generation. Works reliably across multiple clicks.
@@ -198,7 +217,7 @@ An entry carrying a `source:` key (the tag-database lookup of earlier versions) 
 
 ### Authoring base prompts and operational prompts
 
-`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`remix_prose`, `prose_adherence`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`). Both merge with the published defaults; anything you don't override stays.
+`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`remix_prose`, `prose_adherence`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`, `sigil_append`). Both merge with the published defaults; anything you don't override stays.
 
 ```yaml
 # _bases.yaml
@@ -218,6 +237,8 @@ _format                    # shared: no headings, no line breaks, no commentary
 ```
 
 Then these blocks are appended as they apply: `prose_adherence` when the source prompt is not empty, `motion` when **+ Motion and Audio** is on, and `negative` (with its `POSITIVE:`/`NEGATIVE:` contract) when **+ Negative** is on. The user message carries `SOURCE PROMPT: ...`, an `Apply these styles to the scene: ...` line for selected modifiers, and the `inline_wildcard` instruction when the source contains `{name?}` placeholders.
+
+An `@` suffix in the source prompt is appended right after `_format`, under the `sigil_append` line, before the blocks above. An `@@` suffix replaces all of it.
 
 Override `_preamble` or `_format` in `_bases.yaml` to change shared behavior for all bases.
 

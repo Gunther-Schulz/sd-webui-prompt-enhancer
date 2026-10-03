@@ -125,18 +125,25 @@ def main() -> int:
                 print(f"  - {name}")
         return 1
 
-    # Adherence directive, non-empty source only — mirrors _enhance
-    if args.source.strip():
-        sp = f"{sp}\n\n{pe._prompts.get('prose_adherence', '')}"
+    # `@` / `@@` sigil — mirrors _enhance: the body goes on as the source,
+    # the suffix is applied to the assembled system prompt
+    source, sigil_suffix, sigil_replace = pe._split_sigil(args.source)
+    replaced = sigil_replace and bool(sigil_suffix)
+    sp = pe._merge_system_prompt(sp, sigil_suffix, sigil_replace)
 
-    # Append motion + negative directives mirroring _enhance
-    if args.motion:
-        sp = f"{sp}\n\n{pe._prompts.get('motion', '')}"
-    if args.neg:
-        sp = f"{sp}\n\n{pe._prompts.get('negative', '')}"
+    # After an `@@` replace nothing is appended — mirrors _enhance
+    if not replaced:
+        # Adherence directive, non-empty source only
+        if source:
+            sp = f"{sp}\n\n{pe._prompts.get('prose_adherence', '')}"
+
+        # Motion + negative directives
+        if args.motion:
+            sp = f"{sp}\n\n{pe._prompts.get('motion', '')}"
+        if args.neg:
+            sp = f"{sp}\n\n{pe._prompts.get('negative', '')}"
 
     # Build user message — source + style modifiers + inline wildcards
-    source = args.source.strip()
     user_msg = f"SOURCE PROMPT: {source}" if source else pe._prompts.get("empty_source_signal", "")
     style_str = pe._build_style_string(mods)
     if style_str:
