@@ -1170,6 +1170,28 @@ class PromptEnhancer(scripts.Script):
                 _cancel_flag.clear()
                 return [x, y] + [gr.update(interactive=False)] * len(busy_buttons)
 
+            # Step after the model call of both buttons: write the result
+            # into Forge's prompt boxes. Chained to the call and not hung on
+            # a change of the hidden fields, because a result equal to the
+            # previous one changes nothing there and would not be written.
+            # An empty value (failed or cancelled run) leaves a box alone.
+            # It is the LAST step of the chain: a step that runs in the page
+            # only never reports completion, so nothing chained after it
+            # runs (measured: with the button release behind it, Generate
+            # stayed locked for good).
+            push_main_fields_js = f"""function(v, n) {{
+                    var write = function(sel, text) {{
+                        var ta = document.querySelector(sel);
+                        if (text && ta) {{
+                            ta.value = text;
+                            ta.dispatchEvent(new Event('input', {{bubbles: true}}));
+                        }}
+                    }};
+                    write('#{tab}_prompt textarea', v);
+                    write('#{tab}_neg_prompt textarea', n);
+                    return [v, n];
+                }}"""
+
             def _release_buttons():
                 # Runs after the call however it ended: done, cancelled or failed.
                 return [gr.update(interactive=True)] * len(busy_buttons)
@@ -1274,7 +1296,12 @@ class PromptEnhancer(scripts.Script):
                        + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
-            ).then(fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False)
+            ).then(
+                fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False,
+            ).then(
+                fn=None, _js=push_main_fields_js,
+                inputs=[prompt_out, negative_out], outputs=[prompt_out, negative_out], show_progress=False,
+            )
 
             # ── Edit ──
             def _edit(existing, existing_neg, source, api_url, model, *args):
@@ -1376,7 +1403,12 @@ class PromptEnhancer(scripts.Script):
                        + [seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
-            ).then(fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False)
+            ).then(
+                fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False,
+            ).then(
+                fn=None, _js=push_main_fields_js,
+                inputs=[prompt_out, negative_out], outputs=[prompt_out, negative_out], show_progress=False,
+            )
 
             # ── Cancel ──
             # Only sets the threading flag. The generation function detects
@@ -1392,38 +1424,6 @@ class PromptEnhancer(scripts.Script):
                 queue=False,
                 show_progress=False,
                 trigger_mode="multiple",
-            )
-
-            # ── Write to main prompt textarea ──
-            prompt_out.change(
-                fn=None,
-                _js=f"""function(v) {{
-                    if (v) {{
-                        var ta = document.querySelector('#{tab}_prompt textarea');
-                        if (ta) {{
-                            ta.value = v;
-                            ta.dispatchEvent(new Event('input', {{bubbles: true}}));
-                        }}
-                    }}
-                    return v;
-                }}""",
-                inputs=[prompt_out], outputs=[prompt_out], show_progress=False,
-            )
-
-            # ── Write to negative prompt textarea ──
-            negative_out.change(
-                fn=None,
-                _js=f"""function(v) {{
-                    if (v) {{
-                        var ta = document.querySelector('#{tab}_neg_prompt textarea');
-                        if (ta) {{
-                            ta.value = v;
-                            ta.dispatchEvent(new Event('input', {{bubbles: true}}));
-                        }}
-                    }}
-                    return v;
-                }}""",
-                inputs=[negative_out], outputs=[negative_out], show_progress=False,
             )
 
         # ── Metadata ──
