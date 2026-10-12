@@ -5,7 +5,7 @@
 #
 #   motion              added when "+ Motion and Audio" is ticked
 #   negative            added when "+ Negative" is ticked
-#   remix_prose         the instruction the Remix button uses
+#   edit_prose          the instruction the Edit button uses
 #   empty_source_signal what the enhancer is told when the source box is empty
 #   sigil_append        the line that introduces an "@" instruction
 #   inline_wildcard     how {name?} placeholders in the source are handled

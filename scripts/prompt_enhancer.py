@@ -395,7 +395,7 @@ def _collect_modifiers(dropdown_selections, seed=-1):
     return result
 
 
-# Entries chosen by `pick` modifiers on the last Enhance / Remix.
+# Entries chosen by `pick` modifiers on the last Enhance / Edit.
 _last_picks = []
 
 
@@ -544,7 +544,7 @@ def _split_positive_negative(text):
 # Forge's main prompt field can carry `<...>` tokens (`<lora:name:0.8>`,
 # `<hypernet:...>`). An enhancer run overwrites that field, so with
 # "Keep LoRAs" on the tokens are carried across the overwrite, and kept
-# away from the model on the Remix path, which sends the field's text.
+# away from the model on the Edit path, which sends the field's text.
 #
 # Any `<...>` counts, so new token kinds ride along without a code
 # change. Refusing nested brackets is what stops one match swallowing a
@@ -693,7 +693,7 @@ _last_pe_mode: str | None = None
 # Status line prefix per mode — matches the button glyphs so the status
 # message is self-identifying at a glance.
 _MODE_ENHANCE = "\u2728 Enhance"   # ✨ Enhance
-_MODE_REMIX = "\U0001F500 Remix"   # 🔀 Remix
+_MODE_EDIT = "\u270f\ufe0f Edit"     # ✏️ Edit
 
 
 class _TruncatedError(Exception):
@@ -1014,7 +1014,6 @@ class PromptEnhancer(scripts.Script):
             )
             with gr.Row():
                 enhance_btn = gr.Button(value="\u2728 Enhance", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_enhance_btn")
-                refine_btn = gr.Button(value="\U0001f500 Remix", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_refine_btn")
                 cancel_btn = gr.Button(value="\u274c Cancel", scale=0, min_width=80, elem_id=f"{tab}_pe_cancel_btn")
                 prepend_source = gr.Checkbox(label="Prepend", value=False, scale=0, min_width=60)
                 prepend_source.do_not_save_to_config = True
@@ -1025,6 +1024,19 @@ class PromptEnhancer(scripts.Script):
                 keep_loras = gr.Checkbox(label="Keep LoRAs", value=True, scale=0, min_width=110)
                 keep_loras.do_not_save_to_config = True
                 status = gr.HTML(value="", elem_id=f"{tab}_pe_status")
+
+            # ── Edit ──
+            # Its own box: an edit instruction is not a source prompt, and
+            # sharing the Source Prompt box made the button apply a scene
+            # description to a prompt that already contained it.
+            with gr.Row():
+                edit_instruction = gr.Textbox(
+                    label="Edit the prompt in the main prompt box", lines=1, scale=4,
+                    placeholder="What to change: 'make it night', 'add rain', 'she wears a red coat'. Everything else in the prompt stays. Selected modifiers are applied too.",
+                    elem_id=f"{tab}_pe_edit_instruction",
+                )
+                edit_instruction.do_not_save_to_config = True
+                edit_btn = gr.Button(value="\u270f\ufe0f Edit", variant="primary", scale=0, min_width=120, elem_id=f"{tab}_pe_edit_btn")
 
             # ── Base ──
             with gr.Row():
@@ -1133,7 +1145,7 @@ class PromptEnhancer(scripts.Script):
             negative_out = gr.Textbox(visible=False, elem_id=f"{tab}_pe_neg_out")
 
             # First step of both buttons: copy the main prompt fields into
-            # the hidden inputs. Remix edits that text; Enhance only reads
+            # the hidden inputs. Edit changes that text; Enhance only reads
             # it for the `<...>` tokens to keep.
             pull_main_fields_js = f"""function(x, y) {{
                     var ta = document.querySelector('#{tab}_prompt textarea');
@@ -1142,17 +1154,17 @@ class PromptEnhancer(scripts.Script):
                 }}"""
 
             # While the enhancer runs, Forge's Generate is locked, and so
-            # are Enhance and Remix themselves. Ollama and the image model
+            # are Enhance and Edit themselves. Ollama and the image model
             # share the GPU: started side by side, Ollama loads into system
             # RAM and stays there, and every later prompt is slow until
-            # Forge is restarted. The other direction (Enhance and Remix
+            # Forge is restarted. The other direction (Enhance and Edit
             # locked while an image generates) is
             # javascript/prompt_enhancer_busy.js.
             generate_btn = getattr(self, "_generate_btn", None)
             if generate_btn is None or generate_btn.elem_id != f"{tab}_generate":
                 generate_btn = None
                 logger.error(f"Forge's {tab}_generate button was not found: Generate is NOT locked while the enhancer runs")
-            busy_buttons = [enhance_btn, refine_btn] + ([generate_btn] if generate_btn is not None else [])
+            busy_buttons = [enhance_btn, edit_btn] + ([generate_btn] if generate_btn is not None else [])
 
             def _pull_main_fields(x, y):
                 _cancel_flag.clear()
@@ -1264,20 +1276,20 @@ class PromptEnhancer(scripts.Script):
                 show_progress=False,
             ).then(fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False)
 
-            # ── Remix ──
-            def _refine(existing, existing_neg, source, api_url, model, *args):
+            # ── Edit ──
+            def _edit(existing, existing_neg, source, api_url, model, *args):
                 global _last_pe_mode
-                _last_pe_mode = "Remix"
+                _last_pe_mode = "Edit"
                 keep_loras = args[-1]
                 motion_cb = args[-2]
                 neg_cb, temp = args[-3], args[-4]
-                prepend, sd, th = args[-7], args[-6], args[-5]
-                dd_vals = args[:-7]
+                sd, th = args[-6], args[-5]
+                dd_vals = args[:-6]
 
                 _cancel_flag.clear()
                 t0 = time.monotonic()
 
-                # Remix sends the main field's text to the model, so the
+                # Edit sends the main field's text to the model, so the
                 # `<...>` tokens come out before the send and go back on
                 # after it.
                 kept_tokens = _extract_angle_tokens(existing) if keep_loras else []
@@ -1285,9 +1297,9 @@ class PromptEnhancer(scripts.Script):
                     existing = _strip_angle_tokens(existing)
                 existing = (existing or "").strip()
                 existing_neg = (existing_neg or "").strip()
-                print(f"[PromptEnhancer] Remix: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
+                print(f"[PromptEnhancer] Edit: existing_len={len(existing)}, source_len={len((source or '').strip())}, neg={neg_cb}")
                 if not existing:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: No prompt to remix. Generate one first with Enhance.</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_EDIT}: The main prompt box is empty. Write a prompt there or make one with Enhance first.</span>"
                     return
 
                 # From here on `source` is the instruction without its sigil part.
@@ -1295,15 +1307,15 @@ class PromptEnhancer(scripts.Script):
                 replaced = sigil_replace and bool(sigil_suffix)
                 sd = _effective_seed(sd)
                 mods = _collect_modifiers(dd_vals, sd)
-                print(f"[PromptEnhancer] Remix: mods={len(mods)}, source={'yes' if source else 'no'}")
+                print(f"[PromptEnhancer] Edit: mods={len(mods)}, source={'yes' if source else 'no'}")
 
                 if not mods and not source and not sigil_suffix:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Select modifiers or update source prompt.</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_EDIT}: Type what to change in the Edit box, or select modifiers.</span>"
                     return
 
                 # The sigil acts on the editor prompt. The user's own
                 # instruction and styles are appended after it either way.
-                sp = _merge_system_prompt(_prompts.get("remix_prose", ""), sigil_suffix, sigil_replace)
+                sp = _merge_system_prompt(_prompts.get("edit_prose", ""), sigil_suffix, sigil_replace)
 
                 if not replaced:
                     if motion_cb:
@@ -1328,9 +1340,9 @@ class PromptEnhancer(scripts.Script):
                         if isinstance(chunk, dict):
                             p = chunk
                             if p["tokens"] > 0:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_REMIX}: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
+                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_EDIT}: {p['words']} words, {p['elapsed']:.1f}s ({p['tps']:.1f} tok/s)</span>"
                             else:
-                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_REMIX}: {p['elapsed']:.1f}s...</span>"
+                                yield gr.update(), gr.update(), f"<span style='color:#aaa'>{_MODE_EDIT}: {p['elapsed']:.1f}s...</span>"
                         else:
                             raw = chunk
                     raw = _clean_output(raw)
@@ -1340,30 +1352,28 @@ class PromptEnhancer(scripts.Script):
                     else:
                         result, negative = raw, ""
 
-                    if prepend and source:
-                        result = f"{source}\n\n{result}"
                     elapsed = f"{time.monotonic() - t0:.1f}s"
-                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_REMIX}: OK - remixed to {len(result.split())} words, {elapsed}{_picks_note()}</span>"
+                    yield _append_missing_tokens(result, kept_tokens), negative, f"<span style='color:#6c6'>{_MODE_EDIT}: OK - edited to {len(result.split())} words, {elapsed}{_picks_note()}</span>"
                 except InterruptedError:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Cancelled</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_EDIT}: Cancelled</span>"
                 except _TruncatedError as e:
                     # Truncated prose is still prose — surface it so the
                     # user can use or edit it.
-                    yield _append_missing_tokens(_clean_output(str(e)), kept_tokens), "", f"<span style='color:#ca6'>{_MODE_REMIX}: Truncated</span>"
+                    yield _append_missing_tokens(_clean_output(str(e)), kept_tokens), "", f"<span style='color:#ca6'>{_MODE_EDIT}: Truncated</span>"
                 except urllib.error.URLError as e:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: Connection failed: {e.reason}</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_EDIT}: Connection failed: {e.reason}</span>"
                 except Exception as e:
-                    yield "", "", f"<span style='color:#c66'>{_MODE_REMIX}: {type(e).__name__}: {e}</span>"
+                    yield "", "", f"<span style='color:#c66'>{_MODE_EDIT}: {type(e).__name__}: {e}</span>"
 
-            refine_btn.click(
+            edit_btn.click(
                 fn=_pull_main_fields,
                 _js=pull_main_fields_js,
                 inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in] + busy_buttons, show_progress=False,
             ).then(
-                fn=_refine,
-                inputs=[prompt_in, negative_in, source_prompt, api_url, model]
+                fn=_edit,
+                inputs=[prompt_in, negative_in, edit_instruction, api_url, model]
                        + dd_components
-                       + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
+                       + [seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
             ).then(fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False)

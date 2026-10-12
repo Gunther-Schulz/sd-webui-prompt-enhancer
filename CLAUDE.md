@@ -44,7 +44,7 @@ Before writing code, check these. Full explanations follow below.
 Heavy active development. Single maintainer. Not yet a widely-used
 extension. Prose only since 2026-10-03: the extension expands a source
 prompt into natural-language prose (Enhance) and patches an existing
-prompt (Remix). The earlier tag half — Hybrid and Tags modes, tag
+prompt (Edit, called Remix until 2026-10-12). The earlier tag half — Hybrid and Tags modes, tag
 formats, the Danbooru retrieval pipeline — was removed.
 
 ## No backwards compatibility required
@@ -246,7 +246,7 @@ NSFW.
 |---|---|---|
 | Modifier metadata | `modifiers/**/*.yaml` entries | behavioral text, keywords |
 | Base prose style | `bases.yaml` | voice, structure, content rules (including "do/don't sanitize") |
-| Operational prompts | `prompts.yaml` | adherence, remix, motion, negative, inline wildcards |
+| Operational prompts | `prompts.yaml` | adherence, edit, motion, negative, inline wildcards |
 | Content classification | LLM call | "is this NSFW?", "does this detail fit the scene?" |
 | Structural algorithms | Python | prompt assembly, output cleanup, repetition detection |
 

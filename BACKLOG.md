@@ -6,6 +6,22 @@ evidence they wait on. Closed entries move to `## Done` with their commit ref.
 
 ## Ready
 
+### A result identical to the previous one is not written into the main prompt box
+
+**Booked 2026-10-12.** Measured that day on a Forge started beside the real one, with a stand-in
+model that returns the same text on every call: Edit reported "OK - edited to 12 words" and the
+main prompt box kept the text typed into it before the run. Cause, read from the code: the box is
+written by `prompt_out.change` (and `negative_out.change`), and a hidden field set to the value it
+already holds raises no change event. Reachable with a real model by reusing the seed on the same
+input after changing the box by hand.
+
+Fix: write the box from a step chained after the handler (`.then(fn=None, _js=...)` on the Enhance
+and the Edit chain, reading `prompt_out` and `negative_out`), and drop the two `.change` listeners.
+Write-set: `scripts/prompt_enhancer.py`. Done when, on a running Forge with a stand-in model that
+returns constant text, two runs in a row each overwrite a box that was changed by hand in between,
+and a cancelled run with no partial text leaves the box as it was.
+
+
 ### Does a different model, or thinking mode, fix the two-body problem?
 
 **Booked 2026-10-03**, started and cancelled the same evening at the operator's request (2 of 34
@@ -85,6 +101,20 @@ returns OK; Remix, the three checkboxes and the modifier dropdowns with the new 
 failure points at in `scripts/prompt_enhancer.py`.
 
 ## Parked
+
+### Edit (Remix until 2026-10-12): keep it or cut it
+
+**Booked 2026-10-12.** The operator found Remix useless and did not know what to expect from it.
+Read from the code that day: Remix took its instruction from the Source Prompt box, so with the
+scene description still in that box the model was told to apply a description the prompt already
+contained. It was renamed Edit and given its own instruction box with a one-line description
+(operator, first-hand: he wants to try it under that frame before deciding). A full cut was
+built the same day and not shipped: button, handler, `edit_prose`, the hidden negative input and
+the `PE Mode` metadata go; the Enhance request stayed byte-identical in `compare_prompt.py --dry`.
+
+Waits on: the operator's own use of Edit. Keep if he uses it and the patches hold the rest of the
+prompt; cut if he does not. Nothing here measures the quality of an edit (PROSE-TUNING, "Not
+tested").
 
 ### Two-pass scene variety (model lists setups, code picks one)
 

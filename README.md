@@ -8,7 +8,7 @@ Takes your short prompt and expands it into a detailed natural-language descript
 
 - **Local LLM powered** — uses [Ollama](https://ollama.com)
 - **Enhance** — expands the source prompt into prose, written straight into the main prompt box
-- **Remix** — applies an instruction or new modifiers to the prompt that is already in the main prompt box
+- **Edit** — changes one thing in the prompt that is already in the main prompt box: type what to change in the Edit box, the rest of the prompt stays
 - **Keep LoRAs** — `<lora:...>` tokens in the main prompt box survive a regeneration
 - **Bases** — the system prompt that turns your source into prose. One ships, `Default`: it keeps everything you state and invents what you leave open. Add your own through Local Overrides
 - **220+ categorized modifiers** — organized into auto-generated dropdowns, one per YAML file
@@ -17,7 +17,7 @@ Takes your short prompt and expands it into a detailed natural-language descript
 - **Local overrides** — extend with your own YAML files; each file becomes a dropdown
 - **Streaming** — token streaming with stall detection, thinking detection, repetition detection, and configurable safeguards
 - **Cancel button** — abort any running generation
-- **One at a time** — Forge's Generate is locked while Enhance or Remix runs, and Enhance and Remix are locked while an image generates, so Ollama and the image model never compete for the GPU
+- **One at a time** — Forge's Generate is locked while Enhance or Edit runs, and Enhance and Edit are locked while an image generates, so Ollama and the image model never compete for the GPU
 - **Ollama status** — shows version, loaded model, and GPU/CPU mode
 - **Metadata** — settings saved to generated images and restored when loading
 - **Works in both txt2img and img2img** tabs
@@ -83,19 +83,19 @@ The result is written into the main prompt box. Nothing is sent to the image mod
 
 ### Keep LoRAs
 
-Enhance and Remix overwrite the main prompt box. With **Keep LoRAs** on, every `<...>` token found in the box before the run — `<lora:name:0.8>`, `<hypernet:name:1>`, anything between angle brackets — is appended to the new prompt, so a LoRA you are testing stays put while the prose changes. A token the new prompt already contains is not added twice. The tokens go to the end: Forge takes them out of the prompt wherever they sit, so their position carries no meaning.
+Enhance and Edit overwrite the main prompt box. With **Keep LoRAs** on, every `<...>` token found in the box before the run — `<lora:name:0.8>`, `<hypernet:name:1>`, anything between angle brackets — is appended to the new prompt, so a LoRA you are testing stays put while the prose changes. A token the new prompt already contains is not added twice. The tokens go to the end: Forge takes them out of the prompt wherever they sit, so their position carries no meaning.
 
-On Remix, which sends the box's text to the model, the tokens are taken out before the send and put back afterwards, so the model never sees them.
+On Edit, which sends the box's text to the model, the tokens are taken out before the send and put back afterwards, so the model never sees them.
 
 With the checkbox off nothing is carried over. Known limit: prose containing bare comparison brackets (`5 < 10 > 3`) is read as a token.
 
-### Remixing an existing prompt
+### Editing an existing prompt
 
 Already have a prompt in the main prompt box and want to tweak it?
 
-1. Type an instruction in the **Source Prompt** box ("make it night", "add rain"), select modifiers, or both
-2. Click **🔀 Remix** instead of Enhance
-3. The model reads the current prompt from the main prompt box and patches it rather than rewriting it from scratch
+1. Type what to change in the **Edit** box ("make it night", "add rain"), select modifiers, or both. The Source Prompt box is not used.
+2. Click **✏️ Edit**
+3. The model reads the current prompt from the main prompt box and patches it rather than rewriting it from scratch. Prepend does not apply.
 
 ### Random modifiers
 
@@ -125,7 +125,7 @@ a woman opens a door @@ Output exactly 6 lines. Each line describes only visible
 
 Everything from the sigil on is taken out of the prompt the model is asked to enhance. `@@` is looked for first, and the first occurrence splits. Nothing after an empty `@` or `@@` changes anything, so a half-typed `prompt @@` behaves like `prompt`.
 
-There is no way to escape a literal `@`: `a poster for @midnight` is split at the `@`. Both work on Enhance and on Remix; on Remix the sigil acts on the editor instructions, and your instruction text before the sigil is still applied.
+There is no way to escape a literal `@`: `a poster for @midnight` is split at the `@`. Both work on Enhance and on Edit; on Edit the sigil goes in the Edit box and acts on the editor instructions, and your instruction text before the sigil is still applied.
 
 ### Cancel
 
@@ -234,7 +234,7 @@ An entry carrying a `source:` key (the tag-database lookup of earlier versions) 
 
 ### Authoring base prompts and operational prompts
 
-`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`remix_prose`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`, `sigil_append`). Both merge with the published defaults; anything you don't override stays.
+`_bases.yaml` extends or replaces entries in the **Base** dropdown. `_prompts.yaml` overrides the operational prompts (`edit_prose`, `inline_wildcard`, `motion`, `negative`, `empty_source_signal`, `sigil_append`). Both merge with the published defaults; anything you don't override stays.
 
 ```yaml
 # _bases.yaml
@@ -306,7 +306,7 @@ Rules of thumb:
 ## How it works
 
 1. **Enhance**: the source prompt is sent to the local LLM with the assembled system prompt, and the selected modifiers in the user message. The LLM returns a description in prose.
-2. **Remix**: the current prompt is sent back to the LLM together with your instruction and modifiers, under an editor prompt that asks for a minimal patch.
+2. **Edit**: the current prompt is sent back to the LLM together with your instruction and modifiers, under an editor prompt that asks for a minimal patch.
 3. **Streaming**: all LLM calls use streaming with stall detection and thinking mode detection. `/no_think` is prepended to prevent Qwen3 models from entering thinking mode.
 4. The output is written to the main prompt textbox and the settings are saved to image metadata.
 

@@ -232,6 +232,6 @@ each on the same bare source, graded by reading:
 
 ## Not tested
 
-Other models. Remix. The Motion and Negative blocks with the new base.
+Other models. Edit (Remix until 2026-10-12). The Motion and Negative blocks with the new base.
 The modifier dropdowns. Image results: every number above is about the
 text; whether the images follow is the operator's test.

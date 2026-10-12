@@ -1,4 +1,4 @@
-// Enhance and Remix are locked while Forge generates an image.
+// Enhance and Edit are locked while Forge generates an image.
 //
 // Ollama and the image model share the GPU. An enhancer call that starts
 // while an image is generating finds the memory taken, Ollama loads its
@@ -14,7 +14,7 @@
 (function () {
     const TABS = ["txt2img", "img2img"];
     const SIGNS = ["_interrupt", "_interrupting"];
-    const LOCKED = ["_pe_enhance_btn", "_pe_refine_btn"];
+    const LOCKED = ["_pe_enhance_btn", "_pe_edit_btn"];
     const CLASS = "pe-locked";
 
     function generating() {
@@ -55,7 +55,7 @@
             }
         }
         if (watched !== TABS.length * SIGNS.length) {
-            console.error(`[PromptEnhancer] ${watched} of ${TABS.length * SIGNS.length} Interrupt buttons found: Enhance and Remix are NOT locked while an image generates`);
+            console.error(`[PromptEnhancer] ${watched} of ${TABS.length * SIGNS.length} Interrupt buttons found: Enhance and Edit are NOT locked while an image generates`);
         }
         apply();
     });
