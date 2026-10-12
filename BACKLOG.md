@@ -6,21 +6,24 @@ evidence they wait on. Closed entries move to `## Done` with their commit ref.
 
 ## Ready
 
-### A result identical to the previous one is not written into the main prompt box
+### A pause of a few seconds in the model's stream kills the run
 
 **Booked 2026-10-12.** Measured that day on a Forge started beside the real one, with a stand-in
-model that returns the same text on every call: Edit reported "OK - edited to 12 words" and the
-main prompt box kept the text typed into it before the run. Cause, read from the code: the box is
-written by `prompt_out.change` (and `negative_out.change`), and a hidden field set to the value it
-already holds raises no change event. Reachable with a real model by reusing the seed on the same
-input after changing the box by hand.
+model that sends its response headers at once and its first text 2.5 s later: Enhance ended with
+"OSError: cannot read from timed out object". Cause, read from the code and CPython's `socket.py`:
+`_call_llm` sets a 2 s socket timeout so the read loop can look at the cancel flag, catches the
+first timeout and reads again, and a socket file that has timed out once refuses every later read.
+So any silence of 2 to 4 s after the headers ends the run, and `PROMPT_ENHANCER_STALL_TIMEOUT`
+(10 s) can never be what fires. Not measured: how often the real Ollama pauses that long. It sends
+its headers with the first text, so a slow first token is not this case; a model running from
+system RAM, or a long thinking phase, could be.
 
-Fix: write the box from a step chained after the handler (`.then(fn=None, _js=...)` on the Enhance
-and the Edit chain, reading `prompt_out` and `negative_out`), and drop the two `.change` listeners.
-Write-set: `scripts/prompt_enhancer.py`. Done when, on a running Forge with a stand-in model that
-returns constant text, two runs in a row each overwrite a box that was changed by hand in between,
-and a cancelled run with no partial text leaves the box as it was.
-
+Fix: read the stream in a way that survives a quiet period — a reader thread doing blocking reads
+into a queue, the loop taking from the queue with a timeout and closing the response on cancel —
+and no timeout on the socket itself. Write-set: `scripts/prompt_enhancer.py` (`_call_llm`). Done
+when, against a stand-in server: a 5 s pause before and in the middle of the text still returns the
+whole text; a pause longer than the stall timeout ends with the stall message; Cancel during a
+pause ends the run within about a second.
 
 ### Does a different model, or thinking mode, fix the two-body problem?
 
@@ -132,30 +135,40 @@ model), or the simpler route proving insufficient: modifier lists with a code-si
 Unparked, the open points are the age-range steer (untested), the missing "every person is an
 adult" guard in any list prompt, and whether the list call respects a place steer reliably.
 
-### Generate and the enhancer can run at the same time, and together they run out of memory
+### Does the enhancer's model stay loaded after a call, and does that hurt the next Generate?
 
 **PARKED 2026-10-03, operator report** ("a shim to block the generate button while
 the prompt enhancer runs (forge) because they get in each other's way (will get
-OOM)"; ranked by the operator as not very important).
+OOM)"). **Narrowed 2026-10-12:** the lock is built, in both directions (`914959e`;
+operator, first-hand that day: started side by side, Ollama loads into system RAM and
+stays slow until Forge is restarted). What it covers and does not is in that commit's
+message.
 
-The enhancer's LLM (Ollama) and Forge's image model share one machine. Nothing
-stops a Generate click while an enhancer call is in flight, or an enhancer click
-while an image is generating. The OOM is the operator's observation, not measured
-in this repo.
+Still open, and not measured in this repo: whether the LLM is still loaded after the
+enhancer call returns. If it is, a Generate clicked one second after Enhance finishes
+meets the same full GPU the lock was built to avoid, and unloading on completion (or a
+short keep-alive) would matter more than the lock.
 
-**Waiting on** (design is open; each item is one short measurement or read):
-- Which memory runs out — GPU or host — and whether the LLM is still loaded after
-  the enhancer call returns (`curl 127.0.0.1:11434/api/ps` right after a call).
-  If it stays loaded, unloading it on completion may matter more than any button
-  lock, and a lock alone would not help a Generate clicked one second later.
-- Which direction needs the lock: Generate blocked during enhancement (the
-  request), the enhancer buttons blocked during generation, or both.
-- Where a lock can live. `javascript/` is empty today, so there is no existing
-  button handling to extend; the candidates are a small script disabling Forge's
-  Generate button while the enhancer's status is in progress, or a server-side
-  check. Neither has been read against Forge's UI code.
+**Waiting on:** one read right after a call, with Forge holding its image model:
+`curl 127.0.0.1:11434/api/ps`. A model listed there with VRAM in use means the unload
+is worth building; an empty list closes this entry.
 
 ## Done
+
+### A result identical to the previous one is not written into the main prompt box
+
+**DONE 2026-10-12** — `2cdfdec`. Built as booked, except that the write step is the last of its chain, behind the button release (a page-only step never reports completion). **Booked 2026-10-12.** Measured that day on a Forge started beside the real one, with a stand-in
+model that returns the same text on every call: Edit reported "OK - edited to 12 words" and the
+main prompt box kept the text typed into it before the run. Cause, read from the code: the box is
+written by `prompt_out.change` (and `negative_out.change`), and a hidden field set to the value it
+already holds raises no change event. Reachable with a real model by reusing the seed on the same
+input after changing the box by hand.
+
+Fix: write the box from a step chained after the handler (`.then(fn=None, _js=...)` on the Enhance
+and the Edit chain, reading `prompt_out` and `negative_out`), and drop the two `.change` listeners.
+Write-set: `scripts/prompt_enhancer.py`. Done when, on a running Forge with a stand-in model that
+returns constant text, two runs in a row each overwrite a box that was changed by hand in between,
+and a cancelled run with no partial text leaves the box as it was.
 
 ### Cut this extension down to prose only, with LoRA survival
 
