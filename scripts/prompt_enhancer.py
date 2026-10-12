@@ -991,6 +991,12 @@ class PromptEnhancer(scripts.Script):
     def show(self, is_img2img):
         return scripts.AlwaysVisible
 
+    def after_component(self, component, **kwargs):
+        # Forge's Generate button of this tab, for the lock in ui().
+        elem_id = getattr(component, "elem_id", None)
+        if elem_id in ("txt2img_generate", "img2img_generate"):
+            self._generate_btn = component
+
     def ui(self, is_img2img):
         tab = "img2img" if is_img2img else "txt2img"
 
@@ -1135,9 +1141,26 @@ class PromptEnhancer(scripts.Script):
                     return [ta ? ta.value : x, neg ? neg.value : y];
                 }}"""
 
+            # While the enhancer runs, Forge's Generate is locked, and so
+            # are Enhance and Remix themselves. Ollama and the image model
+            # share the GPU: started side by side, Ollama loads into system
+            # RAM and stays there, and every later prompt is slow until
+            # Forge is restarted. The other direction (Enhance and Remix
+            # locked while an image generates) is
+            # javascript/prompt_enhancer_busy.js.
+            generate_btn = getattr(self, "_generate_btn", None)
+            if generate_btn is None or generate_btn.elem_id != f"{tab}_generate":
+                generate_btn = None
+                logger.error(f"Forge's {tab}_generate button was not found: Generate is NOT locked while the enhancer runs")
+            busy_buttons = [enhance_btn, refine_btn] + ([generate_btn] if generate_btn is not None else [])
+
             def _pull_main_fields(x, y):
                 _cancel_flag.clear()
-                return x, y
+                return [x, y] + [gr.update(interactive=False)] * len(busy_buttons)
+
+            def _release_buttons():
+                # Runs after the call however it ended: done, cancelled or failed.
+                return [gr.update(interactive=True)] * len(busy_buttons)
 
             # ── Enhance ──
             def _enhance(existing, source, api_url, model, base_name, *args):
@@ -1231,7 +1254,7 @@ class PromptEnhancer(scripts.Script):
             enhance_btn.click(
                 fn=_pull_main_fields,
                 _js=pull_main_fields_js,
-                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
+                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in] + busy_buttons, show_progress=False,
             ).then(
                 fn=_enhance,
                 inputs=[prompt_in, source_prompt, api_url, model, base]
@@ -1239,7 +1262,7 @@ class PromptEnhancer(scripts.Script):
                        + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
-            )
+            ).then(fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False)
 
             # ── Remix ──
             def _refine(existing, existing_neg, source, api_url, model, *args):
@@ -1335,7 +1358,7 @@ class PromptEnhancer(scripts.Script):
             refine_btn.click(
                 fn=_pull_main_fields,
                 _js=pull_main_fields_js,
-                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in], show_progress=False,
+                inputs=[prompt_in, negative_in], outputs=[prompt_in, negative_in] + busy_buttons, show_progress=False,
             ).then(
                 fn=_refine,
                 inputs=[prompt_in, negative_in, source_prompt, api_url, model]
@@ -1343,7 +1366,7 @@ class PromptEnhancer(scripts.Script):
                        + [prepend_source, seed, think, temperature, negative_prompt_cb, motion_cb, keep_loras],
                 outputs=[prompt_out, negative_out, status],
                 show_progress=False,
-            )
+            ).then(fn=_release_buttons, inputs=[], outputs=busy_buttons, show_progress=False)
 
             # ── Cancel ──
             # Only sets the threading flag. The generation function detects

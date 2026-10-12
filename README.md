@@ -17,6 +17,7 @@ Takes your short prompt and expands it into a detailed natural-language descript
 - **Local overrides** — extend with your own YAML files; each file becomes a dropdown
 - **Streaming** — token streaming with stall detection, thinking detection, repetition detection, and configurable safeguards
 - **Cancel button** — abort any running generation
+- **One at a time** — Forge's Generate is locked while Enhance or Remix runs, and Enhance and Remix are locked while an image generates, so Ollama and the image model never compete for the GPU
 - **Ollama status** — shows version, loaded model, and GPU/CPU mode
 - **Metadata** — settings saved to generated images and restored when loading
 - **Works in both txt2img and img2img** tabs
